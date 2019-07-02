@@ -1,0 +1,4 @@
+/public/dist/
+
+# for NPM
+node_modules/
