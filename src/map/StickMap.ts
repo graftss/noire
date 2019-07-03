@@ -1,39 +1,49 @@
+import AxisMap, { AxisBinding, AxisConfig, AxisInput } from './AxisMap';
+import ButtonMap, { ButtonBinding, ButtonInput } from './ButtonMap';
+
 export interface StickConfig {
-  deadzone?: number;
+  h?: AxisConfig;
+  v?: AxisConfig;
 }
 
 export interface StickBinding {
-  hAxis: number;
-  vAxis: number;
-  downIndex?: number;
+  h: AxisBinding;
+  v: AxisBinding;
+  down?: ButtonBinding;
 }
 
 export interface StickInput {
-  x: number;
-  y: number;
-  pressed: boolean;
+  x: AxisInput;
+  y: AxisInput;
+  down: ButtonInput;
 }
 
 export default class StickMap {
   binding: StickBinding;
   config: StickConfig;
+  hMap: AxisMap;
+  vMap: AxisMap;
+  downMap?: ButtonMap;
 
-  constructor(binding: StickBinding, config: StickConfig) {
+  constructor(binding: StickBinding, config: StickConfig = {}) {
     this.binding = binding;
     this.config = config;
-  }
 
-  normalizeAxis(x) {
-    return Math.abs(x) < (this.config.deadzone || 0) ? 0 : x;
+    this.hMap = new AxisMap(binding.h, config.h);
+    this.vMap = new AxisMap(binding.v, config.v);
+    if (binding.down) {
+      this.downMap = new ButtonMap(binding.down);
+    }
+
   }
 
   getInput(gamepad: Gamepad): StickInput {
-    const { hAxis, vAxis, downIndex } = this.binding;
+    const { down } = this.binding;
 
     return {
-      x: this.normalizeAxis(gamepad.axes[hAxis]),
-      y: this.normalizeAxis(gamepad.axes[vAxis]),
-      pressed: gamepad.buttons[downIndex].pressed,
+      x: this.hMap.getInput(gamepad),
+      y: this.vMap.getInput(gamepad),
+      down: this.downMap.getInput(gamepad),
     };
   }
 }

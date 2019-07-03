@@ -49,7 +49,7 @@ export default class StickComponent implements Component<StickInput> {
     this.group.add(this.stick);
   }
 
-  update({ x, y, pressed }: StickInput) {
+  update({ x, y, down }: StickInput) {
     this.stick.position({
       x: this.br * x * this.rangeScaling,
       y: this.br * y * this.rangeScaling,
@@ -60,7 +60,7 @@ export default class StickComponent implements Component<StickInput> {
       y: this.sr * depthFactor(y),
     });
 
-    this.stick.fill(pressed ? this.pressedStickFill : this.stickFill);
+    this.stick.fill(down.pressed ? this.pressedStickFill : this.stickFill);
 
     this.stick.shadowOffset({
       x: sign(x) * depthFactor(x) * -1,

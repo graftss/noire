@@ -6,8 +6,16 @@ import TestDisplay from './test/TestDisplay';
 import NextInputListener from './gamepad/NextInputListener';
 
 const binding: GamepadBinding = {
-  ls: { hAxis: 0, vAxis: 1, downIndex: 10 },
-  rs: { hAxis: 5, vAxis: 2, downIndex: 11 },
+  ls: {
+    h: { index: 0, inverted: false },
+    v: { index: 1, inverted: false },
+    down: { index: 10 },
+  },
+  rs: {
+    h: { index: 5, inverted: false },
+    v: { index: 2, inverted: false },
+    down: { index: 11 },
+  },
   dpad: {
     kind: 'axis',
     binding: {

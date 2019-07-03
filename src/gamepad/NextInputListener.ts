@@ -77,7 +77,7 @@ export default class NextInputListener {
           if (buttons[i].value !== baselineInput.buttons[i]) {
             this.state.callback({
               kind: 'button',
-              binding: { downIndex: i },
+              binding: { index: i },
             });
             return this.deactivate();
           }
