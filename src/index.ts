@@ -52,8 +52,8 @@ const nextInputListener = new NextInputListener();
 
 let t0 = 0;
 
-nextInputListener.onNextButton((axis) => {
-  console.log('hi', axis);
+nextInputListener.awaitPositiveAxis((binding) => {
+  console.log('hi', binding);
 });
 
 const update = (t1) => {
@@ -65,6 +65,7 @@ const update = (t1) => {
   const input = map.getInput(gamepad);
 
   if (input) {
+    nextInputListener.update(gamepad);
     display.update(input, dt);
     display.draw();
   }

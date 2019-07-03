@@ -1,8 +1,9 @@
-import { ButtonBinding } from '../map/ButtonMap';
+import { AxisBinding } from '../map/AxisMap';
 import { AxisValueBinding } from '../map/AxisValueMap';
+import { ButtonBinding } from '../map/ButtonMap';
 import { clone } from '../utils';
 
-type ButtonDescriptor = {
+export type ButtonInputBinding = {
   kind: 'button';
   binding: ButtonBinding;
 } | {
@@ -10,31 +11,30 @@ type ButtonDescriptor = {
   binding: AxisValueBinding;
 };
 
-type state = {
+type ListeningState = {
   kind: 'axis';
-  callback: (axis: number) => any;
+  callback: (binding: AxisBinding) => any;
   baselineInput?: number[];
 } | {
   kind: 'button';
-  callback: (button: ButtonDescriptor) => any;
+  callback: (binding: ButtonInputBinding) => any;
   baselineInput?: { axes: number[], buttons: number[] };
 };
 
 const MIN_AXIS_MAGNITUDE = 0.5;
 
 export default class NextInputListener {
-  state?: state;
+  state?: ListeningState;
   active: boolean = false;
 
-  onNextButton(callback) {
+  awaitButton(callback) {
     this.state = { kind: 'button', callback };
     this.active = true;
   }
 
-  onNextAxis(callback: (axis: number) => any) {
+  awaitPositiveAxis(callback) {
     this.state = { kind: 'axis', callback };
     this.active = true;
-    console.log('starting');
   }
 
   deactivate() {
@@ -57,7 +57,10 @@ export default class NextInputListener {
         for (let i = 0; i < axes.length; i++) {
           if (axes[i] !== this.state.baselineInput[i] &&
               Math.abs(axes[i]) > MIN_AXIS_MAGNITUDE) {
-            this.state.callback(i);
+            this.state.callback({
+              index: i,
+              inverted: axes[i] < 0,
+            });
             return this.deactivate();
           }
         }
