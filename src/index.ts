@@ -1,8 +1,8 @@
 import Konva from 'konva';
 
 import GamepadManager from './gamepad/GamepadManager';
-import GamepadMap, { GamepadBindings } from './map/GamepadMap';
-import DualStickDisplay from './display/DualStickDisplay';
+import GamepadMap, { GamepadBindings } from './test/GamepadMap';
+import TestDisplay from './test/TestDisplay';
 
 const bindings: GamepadBindings = {
   ls: { hAxis: 0, vAxis: 1, downIndex: 10 },
@@ -34,7 +34,7 @@ const analogConfig = {
 
 const gamepadManager = new GamepadManager('gamepads');
 const map = new GamepadMap(bindings, config);
-const visualizer = new DualStickDisplay(stage, analogConfig);
+const visualizer = new TestDisplay(stage, analogConfig);
 
 let t0 = 0;
 

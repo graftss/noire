@@ -1,10 +1,16 @@
-import StickMap, { StickBindings } from './StickMap';
-import DPadMap, { DPadBindings } from './DPadMap';
+import StickMap, { StickBindings, StickInput } from '../map/StickMap';
+import DPadMap, { DPadBindings, DPadInput } from '../map/DPadMap';
 
 export interface GamepadBindings {
   ls: StickBindings;
   rs: StickBindings;
   dpad: DPadBindings;
+}
+
+export interface GamepadInput {
+  ls: StickInput;
+  rs: StickInput;
+  dpad: DPadInput;
 }
 
 export default class GamepadMap {
