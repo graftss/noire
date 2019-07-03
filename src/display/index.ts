@@ -21,4 +21,6 @@ export default abstract class Display<T> {
   draw() {
     this.componentManager.draw();
   }
+
+  abstract update(input: T, dt: number): void;
 }

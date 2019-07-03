@@ -4,12 +4,12 @@ import Component from '../Component';
 import Display from '../display';
 import { GamepadInput } from './GamepadMap';
 import StickComponent from '../component/StickComponent';
-import ButtonComponent from '../component/ButtonComponent';
+import DPadComponent from '../component/DPadComponent';
 
 export default class TestDisplay extends Display<GamepadInput> {
   left: StickComponent;
   right: StickComponent;
-  up: ButtonComponent;
+  dpad: DPadComponent;
 
   constructor(stage, config) {
     super(stage);
@@ -17,16 +17,16 @@ export default class TestDisplay extends Display<GamepadInput> {
 
     this.left = new StickComponent(leftPos.x, leftPos.y, boundaryR, stickR);
     this.right = new StickComponent(rightPos.x, rightPos.y, boundaryR, stickR);
-    this.up = new ButtonComponent(400, 100);
+    this.dpad = new DPadComponent(50, 50, 20, 20);
 
     this.addComponent(this.left);
     this.addComponent(this.right);
-    this.addComponent(this.up);
+    this.addComponent(this.dpad);
   }
 
-  update(input, dt) {
+  update(input: GamepadInput, dt) {
     this.left.update(input.ls);
     this.right.update(input.rs);
-    this.up.update(input.dpad.u);
+    this.dpad.update(input.dpad);
   }
 }
