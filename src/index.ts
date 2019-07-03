@@ -1,16 +1,16 @@
 import Konva from 'konva';
 
 import GamepadManager from './gamepad/GamepadManager';
-import GamepadMap, { GamepadBindings } from './test/GamepadMap';
+import GamepadMap, { GamepadBinding } from './test/GamepadMap';
 import TestDisplay from './test/TestDisplay';
 import NextInputListener from './gamepad/NextInputListener';
 
-const bindings: GamepadBindings = {
+const binding: GamepadBinding = {
   ls: { hAxis: 0, vAxis: 1, downIndex: 10 },
   rs: { hAxis: 5, vAxis: 2, downIndex: 11 },
   dpad: {
     kind: 'axis',
-    bindings: {
+    binding: {
       u: { axis: 9, value: -1 },
       l: { axis: 9, value: 0.7142857 },
       d: { axis: 9, value: 0.1428571 },
@@ -35,7 +35,7 @@ const analogConfig = {
 };
 
 const gamepadManager = new GamepadManager('gamepads');
-const map = new GamepadMap(bindings, config);
+const map = new GamepadMap(binding, config);
 const display = new TestDisplay(stage, analogConfig);
 const nextInputListener = new NextInputListener();
 

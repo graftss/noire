@@ -1,5 +1,5 @@
-import ButtonMap, { ButtonBindings, ButtonInput } from './ButtonMap';
-import AxisValueMap, { AxisValueBindings } from './AxisValueMap';
+import ButtonMap, { ButtonBinding, ButtonInput } from './ButtonMap';
+import AxisValueMap, { AxisValueBinding } from './AxisValueMap';
 
 export interface DPadDict<T> {
   u: T;
@@ -8,36 +8,36 @@ export interface DPadDict<T> {
   r: T;
 }
 
-export type DPadBindings = {
+export type DPadBinding = {
   kind: 'axis';
-  bindings: DPadDict<AxisValueBindings>;
+  binding: DPadDict<AxisValueBinding>;
 } | {
   kind: 'button';
-  bindings: DPadDict<ButtonBindings>;
+  binding: DPadDict<ButtonBinding>;
 }
 
 export type DPadInput = DPadDict<ButtonInput>
 
 export default class DPadMap {
-  bindings: DPadBindings;
+  binding: DPadBinding;
   map: DPadDict<AxisValueMap | ButtonMap>;
 
-  constructor(bindings: DPadBindings) {
-    this.bindings = bindings;
+  constructor(binding: DPadBinding) {
+    this.binding = binding;
 
-    if (bindings.kind === 'axis') {
+    if (binding.kind === 'axis') {
       this.map = {
-        u: new AxisValueMap(bindings.bindings.u),
-        l: new AxisValueMap(bindings.bindings.l),
-        d: new AxisValueMap(bindings.bindings.d),
-        r: new AxisValueMap(bindings.bindings.r),
+        u: new AxisValueMap(binding.binding.u),
+        l: new AxisValueMap(binding.binding.l),
+        d: new AxisValueMap(binding.binding.d),
+        r: new AxisValueMap(binding.binding.r),
       };
     } else {
       this.map = {
-        u: new ButtonMap(bindings.bindings.u),
-        l: new ButtonMap(bindings.bindings.l),
-        d: new ButtonMap(bindings.bindings.d),
-        r: new ButtonMap(bindings.bindings.r),
+        u: new ButtonMap(binding.binding.u),
+        l: new ButtonMap(binding.binding.l),
+        d: new ButtonMap(binding.binding.d),
+        r: new ButtonMap(binding.binding.r),
       };
     }
   }

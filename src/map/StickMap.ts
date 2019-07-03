@@ -2,7 +2,7 @@ export interface StickConfig {
   deadzone?: number;
 }
 
-export interface StickBindings {
+export interface StickBinding {
   hAxis: number;
   vAxis: number;
   downIndex?: number;
@@ -15,11 +15,11 @@ export interface StickInput {
 }
 
 export default class StickMap {
-  bindings: StickBindings;
+  binding: StickBinding;
   config: StickConfig;
 
-  constructor(bindings: StickBindings, config: StickConfig) {
-    this.bindings = bindings;
+  constructor(binding: StickBinding, config: StickConfig) {
+    this.binding = binding;
     this.config = config;
   }
 
@@ -28,7 +28,7 @@ export default class StickMap {
   }
 
   getInput(gamepad: Gamepad): StickInput {
-    const { hAxis, vAxis, downIndex } = this.bindings;
+    const { hAxis, vAxis, downIndex } = this.binding;
 
     return {
       x: this.normalizeAxis(gamepad.axes[hAxis]),

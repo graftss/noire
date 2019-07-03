@@ -1,20 +1,20 @@
 import { ButtonInput } from './ButtonMap';
 
-export interface AxisValueBindings {
+export interface AxisValueBinding {
   axis: number;
   value: number;
   marginOfError?: number;
 }
 
 export default class AxisValueMap {
-  bindings: AxisValueBindings;
+  binding: AxisValueBinding;
 
-  constructor(bindings: AxisValueBindings) {
-    this.bindings = bindings;
+  constructor(binding: AxisValueBinding) {
+    this.binding = binding;
   }
 
   getInput(gamepad: Gamepad): ButtonInput {
-    const { axis, value, marginOfError = 0.001 } = this.bindings;
+    const { axis, value, marginOfError = 0.001 } = this.binding;
 
     return {
       pressed: Math.abs(gamepad.axes[axis] - value) < marginOfError,

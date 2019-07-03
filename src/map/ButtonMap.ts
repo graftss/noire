@@ -1,4 +1,4 @@
-export interface ButtonBindings {
+export interface ButtonBinding {
   downIndex: number;
 }
 
@@ -7,14 +7,14 @@ export interface ButtonInput {
 }
 
 export default class ButtonMap {
-  bindings: ButtonBindings;
+  binding: ButtonBinding;
 
-  constructor(bindings: ButtonBindings) {
-    this.bindings = bindings;
+  constructor(binding: ButtonBinding) {
+    this.binding = binding;
   }
 
   getInput(gamepad: Gamepad): ButtonInput {
-    const { downIndex } = this.bindings;
+    const { downIndex } = this.binding;
 
     return {
       pressed: gamepad.buttons[downIndex].pressed,
