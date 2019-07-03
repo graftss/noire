@@ -3,9 +3,9 @@ export interface StickConfig {
 }
 
 export interface StickBindings {
-  h: number;
-  v: number;
-  down?: number;
+  hAxis: number;
+  vAxis: number;
+  downIndex?: number;
 }
 
 export interface StickInput {
@@ -15,17 +15,11 @@ export interface StickInput {
 }
 
 export default class StickMap {
-  hIndex: number;
-  vIndex: number;
-  downIndex: number;
+  bindings: StickBindings;
   config: StickConfig;
 
   constructor(bindings: StickBindings, config: StickConfig) {
-    const { h, v, down } = bindings;
-
-    this.hIndex = h;
-    this.vIndex = v;
-    this.downIndex = down;
+    this.bindings = bindings;
     this.config = config;
   }
 
@@ -34,10 +28,12 @@ export default class StickMap {
   }
 
   getInput(gamepad: Gamepad): StickInput {
+    const { hAxis, vAxis, downIndex } = this.bindings;
+
     return {
-      x: this.normalizeAxis(gamepad.axes[this.hIndex]),
-      y: this.normalizeAxis(gamepad.axes[this.vIndex]),
-      pressed: gamepad.buttons[this.downIndex].pressed,
+      x: this.normalizeAxis(gamepad.axes[hAxis]),
+      y: this.normalizeAxis(gamepad.axes[vAxis]),
+      pressed: gamepad.buttons[downIndex].pressed,
     };
   }
 }

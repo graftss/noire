@@ -1,12 +1,21 @@
 import Konva from 'konva';
 
 import GamepadManager from './gamepad/GamepadManager';
-import GamepadMap from './map/GamepadMap';
+import GamepadMap, { GamepadBindings } from './map/GamepadMap';
 import DualStickDisplay from './display/DualStickDisplay';
 
-const bindings = {
-  ls: { h: 0, v: 1, down: 10 },
-  rs: { h: 5, v: 2, down: 11 },
+const bindings: GamepadBindings = {
+  ls: { hAxis: 0, vAxis: 1, downIndex: 10 },
+  rs: { hAxis: 5, vAxis: 2, downIndex: 11 },
+  dpad: {
+    kind: 'axis',
+    bindings: {
+      u: { axis: 9, value: -1 },
+      l: { axis: 9, value: 0.7142857 },
+      d: { axis: 9, value: 0.1428571 },
+      r: { axis: 9, value: -0.428571 },
+    },
+  }
 };
 const config = { deadzone: 0.01 };
 
