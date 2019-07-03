@@ -1,25 +1,36 @@
 import Konva from 'konva';
 
-import ComponentManager from '../component/ComponentManager';
 import Component from '../component';
+import ComponentManager from './ComponentManager';
+import ComponentTransformerPlugin from './ComponentTransformerPlugin';
+import DisplayPlugin from './DisplayPlugin';
 
 export default abstract class Display<T> {
-  componentManager: ComponentManager;
+  stage: Konva.Stage;
+  layer: Konva.Layer;
+  cm: ComponentManager;
+  plugins: DisplayPlugin[];
 
-  constructor(stage) {
-    this.componentManager = new ComponentManager(stage);
+  constructor(stage: Konva.Stage, layer: Konva.Layer) {
+    this.stage = stage;
+    this.layer = layer;
+    this.cm = new ComponentManager(stage, layer);
+
+    this.plugins = [
+      new ComponentTransformerPlugin(stage, layer, this.cm),
+    ];
   }
 
   addComponent(component: Component<any>) {
-    this.componentManager.add(component);
+    this.cm.add(component);
   }
 
   removeComponent(component: Component<any>) {
-    this.componentManager.remove(component);
+    this.cm.remove(component);
   }
 
   draw() {
-    this.componentManager.draw();
+    this.layer.draw();
   }
 
   abstract update(input: T, dt: number): void;

@@ -11,8 +11,8 @@ export default class TestDisplay extends Display<GamepadInput> {
   right: StickComponent;
   dpad: DPadComponent;
 
-  constructor(stage, config) {
-    super(stage);
+  constructor(stage, layer, config) {
+    super(stage, layer);
     const { leftPos, rightPos, boundaryR, stickR } = config;
 
     this.left = new StickComponent(leftPos.x, leftPos.y, boundaryR, stickR);

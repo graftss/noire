@@ -27,6 +27,9 @@ const stage = new Konva.Stage({
   container: 'canvas',
 });
 
+const layer = new Konva.Layer();
+stage.add(layer);
+
 const analogConfig = {
   leftPos: { x: 200, y: 200 },
   rightPos: { x: 310, y: 200 },
@@ -36,7 +39,7 @@ const analogConfig = {
 
 const gamepadManager = new GamepadManager('gamepads');
 const map = new GamepadMap(binding, config);
-const display = new TestDisplay(stage, analogConfig);
+const display = new TestDisplay(stage, layer, analogConfig);
 const nextInputListener = new NextInputListener();
 
 let t0 = 0;
@@ -52,10 +55,6 @@ const update = (t1) => {
   const gamepad = gamepadManager.getActiveGamepad();
 
   const input = map.getInput(gamepad);
-
-  if (input) {
-    nextInputListener.update(gamepad);
-  }
 
   if (input) {
     display.update(input, dt);
