@@ -34,7 +34,7 @@ const analogConfig = {
 
 const gamepadManager = new GamepadManager('gamepads');
 const map = new GamepadMap(bindings, config);
-const visualizer = new TestDisplay(stage, analogConfig);
+const display = new TestDisplay(stage, analogConfig);
 
 let t0 = 0;
 
@@ -44,7 +44,10 @@ const update = (t1) => {
 
   const input = map.getInput(gamepadManager.getActiveGamepad());
 
-  if (input) visualizer.update(input, dt);
+  if (input) {
+    display.update(input, dt);
+    display.draw();
+  }
 
   requestAnimationFrame(update);
 };

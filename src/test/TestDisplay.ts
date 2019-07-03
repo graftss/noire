@@ -19,16 +19,14 @@ export default class TestDisplay extends Display<GamepadInput> {
     this.right = new StickComponent(rightPos.x, rightPos.y, boundaryR, stickR);
     this.up = new ButtonComponent(400, 100);
 
-    this.componentManager.add(this.left);
-    this.componentManager.add(this.right);
-    this.componentManager.add(this.up);
+    this.addComponent(this.left);
+    this.addComponent(this.right);
+    this.addComponent(this.up);
   }
 
   update(input, dt) {
     this.left.update(input.ls);
     this.right.update(input.rs);
     this.up.update(input.dpad.u);
-
-    this.draw();
   }
 }

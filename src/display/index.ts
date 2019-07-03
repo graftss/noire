@@ -1,6 +1,7 @@
 import Konva from 'konva';
 
 import ComponentManager from '../component/ComponentManager';
+import Component from '../component';
 
 export default abstract class Display<T> {
   componentManager: ComponentManager;
@@ -9,7 +10,13 @@ export default abstract class Display<T> {
     this.componentManager = new ComponentManager(stage);
   }
 
-  abstract update(input: T, dt: number): void
+  addComponent(component: Component<any>) {
+    this.componentManager.add(component);
+  }
+
+  removeComponent(component: Component<any>) {
+    this.componentManager.remove(component);
+  }
 
   draw() {
     this.componentManager.draw();

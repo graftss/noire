@@ -29,6 +29,10 @@ export default class GamepadManager {
     this.activeGamepad = undefined;
 
     this.renderSelector();
+
+    //TODO: for testing
+    this.selector.selectedIndex = 1;
+    this.activeIndex = 1;
   }
 
   renderSelector() {

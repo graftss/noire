@@ -23,7 +23,6 @@ export default class ButtonComponent implements Component<ButtonInput> {
   }
 
   update({ pressed }: ButtonInput) {
-    console.log(pressed);
     this.rect.fill(pressed ? this.pressedFill : this.fill);
   }
 }
