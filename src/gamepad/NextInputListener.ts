@@ -1,12 +1,22 @@
-import { clone, sign } from '../utils';
+import { ButtonBinding } from '../map/ButtonMap';
+import { AxisValueBinding } from '../map/AxisValueMap';
+import { clone } from '../utils';
+
+type ButtonDescriptor = {
+  kind: 'button';
+  binding: ButtonBinding;
+} | {
+  kind: 'axisValue';
+  binding: AxisValueBinding;
+};
 
 type state = {
   kind: 'axis';
-  callback: (axis: number, sign: number) => any;
+  callback: (axis: number) => any;
   baselineInput?: number[];
 } | {
   kind: 'button';
-  callback: (button: number) => any;
+  callback: (button: ButtonDescriptor) => any;
   baselineInput?: { axes: number[], buttons: number[] };
 };
 
@@ -16,12 +26,12 @@ export default class NextInputListener {
   state?: state;
   active: boolean = false;
 
-  onNextButton(callback: (axis: number) => any) {
+  onNextButton(callback) {
     this.state = { kind: 'button', callback };
     this.active = true;
   }
 
-  onNextAxis(callback: (axis: number, sign: number) => any) {
+  onNextAxis(callback: (axis: number) => any) {
     this.state = { kind: 'axis', callback };
     this.active = true;
     console.log('starting');
@@ -47,7 +57,7 @@ export default class NextInputListener {
         for (let i = 0; i < axes.length; i++) {
           if (axes[i] !== this.state.baselineInput[i] &&
               Math.abs(axes[i]) > MIN_AXIS_MAGNITUDE) {
-            this.state.callback(i, sign(axes[i]));
+            this.state.callback(i);
             return this.deactivate();
           }
         }
@@ -65,14 +75,20 @@ export default class NextInputListener {
 
         for (let i = 0; i < buttons.length; i++) {
           if (buttons[i].value !== baselineInput.buttons[i]) {
-            this.state.callback(i);
+            this.state.callback({
+              kind: 'button',
+              binding: { downIndex: i },
+            });
             return this.deactivate();
           }
         }
 
         for (let i = 0; i < axes.length; i++) {
           if (axes[i] !== baselineInput.axes[i]) {
-            this.state.callback(i);
+            this.state.callback({
+              kind: 'axisValue',
+              binding: { axis: i, value: axes[i] },
+            });
             return this.deactivate();
           }
         }
