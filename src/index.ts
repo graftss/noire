@@ -3,6 +3,7 @@ import Konva from 'konva';
 import GamepadManager from './gamepad/GamepadManager';
 import GamepadMap, { GamepadBindings } from './test/GamepadMap';
 import TestDisplay from './test/TestDisplay';
+import NextInputListener from './gamepad/NextInputListener';
 
 const bindings: GamepadBindings = {
   ls: { hAxis: 0, vAxis: 1, downIndex: 10 },
@@ -17,6 +18,7 @@ const bindings: GamepadBindings = {
     },
   }
 };
+
 const config = { deadzone: 0.01 };
 
 const stage = new Konva.Stage({
@@ -35,14 +37,25 @@ const analogConfig = {
 const gamepadManager = new GamepadManager('gamepads');
 const map = new GamepadMap(bindings, config);
 const display = new TestDisplay(stage, analogConfig);
+const nextInputListener = new NextInputListener();
 
 let t0 = 0;
+
+nextInputListener.onNextButton((axis) => {
+  console.log('hi', axis);
+});
 
 const update = (t1) => {
   const dt = t1 - t0;
   t0 = t1;
 
-  const input = map.getInput(gamepadManager.getActiveGamepad());
+  const gamepad = gamepadManager.getActiveGamepad();
+
+  const input = map.getInput(gamepad);
+
+  if (input) {
+    nextInputListener.update(gamepad);
+  }
 
   if (input) {
     display.update(input, dt);

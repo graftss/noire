@@ -2,14 +2,13 @@ import Konva from 'konva';
 
 import Component from '.';
 import { StickInput } from '../map/StickMap';
+import { sign } from '../utils';
 
 const depthFactor = (t: number): number => (
   t > 0.2 ?
     1 - 0.08 * Math.abs(t) :
     1 - 0.02 * Math.abs(t)
 );
-
-const sign = x => x > 0 ? 1 : x < 0 ? -1 : 0;
 
 export default class StickComponent implements Component<StickInput> {
   group: Konva.Group;
