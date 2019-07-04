@@ -1,6 +1,20 @@
 import Konva from 'konva';
 
-export default interface Component<T> {
+export interface BaseComponentConfig {
+  x: number;
+  y: number;
+}
+
+export default abstract class Component<T> {
   group: Konva.Group;
-  update(input: T, dt: number): void;
+
+  constructor(
+    private baseConfig: BaseComponentConfig,
+  ) {
+    const { x, y } = baseConfig;
+
+    this.group = new Konva.Group({ x, y });
+  }
+
+  abstract update(input: T, dt: number): void;
 }

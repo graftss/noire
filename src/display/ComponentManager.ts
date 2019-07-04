@@ -12,7 +12,7 @@ type ComponentData = {
 
 export default class ComponentManager {
   layer: Konva.Layer;
-  componentData: ComponentData[] = [];
+  componentData: ComponentData[];
 
   callbacks: {
     add: ComponentCallback[];
@@ -22,9 +22,14 @@ export default class ComponentManager {
     remove: [],
   };
 
-  constructor(stage, layer) {
+  constructor(
+    stage: Konva.Stage,
+    layer: Konva.Layer,
+    componentData?: ComponentData[],
+  ) {
     this.layer = layer;
     stage.add(this.layer);
+    this.componentData = componentData || [];
   }
 
   onAddedComponent(callback: ComponentCallback) {

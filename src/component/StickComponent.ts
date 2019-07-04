@@ -1,8 +1,24 @@
 import Konva from 'konva';
 
-import Component from '.';
+import Component, { BaseComponentConfig } from '.';
 import { StickInput } from '../gamepad/inputMaps';
-import { sign } from '../utils';
+import { defaults, sign } from '../utils';
+
+export interface StickComponentConfig {
+  boundaryRadius?: number;
+  stickRadius?: number;
+  rangeScaling?: number;
+  stickFill?: string;
+  pressedStickFill?: string;
+}
+
+export const defaultStickComponentConfig: StickComponentConfig = {
+  boundaryRadius: 26,
+  stickRadius: 40,
+  rangeScaling: 0.5,
+  stickFill: 'black',
+  pressedStickFill: 'darkred',
+};
 
 const depthFactor = (t: number): number => (
   t > 0.2 ?
@@ -10,37 +26,34 @@ const depthFactor = (t: number): number => (
     1 - 0.02 * Math.abs(t)
 );
 
-export default class StickComponent implements Component<StickInput> {
-  group: Konva.Group;
+export default class StickComponent extends Component<StickInput> {
   center: Konva.Circle;
   stick: Konva.Ellipse;
-  br: number;
-  sr: number;
 
-  rangeScaling: number = 0.5;
-  stickFill: string = 'black';
-  pressedStickFill: string = 'darkred';
+  constructor(
+    baseConfig: BaseComponentConfig,
+    private config: StickComponentConfig,
+  ) {
+    super(baseConfig);
+    this.config = defaults(defaultStickComponentConfig, config);
 
-  constructor(x, y, br, sr) {
-    this.group = new Konva.Group({ x, y });
-    this.br = br;
-    this.sr = sr;
+    const { boundaryRadius, stickRadius, stickFill } = config;
 
     this.center = new Konva.Circle({
-      radius: br * 0.43,
+      radius: boundaryRadius * 0.43,
       stroke: 'black',
       strokeWidth: 2,
     });
 
     this.stick = new Konva.Ellipse({
-      radiusX: sr,
-      radiusY: sr,
+      radiusX: stickRadius,
+      radiusY: stickRadius,
       stroke: '#454545',
       strokeWidth: 1,
       shadowColor: 'black',
       shadowOpacity: 0.3,
       shadowBlur: 5,
-      fill: this.stickFill,
+      fill: stickFill,
     });
 
     this.stick.shadowEnabled(false);
@@ -50,17 +63,25 @@ export default class StickComponent implements Component<StickInput> {
   }
 
   update({ x, y, down }: StickInput) {
+    const {
+      boundaryRadius,
+      stickRadius,
+      rangeScaling,
+      stickFill,
+      pressedStickFill,
+    } = this.config;
+
     this.stick.position({
-      x: this.br * x * this.rangeScaling,
-      y: this.br * y * this.rangeScaling,
+      x: boundaryRadius * x * rangeScaling,
+      y: boundaryRadius * y * rangeScaling,
     });
 
     this.stick.radius({
-      x: this.sr * depthFactor(x),
-      y: this.sr * depthFactor(y),
+      x: stickRadius * depthFactor(x),
+      y: stickRadius * depthFactor(y),
     });
 
-    this.stick.fill(down.pressed ? this.pressedStickFill : this.stickFill);
+    this.stick.fill(down.pressed ? pressedStickFill : stickFill);
 
     this.stick.shadowOffset({
       x: sign(x) * depthFactor(x) * -1,

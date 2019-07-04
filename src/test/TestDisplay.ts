@@ -2,11 +2,17 @@ import Konva from 'konva';
 
 import Component from '../Component';
 import Display from '../display';
-import { GamepadInput, GamepadBinding } from './GamepadMap';
 import StickComponent from '../component/StickComponent';
 import DPadComponent from '../component/DPadComponent';
 import * as M from '../gamepad/inputMaps';
 import { BindingData } from '../gamepad/BindingManager';
+import deserializeComponent, { SerializedComponent } from '../component/deserializeComponent';
+
+interface GamepadBinding {
+  ls: M.StickBinding;
+  rs: M.StickBinding;
+  dpad: M.DPadBinding;
+}
 
 const binding: GamepadBinding = {
   ls: {
@@ -33,28 +39,34 @@ const bindingList: BindingData[] = [
   { id: 2, binding: { kind: 'dpad', binding: binding.dpad } },
 ];
 
-const analogConfig = {
-  leftPos: { x: 200, y: 200 },
-  rightPos: { x: 310, y: 200 },
-  boundaryR: 40,
-  stickR: 26,
+const stickConfig = {
+  boundaryRadius: 40,
+  stickRadius: 26,
 };
 
-export default class TestDisplay extends Display {
-  left: StickComponent;
-  right: StickComponent;
-  dpad: DPadComponent;
+const leftBaseConfig = { x: 200, y: 200 };
 
+const rightBaseConfig = { x: 310, y: 200 };
+
+const dPadBaseConfig = { x: 50, y: 50 };
+
+const dPadConfig = {
+  buttonWidth: 30,
+  buttonHeight: 30,
+};
+
+const serializedComponents: SerializedComponent[] = [
+  { kind: 'stick', baseConfig: leftBaseConfig, config: stickConfig },
+  { kind: 'stick', baseConfig: rightBaseConfig, config: stickConfig },
+  { kind: 'dpad', baseConfig: dPadBaseConfig, config: dPadConfig },
+];
+
+export default class TestDisplay extends Display {
   constructor(stage, layer) {
     super(stage, layer, bindingList);
-    const { leftPos, rightPos, boundaryR, stickR } = analogConfig;
 
-    this.left = new StickComponent(leftPos.x, leftPos.y, boundaryR, stickR);
-    this.right = new StickComponent(rightPos.x, rightPos.y, boundaryR, stickR);
-    this.dpad = new DPadComponent(50, 50, 20, 20);
+    const components = serializedComponents.map(deserializeComponent);
 
-    this.addComponent(this.left, 0);
-    this.addComponent(this.right, 1);
-    this.addComponent(this.dpad, 2);
+    components.forEach((c, i) => this.addComponent(c, i));
   }
 }

@@ -1,7 +1,6 @@
 import Konva from 'konva';
 
 import GamepadManager from './gamepad/GamepadManager';
-import gamepadMap, { GamepadBinding } from './test/GamepadMap';
 import TestDisplay from './test/TestDisplay';
 import NextInputListener from './gamepad/NextInputListener';
 

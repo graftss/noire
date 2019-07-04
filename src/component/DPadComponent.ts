@@ -1,32 +1,70 @@
 import Konva from 'konva';
 
-import Component from '.';
+import Component, { BaseComponentConfig } from '.';
 import { DPadInput, DPadDict, ButtonInput } from '../gamepad/inputMaps';
+import { defaults } from '../utils';
 
 const dirs = ['u', 'l', 'd', 'r'];
 
-export default class DPadComponent implements Component<DPadInput> {
-  group: Konva.Group;
+export interface DPadComponentConfig {
+  buttonWidth?: number;
+  buttonHeight?: number;
+  fill?: string;
+  pressedFill?: string;
+}
+
+export const defaultDPadComponentConfig: DPadComponentConfig = {
+  buttonWidth: 20,
+  buttonHeight: 20,
+  fill: 'black',
+  pressedFill: 'darkred',
+};
+
+export default class DPadComponent extends Component<DPadInput> {
   rects: DPadDict<Konva.Rect>;
 
-  fill: string = 'black';
-  pressedFill: string = 'darkred';
+  constructor(
+    baseConfig: BaseComponentConfig,
+    private config: DPadComponentConfig,
+  ) {
+    super(baseConfig);
+    this.config = defaults(defaultDPadComponentConfig, config);
 
-  constructor(x, y, bw, bh) {
-    this.group = new Konva.Group({ x, y });
+    const { buttonWidth, buttonHeight } = config;
 
     this.rects = {
-      u: new Konva.Rect({ x: 0, y: -bh, width: bw, height: bh }),
-      l: new Konva.Rect({ x: -bw, y: 0, width: bw, height: bh }),
-      d: new Konva.Rect({ x: 0, y: bh, width: bw, height: bh }),
-      r: new Konva.Rect({ x: bw, y: 0, width: bw, height: bh }),
+      u: new Konva.Rect({
+        x: 0,
+        y: -buttonHeight,
+        width: buttonWidth,
+        height: buttonHeight,
+      }),
+      l: new Konva.Rect({
+        x: -buttonWidth,
+        y: 0,
+        width: buttonWidth,
+        height: buttonHeight,
+      }),
+      d: new Konva.Rect({
+        x: 0,
+        y: buttonHeight,
+        width: buttonWidth,
+        height: buttonHeight,
+      }),
+      r: new Konva.Rect({
+        x: buttonWidth,
+        y: 0,
+        width: buttonWidth,
+        height: buttonHeight,
+      }),
     };
 
     dirs.forEach(dir => this.group.add(this.rects[dir]));
   }
 
   update(input: DPadInput) {
-    const { pressedFill, fill } = this;
+    const { pressedFill, fill } = this.config;
+
     dirs.forEach(dir => {
       this.rects[dir].fill(input[dir].pressed ? pressedFill : fill);
     });

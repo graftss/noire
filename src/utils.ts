@@ -13,3 +13,11 @@ export const find = <T>(pred: (t: T) => boolean) => (list: T[]): T | undefined =
     if (pred(list[i])) return list[i];
   }
 };
+
+export const defaults = <T extends {}>(source: T, target: T): T => {
+  for (let key in source) {
+    target[key] = (target[key] !== undefined) ? target[key] : source[key];
+  }
+
+  return target;
+};
