@@ -1,5 +1,21 @@
 export type InputMap<T, U> = (binding: T) => (g: Gamepad) => U;
 
+export type Binding =
+  { kind: 'axis', binding: AxisBinding } |
+  { kind: 'button', binding: ButtonInputBinding } |
+  { kind: 'dpad', binding: DPadBinding } |
+  { kind: 'stick', binding: StickBinding };
+
+// TODO: add `RawInput` (or something) type to characterize just the
+// `input` property of the `Input` type, to better type the input
+// argument of `Component.input`.
+
+export type Input =
+  { kind: 'axis', input: AxisInput } |
+  { kind: 'button', input: ButtonInput } |
+  { kind: 'dpad', input: DPadInput } |
+  { kind: 'stick', input: StickInput };
+
 export interface AxisBinding {
   index: number;
   inverted: boolean;
@@ -27,6 +43,14 @@ export interface ButtonBinding {
   index: number;
 }
 
+export type ButtonInputBinding = {
+  kind: 'button';
+  binding: ButtonBinding;
+} | {
+  kind: 'axisValue';
+  binding: AxisValueBinding;
+};
+
 export interface ButtonInput {
   pressed: boolean;
 }
@@ -47,24 +71,15 @@ export const buttonMap: InputMap<ButtonBinding, ButtonInput> = (
   }
 );
 
-export interface DPadDict<T> {
-  u: T;
-  l: T;
-  d: T;
-  r: T;
-}
+export const buttonInputMap: InputMap<ButtonInputBinding, ButtonInput> = (
+  binding => gamepad => binding.kind === 'button' ?
+    buttonMap(binding.binding)(gamepad) :
+    axisValueMap(binding.binding)(gamepad)
+);
 
-export type DPadAxisBinding = DPadDict<AxisValueBinding>;
+export interface DPadDict<T> { u: T; l: T; d: T; r: T; }
 
-export type DPadButtonBinding = DPadDict<ButtonBinding>;
-
-export type DPadBinding = {
-  kind: 'axis';
-  binding: DPadAxisBinding;
-} | {
-  kind: 'button';
-  binding: DPadButtonBinding;
-}
+export type DPadBinding = DPadDict<ButtonInputBinding>;
 
 export type DPadInput = DPadDict<ButtonInput>
 
@@ -78,22 +93,10 @@ const dPadDictMap = <T, U>(
   r: f(dict.r),
 });
 
-const dPadAxisMap: InputMap<DPadAxisBinding, DPadInput> = (
-  binding => gamepad => (
-    dPadDictMap((avb: AxisValueBinding) => axisValueMap(avb)(gamepad), binding)
-  )
-);
-
-const dPadButtonMap: InputMap<DPadButtonBinding, DPadInput> = (
-  binding => gamepad => (
-    dPadDictMap((bb: ButtonBinding) => buttonMap(bb)(gamepad), binding)
-  )
-);
-
 export const dPadMap: InputMap<DPadBinding, DPadInput> = (
-  binding => binding.kind === 'axis' ?
-    dPadAxisMap(binding.binding) :
-    dPadButtonMap(binding.binding)
+  binding => gamepad => (
+    dPadDictMap((bb: ButtonInputBinding) => buttonInputMap(bb)(gamepad), binding)
+  )
 );
 
 export interface StickBinding {

@@ -1,19 +1,26 @@
 import Konva from 'konva';
 
+import BindingManager, { BindingData } from '../gamepad/BindingManager';
 import Component from '../component';
 import ComponentManager from './ComponentManager';
 import ComponentTransformerPlugin from './ComponentTransformerPlugin';
 import DisplayPlugin from './DisplayPlugin';
 
-export default abstract class Display<T> {
+export default class Display {
   stage: Konva.Stage;
   layer: Konva.Layer;
+  bm: BindingManager;
   cm: ComponentManager;
   plugins: DisplayPlugin[];
 
-  constructor(stage: Konva.Stage, layer: Konva.Layer) {
+  constructor(
+    stage: Konva.Stage,
+    layer: Konva.Layer,
+    bindingData?: BindingData[],
+  ) {
     this.stage = stage;
     this.layer = layer;
+    this.bm = new BindingManager(bindingData);
     this.cm = new ComponentManager(stage, layer);
 
     this.plugins = [
@@ -21,17 +28,20 @@ export default abstract class Display<T> {
     ];
   }
 
-  addComponent(component: Component<any>) {
-    this.cm.add(component);
+  addComponent(component: Component<any>, bindingId: number) {
+    this.cm.add({ component, bindingId });
   }
 
-  removeComponent(component: Component<any>) {
-    this.cm.remove(component);
-  }
+  // removeComponent(component: Component<any>) {
+  //   this.cm.remove(component);
+  // }
 
   draw() {
     this.layer.draw();
   }
 
-  abstract update(input: T, dt: number): void;
+  update(gamepad: Gamepad, dt: number) {
+    const inputDict = this.bm.getInputDict(gamepad);
+    this.cm.update(inputDict, dt);
+  }
 }

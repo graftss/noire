@@ -1,21 +1,13 @@
-import { ButtonBinding, AxisValueBinding, AxisBinding } from './inputmaps';
+import * as M from './inputmaps';
 import { clone } from '../utils';
-
-export type ButtonInputBinding = {
-  kind: 'button';
-  binding: ButtonBinding;
-} | {
-  kind: 'axisValue';
-  binding: AxisValueBinding;
-};
 
 type ListeningState = {
   kind: 'axis';
-  callback: (binding: AxisBinding) => any;
+  callback: (binding: M.AxisBinding) => any;
   baselineInput?: number[];
 } | {
   kind: 'button';
-  callback: (binding: ButtonInputBinding) => any;
+  callback: (binding: M.ButtonInputBinding) => any;
   baselineInput?: { axes: number[], buttons: number[] };
 };
 
@@ -43,6 +35,7 @@ export default class NextInputListener {
   update(gamepad: Gamepad) {
     if (!this.state) return;
 
+    // TODO: put `baselineInput` here
     const { callback } = this.state;
 
     if (this.state.kind === 'axis') {

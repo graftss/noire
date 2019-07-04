@@ -1,12 +1,18 @@
 import Konva from 'konva';
 
 import Component from '../component';
+import * as M from '../gamepad/inputMaps';
 
 type ComponentCallback = (c: Component<any>) => any;
 
+type ComponentData = {
+  component: Component<any>;
+  bindingId: number;
+};
+
 export default class ComponentManager {
   layer: Konva.Layer;
-  components: Component<any>[] = [];
+  componentData: ComponentData[] = [];
 
   callbacks: {
     add: ComponentCallback[];
@@ -29,22 +35,28 @@ export default class ComponentManager {
     this.callbacks.remove.push(callback);
   }
 
-  add(component: Component<any>) {
-    this.components.push(component);
-    this.layer.add(component.group);
+  add(data: ComponentData) {
+    this.componentData.push(data);
+    this.layer.add(data.component.group);
 
-    this.callbacks.add.forEach(cb => cb(component));
+    this.callbacks.add.forEach(cb => cb(data.component));
   }
 
-  remove(component: Component<any>) {
-    const idx = this.components.indexOf(component);
+  // remove(component: Component<any>) {
+  //   const idx = this.components.indexOf(component);
 
-    if (idx >= 0) {
-      const component = this.components[idx];
-      component.group.remove();
-      this.callbacks.remove.forEach(cb => cb(component));
+  //   if (idx >= 0) {
+  //     const component = this.components[idx];
+  //     component.group.remove();
+  //     this.callbacks.remove.forEach(cb => cb(component));
 
-      this.components.splice(idx, 1);
-    }
+  //     this.components.splice(idx, 1);
+  //   }
+  // }
+
+  update(inputDict: ({ [bindingId: number] : M.Input }), dt: number) {
+    this.componentData.forEach(({ component, bindingId }) => {
+      component.update(inputDict[bindingId].input, dt);
+    });
   }
 }

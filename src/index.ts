@@ -5,27 +5,6 @@ import gamepadMap, { GamepadBinding } from './test/GamepadMap';
 import TestDisplay from './test/TestDisplay';
 import NextInputListener from './gamepad/NextInputListener';
 
-const binding: GamepadBinding = {
-  ls: {
-    h: { index: 0, inverted: false },
-    v: { index: 1, inverted: false },
-    down: { index: 10 },
-  },
-  rs: {
-    h: { index: 5, inverted: false },
-    v: { index: 2, inverted: false },
-    down: { index: 11 },
-  },
-  dpad: {
-    kind: 'axis',
-    binding: {
-      u: { axis: 9, value: -1 },
-      l: { axis: 9, value: 0.7142857 },
-      d: { axis: 9, value: 0.1428571 },
-      r: { axis: 9, value: -0.428571 },
-    },
-  }
-};
 
 const config = { deadzone: 0.01 };
 
@@ -38,16 +17,8 @@ const stage = new Konva.Stage({
 const layer = new Konva.Layer();
 stage.add(layer);
 
-const analogConfig = {
-  leftPos: { x: 200, y: 200 },
-  rightPos: { x: 310, y: 200 },
-  boundaryR: 40,
-  stickR: 26,
-};
-
 const gamepadManager = new GamepadManager('gamepads');
-const inputMap = gamepadMap(binding);
-const display = new TestDisplay(stage, layer, analogConfig);
+const display = new TestDisplay(stage, layer);
 const nextInputListener = new NextInputListener();
 
 let t0 = 0;
@@ -63,11 +34,7 @@ const update = (t1) => {
   const gamepad = gamepadManager.getActiveGamepad();
 
   if (gamepad) {
-      const input = inputMap(gamepad);
-
-
-    nextInputListener.update(gamepad);
-    display.update(input, dt);
+    display.update(gamepad, dt);
     display.draw();
   }
 
