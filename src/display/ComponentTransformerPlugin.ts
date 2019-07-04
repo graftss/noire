@@ -12,6 +12,8 @@ export default class ComponentTransformerPlugin extends DisplayPlugin {
   constructor(stage: Konva.Stage, layer: Konva.Layer, cm: ComponentManager) {
     super(stage, layer, cm);
 
+    stage.on(CLICK_EVENT, this.onStageClick);
+
     cm.onAddedComponent(
       c => c.group.on(CLICK_EVENT, this.onComponentClick)
     );
@@ -20,6 +22,7 @@ export default class ComponentTransformerPlugin extends DisplayPlugin {
   }
 
   onStageClick = ({ target, currentTarget }) => {
+    console.log({ target, currentTarget });
     if (target === this.stage) {
       this.assignTransformer();
     }
