@@ -1,9 +1,9 @@
 import Konva from 'konva';
 
-import ComponentManager from './ComponentManager';
+import ComponentManager, { ComponentData } from '../ComponentManager';
 import DisplayPlugin from './DisplayPlugin';
 
-const CLICK_EVENT = 'click.addTransformer';
+const CLICK_EVENT = 'click.ComponentTransformerPlugin';
 
 export default class ComponentTransformerPlugin extends DisplayPlugin {
   transformer?: Konva.Transformer;
@@ -14,23 +14,17 @@ export default class ComponentTransformerPlugin extends DisplayPlugin {
 
     stage.on(CLICK_EVENT, this.onStageClick);
 
-    cm.onAddedComponent(
-      c => c.group.on(CLICK_EVENT, this.onComponentClick)
-    );
-
-    cm.onRemovedComponent(c => c.group.off(CLICK_EVENT));
+    cm.onComponentClick(this.onComponentClick);
   }
 
   onStageClick = ({ target, currentTarget }) => {
-    console.log({ target, currentTarget });
     if (target === this.stage) {
       this.assignTransformer();
     }
   }
 
-  // TODO: add generic type for events like this
-  onComponentClick = (e) => {
-    this.assignTransformer(e.currentTarget);
+  onComponentClick = (data: ComponentData) => {
+    this.assignTransformer(data.component.group);
   }
 
   assignTransformer(target?: Konva.Node) {

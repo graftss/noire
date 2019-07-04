@@ -4,12 +4,14 @@ import Component from '../component';
 import * as M from '../gamepad/inputMaps';
 import { BindingId } from '../gamepad/BindingManager';
 
-type ComponentCallback = (c: Component<any>) => any;
+export type ComponentCallback = (c: ComponentData) => any;
 
-type ComponentData = {
+export type ComponentData = {
   component: Component<any>;
   bindingId: BindingId;
 };
+
+const CLICK_EVENT = `click.ComponentManager`;
 
 export default class ComponentManager {
   layer: Konva.Layer;
@@ -18,9 +20,11 @@ export default class ComponentManager {
   callbacks: {
     add: ComponentCallback[];
     remove: ComponentCallback[];
+    click: ComponentCallback[];
   } = {
     add: [],
     remove: [],
+    click: [],
   };
 
   constructor(
@@ -41,11 +45,19 @@ export default class ComponentManager {
     this.callbacks.remove.push(callback);
   }
 
+  onComponentClick(callback: ComponentCallback) {
+    this.callbacks.click.push(callback);
+  }
+
   add(data: ComponentData) {
     this.componentData.push(data);
     this.layer.add(data.component.group);
 
-    this.callbacks.add.forEach(cb => cb(data.component));
+    this.callbacks.add.forEach(cb => cb(data));
+
+    data.component.group.on(CLICK_EVENT, () => {
+      this.callbacks.click.forEach(cb => cb(data));
+    });
   }
 
   // remove(component: Component<any>) {

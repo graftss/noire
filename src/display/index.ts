@@ -3,8 +3,8 @@ import Konva from 'konva';
 import BindingManager, { BindingData, BindingId } from '../gamepad/BindingManager';
 import Component from '../component';
 import ComponentManager from './ComponentManager';
-import ComponentTransformerPlugin from './ComponentTransformerPlugin';
-import DisplayPlugin from './DisplayPlugin';
+import ComponentTransformerPlugin from './plugin/ComponentTransformerPlugin';
+import DisplayPlugin from './plugin/DisplayPlugin';
 
 export default class Display {
   stage: Konva.Stage;
