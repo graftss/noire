@@ -1,6 +1,16 @@
 import { map, mapObjIndexed } from 'ramda';
 import uuidv4 from 'uuid/v4';
 
+export const without = <T>(t: T, ts: T[]): T[] => {
+  const idx = ts.indexOf(t);
+
+  if (idx > -1) {
+    ts.splice(idx, 1);
+  }
+
+  return ts;
+};
+
 export const sign = (x: number) => x > 0 ? 1 : x < 0 ? -1 : 0;
 
 export const clone = (obj: Object): any => JSON.parse(JSON.stringify(obj));

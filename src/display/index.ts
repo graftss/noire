@@ -5,6 +5,7 @@ import Component from '../component';
 import ComponentManager from './ComponentManager';
 import ComponentTransformerPlugin from './plugin/ComponentTransformerPlugin';
 import DisplayPlugin from './plugin/DisplayPlugin';
+import DisplayEventBus from './DisplayEventBus';
 
 export default class Display {
   stage: Konva.Stage;
@@ -12,6 +13,7 @@ export default class Display {
   bm: BindingManager;
   cm: ComponentManager;
   plugins: DisplayPlugin[];
+  eventBus: DisplayEventBus;
 
   constructor(
     stage: Konva.Stage,
@@ -22,9 +24,10 @@ export default class Display {
     this.layer = layer;
     this.bm = new BindingManager(bindingData);
     this.cm = new ComponentManager(stage, layer);
+    this.eventBus = new DisplayEventBus(stage, this.cm);
 
     this.plugins = [
-      new ComponentTransformerPlugin(stage, layer, this.cm),
+      new ComponentTransformerPlugin(this.eventBus),
     ];
   }
 

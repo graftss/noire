@@ -2,6 +2,7 @@ import Konva from 'konva';
 
 import ComponentManager, { ComponentData } from '../ComponentManager';
 import DisplayPlugin from './DisplayPlugin';
+import DisplayEventBus from '../DisplayEventBus';
 
 const CLICK_EVENT = 'click.ComponentTransformerPlugin';
 
@@ -9,16 +10,15 @@ export default class ComponentTransformerPlugin extends DisplayPlugin {
   transformer?: Konva.Transformer;
   transformerTarget?: Konva.Node;
 
-  constructor(stage: Konva.Stage, layer: Konva.Layer, cm: ComponentManager) {
-    super(stage, layer, cm);
+  constructor(eventBus: DisplayEventBus) {
+    super(eventBus);
 
-    stage.on(CLICK_EVENT, this.onStageClick);
-
-    cm.onComponentClick(this.onComponentClick);
+    eventBus.on({ kind: 'stageClick', cb: this.onStageClick });
+    eventBus.on({ kind: 'componentClick', cb: this.onComponentClick });
   }
 
-  onStageClick = ({ target, currentTarget }) => {
-    if (target === this.stage) {
+  onStageClick = (stage: Konva.Stage, { target, currentTarget }) => {
+    if (target === stage) {
       this.assignTransformer();
     }
   }
@@ -37,7 +37,7 @@ export default class ComponentTransformerPlugin extends DisplayPlugin {
       this.transformerTarget = target;
       this.transformer = new Konva.Transformer();
       this.transformer.attachTo(target);
-      this.layer.add(this.transformer);
+      target.getLayer().add(this.transformer);
 
       target.draggable(true);
     }

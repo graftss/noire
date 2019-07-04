@@ -1,11 +1,9 @@
 import Konva from 'konva';
 
-import ComponentManager from '../ComponentManager';
+import DisplayEventBus from '../DisplayEventBus';
 
 export default abstract class DisplayPlugin {
   constructor(
-    protected stage: Konva.Stage,
-    protected layer: Konva.Layer,
-    protected cm: ComponentManager,
+    protected eventBus: DisplayEventBus,
   ) {}
 }
