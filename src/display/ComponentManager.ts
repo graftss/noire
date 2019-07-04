@@ -2,12 +2,13 @@ import Konva from 'konva';
 
 import Component from '../component';
 import * as M from '../gamepad/inputMaps';
+import { BindingId } from '../gamepad/BindingManager';
 
 type ComponentCallback = (c: Component<any>) => any;
 
 type ComponentData = {
   component: Component<any>;
-  bindingId: number;
+  bindingId: BindingId;
 };
 
 export default class ComponentManager {
@@ -61,7 +62,10 @@ export default class ComponentManager {
 
   update(inputDict: ({ [bindingId: number] : M.Input }), dt: number) {
     this.componentData.forEach(({ component, bindingId }) => {
-      component.update(inputDict[bindingId].input, dt);
+      const input = inputDict[bindingId];
+      if (input) {
+        component.update(inputDict[bindingId].input, dt);
+      }
     });
   }
 }

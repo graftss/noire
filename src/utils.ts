@@ -1,4 +1,5 @@
 import { map, mapObjIndexed } from 'ramda';
+import uuidv4 from 'uuid/v4';
 
 export const sign = (x: number) => x > 0 ? 1 : x < 0 ? -1 : 0;
 
@@ -21,3 +22,5 @@ export const defaults = <T extends {}>(source: T, target: T): T => {
 
   return target;
 };
+
+export const uuid = () => uuidv4();

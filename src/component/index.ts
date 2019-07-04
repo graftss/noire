@@ -3,6 +3,7 @@ import Konva from 'konva';
 export interface BaseComponentConfig {
   x: number;
   y: number;
+  bindingId?: string;
 }
 
 export default abstract class Component<T> {

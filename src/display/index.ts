@@ -1,6 +1,6 @@
 import Konva from 'konva';
 
-import BindingManager, { BindingData } from '../gamepad/BindingManager';
+import BindingManager, { BindingData, BindingId } from '../gamepad/BindingManager';
 import Component from '../component';
 import ComponentManager from './ComponentManager';
 import ComponentTransformerPlugin from './ComponentTransformerPlugin';
@@ -28,7 +28,7 @@ export default class Display {
     ];
   }
 
-  addComponent(component: Component<any>, bindingId: number) {
+  addComponent(component: Component<any>, bindingId?: BindingId) {
     this.cm.add({ component, bindingId });
   }
 

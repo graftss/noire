@@ -1,10 +1,12 @@
 import { equals, max, reduce } from 'ramda';
 
 import * as M from './inputMaps';
-import { find, mappedEval } from '../utils';
+import { find, mappedEval, uuid } from '../utils';
+
+export type BindingId = string;
 
 export type BindingData = {
-  id: number,
+  id: BindingId,
   binding: M.Binding
 };
 
@@ -12,31 +14,28 @@ const hasBinding = (binding: M.Binding) => (data: BindingData) => (
   equals(binding, data.binding)
 );
 
-const matchesId = (id: number) => (data: BindingData) => data.id === id;
+const matchesId = (id: BindingId) => (data: BindingData) => data.id === id;
 const findBindingWithId =
   (id, data: BindingData[]) => find(matchesId(id))(data).binding;
 
 export default class BindingManager {
   bindingData: BindingData[];
-  nextBindingId: number;
 
   constructor(bindingData: BindingData[] = []) {
     // TODO: sanity check initial binding list
     this.bindingData = bindingData;
-    this.nextBindingId = reduce(max, 0, bindingData) + 1;
   }
 
   public add(binding: M.Binding): boolean {
     if (!find(hasBinding(binding))(this.bindingData)) {
-      this.bindingData.push({ binding, id: this.nextBindingId });
-      this.nextBindingId += 1;
+      this.bindingData.push({ binding, id: uuid() });
       return true;
     }
 
     return false;
   }
 
-  private getBinding(id: number): M.Binding {
+  private getBinding(id: BindingId): M.Binding {
     return findBindingWithId(id, this.bindingData);
   }
 

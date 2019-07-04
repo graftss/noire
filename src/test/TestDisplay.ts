@@ -33,10 +33,12 @@ const binding: GamepadBinding = {
   }
 };
 
+const ids = ['a', 'b', 'c']
+
 const bindingList: BindingData[] = [
-  { id: 0, binding: { kind: 'stick', binding: binding.ls } },
-  { id: 1, binding: { kind: 'stick', binding: binding.rs } },
-  { id: 2, binding: { kind: 'dpad', binding: binding.dpad } },
+  { id: ids[0], binding: { kind: 'stick', binding: binding.ls } },
+  { id: ids[1], binding: { kind: 'stick', binding: binding.rs } },
+  { id: ids[2], binding: { kind: 'dpad', binding: binding.dpad } },
 ];
 
 const stickConfig = {
@@ -67,6 +69,6 @@ export default class TestDisplay extends Display {
 
     const components = serializedComponents.map(deserializeComponent);
 
-    components.forEach((c, i) => this.addComponent(c, i));
+    components.forEach((c, i) => this.addComponent(c, ids[i]));
   }
 }

@@ -30,7 +30,7 @@ export default class DPadComponent extends Component<DPadInput> {
     super(baseConfig);
     this.config = defaults(defaultDPadComponentConfig, config);
 
-    const { buttonWidth, buttonHeight } = config;
+    const { buttonWidth, buttonHeight, fill } = config;
 
     this.rects = {
       u: new Konva.Rect({
@@ -38,24 +38,28 @@ export default class DPadComponent extends Component<DPadInput> {
         y: -buttonHeight,
         width: buttonWidth,
         height: buttonHeight,
+        fill,
       }),
       l: new Konva.Rect({
         x: -buttonWidth,
         y: 0,
         width: buttonWidth,
         height: buttonHeight,
+        fill,
       }),
       d: new Konva.Rect({
         x: 0,
         y: buttonHeight,
         width: buttonWidth,
         height: buttonHeight,
+        fill,
       }),
       r: new Konva.Rect({
         x: buttonWidth,
         y: 0,
         width: buttonWidth,
         height: buttonHeight,
+        fill,
       }),
     };
 
