@@ -1,5 +1,12 @@
-import StickMap, { StickBinding, StickInput } from '../map/StickMap';
-import DPadMap, { DPadBinding, DPadInput } from '../map/DPadMap';
+import {
+  stickMap,
+  dPadMap,
+  InputMap,
+  StickBinding,
+  DPadBinding,
+  StickInput,
+  DPadInput,
+} from '../gamepad/inputMaps';
 
 export interface GamepadBinding {
   ls: StickBinding;
@@ -13,25 +20,16 @@ export interface GamepadInput {
   dpad: DPadInput;
 }
 
-export default class GamepadMap {
-  ls: StickMap;
-  rs: StickMap;
-  dpad: DPadMap;
+export default (binding: GamepadBinding) => {
+  const inputMaps = {
+    ls: stickMap(binding.ls),
+    rs: stickMap(binding.rs),
+    dpad: dPadMap(binding.dpad),
+  };
 
-  constructor(binding: GamepadBinding, config) {
-    const { ls, rs, dpad } = binding;
-    this.ls = new StickMap(ls, config);
-    this.rs = new StickMap(rs, config);
-    this.dpad = new DPadMap(dpad);
-  }
-
-  getInput(gamepad: Gamepad) {
-    if (!gamepad) return undefined;
-
-    return {
-      ls: this.ls.getInput(gamepad),
-      rs: this.rs.getInput(gamepad),
-      dpad: this.dpad.getInput(gamepad),
-    };
-  }
-}
+  return gamepad => ({
+    ls: inputMaps.ls(gamepad),
+    rs: inputMaps.rs(gamepad),
+    dpad: inputMaps.dpad(gamepad),
+  });
+};

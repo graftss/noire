@@ -17,6 +17,7 @@
     "webpack-cli": "^3.3.1"
   },
   "dependencies": {
-    "konva": "^3.2.5"
+    "konva": "^3.2.5",
+    "ramda": "^0.26.1"
   }
 }

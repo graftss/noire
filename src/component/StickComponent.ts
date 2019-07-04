@@ -1,7 +1,7 @@
 import Konva from 'konva';
 
 import Component from '.';
-import { StickInput } from '../map/StickMap';
+import { StickInput } from '../gamepad/inputMaps';
 import { sign } from '../utils';
 
 const depthFactor = (t: number): number => (

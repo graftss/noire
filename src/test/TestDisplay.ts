@@ -6,6 +6,8 @@ import { GamepadInput } from './GamepadMap';
 import StickComponent from '../component/StickComponent';
 import DPadComponent from '../component/DPadComponent';
 
+
+
 export default class TestDisplay extends Display<GamepadInput> {
   left: StickComponent;
   right: StickComponent;

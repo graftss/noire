@@ -1,8 +1,7 @@
 import Konva from 'konva';
 
 import Component from '.';
-import { ButtonInput } from '../map/ButtonMap';
-import { DPadInput, DPadDict } from '../map/DPadMap';
+import { DPadInput, DPadDict, ButtonInput } from '../gamepad/inputMaps';
 
 const dirs = ['u', 'l', 'd', 'r'];
 

@@ -1,6 +1,4 @@
-import { AxisBinding } from '../map/AxisMap';
-import { AxisValueBinding } from '../map/AxisValueMap';
-import { ButtonBinding } from '../map/ButtonMap';
+import { ButtonBinding, AxisValueBinding, AxisBinding } from './inputmaps';
 import { clone } from '../utils';
 
 export type ButtonInputBinding = {

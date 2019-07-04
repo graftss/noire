@@ -1,7 +1,7 @@
 import Konva from 'konva';
 
 import Component from '.';
-import { ButtonInput } from '../map/ButtonMap';
+import { ButtonInput } from '../gamepad/inputMaps';
 
 export default class ButtonComponent implements Component<ButtonInput> {
   group: Konva.Group;

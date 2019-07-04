@@ -1,7 +1,7 @@
 import Konva from 'konva';
 
 import GamepadManager from './gamepad/GamepadManager';
-import GamepadMap, { GamepadBinding } from './test/GamepadMap';
+import gamepadMap, { GamepadBinding } from './test/GamepadMap';
 import TestDisplay from './test/TestDisplay';
 import NextInputListener from './gamepad/NextInputListener';
 
@@ -46,7 +46,7 @@ const analogConfig = {
 };
 
 const gamepadManager = new GamepadManager('gamepads');
-const map = new GamepadMap(binding, config);
+const inputMap = gamepadMap(binding);
 const display = new TestDisplay(stage, layer, analogConfig);
 const nextInputListener = new NextInputListener();
 
@@ -62,9 +62,10 @@ const update = (t1) => {
 
   const gamepad = gamepadManager.getActiveGamepad();
 
-  const input = map.getInput(gamepad);
+  if (gamepad) {
+      const input = inputMap(gamepad);
 
-  if (input) {
+
     nextInputListener.update(gamepad);
     display.update(input, dt);
     display.draw();
