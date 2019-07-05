@@ -1,7 +1,7 @@
 import Konva from 'konva';
 
 import * as T from '../types';
-import { Component } from '.';
+import { TypedComponent } from '.';
 import { defaults } from '../utils';
 
 const dirs = ['u', 'l', 'd', 'r'];
@@ -13,7 +13,7 @@ export const defaultDPadComponentConfig: T.DPadComponentConfig = {
   pressedFill: 'darkred',
 };
 
-export class DPadComponent extends Component<T.DPadInput> {
+export class DPadComponent extends TypedComponent<T.DPadInput> {
   rects: Record<T.Dir, Konva.Rect>;
 
   constructor(
@@ -59,7 +59,7 @@ export class DPadComponent extends Component<T.DPadInput> {
     dirs.forEach(dir => this.group.add(this.rects[dir]));
   }
 
-  update(input: T.DPadInput) {
+  update(input: T.DPadInput): void {
     const { pressedFill, fill } = this.config;
 
     dirs.forEach(dir => {

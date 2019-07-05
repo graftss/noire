@@ -1,10 +1,9 @@
 import * as React from 'react';
 
-export interface HelloProps { name: string; }
+export interface HelloProps {
+  name: string;
+}
 
-export const Hello = (props: HelloProps) => (
-  <div>hello {name}</div>
+export const Hello: React.SFC<HelloProps> = (props: HelloProps) => (
+  <div>hello {props.name}</div>
 );
-
-const x: any = {};
-console.log(x.y.z)

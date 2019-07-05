@@ -5,14 +5,23 @@
   "description": "",
   "main": "public/index.js",
   "scripts": {
-    "start": "webpack-dev-server --mode development --open --hot"
+    "start": "webpack-dev-server --mode development --open --hot",
+    "lint": "eslint --ext .ts,.tsx --fix src/**/*"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/ramda": "^0.26.15",
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
+    "@typescript-eslint/eslint-plugin": "^1.11.0",
+    "@typescript-eslint/parser": "^1.11.0",
     "acorn": "^6.1.1",
+    "eslint": "^6.0.1",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.14.2",
+    "prettier": "^1.18.2",
     "source-map-loader": "^0.2.4",
     "ts-loader": "^5.4.3",
     "typescript": "^3.4.5",

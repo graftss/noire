@@ -2,12 +2,11 @@ import Konva from 'konva';
 
 import * as T from '../types';
 import { BindingManager } from './BindingManager';
-import { Component } from '../component';
 import { ComponentManager } from './ComponentManager';
 import { ComponentEditorPlugin } from './plugin/ComponentEditorPlugin';
 import { ComponentTransformerPlugin } from './plugin/ComponentTransformerPlugin';
-import { DisplayPlugin } from './plugin/DisplayPlugin';
 import { DisplayEventBus } from './DisplayEventBus';
+import { DisplayPlugin } from './plugin/DisplayPlugin';
 import { NextInputListener } from './NextInputListener';
 
 export class Display {
@@ -41,7 +40,7 @@ export class Display {
     ];
   }
 
-  addComponent(component: Component<any>, bindingId?: T.BindingId) {
+  addComponent(component, bindingId?: T.BindingId): void {
     this.cm.add({ component, bindingId });
   }
 
@@ -49,11 +48,11 @@ export class Display {
   //   this.cm.remove(component);
   // }
 
-  draw() {
+  draw(): void {
     this.layer.draw();
   }
 
-  update(gamepad: Gamepad, dt: number) {
+  update(gamepad: Gamepad, dt: number): void {
     if (this.nextInputListener.isActive()) {
       this.nextInputListener.update(gamepad);
     }

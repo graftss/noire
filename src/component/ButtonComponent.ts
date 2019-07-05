@@ -1,7 +1,7 @@
 import Konva from 'konva';
 
 import * as T from '../types';
-import { Component } from '.';
+import { TypedComponent } from '.';
 import { defaults } from '../utils';
 
 export const defaultButtonComponentConfig: T.ButtonComponentConfig = {
@@ -11,7 +11,7 @@ export const defaultButtonComponentConfig: T.ButtonComponentConfig = {
   pressedFill: 'darkred',
 };
 
-export class ButtonComponent extends Component<T.ButtonInput> {
+export class ButtonComponent extends TypedComponent<T.ButtonInput> {
   rect: Konva.Rect;
 
   constructor(
@@ -32,7 +32,7 @@ export class ButtonComponent extends Component<T.ButtonInput> {
     this.group.add(this.rect);
   }
 
-  update({ pressed }: T.ButtonInput) {
+  update({ pressed }: T.ButtonInput): void {
     const { fill, pressedFill } = this.config;
 
     this.rect.fill(pressed ? pressedFill : fill);

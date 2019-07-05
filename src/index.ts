@@ -4,8 +4,6 @@ import { GamepadManager } from './gamepad/GamepadManager';
 import TestDisplay from './test/TestDisplay';
 import { renderEditor } from './editor';
 
-const config = { deadzone: 0.01 };
-
 const stage = new Konva.Stage({
   width: 800,
   height: 600,
@@ -20,7 +18,7 @@ const display = new TestDisplay(stage, layer);
 
 let t0 = 0;
 
-const update = (t1) => {
+const update = (t1): void => {
   const dt = t1 - t0;
   t0 = t1;
 

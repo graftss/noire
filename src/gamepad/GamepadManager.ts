@@ -6,10 +6,10 @@ export class GamepadManager {
 
   constructor(selectorId: string) {
     this.rerender = this.rerender.bind(this);
-    window.addEventListener("gamepadconnected", this.rerender);
-    window.addEventListener("gamepaddisconnected", this.rerender);
+    window.addEventListener('gamepadconnected', this.rerender);
+    window.addEventListener('gamepaddisconnected', this.rerender);
 
-    this.selector = <HTMLSelectElement>document.getElementById(selectorId);
+    this.selector = document.getElementById(selectorId) as HTMLSelectElement;
     this.updateActive = this.updateActive.bind(this);
     this.selector.addEventListener('change', this.updateActive);
   }
@@ -19,11 +19,11 @@ export class GamepadManager {
     return gamepads[this.activeIndex];
   }
 
-  updateActive() {
+  private updateActive(): void {
     this.activeIndex = this.selector.selectedIndex;
   }
 
-  rerender() {
+  private rerender(): void {
     this.gamepads = navigator.getGamepads();
     this.activeIndex = -1;
     this.activeGamepad = undefined;
@@ -35,7 +35,7 @@ export class GamepadManager {
     this.activeIndex = 1;
   }
 
-  renderSelector() {
+  private renderSelector(): void {
     const { selector, gamepads } = this;
     const { options } = selector;
 
@@ -47,7 +47,7 @@ export class GamepadManager {
       if (gamepad) {
         options[options.length] = new Option(
           `Player ${i + 1}: ${gamepad.id}`,
-          i.toString()
+          i.toString(),
         );
       }
     }

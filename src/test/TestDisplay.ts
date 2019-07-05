@@ -1,10 +1,5 @@
-import Konva from 'konva';
-
-import { Component } from '../Component';
-import { Display } from '../display';
-import { StickComponent } from '../component/StickComponent';
-import { DPadComponent } from '../component/DPadComponent';
 import * as T from '../types';
+import { Display } from '../display';
 import { deserializeComponent } from '../component/deserializeComponent';
 
 interface GamepadBinding {
@@ -37,13 +32,13 @@ const btnBinding: T.ButtonInputBinding = {
   binding: { index: 3 },
 };
 
-const ids = ['a', 'b', 'c', 'd']
+const ids = ['a', 'b', 'c', 'd'];
 
 const bindingList: T.BindingData[] = [
-  // { id: ids[0], binding: { kind: 'stick', binding: binding.ls } },
-  // { id: ids[1], binding: { kind: 'stick', binding: binding.rs } },
-  // { id: ids[2], binding: { kind: 'dpad', binding: binding.dpad } },
-  { id: ids[3], binding: { kind: 'button', binding: btnBinding } }
+  { id: ids[0], binding: { kind: 'stick', binding: binding.ls } },
+  { id: ids[1], binding: { kind: 'stick', binding: binding.rs } },
+  { id: ids[2], binding: { kind: 'dpad', binding: binding.dpad } },
+  { id: ids[3], binding: { kind: 'button', binding: btnBinding } },
 ];
 
 const stickConfig = {
@@ -63,10 +58,14 @@ const dPadConfig = {
 };
 
 const serializedComponents: T.SerializedComponent[] = [
-  // { kind: 'stick', baseConfig: leftBaseConfig, config: stickConfig },
-  // { kind: 'stick', baseConfig: rightBaseConfig, config: stickConfig },
-  // { kind: 'dpad', baseConfig: dPadBaseConfig, config: dPadConfig },
-  { kind: 'button', baseConfig: { x: 30, y: 30, bindingId: ids[3] }, config: {} },
+  { kind: 'stick', baseConfig: leftBaseConfig, config: stickConfig },
+  { kind: 'stick', baseConfig: rightBaseConfig, config: stickConfig },
+  { kind: 'dpad', baseConfig: dPadBaseConfig, config: dPadConfig },
+  {
+    kind: 'button',
+    baseConfig: { x: 30, y: 30, bindingId: ids[3] },
+    config: {},
+  },
 ];
 
 export default class TestDisplay extends Display {

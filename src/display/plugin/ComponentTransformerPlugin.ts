@@ -1,11 +1,8 @@
 import Konva from 'konva';
 
 import * as T from '../../types';
-import { ComponentManager } from '../ComponentManager';
 import { DisplayPlugin } from './DisplayPlugin';
 import { DisplayEventBus } from '../DisplayEventBus';
-
-const CLICK_EVENT = 'click.ComponentTransformerPlugin';
 
 export class ComponentTransformerPlugin extends DisplayPlugin {
   transformer?: Konva.Transformer;
@@ -18,15 +15,15 @@ export class ComponentTransformerPlugin extends DisplayPlugin {
     eventBus.on({ kind: 'componentClick', cb: this.onComponentClick });
   }
 
-  onStageClick = (stage: Konva.Stage) => {
+  private onStageClick = (): void => {
     this.assignTransformer();
-  }
+  };
 
-  onComponentClick = (data: T.ComponentData) => {
+  private onComponentClick = (data: T.ComponentData): void => {
     this.assignTransformer(data.component.group);
-  }
+  };
 
-  assignTransformer(target?: Konva.Node) {
+  private assignTransformer(target?: Konva.Node): void {
     if (this.transformer) {
       this.transformer.destroy();
       this.transformerTarget.draggable(false);

@@ -6,11 +6,9 @@ import { DisplayPlugin } from './DisplayPlugin';
 import { DisplayEventBus } from '../DisplayEventBus';
 import { NextInputListener } from '../NextInputListener';
 
-const bindingButton =
-  <HTMLButtonElement>document.getElementById('axis-editor-binding');
-
 export class ComponentEditorPlugin extends DisplayPlugin {
-  private selected?: Component<any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private selected?: Component;
 
   constructor(
     eventBus: DisplayEventBus,
@@ -44,7 +42,5 @@ export class ComponentEditorPlugin extends DisplayPlugin {
         data: [component, bindingData],
       });
     });
-  }
-
-
+  };
 }

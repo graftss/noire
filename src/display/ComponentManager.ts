@@ -1,7 +1,6 @@
 import Konva from 'konva';
 
 import * as T from '../types';
-import { Component } from '../component';
 import { DisplayEventBus } from './DisplayEventBus';
 
 const CLICK_EVENT = `click.ComponentManager`;
@@ -20,7 +19,7 @@ export class ComponentManager {
     componentData.forEach(this.add);
   }
 
-  public add = (data: T.ComponentData) => {
+  add = (data: T.ComponentData) => {
     this.componentData.push(data);
     this.layer.add(data.component.group);
 
@@ -35,15 +34,18 @@ export class ComponentManager {
         data: [data],
       });
     });
-  }
+  };
 
-  public setBindingId(data: T.ComponentData) {
+  setBindingId(newData: T.ComponentData): boolean {
     for (let i = 0; i < this.componentData.length; i++) {
-      const next = this.componentData[i];
-      if (next.component === data.component) {
-        return next.bindingId = data.bindingId;
+      const data = this.componentData[i];
+      if (newData.component === data.component) {
+        data.bindingId = newData.bindingId;
+        return true;
       }
     }
+
+    return false;
   }
 
   // remove(component: Component<any>) {
@@ -58,7 +60,7 @@ export class ComponentManager {
   //   }
   // }
 
-  public update(inputDict: ({ [bindingId: number] : T.Input }), dt: number) {
+  update(inputDict: { [bindingId: number]: T.Input }, dt: number): void {
     this.componentData.forEach(({ component, bindingId }) => {
       const input = inputDict[bindingId];
       if (input) {

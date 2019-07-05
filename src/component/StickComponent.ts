@@ -1,7 +1,7 @@
 import Konva from 'konva';
 
 import * as T from '../types';
-import { Component } from '.';
+import { TypedComponent } from '.';
 import { defaults, sign } from '../utils';
 
 export const defaultStickComponentConfig: T.StickComponentConfig = {
@@ -12,13 +12,10 @@ export const defaultStickComponentConfig: T.StickComponentConfig = {
   pressedStickFill: 'darkred',
 };
 
-const depthFactor = (t: number): number => (
-  t > 0.2 ?
-    1 - 0.08 * Math.abs(t) :
-    1 - 0.02 * Math.abs(t)
-);
+const depthFactor = (t: number): number =>
+  t > 0.2 ? 1 - 0.08 * Math.abs(t) : 1 - 0.02 * Math.abs(t);
 
-export class StickComponent extends Component<T.StickInput> {
+export class StickComponent extends TypedComponent<T.StickInput> {
   center: Konva.Circle;
   stick: Konva.Ellipse;
 
@@ -54,7 +51,7 @@ export class StickComponent extends Component<T.StickInput> {
     this.group.add(this.stick);
   }
 
-  update({ x, y, down }: T.StickInput) {
+  update({ x, y, down }: T.StickInput): void {
     const {
       boundaryRadius,
       stickRadius,

@@ -1,18 +1,20 @@
 import * as T from '../types';
 import { clone } from '../utils';
 
-type AxisCallback = (binding: T.AxisBinding) => any;
-type ButtonCallback = (binding: T.ButtonInputBinding) => any;
+type AxisCallback = (binding: T.AxisBinding) => void;
+type ButtonCallback = (binding: T.ButtonInputBinding) => void;
 
-type ListeningState = {
-  kind: 'axis';
-  callback: AxisCallback;
-  baselineInput?: number[];
-} | {
-  kind: 'button';
-  callback: ButtonCallback;
-  baselineInput?: { axes: number[], buttons: number[] };
-};
+type ListeningState =
+  | {
+      kind: 'axis';
+      callback: AxisCallback;
+      baselineInput?: number[];
+    }
+  | {
+      kind: 'button';
+      callback: ButtonCallback;
+      baselineInput?: { axes: number[]; buttons: number[] };
+    };
 
 const MIN_AXIS_MAGNITUDE = 0.5;
 
@@ -20,12 +22,12 @@ export class NextInputListener {
   private state?: ListeningState;
   pollingBaselineInput: boolean = false;
 
-  awaitButton(callback: ButtonCallback) {
+  awaitButton(callback: ButtonCallback): void {
     this.state = { kind: 'button', callback };
     this.pollingBaselineInput = true;
   }
 
-  awaitPositiveAxis(callback: AxisCallback) {
+  awaitPositiveAxis(callback: AxisCallback): void {
     this.state = { kind: 'axis', callback };
     this.pollingBaselineInput = true;
   }
@@ -34,16 +36,13 @@ export class NextInputListener {
     return this.state !== undefined;
   }
 
-  deactivate() {
+  deactivate(): void {
     this.pollingBaselineInput = false;
     this.state = undefined;
   }
 
-  update(gamepad: Gamepad) {
+  update(gamepad: Gamepad): void {
     if (!this.isActive()) return;
-
-    // TODO: put `baselineInput` here
-    const { callback } = this.state;
 
     if (this.state.kind === 'axis') {
       if (this.pollingBaselineInput) {
@@ -53,8 +52,10 @@ export class NextInputListener {
         const { axes } = gamepad;
 
         for (let i = 0; i < axes.length; i++) {
-          if (axes[i] !== this.state.baselineInput[i] &&
-              Math.abs(axes[i]) > MIN_AXIS_MAGNITUDE) {
+          if (
+            axes[i] !== this.state.baselineInput[i] &&
+            Math.abs(axes[i]) > MIN_AXIS_MAGNITUDE
+          ) {
             this.state.callback({
               index: i,
               inverted: axes[i] < 0,

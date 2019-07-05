@@ -2,12 +2,13 @@ import Konva from 'konva';
 
 import * as T from '../types';
 
-export abstract class Component<I> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Component = TypedComponent<any>;
+
+export abstract class TypedComponent<I> {
   group: Konva.Group;
 
-  constructor(
-    private baseConfig: T.BaseComponentConfig,
-  ) {
+  constructor(private baseConfig: T.BaseComponentConfig) {
     const { x, y } = baseConfig;
 
     this.group = new Konva.Group({ x, y });
