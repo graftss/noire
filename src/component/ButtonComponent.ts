@@ -1,15 +1,12 @@
 import Konva from 'konva';
 
-import Component, { BaseComponentConfig } from '.';
+import { Component } from '.';
 import { defaults } from '../utils';
-import { ButtonInput } from '../types';
-
-export interface ButtonComponentConfig {
-  width?: number;
-  height?: number;
-  fill?: string;
-  pressedFill?: string;
-}
+import {
+  BaseComponentConfig,
+  ButtonComponentConfig,
+  ButtonInput,
+} from '../types';
 
 export const defaultButtonComponentConfig: ButtonComponentConfig = {
   width: 30,
@@ -18,7 +15,7 @@ export const defaultButtonComponentConfig: ButtonComponentConfig = {
   pressedFill: 'darkred',
 };
 
-export default class ButtonComponent extends Component<ButtonInput> {
+export class ButtonComponent extends Component<ButtonInput> {
   rect: Konva.Rect;
 
   constructor(

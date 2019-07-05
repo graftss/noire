@@ -63,3 +63,39 @@ export interface StickInput {
   y: AxisInput;
   down: ButtonInput;
 }
+
+export interface BaseComponentConfig {
+  x: number;
+  y: number;
+  bindingId?: string;
+}
+
+export interface DPadComponentConfig {
+  buttonWidth?: number;
+  buttonHeight?: number;
+  fill?: string;
+  pressedFill?: string;
+}
+
+export interface StickComponentConfig {
+  boundaryRadius?: number;
+  stickRadius?: number;
+  rangeScaling?: number;
+  stickFill?: string;
+  pressedStickFill?: string;
+}
+
+export interface ButtonComponentConfig {
+  width?: number;
+  height?: number;
+  fill?: string;
+  pressedFill?: string;
+}
+
+export type SerializedComponent = {
+  baseConfig: BaseComponentConfig;
+} & (
+  ({ kind: 'button'; config: ButtonComponentConfig; }) |
+  ({ kind: 'stick'; config: StickComponentConfig; }) |
+  ({ kind: 'dpad'; config: DPadComponentConfig; })
+);

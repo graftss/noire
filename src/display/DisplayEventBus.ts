@@ -1,6 +1,6 @@
 import Konva from 'konva';
 
-import Component from '../component';
+import { Component } from '../component';
 import ComponentManager, { ComponentData } from './ComponentManager';
 import * as M from '../gamepad/inputMaps';
 import { BindingData } from './BindingManager';

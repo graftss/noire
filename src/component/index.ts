@@ -1,12 +1,8 @@
 import Konva from 'konva';
 
-export interface BaseComponentConfig {
-  x: number;
-  y: number;
-  bindingId?: string;
-}
+import { BaseComponentConfig } from '../types';
 
-export default abstract class Component<T> {
+export abstract class Component<T> {
   group: Konva.Group;
 
   constructor(

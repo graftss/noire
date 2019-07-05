@@ -1,16 +1,12 @@
 import Konva from 'konva';
 
-import Component, { BaseComponentConfig } from '.';
+import { Component } from '.';
 import { defaults, sign } from '../utils';
-import { StickInput } from '../types';
-
-export interface StickComponentConfig {
-  boundaryRadius?: number;
-  stickRadius?: number;
-  rangeScaling?: number;
-  stickFill?: string;
-  pressedStickFill?: string;
-}
+import {
+  BaseComponentConfig,
+  StickComponentConfig,
+  StickInput,
+} from '../types';
 
 export const defaultStickComponentConfig: StickComponentConfig = {
   boundaryRadius: 26,
@@ -26,7 +22,7 @@ const depthFactor = (t: number): number => (
     1 - 0.02 * Math.abs(t)
 );
 
-export default class StickComponent extends Component<StickInput> {
+export class StickComponent extends Component<StickInput> {
   center: Konva.Circle;
   stick: Konva.Ellipse;
 

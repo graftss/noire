@@ -1,6 +1,6 @@
 import Konva from 'konva';
 
-import Component from '../component';
+import { Component } from '../component';
 import { Input } from '../types';
 import { BindingId } from './BindingManager';
 import DisplayEventBus from './DisplayEventBus';

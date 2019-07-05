@@ -1,12 +1,12 @@
 import Konva from 'konva';
 
-import Component from '../Component';
+import { Component } from '../Component';
 import Display from '../display';
-import StickComponent from '../component/StickComponent';
-import DPadComponent from '../component/DPadComponent';
+import { StickComponent } from '../component/StickComponent';
+import { DPadComponent } from '../component/DPadComponent';
 import * as T from '../types';
 import { BindingData } from '../display/BindingManager';
-import deserializeComponent, { SerializedComponent } from '../component/deserializeComponent';
+import { deserializeComponent } from '../component/deserializeComponent';
 
 interface GamepadBinding {
   ls: T.StickBinding;
@@ -63,7 +63,7 @@ const dPadConfig = {
   buttonHeight: 30,
 };
 
-const serializedComponents: SerializedComponent[] = [
+const serializedComponents: T.SerializedComponent[] = [
   // { kind: 'stick', baseConfig: leftBaseConfig, config: stickConfig },
   // { kind: 'stick', baseConfig: rightBaseConfig, config: stickConfig },
   // { kind: 'dpad', baseConfig: dPadBaseConfig, config: dPadConfig },

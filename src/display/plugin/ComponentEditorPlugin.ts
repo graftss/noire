@@ -1,5 +1,5 @@
 import BindingManager, { BindingData } from '../BindingManager';
-import Component from '../../component';
+import { Component } from '../../component';
 import ComponentManager from '../ComponentManager';
 import DisplayPlugin from './DisplayPlugin';
 import DisplayEventBus from '../DisplayEventBus';

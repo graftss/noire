@@ -1,7 +1,7 @@
 import Konva from 'konva';
 
 import BindingManager, { BindingData, BindingId } from './BindingManager';
-import Component from '../component';
+import { Component } from '../component';
 import ComponentManager, { ComponentData } from './ComponentManager';
 import ComponentEditorPlugin from './plugin/ComponentEditorPlugin';
 import ComponentTransformerPlugin from './plugin/ComponentTransformerPlugin';

@@ -1,31 +1,24 @@
 import Konva from 'konva';
 
-import Component, { BaseComponentConfig } from '.';
+import { Component } from '.';
 import { defaults } from '../utils';
-import { Dir, DPadInput } from '../types';
+import * as T from '../types';
 
 const dirs = ['u', 'l', 'd', 'r'];
 
-export interface DPadComponentConfig {
-  buttonWidth?: number;
-  buttonHeight?: number;
-  fill?: string;
-  pressedFill?: string;
-}
-
-export const defaultDPadComponentConfig: DPadComponentConfig = {
+export const defaultDPadComponentConfig: T.DPadComponentConfig = {
   buttonWidth: 20,
   buttonHeight: 20,
   fill: 'black',
   pressedFill: 'darkred',
 };
 
-export default class DPadComponent extends Component<DPadInput> {
-  rects: Record<Dir, Konva.Rect>;
+export class DPadComponent extends Component<T.DPadInput> {
+  rects: Record<T.Dir, Konva.Rect>;
 
   constructor(
-    baseConfig: BaseComponentConfig,
-    private config: DPadComponentConfig,
+    baseConfig: T.BaseComponentConfig,
+    private config: T.DPadComponentConfig,
   ) {
     super(baseConfig);
     this.config = defaults(defaultDPadComponentConfig, config);
@@ -66,7 +59,7 @@ export default class DPadComponent extends Component<DPadInput> {
     dirs.forEach(dir => this.group.add(this.rects[dir]));
   }
 
-  update(input: DPadInput) {
+  update(input: T.DPadInput) {
     const { pressedFill, fill } = this.config;
 
     dirs.forEach(dir => {
