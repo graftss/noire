@@ -2,7 +2,7 @@ import Konva from 'konva';
 
 import Component from '../component';
 import * as M from '../gamepad/inputMaps';
-import { BindingId } from '../gamepad/BindingManager';
+import { BindingId } from './BindingManager';
 import DisplayEventBus from './DisplayEventBus';
 
 export type ComponentCallback = (c: ComponentData) => any;
@@ -15,19 +15,20 @@ export type ComponentData = {
 const CLICK_EVENT = `click.ComponentManager`;
 
 export default class ComponentManager {
-  selected: ComponentData[] = [];
+  private selected: ComponentData[] = [];
 
   constructor(
     private stage: Konva.Stage,
     private layer: Konva.Layer,
     private eventBus: DisplayEventBus,
-    private componentData?: ComponentData[],
+    private componentData: ComponentData[] = [],
   ) {
     this.layer = layer;
-    this.componentData = componentData || [];
+
+    componentData.forEach(this.add);
   }
 
-  add(data: ComponentData) {
+  public add = (data: ComponentData) => {
     this.componentData.push(data);
     this.layer.add(data.component.group);
 
@@ -44,6 +45,15 @@ export default class ComponentManager {
     });
   }
 
+  public setBindingId(data: ComponentData) {
+    for (let i = 0; i < this.componentData.length; i++) {
+      const next = this.componentData[i];
+      if (next.component === data.component) {
+        return next.bindingId = data.bindingId;
+      }
+    }
+  }
+
   // remove(component: Component<any>) {
   //   const idx = this.components.indexOf(component);
 
@@ -56,7 +66,7 @@ export default class ComponentManager {
   //   }
   // }
 
-  update(inputDict: ({ [bindingId: number] : M.Input }), dt: number) {
+  public update(inputDict: ({ [bindingId: number] : M.Input }), dt: number) {
     this.componentData.forEach(({ component, bindingId }) => {
       const input = inputDict[bindingId];
       if (input) {

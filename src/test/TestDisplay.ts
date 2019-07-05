@@ -5,7 +5,7 @@ import Display from '../display';
 import StickComponent from '../component/StickComponent';
 import DPadComponent from '../component/DPadComponent';
 import * as M from '../gamepad/inputMaps';
-import { BindingData } from '../gamepad/BindingManager';
+import { BindingData } from '../display/BindingManager';
 import deserializeComponent, { SerializedComponent } from '../component/deserializeComponent';
 
 interface GamepadBinding {
@@ -30,15 +30,21 @@ const binding: GamepadBinding = {
     l: { kind: 'axisValue', binding: { axis: 9, value: 0.7142857 } },
     d: { kind: 'axisValue', binding: { axis: 9, value: 0.1428571 } },
     r: { kind: 'axisValue', binding: { axis: 9, value: -0.428571 } },
-  }
+  },
 };
 
-const ids = ['a', 'b', 'c']
+const btnBinding: M.ButtonInputBinding = {
+  kind: 'button',
+  binding: { index: 3 },
+};
+
+const ids = ['a', 'b', 'c', 'd']
 
 const bindingList: BindingData[] = [
-  { id: ids[0], binding: { kind: 'stick', binding: binding.ls } },
-  { id: ids[1], binding: { kind: 'stick', binding: binding.rs } },
-  { id: ids[2], binding: { kind: 'dpad', binding: binding.dpad } },
+  // { id: ids[0], binding: { kind: 'stick', binding: binding.ls } },
+  // { id: ids[1], binding: { kind: 'stick', binding: binding.rs } },
+  // { id: ids[2], binding: { kind: 'dpad', binding: binding.dpad } },
+  { id: ids[3], binding: { kind: 'button', binding: btnBinding } }
 ];
 
 const stickConfig = {
@@ -58,17 +64,15 @@ const dPadConfig = {
 };
 
 const serializedComponents: SerializedComponent[] = [
-  { kind: 'stick', baseConfig: leftBaseConfig, config: stickConfig },
-  { kind: 'stick', baseConfig: rightBaseConfig, config: stickConfig },
-  { kind: 'dpad', baseConfig: dPadBaseConfig, config: dPadConfig },
+  // { kind: 'stick', baseConfig: leftBaseConfig, config: stickConfig },
+  // { kind: 'stick', baseConfig: rightBaseConfig, config: stickConfig },
+  // { kind: 'dpad', baseConfig: dPadBaseConfig, config: dPadConfig },
+  { kind: 'button', baseConfig: { x: 30, y: 30, bindingId: ids[3] }, config: {} },
 ];
 
 export default class TestDisplay extends Display {
   constructor(stage, layer) {
-    super(stage, layer, bindingList);
-
-    const components = serializedComponents.map(deserializeComponent);
-
-    components.forEach((c, i) => this.addComponent(c, ids[i]));
+    const componentData = serializedComponents.map(deserializeComponent);
+    super(stage, layer, bindingList, componentData);
   }
 }

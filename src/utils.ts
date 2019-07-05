@@ -33,4 +33,4 @@ export const defaults = <T extends {}>(source: T, target: T): T => {
   return target;
 };
 
-export const uuid = () => uuidv4();
+export const uuid = (): string => uuidv4();

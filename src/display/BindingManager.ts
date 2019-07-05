@@ -1,12 +1,13 @@
 import { equals, max, reduce } from 'ramda';
 
-import * as M from './inputMaps';
+import DisplayEventBus from './DisplayEventBus';
+import * as M from '../gamepad/inputMaps';
 import { find, mappedEval, uuid } from '../utils';
 
 export type BindingId = string;
 
 export type BindingData = {
-  id: BindingId,
+  id?: BindingId,
   binding: M.Binding
 };
 
@@ -19,20 +20,22 @@ const findBindingWithId =
   (id, data: BindingData[]) => find(matchesId(id))(data).binding;
 
 export default class BindingManager {
-  bindingData: BindingData[];
-
-  constructor(bindingData: BindingData[] = []) {
+  constructor(
+    private eventBus: DisplayEventBus,
+    private bindingData: BindingData[] = [],
+  ) {
     // TODO: sanity check initial binding list
     this.bindingData = bindingData;
   }
 
-  public add(binding: M.Binding): boolean {
-    if (!find(hasBinding(binding))(this.bindingData)) {
-      this.bindingData.push({ binding, id: uuid() });
-      return true;
-    }
+  public add(binding: M.Binding): BindingId {
+    const data = find(hasBinding(binding))(this.bindingData);
 
-    return false;
+    if (data) return data.id;
+
+    const id = uuid();
+    this.bindingData.push({ binding, id });
+    return id;
   }
 
   private getBinding(id: BindingId): M.Binding {

@@ -17,10 +17,8 @@ export default class ComponentTransformerPlugin extends DisplayPlugin {
     eventBus.on({ kind: 'componentClick', cb: this.onComponentClick });
   }
 
-  onStageClick = (stage: Konva.Stage, { target, currentTarget }) => {
-    if (target === stage) {
-      this.assignTransformer();
-    }
+  onStageClick = (stage: Konva.Stage) => {
+    this.assignTransformer();
   }
 
   onComponentClick = (data: ComponentData) => {

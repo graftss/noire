@@ -1,6 +1,7 @@
 import ButtonComponent, { ButtonComponentConfig } from './ButtonComponent';
 import StickComponent, { StickComponentConfig } from './StickComponent';
 import DPadComponent, { DPadComponentConfig } from './DPadComponent';
+import { ComponentData } from '../display/ComponentManager';
 import Component, { BaseComponentConfig } from '.';
 
 export type SerializedComponent = {
@@ -11,10 +12,14 @@ export type SerializedComponent = {
   ({ kind: 'dpad'; config: DPadComponentConfig; })
 );
 
-export default (s: SerializedComponent): Component<any> => {
+export default (s: SerializedComponent): ComponentData => {
+  let component: Component<any>;
+
   switch (s.kind) {
-    case 'button': return new ButtonComponent(s.baseConfig, s.config);
-    case 'stick': return new StickComponent(s.baseConfig, s.config);
-    case 'dpad': return new DPadComponent(s.baseConfig, s.config);
+    case 'button': component = new ButtonComponent(s.baseConfig, s.config); break;
+    case 'stick': component = new StickComponent(s.baseConfig, s.config); break;
+    case 'dpad': component = new DPadComponent(s.baseConfig, s.config); break;
   }
+
+  return { bindingId: s.baseConfig.bindingId, component };
 };
