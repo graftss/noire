@@ -1,12 +1,11 @@
+import * as T from '../types';
 import { Component } from '.';
 import { ButtonComponent } from './ButtonComponent';
 import { DPadComponent } from './DPadComponent';
 import { StickComponent } from './StickComponent';
-import { ComponentData } from '../display/ComponentManager';
-import { SerializedComponent } from '../types';
 
 export const deserializeComponent =
-  (s: SerializedComponent): ComponentData => {
+  (s: T.SerializedComponent): T.ComponentData => {
     let component: Component<any>;
 
     switch (s.kind) {

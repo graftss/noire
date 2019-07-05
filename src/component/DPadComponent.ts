@@ -1,8 +1,8 @@
 import Konva from 'konva';
 
+import * as T from '../types';
 import { Component } from '.';
 import { defaults } from '../utils';
-import * as T from '../types';
 
 const dirs = ['u', 'l', 'd', 'r'];
 

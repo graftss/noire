@@ -1,17 +1,17 @@
 import Konva from 'konva';
 
-import { BaseComponentConfig } from '../types';
+import * as T from '../types';
 
-export abstract class Component<T> {
+export abstract class Component<I> {
   group: Konva.Group;
 
   constructor(
-    private baseConfig: BaseComponentConfig,
+    private baseConfig: T.BaseComponentConfig,
   ) {
     const { x, y } = baseConfig;
 
     this.group = new Konva.Group({ x, y });
   }
 
-  abstract update(input: T, dt: number): void;
+  abstract update(input: I, dt: number): void;
 }

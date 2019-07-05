@@ -1,35 +1,28 @@
 import { equals, max, reduce } from 'ramda';
 
-import DisplayEventBus from './DisplayEventBus';
 import * as T from '../types';
 import * as M from '../gamepad/inputMaps';
+import { DisplayEventBus } from './DisplayEventBus';
 import { find, mappedEval, uuid } from '../utils';
 
-export type BindingId = string;
-
-export type BindingData = {
-  id?: BindingId,
-  binding: T.Binding
-};
-
-const hasBinding = (binding: T.Binding) => (data: BindingData) => (
+const hasBinding = (binding: T.Binding) => (data: T.BindingData) => (
   equals(binding, data.binding)
 );
 
-const matchesId = (id: BindingId) => (data: BindingData) => data.id === id;
+const matchesId = (id: T.BindingId) => (data: T.BindingData) => data.id === id;
 const findBindingWithId =
-  (id, data: BindingData[]) => find(matchesId(id))(data).binding;
+  (id, data: T.BindingData[]) => find(matchesId(id))(data).binding;
 
-export default class BindingManager {
+export class BindingManager {
   constructor(
     private eventBus: DisplayEventBus,
-    private bindingData: BindingData[] = [],
+    private bindingData: T.BindingData[] = [],
   ) {
     // TODO: sanity check initial binding list
     this.bindingData = bindingData;
   }
 
-  public add(binding: T.Binding): BindingId {
+  public add(binding: T.Binding): T.BindingId {
     const data = find(hasBinding(binding))(this.bindingData);
 
     if (data) return data.id;
@@ -39,7 +32,7 @@ export default class BindingManager {
     return id;
   }
 
-  private getBinding(id: BindingId): T.Binding {
+  private getBinding(id: T.BindingId): T.Binding {
     return findBindingWithId(id, this.bindingData);
   }
 

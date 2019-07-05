@@ -1,34 +1,26 @@
 import Konva from 'konva';
 
+import * as T from '../types';
 import { Component } from '../component';
-import { Input } from '../types';
-import { BindingId } from './BindingManager';
-import DisplayEventBus from './DisplayEventBus';
-
-export type ComponentCallback = (c: ComponentData) => any;
-
-export type ComponentData = {
-  component: Component<any>;
-  bindingId: BindingId;
-};
+import { DisplayEventBus } from './DisplayEventBus';
 
 const CLICK_EVENT = `click.ComponentManager`;
 
-export default class ComponentManager {
-  private selected: ComponentData[] = [];
+export class ComponentManager {
+  private selected: T.ComponentData[] = [];
 
   constructor(
     private stage: Konva.Stage,
     private layer: Konva.Layer,
     private eventBus: DisplayEventBus,
-    private componentData: ComponentData[] = [],
+    private componentData: T.ComponentData[] = [],
   ) {
     this.layer = layer;
 
     componentData.forEach(this.add);
   }
 
-  public add = (data: ComponentData) => {
+  public add = (data: T.ComponentData) => {
     this.componentData.push(data);
     this.layer.add(data.component.group);
 
@@ -45,7 +37,7 @@ export default class ComponentManager {
     });
   }
 
-  public setBindingId(data: ComponentData) {
+  public setBindingId(data: T.ComponentData) {
     for (let i = 0; i < this.componentData.length; i++) {
       const next = this.componentData[i];
       if (next.component === data.component) {
@@ -66,7 +58,7 @@ export default class ComponentManager {
   //   }
   // }
 
-  public update(inputDict: ({ [bindingId: number] : Input }), dt: number) {
+  public update(inputDict: ({ [bindingId: number] : T.Input }), dt: number) {
     this.componentData.forEach(({ component, bindingId }) => {
       const input = inputDict[bindingId];
       if (input) {

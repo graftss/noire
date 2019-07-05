@@ -1,15 +1,16 @@
 import Konva from 'konva';
 
-import BindingManager, { BindingData, BindingId } from './BindingManager';
+import * as T from '../types';
+import { BindingManager } from './BindingManager';
 import { Component } from '../component';
-import ComponentManager, { ComponentData } from './ComponentManager';
-import ComponentEditorPlugin from './plugin/ComponentEditorPlugin';
-import ComponentTransformerPlugin from './plugin/ComponentTransformerPlugin';
-import DisplayPlugin from './plugin/DisplayPlugin';
-import DisplayEventBus from './DisplayEventBus';
-import NextInputListener from './NextInputListener';
+import { ComponentManager } from './ComponentManager';
+import { ComponentEditorPlugin } from './plugin/ComponentEditorPlugin';
+import { ComponentTransformerPlugin } from './plugin/ComponentTransformerPlugin';
+import { DisplayPlugin } from './plugin/DisplayPlugin';
+import { DisplayEventBus } from './DisplayEventBus';
+import { NextInputListener } from './NextInputListener';
 
-export default class Display {
+export class Display {
   private nextInputListener: NextInputListener;
   private eventBus: DisplayEventBus;
   private bm: BindingManager;
@@ -19,8 +20,8 @@ export default class Display {
   constructor(
     private stage: Konva.Stage,
     private layer: Konva.Layer,
-    private bindingData?: BindingData[],
-    private componentData?: ComponentData[],
+    private bindingData?: T.BindingData[],
+    private componentData?: T.ComponentData[],
   ) {
     this.stage = stage;
     this.layer = layer;
@@ -40,7 +41,7 @@ export default class Display {
     ];
   }
 
-  addComponent(component: Component<any>, bindingId?: BindingId) {
+  addComponent(component: Component<any>, bindingId?: T.BindingId) {
     this.cm.add({ component, bindingId });
   }
 

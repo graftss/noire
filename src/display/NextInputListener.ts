@@ -1,8 +1,8 @@
-import { AxisBinding, ButtonInputBinding } from '../types';
+import * as T from '../types';
 import { clone } from '../utils';
 
-type AxisCallback = (binding: AxisBinding) => any;
-type ButtonCallback = (binding: ButtonInputBinding) => any;
+type AxisCallback = (binding: T.AxisBinding) => any;
+type ButtonCallback = (binding: T.ButtonInputBinding) => any;
 
 type ListeningState = {
   kind: 'axis';
@@ -16,30 +16,30 @@ type ListeningState = {
 
 const MIN_AXIS_MAGNITUDE = 0.5;
 
-export default class NextInputListener {
+export class NextInputListener {
   private state?: ListeningState;
-  public pollingBaselineInput: boolean = false;
+  pollingBaselineInput: boolean = false;
 
-  public awaitButton(callback: ButtonCallback) {
+  awaitButton(callback: ButtonCallback) {
     this.state = { kind: 'button', callback };
     this.pollingBaselineInput = true;
   }
 
-  public awaitPositiveAxis(callback: AxisCallback) {
+  awaitPositiveAxis(callback: AxisCallback) {
     this.state = { kind: 'axis', callback };
     this.pollingBaselineInput = true;
   }
 
-  public isActive(): boolean {
+  isActive(): boolean {
     return this.state !== undefined;
   }
 
-  public deactivate() {
+  deactivate() {
     this.pollingBaselineInput = false;
     this.state = undefined;
   }
 
-  public update(gamepad: Gamepad) {
+  update(gamepad: Gamepad) {
     if (!this.isActive()) return;
 
     // TODO: put `baselineInput` here

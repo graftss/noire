@@ -1,3 +1,5 @@
+import { Component } from './component';
+
 export type InputMap<T, U> = (binding: T) => (g: Gamepad) => U;
 
 export type Binding =
@@ -99,3 +101,17 @@ export type SerializedComponent = {
   ({ kind: 'stick'; config: StickComponentConfig; }) |
   ({ kind: 'dpad'; config: DPadComponentConfig; })
 );
+
+export type BindingId = string;
+
+export type ComponentData = {
+  component: Component<any>;
+  bindingId: BindingId;
+};
+
+export type ComponentCallback = (c: ComponentData) => any;
+
+export type BindingData = {
+  id?: BindingId,
+  binding: Binding
+};

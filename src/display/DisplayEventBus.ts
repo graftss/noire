@@ -1,9 +1,9 @@
 import Konva from 'konva';
 
-import { Component } from '../component';
-import ComponentManager, { ComponentData } from './ComponentManager';
+import * as T from '../types';
 import * as M from '../gamepad/inputMaps';
-import { BindingData } from './BindingManager';
+import { Component } from '../component';
+import { ComponentManager } from './ComponentManager';
 import { without } from '../utils';
 
 type F1<T> = (t: T) => void;
@@ -11,21 +11,21 @@ type F2<T, U> = (t: T, u: U) => void;
 
 export type Handler =
   { kind: 'stageClick', cb: F1<Konva.Stage> } |
-  { kind: 'componentClick', cb: F1<ComponentData> } |
-  { kind: 'componentAdd', cb: F1<ComponentData> } |
-  { kind: 'bindingAdd', cb: F2<Component<any>, BindingData> };
+  { kind: 'componentClick', cb: F1<T.ComponentData> } |
+  { kind: 'componentAdd', cb: F1<T.ComponentData> } |
+  { kind: 'bindingAdd', cb: F2<Component<any>, T.BindingData> };
 
 export type DisplayEvent =
   { kind: 'stageClick', data: [Konva.Stage] } |
-  { kind: 'componentClick', data: [ComponentData] } |
-  { kind: 'componentAdd', data: [ComponentData] } |
-  { kind: 'bindingAdd', data: [Component<any>, BindingData] };
+  { kind: 'componentClick', data: [T.ComponentData] } |
+  { kind: 'componentAdd', data: [T.ComponentData] } |
+  { kind: 'bindingAdd', data: [Component<any>, T.BindingData] };
 
-export default class DisplayEventBus {
+export class DisplayEventBus {
   private stageClickHandlers: F1<Konva.Stage>[] = [];
-  private componentClickHandlers: F1<ComponentData>[] = [];
-  private componentAddHandlers: F1<ComponentData>[] = [];
-  private bindingAddHandlers: F2<Component<any>, BindingData>[] = [];
+  private componentClickHandlers: F1<T.ComponentData>[] = [];
+  private componentAddHandlers: F1<T.ComponentData>[] = [];
+  private bindingAddHandlers: F2<Component<any>, T.BindingData>[] = [];
 
   constructor(
     private stage: Konva.Stage,

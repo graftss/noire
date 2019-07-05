@@ -1,11 +1,10 @@
 import Konva from 'konva';
 
 import { Component } from '../Component';
-import Display from '../display';
+import { Display } from '../display';
 import { StickComponent } from '../component/StickComponent';
 import { DPadComponent } from '../component/DPadComponent';
 import * as T from '../types';
-import { BindingData } from '../display/BindingManager';
 import { deserializeComponent } from '../component/deserializeComponent';
 
 interface GamepadBinding {
@@ -40,7 +39,7 @@ const btnBinding: T.ButtonInputBinding = {
 
 const ids = ['a', 'b', 'c', 'd']
 
-const bindingList: BindingData[] = [
+const bindingList: T.BindingData[] = [
   // { id: ids[0], binding: { kind: 'stick', binding: binding.ls } },
   // { id: ids[1], binding: { kind: 'stick', binding: binding.rs } },
   // { id: ids[2], binding: { kind: 'dpad', binding: binding.dpad } },

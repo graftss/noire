@@ -1,15 +1,15 @@
-import BindingManager, { BindingData } from '../BindingManager';
-import { Component } from '../../component';
-import ComponentManager from '../ComponentManager';
-import DisplayPlugin from './DisplayPlugin';
-import DisplayEventBus from '../DisplayEventBus';
 import * as T from '../../types';
-import NextInputListener from '../NextInputListener';
+import { BindingManager } from '../BindingManager';
+import { Component } from '../../component';
+import { ComponentManager } from '../ComponentManager';
+import { DisplayPlugin } from './DisplayPlugin';
+import { DisplayEventBus } from '../DisplayEventBus';
+import { NextInputListener } from '../NextInputListener';
 
 const bindingButton =
   <HTMLButtonElement>document.getElementById('axis-editor-binding');
 
-export default class ComponentEditorPlugin extends DisplayPlugin {
+export class ComponentEditorPlugin extends DisplayPlugin {
   private selected?: Component<any>;
 
   constructor(
@@ -35,7 +35,7 @@ export default class ComponentEditorPlugin extends DisplayPlugin {
     this.listener.awaitButton((buttonBinding: T.ButtonInputBinding) => {
       const binding: T.Binding = { kind: 'button', binding: buttonBinding };
       const bindingId = bm.add(binding);
-      const bindingData: BindingData = { binding, id: bindingId };
+      const bindingData: T.BindingData = { binding, id: bindingId };
 
       cm.setBindingId({ component, bindingId });
 
