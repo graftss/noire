@@ -22,9 +22,9 @@ export default class Display {
   ) {
     this.stage = stage;
     this.layer = layer;
-    this.bm = new BindingManager(bindingData);
-    this.cm = new ComponentManager(stage, layer);
     this.eventBus = new DisplayEventBus(stage, this.cm);
+    this.bm = new BindingManager(bindingData);
+    this.cm = new ComponentManager(stage, layer, this.eventBus);
 
     this.plugins = [
       new ComponentTransformerPlugin(this.eventBus),

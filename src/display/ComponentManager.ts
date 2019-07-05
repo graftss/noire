@@ -3,6 +3,7 @@ import Konva from 'konva';
 import Component from '../component';
 import * as M from '../gamepad/inputMaps';
 import { BindingId } from '../gamepad/BindingManager';
+import DisplayEventBus from './DisplayEventBus';
 
 export type ComponentCallback = (c: ComponentData) => any;
 
@@ -14,49 +15,32 @@ export type ComponentData = {
 const CLICK_EVENT = `click.ComponentManager`;
 
 export default class ComponentManager {
-  layer: Konva.Layer;
-  componentData: ComponentData[];
-
-  callbacks: {
-    add: ComponentCallback[];
-    remove: ComponentCallback[];
-    click: ComponentCallback[];
-  } = {
-    add: [],
-    remove: [],
-    click: [],
-  };
+  selected: ComponentData[] = [];
 
   constructor(
-    stage: Konva.Stage,
-    layer: Konva.Layer,
-    componentData?: ComponentData[],
+    private stage: Konva.Stage,
+    private layer: Konva.Layer,
+    private eventBus: DisplayEventBus,
+    private componentData?: ComponentData[],
   ) {
     this.layer = layer;
-    stage.add(this.layer);
     this.componentData = componentData || [];
-  }
-
-  onAddedComponent(callback: ComponentCallback) {
-    this.callbacks.add.push(callback);
-  }
-
-  onRemovedComponent(callback: ComponentCallback) {
-    this.callbacks.remove.push(callback);
-  }
-
-  onComponentClick(callback: ComponentCallback) {
-    this.callbacks.click.push(callback);
   }
 
   add(data: ComponentData) {
     this.componentData.push(data);
     this.layer.add(data.component.group);
 
-    this.callbacks.add.forEach(cb => cb(data));
+    this.eventBus.emit({
+      kind: 'componentAdd',
+      data: [data],
+    });
 
     data.component.group.on(CLICK_EVENT, () => {
-      this.callbacks.click.forEach(cb => cb(data));
+      this.eventBus.emit({
+        kind: 'componentClick',
+        data: [data],
+      });
     });
   }
 

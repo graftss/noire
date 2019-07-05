@@ -11,6 +11,11 @@ export type Handler =
   { kind: 'componentClick', cb: F1<ComponentData> } |
   { kind: 'componentAdd', cb: F1<ComponentData> };
 
+export type DisplayEvent =
+  { kind: 'stageClick', data: [Konva.Stage, any] } |
+  { kind: 'componentClick', data: [ComponentData] } |
+  { kind: 'componentAdd', data: [ComponentData] };
+
 export default class DisplayEventBus {
   private stageClickHandlers: F2<Konva.Stage, any>[] = [];
   private componentClickHandlers: F1<ComponentData>[] = [];
@@ -20,9 +25,27 @@ export default class DisplayEventBus {
     private stage: Konva.Stage,
     private cm: ComponentManager,
   ) {
-    stage.on('click', e => this.stageClickHandlers.forEach(cb => cb(stage, e)));
-    cm.onAddedComponent(c => this.componentAddHandlers.forEach(cb => cb(c)));
-    cm.onComponentClick(c => this.componentClickHandlers.forEach(cb => cb(c)));
+    stage.on('click', e => this.emit({ kind: 'stageClick', data: [stage, e] }));
+  }
+
+  emit(event: DisplayEvent) {
+    let hands
+    switch (event.kind) {
+      case 'stageClick': {
+        this.stageClickHandlers.forEach(cb => cb(...event.data));
+        break;
+      }
+
+      case 'componentClick': {
+        this.componentClickHandlers.forEach(cb => cb(...event.data));
+        break;
+      }
+
+      case 'componentAdd': {
+        this.componentAddHandlers.forEach(cb => cb(...event.data));
+        break;
+      }
+    }
   }
 
   on(handler: Handler) {
