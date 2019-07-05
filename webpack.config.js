@@ -1,7 +1,13 @@
-const Path = require('path');
+const path = require('path');
 
 module.exports = {
   mode: 'development',
+
+  devtool: 'source-map',
+
+  devServer: {
+    contentBase: path.join(__dirname, 'public'),
+  },
 
   entry: {
     bundle: './src/index.ts',
@@ -9,28 +15,38 @@ module.exports = {
 
   output: {
     filename: '[name].js',
-    path: Path.resolve(__dirname, 'public/dist'),
-    publicPath: 'dist/'
+    path: path.resolve(__dirname, 'public/dist'),
+    publicPath: 'dist/',
   },
 
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.tsx', '.js'],
   },
 
   module: {
     rules: [
       {
-        test: /\.ts$/,
+        test: /\.tsx?$/,
         use: [
           {
-            loader: 'ts-loader'
-          }
-        ]
-      }
-    ]
+            loader: 'ts-loader',
+          },
+        ],
+      },
+      {
+        enforce: 'pre',
+        test: /.js$/,
+        loader: 'source-map-loader',
+      },
+    ],
+  },
+
+  externals: {
+    react: 'React',
+    'react-dom': 'ReactDOM',
   },
 
   optimization: {
-    minimize: false
-  }
+    minimize: false,
+  },
 }

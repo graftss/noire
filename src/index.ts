@@ -2,7 +2,7 @@ import Konva from 'konva';
 
 import { GamepadManager } from './gamepad/GamepadManager';
 import TestDisplay from './test/TestDisplay';
-
+import { renderEditor } from './editor';
 
 const config = { deadzone: 0.01 };
 
@@ -35,3 +35,5 @@ const update = (t1) => {
 };
 
 update(t0);
+
+renderEditor(document.getElementById('editor'));
