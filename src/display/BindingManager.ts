@@ -1,6 +1,7 @@
 import { equals, max, reduce } from 'ramda';
 
 import DisplayEventBus from './DisplayEventBus';
+import * as T from '../types';
 import * as M from '../gamepad/inputMaps';
 import { find, mappedEval, uuid } from '../utils';
 
@@ -8,10 +9,10 @@ export type BindingId = string;
 
 export type BindingData = {
   id?: BindingId,
-  binding: M.Binding
+  binding: T.Binding
 };
 
-const hasBinding = (binding: M.Binding) => (data: BindingData) => (
+const hasBinding = (binding: T.Binding) => (data: BindingData) => (
   equals(binding, data.binding)
 );
 
@@ -28,7 +29,7 @@ export default class BindingManager {
     this.bindingData = bindingData;
   }
 
-  public add(binding: M.Binding): BindingId {
+  public add(binding: T.Binding): BindingId {
     const data = find(hasBinding(binding))(this.bindingData);
 
     if (data) return data.id;
@@ -38,11 +39,11 @@ export default class BindingManager {
     return id;
   }
 
-  private getBinding(id: BindingId): M.Binding {
+  private getBinding(id: BindingId): T.Binding {
     return findBindingWithId(id, this.bindingData);
   }
 
-  private applyBinding(b: M.Binding, gamepad: Gamepad): M.Input | undefined {
+  private applyBinding(b: T.Binding, gamepad: Gamepad): T.Input | undefined {
     if (b) {
       switch (b.kind) {
         case 'axis': return {
@@ -68,7 +69,7 @@ export default class BindingManager {
     }
   }
 
-  public getInputDict(gamepad: Gamepad): { [id: number]: M.Input } {
+  public getInputDict(gamepad: Gamepad): { [id: number]: T.Input } {
     const result = {};
 
     this.bindingData.forEach(

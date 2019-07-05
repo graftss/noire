@@ -1,6 +1,6 @@
 import Konva from 'konva';
 
-import GamepadManager from './gamepad/GamepadManager';
+import { GamepadManager } from './gamepad/GamepadManager';
 import TestDisplay from './test/TestDisplay';
 
 

@@ -1,8 +1,8 @@
 import Konva from 'konva';
 
 import Component, { BaseComponentConfig } from '.';
-import { ButtonInput } from '../gamepad/inputMaps';
 import { defaults } from '../utils';
+import { ButtonInput } from '../types';
 
 export interface ButtonComponentConfig {
   width?: number;

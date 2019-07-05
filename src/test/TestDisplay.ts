@@ -4,14 +4,14 @@ import Component from '../Component';
 import Display from '../display';
 import StickComponent from '../component/StickComponent';
 import DPadComponent from '../component/DPadComponent';
-import * as M from '../gamepad/inputMaps';
+import * as T from '../types';
 import { BindingData } from '../display/BindingManager';
 import deserializeComponent, { SerializedComponent } from '../component/deserializeComponent';
 
 interface GamepadBinding {
-  ls: M.StickBinding;
-  rs: M.StickBinding;
-  dpad: M.DPadBinding;
+  ls: T.StickBinding;
+  rs: T.StickBinding;
+  dpad: T.DPadBinding;
 }
 
 const binding: GamepadBinding = {
@@ -33,7 +33,7 @@ const binding: GamepadBinding = {
   },
 };
 
-const btnBinding: M.ButtonInputBinding = {
+const btnBinding: T.ButtonInputBinding = {
   kind: 'button',
   binding: { index: 3 },
 };

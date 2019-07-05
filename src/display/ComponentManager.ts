@@ -1,7 +1,7 @@
 import Konva from 'konva';
 
 import Component from '../component';
-import * as M from '../gamepad/inputMaps';
+import { Input } from '../types';
 import { BindingId } from './BindingManager';
 import DisplayEventBus from './DisplayEventBus';
 
@@ -66,7 +66,7 @@ export default class ComponentManager {
   //   }
   // }
 
-  public update(inputDict: ({ [bindingId: number] : M.Input }), dt: number) {
+  public update(inputDict: ({ [bindingId: number] : Input }), dt: number) {
     this.componentData.forEach(({ component, bindingId }) => {
       const input = inputDict[bindingId];
       if (input) {

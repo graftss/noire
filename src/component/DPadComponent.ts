@@ -1,8 +1,8 @@
 import Konva from 'konva';
 
 import Component, { BaseComponentConfig } from '.';
-import { DPadInput, DPadDict, ButtonInput } from '../gamepad/inputMaps';
 import { defaults } from '../utils';
+import { Dir, DPadInput } from '../types';
 
 const dirs = ['u', 'l', 'd', 'r'];
 
@@ -21,7 +21,7 @@ export const defaultDPadComponentConfig: DPadComponentConfig = {
 };
 
 export default class DPadComponent extends Component<DPadInput> {
-  rects: DPadDict<Konva.Rect>;
+  rects: Record<Dir, Konva.Rect>;
 
   constructor(
     baseConfig: BaseComponentConfig,

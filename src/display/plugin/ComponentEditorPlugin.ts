@@ -3,7 +3,7 @@ import Component from '../../component';
 import ComponentManager from '../ComponentManager';
 import DisplayPlugin from './DisplayPlugin';
 import DisplayEventBus from '../DisplayEventBus';
-import * as M from '../../gamepad/inputMaps';
+import * as T from '../../types';
 import NextInputListener from '../NextInputListener';
 
 const bindingButton =
@@ -32,8 +32,8 @@ export default class ComponentEditorPlugin extends DisplayPlugin {
     const { bm, cm, eventBus } = this;
     this.selected = component;
 
-    this.listener.awaitButton((buttonBinding: M.ButtonInputBinding) => {
-      const binding: M.Binding = { kind: 'button', binding: buttonBinding };
+    this.listener.awaitButton((buttonBinding: T.ButtonInputBinding) => {
+      const binding: T.Binding = { kind: 'button', binding: buttonBinding };
       const bindingId = bm.add(binding);
       const bindingData: BindingData = { binding, id: bindingId };
 

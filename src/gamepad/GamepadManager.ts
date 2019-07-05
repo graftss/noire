@@ -1,4 +1,4 @@
-export default class GamepadManager {
+export class GamepadManager {
   activeIndex: number = -1;
   selector: HTMLSelectElement;
   gamepads: Gamepad[];

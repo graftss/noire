@@ -1,8 +1,8 @@
 import Konva from 'konva';
 
 import Component, { BaseComponentConfig } from '.';
-import { StickInput } from '../gamepad/inputMaps';
 import { defaults, sign } from '../utils';
+import { StickInput } from '../types';
 
 export interface StickComponentConfig {
   boundaryRadius?: number;

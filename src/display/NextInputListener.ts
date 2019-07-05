@@ -1,8 +1,8 @@
-import * as M from '../gamepad/inputmaps';
+import { AxisBinding, ButtonInputBinding } from '../types';
 import { clone } from '../utils';
 
-type AxisCallback = (binding: M.AxisBinding) => any;
-type ButtonCallback = (binding: M.ButtonInputBinding) => any;
+type AxisCallback = (binding: AxisBinding) => any;
+type ButtonCallback = (binding: ButtonInputBinding) => any;
 
 type ListeningState = {
   kind: 'axis';
