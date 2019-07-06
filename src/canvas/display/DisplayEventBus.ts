@@ -3,7 +3,7 @@ import Konva from 'konva';
 import * as T from '../types';
 import { Component } from '../component';
 import { ComponentManager } from './ComponentManager';
-import { without } from '../utils';
+import { without } from '../../utils';
 
 type F1<T> = (t: T) => void;
 type F2<T, U> = (t: T, u: U) => void;

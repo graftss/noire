@@ -2,7 +2,7 @@ import Konva from 'konva';
 
 import * as T from '../types';
 import { TypedComponent } from '.';
-import { defaults } from '../utils';
+import { defaults } from '../../utils';
 
 const dirs = ['u', 'l', 'd', 'r'];
 

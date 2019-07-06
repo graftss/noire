@@ -1,7 +1,7 @@
 import Konva from 'konva';
 
-import { GamepadManager } from './gamepad/GamepadManager';
-import TestDisplay from './test/TestDisplay';
+import { GamepadManager } from './canvas/gamepad/GamepadManager';
+import TestDisplay from './canvas/test/TestDisplay';
 import { createEditorApp } from './editor';
 
 const stage = new Konva.Stage({

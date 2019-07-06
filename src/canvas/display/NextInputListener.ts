@@ -1,5 +1,5 @@
 import * as T from '../types';
-import { clone } from '../utils';
+import { clone } from '../../utils';
 
 type AxisCallback = (binding: T.AxisBinding) => void;
 type ButtonCallback = (binding: T.ButtonInputBinding) => void;

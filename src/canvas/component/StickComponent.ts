@@ -2,7 +2,7 @@ import Konva from 'konva';
 
 import * as T from '../types';
 import { TypedComponent } from '.';
-import { defaults, sign } from '../utils';
+import { defaults, sign } from '../../utils';
 
 export const defaultStickComponentConfig: T.StickComponentConfig = {
   boundaryRadius: 26,

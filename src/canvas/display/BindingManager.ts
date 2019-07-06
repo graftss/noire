@@ -3,7 +3,7 @@ import { equals } from 'ramda';
 import * as T from '../types';
 import * as M from '../gamepad/inputMaps';
 import { DisplayEventBus } from './DisplayEventBus';
-import { find, uuid } from '../utils';
+import { find, uuid } from '../../utils';
 
 const hasBinding = (binding: T.Binding) => (data: T.BindingData) =>
   equals(binding, data.binding);

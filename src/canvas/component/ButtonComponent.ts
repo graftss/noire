@@ -2,7 +2,7 @@ import Konva from 'konva';
 
 import * as T from '../types';
 import { TypedComponent } from '.';
-import { defaults } from '../utils';
+import { defaults } from '../../utils';
 
 export const defaultButtonComponentConfig: T.ButtonComponentConfig = {
   width: 30,
