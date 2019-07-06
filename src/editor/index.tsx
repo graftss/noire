@@ -17,7 +17,7 @@ export const createEditorApp = (target: HTMLElement): EditorApp => {
   const render = (): void =>
     ReactDOM.render(
       <Provider store={store}>
-        <Editor state={store.getState()} />
+        <Editor />
       </Provider>,
       target,
     );

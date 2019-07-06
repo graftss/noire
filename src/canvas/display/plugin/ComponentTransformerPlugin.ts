@@ -16,7 +16,7 @@ export class ComponentTransformerPlugin extends DisplayPlugin {
   }
 
   private onStageClick = (): void => {
-    this.assignTransformer();
+    if (this.transformer) this.assignTransformer();
   };
 
   private onComponentClick = (component: T.Component): void => {

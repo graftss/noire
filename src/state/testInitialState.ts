@@ -67,9 +67,9 @@ const dPadConfig = {
 };
 
 const serializedComponents: T.SerializedComponent[] = [
-  { kind: 'stick', baseConfig: leftBaseConfig, config: stickConfig },
-  { kind: 'stick', baseConfig: rightBaseConfig, config: stickConfig },
-  { kind: 'dpad', baseConfig: dPadBaseConfig, config: dPadConfig },
+  // { kind: 'stick', baseConfig: leftBaseConfig, config: stickConfig },
+  // { kind: 'stick', baseConfig: rightBaseConfig, config: stickConfig },
+  // { kind: 'dpad', baseConfig: dPadBaseConfig, config: dPadConfig },
   {
     kind: 'button',
     baseConfig: { x: 30, y: 30, bindingId: ids[3], componentId: ids[3] },

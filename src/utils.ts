@@ -39,3 +39,7 @@ export const defaults = <T extends {}>(source: T, target: T): T => {
 };
 
 export const uuid = (): string => uuidv4();
+
+export const keyBy = <T>(ts: T[], map: (t: T) => string): Record<string, T> => {
+  return ts.reduce((result, t) => ({ ...result, [map(t)]: t }), {});
+};

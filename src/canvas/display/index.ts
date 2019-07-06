@@ -9,6 +9,7 @@ import { DisplayPlugin } from './plugin/DisplayPlugin';
 import { NextInputListener } from './NextInputListener';
 import { deserializeComponent } from '../component/deserializeComponent';
 import { DisplayState, EditorStore } from '../../state/types';
+import { selectComponent, deselectComponent } from '../../state/actions';
 
 export class Display {
   private nextInputListener: NextInputListener;
@@ -32,6 +33,20 @@ export class Display {
 
     this.checkForStateChange();
     store.subscribe(this.checkForStateChange);
+
+    this.eventBus.on({
+      kind: 'componentClick',
+      cb: (component: T.Component) => {
+        store.dispatch(selectComponent(component));
+      },
+    });
+
+    this.eventBus.on({
+      kind: 'stageClick',
+      cb: () => {
+        store.dispatch(deselectComponent());
+      },
+    });
   }
 
   private checkForStateChange = (): void => {
@@ -43,7 +58,7 @@ export class Display {
 
   private syncWithState(state: DisplayState): void {
     this.lastState = state;
-    this.cm.reset(state.components.map(deserializeComponent));
+    this.cm.sync(state.components.map(deserializeComponent));
   }
 
   private getInputDict(gamepad: Gamepad): Record<T.BindingId, T.Input> {

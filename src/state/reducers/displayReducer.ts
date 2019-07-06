@@ -18,6 +18,12 @@ export const displayReducer = (
             bindings: [...state.bindings, action.data],
           };
     }
+
+    case 'selectComponent': {
+      return { ...state };
+
+      // return { ...state, selectedComponentId: action.data };
+    }
   }
 
   return state;

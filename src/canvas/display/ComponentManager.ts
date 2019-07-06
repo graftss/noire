@@ -2,6 +2,7 @@ import Konva from 'konva';
 
 import * as T from '../types';
 import { DisplayEventBus } from './DisplayEventBus';
+import { keyBy } from '../../utils';
 
 const CLICK_EVENT = `click.ComponentManager`;
 
@@ -16,11 +17,24 @@ export class ComponentManager {
     this.layer = layer;
   }
 
-  reset(componentData: T.Component[] = []): void {
+  reset(components: T.Component[] = []): void {
     this.components.forEach(component => component.group.destroy());
 
-    this.components = componentData;
-    componentData.forEach(this.add);
+    this.components = components;
+    components.forEach(this.add);
+  }
+
+  sync(components: T.Component[]): void {
+    const currentById = keyBy(this.components, c => c.getBindingId());
+    const newById = keyBy(components, c => c.getBindingId());
+
+    components.forEach(component => {
+      if (!currentById[component.getBindingId()]) this.add(component);
+    });
+
+    this.components.forEach(component => {
+      // if (!newById[component.getBindingId()]) this.remove(component);
+    });
   }
 
   add = (component: T.Component) => {
