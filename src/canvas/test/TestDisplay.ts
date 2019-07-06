@@ -46,11 +46,11 @@ const stickConfig = {
   stickRadius: 26,
 };
 
-const leftBaseConfig = { x: 200, y: 200 };
+const leftBaseConfig = { x: 200, y: 200, bindingId: ids[0] };
 
-const rightBaseConfig = { x: 310, y: 200 };
+const rightBaseConfig = { x: 310, y: 200, bindingId: ids[1] };
 
-const dPadBaseConfig = { x: 50, y: 50 };
+const dPadBaseConfig = { x: 50, y: 50, bindingId: ids[2] };
 
 const dPadConfig = {
   buttonWidth: 30,
