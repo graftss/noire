@@ -61,3 +61,34 @@ export const stickMap: T.InputMap<T.StickBinding, T.StickInput> = binding => {
     down: inputMaps.down(gamepad),
   });
 };
+
+export const applyBinding = (
+  b: T.Binding,
+  gamepad: Gamepad,
+): T.Input | undefined => {
+  switch (b.kind) {
+    case 'axis':
+      return {
+        kind: 'axis',
+        input: axisMap(b.binding)(gamepad),
+      };
+
+    case 'button':
+      return {
+        kind: 'button',
+        input: buttonInputMap(b.binding)(gamepad),
+      };
+
+    case 'dpad':
+      return {
+        kind: 'dpad',
+        input: dPadMap(b.binding)(gamepad),
+      };
+
+    case 'stick':
+      return {
+        kind: 'stick',
+        input: stickMap(b.binding)(gamepad),
+      };
+  }
+};
