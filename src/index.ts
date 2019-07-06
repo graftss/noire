@@ -1,7 +1,7 @@
 import Konva from 'konva';
 
 import { GamepadManager } from './canvas/gamepad/GamepadManager';
-import TestDisplay from './canvas/test/TestDisplay';
+import { Display } from './canvas/display';
 import { createEditorApp } from './editor';
 
 const stage = new Konva.Stage({
@@ -19,7 +19,7 @@ const editorApp = createEditorApp(document.getElementById('editor'));
 editorApp.render();
 
 const gamepadManager = new GamepadManager('gamepads');
-const display = new TestDisplay(stage, layer, editorApp);
+const display = new Display(stage, layer, editorApp.store);
 
 const update = (t1): void => {
   const dt = t1 - t0;

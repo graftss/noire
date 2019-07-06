@@ -3,26 +3,25 @@ import Konva from 'konva';
 import * as T from '../types';
 import { applyBinding } from './BindingManager';
 import { ComponentManager } from './ComponentManager';
-// import { ComponentEditorPlugin } from './plugin/ComponentEditorPlugin';
 import { ComponentTransformerPlugin } from './plugin/ComponentTransformerPlugin';
 import { DisplayEventBus } from './DisplayEventBus';
 import { DisplayPlugin } from './plugin/DisplayPlugin';
 import { NextInputListener } from './NextInputListener';
 import { EditorApp } from '../../editor';
 import { deserializeComponent } from '../component/deserializeComponent';
+import { DisplayState, EditorState, EditorStore } from '../../state/types';
 
 export class Display {
-  private bindingData: T.BindingData[];
   private nextInputListener: NextInputListener;
   private eventBus: DisplayEventBus;
   private cm: ComponentManager;
-
+  private lastState: DisplayState;
   private plugins: DisplayPlugin[];
 
   constructor(
     private stage: Konva.Stage,
     private layer: Konva.Layer,
-    private editorApp: EditorApp,
+    private store: EditorStore,
   ) {
     this.stage = stage;
     this.layer = layer;
@@ -31,34 +30,39 @@ export class Display {
     this.plugins = [new ComponentTransformerPlugin(this.eventBus)];
 
     this.cm = new ComponentManager(stage, layer, this.eventBus);
-    this.syncWithStore();
+
+    this.checkForStateChange();
+    store.subscribe(this.checkForStateChange);
   }
 
-  syncWithStore(): void {
-    const { display } = this.editorApp.store.getState();
-
-    this.bindingData = display.bindings;
-    this.cm.reset(display.components.map(deserializeComponent));
+  private checkForStateChange = (): void => {
+    const newState = this.store.getState().display;
+    if (this.lastState !== newState) {
+      this.syncWithState(newState);
+    }
   }
 
-  draw(): void {
-    this.layer.draw();
+  private syncWithState(state: DisplayState): void {
+    this.lastState = state;
+    this.cm.reset(state.components.map(deserializeComponent));
   }
 
-  getInputDict(gamepad: Gamepad): Record<T.BindingId, T.Input> {
+  private getInputDict(gamepad: Gamepad): Record<T.BindingId, T.Input> {
     const result = {};
 
-    this.bindingData.forEach(
+    this.lastState.bindings.forEach(
       ({ id, binding }) => (result[id] = applyBinding(binding, gamepad)),
     );
 
     return result;
   }
 
+  draw(): void {
+    this.layer.draw();
+  }
+
   update(gamepad: Gamepad, dt: number): void {
-    if (this.nextInputListener.isActive()) {
-      this.nextInputListener.update(gamepad);
-    }
+    this.nextInputListener.update(gamepad);
 
     const inputDict = this.getInputDict(gamepad);
     this.cm.update(inputDict, dt);
