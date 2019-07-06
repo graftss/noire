@@ -26,7 +26,7 @@ export class ComponentEditorPlugin extends DisplayPlugin {
     this.listener.deactivate();
   };
 
-  private onComponentClick = ({ component }): void => {
+  private onComponentClick = (component): void => {
     const { bm, eventBus } = this;
 
     this.listener.awaitButton((buttonBinding: T.ButtonInputBinding) => {

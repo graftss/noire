@@ -14,5 +14,9 @@ export abstract class TypedComponent<I> {
     this.group = new Konva.Group({ x, y });
   }
 
+  getBindingId(): T.BindingId | undefined {
+    return this.baseConfig.bindingId;
+  }
+
   abstract update(input: I, dt: number): void;
 }

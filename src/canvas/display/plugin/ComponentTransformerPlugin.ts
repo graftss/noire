@@ -1,6 +1,7 @@
 import Konva from 'konva';
 
 import * as T from '../../types';
+import { Component } from '../../component';
 import { DisplayPlugin } from './DisplayPlugin';
 import { DisplayEventBus } from '../DisplayEventBus';
 
@@ -19,8 +20,8 @@ export class ComponentTransformerPlugin extends DisplayPlugin {
     this.assignTransformer();
   };
 
-  private onComponentClick = (data: T.ComponentData): void => {
-    this.assignTransformer(data.component.group);
+  private onComponentClick = (component: Component): void => {
+    this.assignTransformer(component.group);
   };
 
   private assignTransformer(target?: Konva.Node): void {

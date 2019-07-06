@@ -66,6 +66,7 @@ export interface BaseComponentConfig {
   x: number;
   y: number;
   bindingId?: string;
+  componentId: string;
 }
 
 export interface DPadComponentConfig {
@@ -99,12 +100,7 @@ export type SerializedComponent = {
 
 export type BindingId = string;
 
-export interface ComponentData {
-  component: Component;
-  bindingId: BindingId;
-}
-
-export type ComponentCallback = (c: ComponentData) => void;
+export type ComponentCallback = (c: Component) => void;
 
 export interface BindingData {
   id?: BindingId;

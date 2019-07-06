@@ -6,20 +6,17 @@ import { StickComponent } from './StickComponent';
 
 export const deserializeComponent = (
   s: T.SerializedComponent,
-): T.ComponentData => {
+): Component => {
   let component: Component;
 
   switch (s.kind) {
     case 'button':
-      component = new ButtonComponent(s.baseConfig, s.config);
-      break;
+      return new ButtonComponent(s.baseConfig, s.config);
     case 'stick':
-      component = new StickComponent(s.baseConfig, s.config);
-      break;
+      return new StickComponent(s.baseConfig, s.config);
     case 'dpad':
-      component = new DPadComponent(s.baseConfig, s.config);
-      break;
+      return new DPadComponent(s.baseConfig, s.config);
   }
 
-  return { bindingId: s.baseConfig.bindingId, component };
+  return component;
 };

@@ -9,20 +9,20 @@ type F2<T, U> = (t: T, u: U) => void;
 
 export type Handler =
   | { kind: 'stageClick'; cb: F1<Konva.Stage> }
-  | { kind: 'componentClick'; cb: F1<T.ComponentData> }
-  | { kind: 'componentAdd'; cb: F1<T.ComponentData> }
+  | { kind: 'componentClick'; cb: F1<Component> }
+  | { kind: 'componentAdd'; cb: F1<Component> }
   | { kind: 'bindingAdd'; cb: F2<Component, T.BindingData> };
 
 export type DisplayEvent =
   | { kind: 'stageClick'; data: [Konva.Stage] }
-  | { kind: 'componentClick'; data: [T.ComponentData] }
-  | { kind: 'componentAdd'; data: [T.ComponentData] }
+  | { kind: 'componentClick'; data: [Component] }
+  | { kind: 'componentAdd'; data: [Component] }
   | { kind: 'bindingAdd'; data: [Component, T.BindingData] };
 
 export class DisplayEventBus {
   private stageClickHandlers: F1<Konva.Stage>[] = [];
-  private componentClickHandlers: F1<T.ComponentData>[] = [];
-  private componentAddHandlers: F1<T.ComponentData>[] = [];
+  private componentClickHandlers: F1<Component>[] = [];
+  private componentAddHandlers: F1<Component>[] = [];
   private bindingAddHandlers: F2<Component, T.BindingData>[] = [];
 
   constructor(private stage: Konva.Stage) {
