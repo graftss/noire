@@ -1,4 +1,4 @@
-import * as T from '../types';
+import * as T from '../../types';
 import { ButtonComponent } from './ButtonComponent';
 import { DPadComponent } from './DPadComponent';
 import { StickComponent } from './StickComponent';

@@ -1,6 +1,6 @@
 import Konva from 'konva';
 
-import * as T from '../types';
+import * as T from '../../types';
 import { without } from '../../utils';
 
 type F1<T> = (t: T) => void;

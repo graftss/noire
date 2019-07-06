@@ -1,12 +1,11 @@
-import * as T from '../canvas/types';
-import { EditorAction } from './types';
+import * as T from '../types';
 
-export const selectComponent = (componentId: string): EditorAction => ({
+export const selectComponent = (componentId: string): T.EditorAction => ({
   type: 'selectComponent',
   data: componentId,
 });
 
-export const deselectComponent = (): EditorAction => ({
+export const deselectComponent = (): T.EditorAction => ({
   type: 'selectComponent',
   data: undefined,
 });

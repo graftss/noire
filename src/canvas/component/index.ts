@@ -1,6 +1,6 @@
 import Konva from 'konva';
 
-import * as T from '../types';
+import * as T from '../../types';
 
 export abstract class TypedComponent<I> {
   protected config: T.BaseComponentConfig;

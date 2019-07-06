@@ -1,6 +1,6 @@
 import Konva from 'konva';
 
-import * as T from '../types';
+import * as T from '../../types';
 import { DisplayEventBus } from './DisplayEventBus';
 import { find, keyBy } from '../../utils';
 

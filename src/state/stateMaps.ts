@@ -1,1 +1,1 @@
-import { EditorState } from './types';
+import { EditorState } from '../types';

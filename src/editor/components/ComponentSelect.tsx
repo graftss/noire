@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import Select from 'react-select';
 import { bindActionCreators } from 'redux';
 
-import * as T from '../../canvas/types';
-import { EditorState } from '../../state/types';
+import * as T from '../../types';
 import { selectComponent } from '../../state/actions';
 import { find } from '../../utils';
 
@@ -25,9 +24,7 @@ const toOption = (c: T.SerializedComponent): ComponentOption => ({
   label: c.kind,
 });
 
-const emptyOption = { label: '--' };
-
-const mapStateToProps = (state: EditorState) => {
+const mapStateToProps = (state: T.EditorState) => {
   return ({
     selectedId: state.display.selectedComponentId,
     options: state.display.components.map(toOption),

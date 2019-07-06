@@ -1,4 +1,4 @@
-import * as T from '../types';
+import * as T from '../../types';
 import { clone } from '../../utils';
 
 type AxisCallback = (binding: T.AxisBinding) => void;

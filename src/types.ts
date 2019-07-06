@@ -1,4 +1,6 @@
-import { TypedComponent } from './component';
+import { Store } from 'redux';
+
+import { TypedComponent } from './canvas/component';
 
 export type InputMap<T, U> = (binding: T) => (g: Gamepad) => U;
 
@@ -110,3 +112,19 @@ export interface BindingData {
   id?: BindingId;
   binding: Binding;
 }
+
+export interface DisplayState {
+  bindings: BindingData[];
+  components: SerializedComponent[];
+  selectedComponentId?: string;
+}
+
+export interface EditorState {
+  display: DisplayState;
+}
+
+export type EditorAction =
+  | { type: 'addBinding'; data: BindingData }
+  | { type: 'selectComponent'; data: string | undefined };
+
+export type EditorStore = Store<EditorState, EditorAction>;

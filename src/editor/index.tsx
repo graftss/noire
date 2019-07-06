@@ -3,16 +3,16 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
 import { createStore } from '../state/createStore';
-import { EditorStore } from '../state/types';
+import * as T from '../types';
 import { Editor } from './components/Editor';
 
 export interface EditorApp {
-  store: EditorStore;
+  store: T.EditorStore;
   render: () => void;
 }
 
 export const createEditorApp = (target: HTMLElement): EditorApp => {
-  const store: EditorStore = createStore();
+  const store: T.EditorStore = createStore();
 
   const render = (): void =>
     ReactDOM.render(

@@ -1,5 +1,4 @@
-import * as T from '../canvas/types';
-import { EditorState } from './types';
+import * as T from '../types';
 
 interface GamepadBinding {
   ls: T.StickBinding;
@@ -76,7 +75,7 @@ const serializedComponents: T.SerializedComponent[] = [
   },
 ];
 
-export const testInitialState: EditorState = {
+export const testInitialState: T.EditorState = {
   display: {
     bindings: bindingList,
     components: serializedComponents,

@@ -1,8 +1,8 @@
 import { combineReducers, Reducer } from 'redux';
 
+import * as T from '../../types';
 import { displayReducer } from './displayReducer';
-import { EditorAction, EditorState } from '../types';
 
-export const reducer: Reducer<EditorState, EditorAction> = combineReducers({
+export const reducer: Reducer<T.EditorState, T.EditorAction> = combineReducers({
   display: displayReducer,
 });

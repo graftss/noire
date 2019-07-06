@@ -1,6 +1,6 @@
 import Konva from 'konva';
 
-import * as T from '../types';
+import * as T from '../../types';
 import { applyBinding } from '../gamepad/applyBinding';
 import { ComponentManager } from './ComponentManager';
 import { ComponentTransformerPlugin } from './plugin/ComponentTransformerPlugin';
@@ -8,7 +8,6 @@ import { DisplayEventBus } from './DisplayEventBus';
 import { DisplayPlugin } from './plugin/DisplayPlugin';
 import { NextInputListener } from './NextInputListener';
 import { deserializeComponent } from '../component/deserializeComponent';
-import { DisplayState, EditorStore } from '../../state/types';
 import { selectComponent, deselectComponent } from '../../state/actions';
 import { find } from '../../utils';
 
@@ -16,13 +15,13 @@ export class Display {
   private nextInputListener: NextInputListener;
   private eventBus: DisplayEventBus;
   private cm: ComponentManager;
-  private lastState?: DisplayState;
+  private lastState?: T.DisplayState;
   private plugins: DisplayPlugin[];
 
   constructor(
     private stage: Konva.Stage,
     private layer: Konva.Layer,
-    private store: EditorStore,
+    private store: T.EditorStore,
   ) {
     this.stage = stage;
     this.layer = layer;
@@ -70,7 +69,7 @@ export class Display {
     }
   };
 
-  private syncWithState(state: DisplayState, lastState: DisplayState): void {
+  private syncWithState(state: T.DisplayState, lastState: T.DisplayState): void {
     const { components, selectedComponentId } = state;
     const lastSelectedComponentId: string | undefined = lastState && lastState.selectedComponentId;
 
