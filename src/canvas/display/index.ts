@@ -14,6 +14,7 @@ export class Display {
   private eventBus: DisplayEventBus;
   private bm: BindingManager;
   private cm: ComponentManager;
+
   private plugins: DisplayPlugin[];
 
   constructor(

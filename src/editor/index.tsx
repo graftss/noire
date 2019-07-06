@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
-import { createStore, EditorStore } from './state/createStore';
+import { createStore } from '../state/createStore';
+import { EditorStore } from '../state/types';
 import { Editor } from './components/Editor';
 
 export interface EditorApp {

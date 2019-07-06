@@ -1,20 +1,11 @@
-import { applyMiddleware, createStore as baseCreateStore, Store } from 'redux';
+import { applyMiddleware, createStore as baseCreateStore } from 'redux';
 import { createLogger } from 'redux-logger';
 
-export interface EditorState {
-  name: string;
-}
+import { EditorState, EditorAction, EditorStore } from './types';
 
 const initialState: EditorState = {
   name: 'neptune',
 };
-
-export interface EditorAction {
-  type: 'setname';
-  data: string;
-}
-
-export type EditorStore = Store<EditorState, EditorAction>;
 
 const reducer = (
   state: EditorState = initialState,

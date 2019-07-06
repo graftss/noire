@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { EditorState } from '../state/createStore';
+import { EditorState } from '../../state/types';
 
 export interface EditorProps {
   state: EditorState;
