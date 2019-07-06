@@ -6,7 +6,7 @@
   "main": "public/index.js",
   "scripts": {
     "start": "webpack-dev-server --mode development --open --hot",
-    "lint": "eslint --ext .ts,.tsx --fix src/**/*"
+    "lint": "eslint --ext .ts,.tsx --fix src/**/* || exit 0"
   },
   "author": "",
   "license": "MIT",
@@ -14,6 +14,7 @@
     "@types/ramda": "^0.26.15",
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
+    "@types/react-redux": "^7.1.1",
     "@typescript-eslint/eslint-plugin": "^1.11.0",
     "@typescript-eslint/parser": "^1.11.0",
     "acorn": "^6.1.1",
@@ -34,6 +35,9 @@
     "ramda": "^0.26.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-redux": "^7.1.0",
+    "redux": "^4.0.1",
+    "redux-logger": "^3.0.6",
     "uuid": "^3.3.2"
   }
 }

@@ -26,6 +26,7 @@ module.exports = {
       accessibility: 'no-public'
     }],
     '@typescript-eslint/no-parameter-properties': 'off',
+    'react/no-render-return-value': 'off',
   },
 
   settings: {
