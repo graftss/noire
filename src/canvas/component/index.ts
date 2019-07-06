@@ -15,5 +15,9 @@ export abstract class TypedComponent<I> {
     return this.baseConfig.bindingId;
   }
 
+  getComponentId(): string {
+    return this.baseConfig.componentId;
+  }
+
   abstract update(input: I, dt: number): void;
 }

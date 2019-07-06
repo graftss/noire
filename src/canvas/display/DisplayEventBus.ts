@@ -8,13 +8,13 @@ type F2<T, U> = (t: T, u: U) => void;
 
 export type Handler =
   | { kind: 'stageClick'; cb: F1<Konva.Stage> }
-  | { kind: 'componentClick'; cb: F1<T.Component> }
+  | { kind: 'componentSelect'; cb: F1<T.Component> }
   | { kind: 'componentAdd'; cb: F1<T.Component> }
   | { kind: 'bindingAdd'; cb: F2<T.Component, T.BindingData> };
 
 export type DisplayEvent =
   | { kind: 'stageClick'; data: [Konva.Stage] }
-  | { kind: 'componentClick'; data: [T.Component] }
+  | { kind: 'componentSelect'; data: [T.Component] }
   | { kind: 'componentAdd'; data: [T.Component] }
   | { kind: 'bindingAdd'; data: [T.Component, T.BindingData] };
 
@@ -24,17 +24,6 @@ export class DisplayEventBus {
   private componentAddHandlers: F1<T.Component>[] = [];
   private bindingAddHandlers: F2<T.Component, T.BindingData>[] = [];
 
-  constructor(private stage: Konva.Stage) {
-    stage.on('click', ({ target, currentTarget }) => {
-      if (target === currentTarget) {
-        this.emit({
-          kind: 'stageClick',
-          data: [stage],
-        });
-      }
-    });
-  }
-
   emit(event: DisplayEvent): void {
     switch (event.kind) {
       case 'stageClick': {
@@ -42,7 +31,7 @@ export class DisplayEventBus {
         break;
       }
 
-      case 'componentClick': {
+      case 'componentSelect': {
         this.componentClickHandlers.forEach(cb => cb(...event.data));
         break;
       }
@@ -64,7 +53,7 @@ export class DisplayEventBus {
       case 'stageClick':
         this.stageClickHandlers.push(handler.cb);
         break;
-      case 'componentClick':
+      case 'componentSelect':
         this.componentClickHandlers.push(handler.cb);
         break;
       case 'componentAdd':
@@ -81,7 +70,7 @@ export class DisplayEventBus {
       case 'stageClick':
         without(handler.cb, this.stageClickHandlers);
         break;
-      case 'componentClick':
+      case 'componentSelect':
         without(handler.cb, this.componentClickHandlers);
         break;
       case 'componentAdd':

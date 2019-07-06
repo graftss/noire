@@ -10,12 +10,13 @@ import { NextInputListener } from './NextInputListener';
 import { deserializeComponent } from '../component/deserializeComponent';
 import { DisplayState, EditorStore } from '../../state/types';
 import { selectComponent, deselectComponent } from '../../state/actions';
+import { find } from '../../utils';
 
 export class Display {
   private nextInputListener: NextInputListener;
   private eventBus: DisplayEventBus;
   private cm: ComponentManager;
-  private lastState: DisplayState;
+  private lastState?: DisplayState;
   private plugins: DisplayPlugin[];
 
   constructor(
@@ -26,7 +27,7 @@ export class Display {
     this.stage = stage;
     this.layer = layer;
     this.nextInputListener = new NextInputListener();
-    this.eventBus = new DisplayEventBus(stage);
+    this.eventBus = new DisplayEventBus();
     this.plugins = [new ComponentTransformerPlugin(this.eventBus)];
 
     this.cm = new ComponentManager(stage, layer, this.eventBus);
@@ -34,10 +35,21 @@ export class Display {
     this.checkForStateChange();
     store.subscribe(this.checkForStateChange);
 
+    stage.on('click', ({ target, currentTarget }) => {
+      if (target === currentTarget) {
+        this.eventBus.emit({
+          kind: 'stageClick',
+          data: [stage],
+        });
+      }
+    });
+
     this.eventBus.on({
-      kind: 'componentClick',
+      kind: 'componentSelect',
       cb: (component: T.Component) => {
-        store.dispatch(selectComponent(component));
+        if (this.lastState.selectedComponentId !== component.getComponentId()) {
+          store.dispatch(selectComponent(component.getComponentId()));
+        }
       },
     });
 
@@ -52,13 +64,24 @@ export class Display {
   private checkForStateChange = (): void => {
     const newState = this.store.getState().display;
     if (this.lastState !== newState) {
-      this.syncWithState(newState);
+      const lastState = this.lastState;
+      this.lastState = newState;
+      this.syncWithState(newState, lastState);
     }
   };
 
-  private syncWithState(state: DisplayState): void {
-    this.lastState = state;
-    this.cm.sync(state.components.map(deserializeComponent));
+  private syncWithState(state: DisplayState, lastState: DisplayState): void {
+    const { components, selectedComponentId } = state;
+    const lastSelectedComponentId: string | undefined = lastState && lastState.selectedComponentId;
+
+    if (selectedComponentId && lastSelectedComponentId !== selectedComponentId) {
+      this.eventBus.emit({
+        kind: 'componentSelect',
+        data: [this.cm.findById(selectedComponentId)],
+      })
+    }
+
+    this.cm.sync(components.map(deserializeComponent));
   }
 
   private getInputDict(gamepad: Gamepad): Record<T.BindingId, T.Input> {

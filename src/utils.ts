@@ -22,9 +22,7 @@ export const mappedApply = (maps): any => mapObjIndexed((v, k) => maps[k](v));
 
 export const mappedEval = maps => k => map(f => f(k), maps);
 
-export const find = <T>(pred: (t: T) => boolean) => (
-  list: T[],
-): T | undefined => {
+export const find = <T>(pred: (t: T) => boolean, list: T[]): T | undefined => {
   for (let i = 0; i < list.length; i++) {
     if (pred(list[i])) return list[i];
   }

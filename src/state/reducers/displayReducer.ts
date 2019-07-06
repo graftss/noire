@@ -9,9 +9,7 @@ export const displayReducer = (
 ): DisplayState => {
   switch (action.type) {
     case 'addBinding': {
-      return find((b: BindingData) => b.id === action.data.id)(
-        state.bindings,
-      ) !== undefined
+      return find((b: BindingData) => b.id === action.data.id, state.bindings) !== undefined
         ? state
         : {
             ...state,
@@ -20,9 +18,7 @@ export const displayReducer = (
     }
 
     case 'selectComponent': {
-      return { ...state };
-
-      // return { ...state, selectedComponentId: action.data };
+      return { ...state, selectedComponentId: action.data };
     }
   }
 

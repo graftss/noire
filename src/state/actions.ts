@@ -1,9 +1,9 @@
 import * as T from '../canvas/types';
 import { EditorAction } from './types';
 
-export const selectComponent = (component: T.Component): EditorAction => ({
+export const selectComponent = (componentId: string): EditorAction => ({
   type: 'selectComponent',
-  data: component.getBindingId(),
+  data: componentId,
 });
 
 export const deselectComponent = (): EditorAction => ({

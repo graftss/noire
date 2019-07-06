@@ -12,14 +12,14 @@ export class ComponentTransformerPlugin extends DisplayPlugin {
     super(eventBus);
 
     eventBus.on({ kind: 'stageClick', cb: this.onStageClick });
-    eventBus.on({ kind: 'componentClick', cb: this.onComponentClick });
+    eventBus.on({ kind: 'componentSelect', cb: this.onComponentSelect });
   }
 
   private onStageClick = (): void => {
     if (this.transformer) this.assignTransformer();
   };
 
-  private onComponentClick = (component: T.Component): void => {
+  private onComponentSelect = (component: T.Component): void => {
     this.assignTransformer(component.group);
   };
 

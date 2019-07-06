@@ -2,12 +2,13 @@ import Konva from 'konva';
 
 import * as T from '../types';
 import { DisplayEventBus } from './DisplayEventBus';
-import { keyBy } from '../../utils';
+import { find, keyBy } from '../../utils';
 
 const CLICK_EVENT = `click.ComponentManager`;
 
 export class ComponentManager {
   private components: T.Component[] = [];
+  private selectedId?: string;
 
   constructor(
     private stage: Konva.Stage,
@@ -24,6 +25,7 @@ export class ComponentManager {
     components.forEach(this.add);
   }
 
+  // TODO: update binding ids here too
   sync(components: T.Component[]): void {
     const currentById = keyBy(this.components, c => c.getBindingId());
     const newById = keyBy(components, c => c.getBindingId());
@@ -48,7 +50,7 @@ export class ComponentManager {
 
     component.group.on(CLICK_EVENT, () => {
       this.eventBus.emit({
-        kind: 'componentClick',
+        kind: 'componentSelect',
         data: [component],
       });
     });
@@ -74,5 +76,9 @@ export class ComponentManager {
         component.update(inputDict[bindingId].input, dt);
       }
     });
+  }
+
+  findById(componentId: string): T.Component {
+    return find(c => c.getComponentId() === componentId, this.components);
   }
 }
