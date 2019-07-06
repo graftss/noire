@@ -12,6 +12,37 @@ const matchesId = (id: T.BindingId) => (data: T.BindingData) => data.id === id;
 const findBindingWithId = (id, data: T.BindingData[]): T.Binding =>
   find(matchesId(id))(data).binding;
 
+export const applyBinding = (
+  b: T.Binding,
+  gamepad: Gamepad,
+): T.Input | undefined => {
+  switch (b.kind) {
+    case 'axis':
+      return {
+        kind: 'axis',
+        input: M.axisMap(b.binding)(gamepad),
+      };
+
+    case 'button':
+      return {
+        kind: 'button',
+        input: M.buttonInputMap(b.binding)(gamepad),
+      };
+
+    case 'dpad':
+      return {
+        kind: 'dpad',
+        input: M.dPadMap(b.binding)(gamepad),
+      };
+
+    case 'stick':
+      return {
+        kind: 'stick',
+        input: M.stickMap(b.binding)(gamepad),
+      };
+  }
+};
+
 export class BindingManager {
   constructor(
     private eventBus: DisplayEventBus,
@@ -33,45 +64,5 @@ export class BindingManager {
 
   private getBinding(id: T.BindingId): T.Binding {
     return findBindingWithId(id, this.bindingData);
-  }
-
-  private applyBinding(b: T.Binding, gamepad: Gamepad): T.Input | undefined {
-    if (b) {
-      switch (b.kind) {
-        case 'axis':
-          return {
-            kind: 'axis',
-            input: M.axisMap(b.binding)(gamepad),
-          };
-
-        case 'button':
-          return {
-            kind: 'button',
-            input: M.buttonInputMap(b.binding)(gamepad),
-          };
-
-        case 'dpad':
-          return {
-            kind: 'dpad',
-            input: M.dPadMap(b.binding)(gamepad),
-          };
-
-        case 'stick':
-          return {
-            kind: 'stick',
-            input: M.stickMap(b.binding)(gamepad),
-          };
-      }
-    }
-  }
-
-  getInputDict(gamepad: Gamepad): { [id: number]: T.Input } {
-    const result = {};
-
-    this.bindingData.forEach(
-      ({ id, binding }) => (result[id] = this.applyBinding(binding, gamepad)),
-    );
-
-    return result;
   }
 }

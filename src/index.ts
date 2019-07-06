@@ -13,13 +13,13 @@ const stage = new Konva.Stage({
 const layer = new Konva.Layer();
 stage.add(layer);
 
-const gamepadManager = new GamepadManager('gamepads');
-const display = new TestDisplay(stage, layer);
-
 let t0 = 0;
 
 const editorApp = createEditorApp(document.getElementById('editor'));
 editorApp.render();
+
+const gamepadManager = new GamepadManager('gamepads');
+const display = new TestDisplay(stage, layer, editorApp);
 
 const update = (t1): void => {
   const dt = t1 - t0;

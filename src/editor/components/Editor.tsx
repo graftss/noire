@@ -7,5 +7,5 @@ export interface EditorProps {
 }
 
 export const Editor: React.SFC<EditorProps> = (props: EditorProps) => (
-  <div>hello {props.state.name}</div>
+  <div>hello {JSON.stringify(props.state.display)}</div>
 );
