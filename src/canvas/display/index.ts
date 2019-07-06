@@ -13,7 +13,6 @@ import { deserializeComponent } from '../component/deserializeComponent';
 
 export class Display {
   private bindingData: T.BindingData[];
-  private componentData: T.ComponentData[];
   private nextInputListener: NextInputListener;
   private eventBus: DisplayEventBus;
   private cm: ComponentManager;
@@ -28,39 +27,25 @@ export class Display {
     this.stage = stage;
     this.layer = layer;
     this.nextInputListener = new NextInputListener();
-    this.eventBus = new DisplayEventBus(stage, this.cm);
-
-    this.syncWithStore();
-
-    this.cm = new ComponentManager(
-      stage,
-      layer,
-      this.eventBus,
-      this.componentData,
-    );
-
+    this.eventBus = new DisplayEventBus(stage);
     this.plugins = [new ComponentTransformerPlugin(this.eventBus)];
+
+    this.cm = new ComponentManager(stage, layer, this.eventBus);
+    this.syncWithStore();
   }
 
   syncWithStore(): void {
-    const state = this.editorApp.store.getState();
-    this.bindingData = state.display.bindings;
-    this.componentData = state.display.components.map(deserializeComponent);
-  }
+    const { display } = this.editorApp.store.getState();
 
-  addComponent(component, bindingId?: T.BindingId): void {
-    this.cm.add({ component, bindingId });
+    this.bindingData = display.bindings;
+    this.cm.reset(display.components.map(deserializeComponent));
   }
-
-  // removeComponent(component: Component<any>) {
-  //   this.cm.remove(component);
-  // }
 
   draw(): void {
     this.layer.draw();
   }
 
-  getInputDict(gamepad: Gamepad): { [id: number]: T.Input } {
+  getInputDict(gamepad: Gamepad): Record<T.BindingId, T.Input> {
     const result = {};
 
     this.bindingData.forEach(

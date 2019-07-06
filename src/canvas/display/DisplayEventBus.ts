@@ -2,7 +2,6 @@ import Konva from 'konva';
 
 import * as T from '../types';
 import { Component } from '../component';
-import { ComponentManager } from './ComponentManager';
 import { without } from '../../utils';
 
 type F1<T> = (t: T) => void;
@@ -26,7 +25,7 @@ export class DisplayEventBus {
   private componentAddHandlers: F1<T.ComponentData>[] = [];
   private bindingAddHandlers: F2<Component, T.BindingData>[] = [];
 
-  constructor(private stage: Konva.Stage, private cm: ComponentManager) {
+  constructor(private stage: Konva.Stage) {
     stage.on('click', ({ target, currentTarget }) => {
       if (target === currentTarget) {
         this.emit({

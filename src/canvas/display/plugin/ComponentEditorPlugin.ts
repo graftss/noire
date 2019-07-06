@@ -27,14 +27,14 @@ export class ComponentEditorPlugin extends DisplayPlugin {
   };
 
   private onComponentClick = ({ component }): void => {
-    const { bm, cm, eventBus } = this;
+    const { bm, eventBus } = this;
 
     this.listener.awaitButton((buttonBinding: T.ButtonInputBinding) => {
       const binding: T.Binding = { kind: 'button', binding: buttonBinding };
       const bindingId = bm.add(binding);
       const bindingData: T.BindingData = { binding, id: bindingId };
 
-      cm.setBindingId({ component, bindingId });
+      // cm.setBindingId({ component, bindingId });
 
       eventBus.emit({
         kind: 'bindingAdd',
