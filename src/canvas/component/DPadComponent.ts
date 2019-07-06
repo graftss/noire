@@ -7,6 +7,7 @@ import { defaults } from '../../utils';
 const dirs = ['u', 'l', 'd', 'r'];
 
 export const defaultDPadComponentConfig: T.DPadComponentConfig = {
+  kind: 'dpad',
   buttonWidth: 20,
   buttonHeight: 20,
   fill: 'black',
@@ -14,13 +15,12 @@ export const defaultDPadComponentConfig: T.DPadComponentConfig = {
 };
 
 export class DPadComponent extends TypedComponent<T.DPadInput> {
-  rects: Record<T.Dir, Konva.Rect>;
+  private rects: Record<T.Dir, Konva.Rect>;
 
   constructor(
-    baseConfig: T.BaseComponentConfig,
-    private config: T.DPadComponentConfig,
+    protected config: T.DPadComponentConfig,
   ) {
-    super(baseConfig);
+    super(config);
     this.config = defaults(defaultDPadComponentConfig, config);
 
     const { buttonWidth, buttonHeight, fill } = config;

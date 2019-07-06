@@ -79,6 +79,6 @@ export class ComponentManager {
   }
 
   findById(componentId: string): T.Component {
-    return find(c => c.getComponentId() === componentId, this.components);
+    return find(c => c.getId() === componentId, this.components);
   }
 }

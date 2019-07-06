@@ -5,6 +5,7 @@ import { TypedComponent } from '.';
 import { defaults, sign } from '../../utils';
 
 export const defaultStickComponentConfig: T.StickComponentConfig = {
+  kind: 'stick',
   boundaryRadius: 26,
   stickRadius: 40,
   rangeScaling: 0.5,
@@ -16,14 +17,13 @@ const depthFactor = (t: number): number =>
   t > 0.2 ? 1 - 0.08 * Math.abs(t) : 1 - 0.02 * Math.abs(t);
 
 export class StickComponent extends TypedComponent<T.StickInput> {
-  center: Konva.Circle;
-  stick: Konva.Ellipse;
+  private center: Konva.Circle;
+  private stick: Konva.Ellipse;
 
   constructor(
-    baseConfig: T.BaseComponentConfig,
-    private config: T.StickComponentConfig,
+    protected config: T.StickComponentConfig,
   ) {
-    super(baseConfig);
+    super(config);
     this.config = defaults(defaultStickComponentConfig, config);
 
     const { boundaryRadius, stickRadius, stickFill } = config;

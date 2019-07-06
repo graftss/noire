@@ -21,7 +21,7 @@ interface ComponentSelectProps {
 }
 
 const toOption = (c: T.SerializedComponent): ComponentOption => ({
-  value: c.baseConfig.componentId,
+  value: c.id,
   label: c.kind,
 });
 

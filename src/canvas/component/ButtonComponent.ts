@@ -5,6 +5,7 @@ import { TypedComponent } from '.';
 import { defaults } from '../../utils';
 
 export const defaultButtonComponentConfig: T.ButtonComponentConfig = {
+  kind: 'button',
   width: 30,
   height: 40,
   fill: 'black',
@@ -12,13 +13,12 @@ export const defaultButtonComponentConfig: T.ButtonComponentConfig = {
 };
 
 export class ButtonComponent extends TypedComponent<T.ButtonInput> {
-  rect: Konva.Rect;
+  private rect: Konva.Rect;
 
   constructor(
-    baseConfig: T.BaseComponentConfig,
-    private config: T.ButtonComponentConfig,
+    protected config: T.ButtonComponentConfig,
   ) {
-    super(baseConfig);
+    super(config);
     this.config = defaults(defaultButtonComponentConfig, config);
 
     const { width, height, fill } = config;

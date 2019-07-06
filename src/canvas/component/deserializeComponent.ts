@@ -8,11 +8,11 @@ export const deserializeComponent = (s: T.SerializedComponent): T.Component => {
 
   switch (s.kind) {
     case 'button':
-      return new ButtonComponent(s.baseConfig, s.config);
+      return new ButtonComponent(s);
     case 'stick':
-      return new StickComponent(s.baseConfig, s.config);
+      return new StickComponent(s);
     case 'dpad':
-      return new DPadComponent(s.baseConfig, s.config);
+      return new DPadComponent(s);
   }
 
   return component;

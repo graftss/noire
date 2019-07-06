@@ -72,8 +72,7 @@ const serializedComponents: T.SerializedComponent[] = [
   // { kind: 'dpad', baseConfig: dPadBaseConfig, config: dPadConfig },
   {
     kind: 'button',
-    baseConfig: { x: 30, y: 30, bindingId: ids[3], componentId: ids[3] },
-    config: {},
+    ...{ x: 30, y: 30, bindingId: ids[3], componentId: ids[3] },
   },
 ];
 

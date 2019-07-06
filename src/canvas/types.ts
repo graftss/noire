@@ -63,20 +63,22 @@ export interface StickInput {
 }
 
 export interface BaseComponentConfig {
-  x: number;
-  y: number;
+  x?: number;
+  y?: number;
   bindingId?: string;
-  componentId: string;
+  id?: string;
 }
 
-export interface DPadComponentConfig {
+export interface DPadComponentConfig extends BaseComponentConfig {
+  kind: 'dpad';
   buttonWidth?: number;
   buttonHeight?: number;
   fill?: string;
   pressedFill?: string;
 }
 
-export interface StickComponentConfig {
+export interface StickComponentConfig extends BaseComponentConfig {
+  kind: 'stick';
   boundaryRadius?: number;
   stickRadius?: number;
   rangeScaling?: number;
@@ -84,19 +86,18 @@ export interface StickComponentConfig {
   pressedStickFill?: string;
 }
 
-export interface ButtonComponentConfig {
+export interface ButtonComponentConfig extends BaseComponentConfig {
+  kind: 'button';
   width?: number;
   height?: number;
   fill?: string;
   pressedFill?: string;
 }
 
-export type SerializedComponent = {
-  baseConfig: BaseComponentConfig;
-} & (
-  | ({ kind: 'button'; config: ButtonComponentConfig })
-  | ({ kind: 'stick'; config: StickComponentConfig })
-  | ({ kind: 'dpad'; config: DPadComponentConfig }));
+export type SerializedComponent =
+  | ButtonComponentConfig
+  | StickComponentConfig
+  | DPadComponentConfig;
 
 export type BindingId = string;
 

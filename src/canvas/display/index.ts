@@ -47,8 +47,8 @@ export class Display {
     this.eventBus.on({
       kind: 'componentSelect',
       cb: (component: T.Component) => {
-        if (this.lastState.selectedComponentId !== component.getComponentId()) {
-          store.dispatch(selectComponent(component.getComponentId()));
+        if (this.lastState.selectedComponentId !== component.getId()) {
+          store.dispatch(selectComponent(component.getId()));
         }
       },
     });
