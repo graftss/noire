@@ -1,13 +1,12 @@
 import Konva from 'konva';
 
 import * as T from '../types';
-import { Component } from '../component';
 import { DisplayEventBus } from './DisplayEventBus';
 
 const CLICK_EVENT = `click.ComponentManager`;
 
 export class ComponentManager {
-  private components: Component[] = [];
+  private components: T.Component[] = [];
 
   constructor(
     private stage: Konva.Stage,
@@ -17,14 +16,14 @@ export class ComponentManager {
     this.layer = layer;
   }
 
-  reset(componentData: Component[] = []): void {
+  reset(componentData: T.Component[] = []): void {
     this.components.forEach(component => component.group.destroy());
 
     this.components = componentData;
     componentData.forEach(this.add);
   }
 
-  add = (component: Component) => {
+  add = (component: T.Component) => {
     this.components.push(component);
     this.layer.add(component.group);
 
@@ -54,7 +53,7 @@ export class ComponentManager {
   // }
 
   update(inputDict: { [bindingId: number]: T.Input }, dt: number): void {
-    this.components.forEach((component: Component) => {
+    this.components.forEach((component: T.Component) => {
       const bindingId = component.getBindingId();
       const input = inputDict[bindingId];
       if (input) {

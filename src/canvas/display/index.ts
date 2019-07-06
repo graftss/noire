@@ -7,9 +7,8 @@ import { ComponentTransformerPlugin } from './plugin/ComponentTransformerPlugin'
 import { DisplayEventBus } from './DisplayEventBus';
 import { DisplayPlugin } from './plugin/DisplayPlugin';
 import { NextInputListener } from './NextInputListener';
-import { EditorApp } from '../../editor';
 import { deserializeComponent } from '../component/deserializeComponent';
-import { DisplayState, EditorState, EditorStore } from '../../state/types';
+import { DisplayState, EditorStore } from '../../state/types';
 
 export class Display {
   private nextInputListener: NextInputListener;
@@ -40,7 +39,7 @@ export class Display {
     if (this.lastState !== newState) {
       this.syncWithState(newState);
     }
-  }
+  };
 
   private syncWithState(state: DisplayState): void {
     this.lastState = state;

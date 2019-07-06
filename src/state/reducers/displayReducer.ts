@@ -9,12 +9,14 @@ export const displayReducer = (
 ): DisplayState => {
   switch (action.type) {
     case 'addBinding': {
-      return find((b: BindingData) => b.id === action.data.id)(state.bindings) !== undefined ?
-        state :
-        {
-          ...state,
-          bindings: [...state.bindings, action.data],
-        };
+      return find((b: BindingData) => b.id === action.data.id)(
+        state.bindings,
+      ) !== undefined
+        ? state
+        : {
+            ...state,
+            bindings: [...state.bindings, action.data],
+          };
     }
   }
 

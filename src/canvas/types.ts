@@ -1,4 +1,4 @@
-import { Component } from './component';
+import { TypedComponent } from './component';
 
 export type InputMap<T, U> = (binding: T) => (g: Gamepad) => U;
 
@@ -99,6 +99,9 @@ export type SerializedComponent = {
   | ({ kind: 'dpad'; config: DPadComponentConfig }));
 
 export type BindingId = string;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Component = TypedComponent<any>;
 
 export type ComponentCallback = (c: Component) => void;
 

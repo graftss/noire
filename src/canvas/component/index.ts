@@ -2,9 +2,6 @@ import Konva from 'konva';
 
 import * as T from '../types';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Component = TypedComponent<any>;
-
 export abstract class TypedComponent<I> {
   group: Konva.Group;
 
