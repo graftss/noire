@@ -28,15 +28,15 @@ export class ComponentManager {
   // TODO: update binding ids here too
   sync(components: T.Component[]): void {
     const currentById = keyBy(this.components, c => c.getBindingId());
-    const newById = keyBy(components, c => c.getBindingId());
+    // const newById = keyBy(components, c => c.getBindingId());
 
     components.forEach(component => {
       if (!currentById[component.getBindingId()]) this.add(component);
     });
 
-    this.components.forEach(component => {
-      // if (!newById[component.getBindingId()]) this.remove(component);
-    });
+    // this.components.forEach(component => {
+    //   if (!newById[component.getBindingId()]) this.remove(component);
+    // });
   }
 
   add = (component: T.Component) => {

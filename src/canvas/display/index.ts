@@ -9,7 +9,6 @@ import { DisplayPlugin } from './plugin/DisplayPlugin';
 import { NextInputListener } from './NextInputListener';
 import { deserializeComponent } from '../component/deserializeComponent';
 import { selectComponent, deselectComponent } from '../../state/actions';
-import { find } from '../../utils';
 
 export class Display {
   private nextInputListener: NextInputListener;
@@ -69,15 +68,22 @@ export class Display {
     }
   };
 
-  private syncWithState(state: T.DisplayState, lastState: T.DisplayState): void {
+  private syncWithState(
+    state: T.DisplayState,
+    lastState: T.DisplayState,
+  ): void {
     const { components, selectedComponentId } = state;
-    const lastSelectedComponentId: string | undefined = lastState && lastState.selectedComponentId;
+    const lastSelectedComponentId: string | undefined =
+      lastState && lastState.selectedComponentId;
 
-    if (selectedComponentId && lastSelectedComponentId !== selectedComponentId) {
+    if (
+      selectedComponentId &&
+      lastSelectedComponentId !== selectedComponentId
+    ) {
       this.eventBus.emit({
         kind: 'componentSelect',
         data: [this.cm.findById(selectedComponentId)],
-      })
+      });
     }
 
     this.cm.sync(components.map(deserializeComponent));

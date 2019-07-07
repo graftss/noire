@@ -27,6 +27,7 @@ module.exports = {
     }],
     '@typescript-eslint/no-parameter-properties': 'off',
     'react/no-render-return-value': 'off',
+    'react/prop-types': 'off',
   },
 
   settings: {

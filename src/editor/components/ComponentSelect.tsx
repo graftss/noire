@@ -11,29 +11,39 @@ interface ComponentOption {
   componentId?: string;
   value?: string;
   label: string;
-};
+}
 
-interface ComponentSelectProps {
-  options: ComponentOption[];
-  selectedId: string;
+interface PropsFromDispatch {
   selectComponent: (componentId: string) => void;
 }
+
+interface PropsFromState {
+  options: ComponentOption[];
+  selectedId: string;
+}
+
+interface ComponentSelectProps extends PropsFromState, PropsFromDispatch {}
 
 const toOption = (c: T.SerializedComponent): ComponentOption => ({
   value: c.id,
   label: c.kind,
 });
 
-const mapStateToProps = (state: T.EditorState) => {
-  return ({
+const mapStateToProps = (state: T.EditorState): PropsFromState => {
+  return {
     selectedId: state.display.selectedComponentId,
     options: state.display.components.map(toOption),
-  });
+  };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({ selectComponent }, dispatch);
+const mapDispatchToProps = (dispatch): PropsFromDispatch =>
+  bindActionCreators({ selectComponent }, dispatch);
 
-const BaseComponentSelect: React.SFC<ComponentSelectProps> = ({ selectedId, options, selectComponent }) => (
+const BaseComponentSelect: React.SFC<ComponentSelectProps> = ({
+  selectedId,
+  options,
+  selectComponent,
+}) => (
   <Select
     value={find(({ value }) => value === selectedId, options) || null}
     options={options}
@@ -42,4 +52,7 @@ const BaseComponentSelect: React.SFC<ComponentSelectProps> = ({ selectedId, opti
   />
 );
 
-export const ComponentSelect = connect(mapStateToProps, mapDispatchToProps)(BaseComponentSelect);
+export const ComponentSelect = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(BaseComponentSelect);

@@ -20,9 +20,7 @@ export class StickComponent extends TypedComponent<T.StickInput> {
   private center: Konva.Circle;
   private stick: Konva.Ellipse;
 
-  constructor(
-    protected config: T.StickComponentConfig,
-  ) {
+  constructor(protected config: T.StickComponentConfig) {
     super(config);
     this.config = defaults(defaultStickComponentConfig, config);
 

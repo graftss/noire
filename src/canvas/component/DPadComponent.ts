@@ -17,9 +17,7 @@ export const defaultDPadComponentConfig: T.DPadComponentConfig = {
 export class DPadComponent extends TypedComponent<T.DPadInput> {
   private rects: Record<T.Dir, Konva.Rect>;
 
-  constructor(
-    protected config: T.DPadComponentConfig,
-  ) {
+  constructor(protected config: T.DPadComponentConfig) {
     super(config);
     this.config = defaults(defaultDPadComponentConfig, config);
 

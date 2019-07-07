@@ -15,9 +15,7 @@ export const defaultButtonComponentConfig: T.ButtonComponentConfig = {
 export class ButtonComponent extends TypedComponent<T.ButtonInput> {
   private rect: Konva.Rect;
 
-  constructor(
-    protected config: T.ButtonComponentConfig,
-  ) {
+  constructor(protected config: T.ButtonComponentConfig) {
     super(config);
     this.config = defaults(defaultButtonComponentConfig, config);
 

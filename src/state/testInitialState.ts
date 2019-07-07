@@ -4,9 +4,14 @@ interface GamepadBinding {
   ls: T.StickBinding;
   rs: T.StickBinding;
   dpad: T.DPadBinding;
+  button: T.ButtonInputBinding;
 }
 
 const binding: GamepadBinding = {
+  button: {
+    kind: 'button',
+    binding: { index: 3 },
+  },
   ls: {
     h: { index: 0, inverted: false },
     v: { index: 1, inverted: false },
@@ -25,54 +30,54 @@ const binding: GamepadBinding = {
   },
 };
 
-const btnBinding: T.ButtonInputBinding = {
-  kind: 'button',
-  binding: { index: 3 },
-};
-
 const ids = ['a', 'b', 'c', 'd'];
 
 const bindingList: T.BindingData[] = [
   { id: ids[0], binding: { kind: 'stick', binding: binding.ls } },
   { id: ids[1], binding: { kind: 'stick', binding: binding.rs } },
   { id: ids[2], binding: { kind: 'dpad', binding: binding.dpad } },
-  { id: ids[3], binding: { kind: 'button', binding: btnBinding } },
+  { id: ids[3], binding: { kind: 'button', binding: binding.button } },
 ];
 
-const stickConfig = {
-  boundaryRadius: 40,
-  stickRadius: 26,
-};
-
-const leftBaseConfig = {
+const leftStick: T.StickComponentConfig = {
+  kind: 'stick',
   x: 200,
   y: 200,
   bindingId: ids[0],
-  componentId: ids[0],
+  id: ids[0],
 };
 
-const rightBaseConfig = {
+const rightStick: T.StickComponentConfig = {
+  kind: 'stick',
   x: 310,
   y: 200,
   bindingId: ids[1],
-  componentId: ids[1],
+  id: ids[1],
 };
 
-const dPadBaseConfig = { x: 50, y: 50, bindingId: ids[2], componentId: ids[2] };
-
-const dPadConfig = {
+const dPad: T.DPadComponentConfig = {
+  kind: 'dpad',
+  x: 50,
+  y: 50,
+  bindingId: ids[2],
+  id: ids[2],
   buttonWidth: 30,
   buttonHeight: 30,
 };
 
+const button: T.ButtonComponentConfig = {
+  kind: 'button',
+  x: 150,
+  y: 100,
+  bindingId: ids[3],
+  id: ids[3],
+};
+
 const serializedComponents: T.SerializedComponent[] = [
-  // { kind: 'stick', baseConfig: leftBaseConfig, config: stickConfig },
-  // { kind: 'stick', baseConfig: rightBaseConfig, config: stickConfig },
-  // { kind: 'dpad', baseConfig: dPadBaseConfig, config: dPadConfig },
-  {
-    kind: 'button',
-    ...{ x: 30, y: 30, bindingId: ids[3], componentId: ids[3] },
-  },
+  leftStick,
+  rightStick,
+  dPad,
+  button,
 ];
 
 export const testInitialState: T.EditorState = {
