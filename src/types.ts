@@ -7,6 +7,7 @@ export {
   BaseComponentConfig,
   SerializedComponent,
 } from './canvas/component/';
+export { EditorApp } from './editor';
 export { EditorAction } from './state/actions';
 export { DisplayState } from './state/reducers/display';
 export { EditorState } from './state/reducers/root';

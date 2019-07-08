@@ -20,13 +20,16 @@ const toOption = (g: Gamepad): GamepadOption => ({
   label: `Player ${g.index + 1}: ${g.id}`,
 });
 
-export class GamepadSelect extends React.Component<GamepadSelectProps, GamepadSelectState> {
+export class GamepadSelect extends React.Component<
+  GamepadSelectProps,
+  GamepadSelectState
+> {
   constructor(props) {
     super(props);
     this.state = { options: [] };
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     window.addEventListener('gamepadconnected', this.updateGamepads);
     window.addEventListener('gamepaddisconnected', this.updateGamepads);
   }
@@ -40,9 +43,9 @@ export class GamepadSelect extends React.Component<GamepadSelectProps, GamepadSe
     }
 
     this.setState({ options });
-  }
+  };
 
-  render() {
+  render(): JSX.Element {
     const { options } = this.state;
     const { selectedIndex, selectGamepad } = this.props;
 

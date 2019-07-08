@@ -98,7 +98,5 @@ export const testInitialState: T.EditorState = {
     bindings,
     components,
   },
-  input: {
-
-  },
+  input: {},
 };

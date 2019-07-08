@@ -8,7 +8,10 @@ const defaultInputState: InputState = {
   gamepadIndex: undefined,
 };
 
-export const inputReducer = (state: InputState = defaultInputState, action: T.EditorAction): InputState => {
+export const inputReducer = (
+  state: InputState = defaultInputState,
+  action: T.EditorAction,
+): InputState => {
   switch (action.type) {
     case 'selectGamepad': {
       return { ...state, gamepadIndex: action.data };
