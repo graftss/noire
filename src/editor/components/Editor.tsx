@@ -5,27 +5,35 @@ import { bindActionCreators } from 'redux';
 import * as T from '../../types';
 import { ComponentSelect } from './ComponentSelect';
 import { ComponentBinding } from './ComponentBinding';
+import { selectComponent } from '../../state/actions';
 import { selectedComponentBinding } from '../../state/stateMaps';
 
 interface PropsFromState {
   binding: T.BindingData;
+  selected: T.SerializedComponent;
+  components: T.SerializedComponent[];
 }
 
 interface PropsFromDispatch {
-
+  selectComponent: (componentId: string) => void;
 }
 
-interface EditorProps extends PropsFromState, PropsFromDispatch {}
+type EditorProps = PropsFromState & PropsFromDispatch;
 
 const mapStateToProps = (state: T.EditorState) => ({
   binding: selectedComponentBinding(state.display),
+  selected: state.display.selectedComponent,
+  components: state.display.components,
 });
 
-const BaseEditor: React.SFC<EditorProps> = ({ binding }) => (
+const mapDispatchToProps = (dispatch): PropsFromDispatch =>
+  bindActionCreators({ selectComponent }, dispatch);
+
+const BaseEditor: React.SFC<EditorProps> = ({ binding, components, selected, selectComponent }) => (
   <div>
-    <ComponentSelect />
+    <ComponentSelect components={components} selected={selected} select={selectComponent} />
     <ComponentBinding binding={binding}/>
   </div>
 )
 
-export const Editor = connect(mapStateToProps)(BaseEditor);
+export const Editor = connect(mapStateToProps, mapDispatchToProps)(BaseEditor);
