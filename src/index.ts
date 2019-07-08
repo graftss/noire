@@ -1,6 +1,5 @@
 import Konva from 'konva';
 
-import { GamepadManager } from './input/GamepadManager';
 import { Display } from './canvas/display';
 import { createEditorApp } from './editor';
 
@@ -18,14 +17,14 @@ let t0 = 0;
 const editorApp = createEditorApp(document.getElementById('editor'));
 editorApp.render();
 
-const gamepadManager = new GamepadManager('gamepads');
+
 const display = new Display(stage, layer, editorApp.store);
 
 const update = (t1): void => {
   const dt = t1 - t0;
   t0 = t1;
 
-  const gamepad = gamepadManager.getActiveGamepad();
+  const gamepad = navigator.getGamepads()[editorApp.store.getState().input.gamepadIndex];
 
   if (gamepad) {
     display.update(gamepad, dt);

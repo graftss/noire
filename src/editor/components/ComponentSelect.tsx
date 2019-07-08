@@ -31,10 +31,7 @@ export const ComponentSelect: React.SFC<ComponentSelectProps> = ({
   <Select
     value={toOption(selected) || null}
     options={components.map(toOption)}
-    onChange={o => {
-      console.log(select, o);
-      select(o.value);
-    }}
+    onChange={o => select(o.value)}
     placeholder="Components"
   />
 );
