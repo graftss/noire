@@ -116,7 +116,7 @@ export interface BindingData {
 export interface DisplayState {
   bindings: BindingData[];
   components: SerializedComponent[];
-  selectedComponentId?: string;
+  selectedComponent?: SerializedComponent;
 }
 
 export interface EditorState {

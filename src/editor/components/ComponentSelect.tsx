@@ -19,19 +19,19 @@ interface PropsFromDispatch {
 
 interface PropsFromState {
   options: ComponentOption[];
-  selectedId: string;
+  selected: T.SerializedComponent;
 }
 
 interface ComponentSelectProps extends PropsFromState, PropsFromDispatch {}
 
-const toOption = (c: T.SerializedComponent): ComponentOption => ({
+const toOption = (c: T.SerializedComponent): ComponentOption | undefined => !c ? undefined : ({
   value: c.id,
   label: c.kind,
 });
 
 const mapStateToProps = (state: T.EditorState): PropsFromState => {
   return {
-    selectedId: state.display.selectedComponentId,
+    selected: state.display.selectedComponent,
     options: state.display.components.map(toOption),
   };
 };
@@ -40,12 +40,12 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators({ selectComponent }, dispatch);
 
 const BaseComponentSelect: React.SFC<ComponentSelectProps> = ({
-  selectedId,
+  selected,
   options,
   selectComponent,
 }) => (
   <Select
-    value={find(({ value }) => value === selectedId, options) || null}
+    value={toOption(selected) || null}
     options={options}
     onChange={o => selectComponent(o.value)}
     placeholder="Components"

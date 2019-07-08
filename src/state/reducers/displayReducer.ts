@@ -1,6 +1,7 @@
 import * as T from '../../types';
 import { find } from '../../utils';
 import { testInitialState } from '../testInitialState';
+import { componentById } from '../stateMaps';
 
 export const displayReducer = (
   state: T.DisplayState = testInitialState.display,
@@ -20,7 +21,7 @@ export const displayReducer = (
     }
 
     case 'selectComponent': {
-      return { ...state, selectedComponentId: action.data };
+      return { ...state, selectedComponent: componentById(state, action.data) };
     }
   }
 

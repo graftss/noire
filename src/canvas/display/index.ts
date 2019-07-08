@@ -9,6 +9,7 @@ import { DisplayPlugin } from './plugin/DisplayPlugin';
 import { NextInputListener } from './NextInputListener';
 import { deserializeComponent } from '../component/deserializeComponent';
 import { selectComponent, deselectComponent } from '../../state/actions';
+import { selectedComponentId } from '../../state/stateMaps';
 
 export class Display {
   private nextInputListener: NextInputListener;
@@ -45,7 +46,7 @@ export class Display {
     this.eventBus.on({
       kind: 'componentSelect',
       cb: (component: T.Component) => {
-        if (this.lastState.selectedComponentId !== component.getId()) {
+        if (selectedComponentId(this.lastState) !== component.getId()) {
           store.dispatch(selectComponent(component.getId()));
         }
       },
@@ -72,17 +73,14 @@ export class Display {
     state: T.DisplayState,
     lastState: T.DisplayState,
   ): void {
-    const { components, selectedComponentId } = state;
-    const lastSelectedComponentId: string | undefined =
-      lastState && lastState.selectedComponentId;
+    const { components, selectedComponent } = state;
+    const lastSelectedId = selectedComponentId(lastState);
+    const selectedId = selectedComponentId(state);
 
-    if (
-      selectedComponentId &&
-      lastSelectedComponentId !== selectedComponentId
-    ) {
+    if (selectedId && lastSelectedId !== selectedId) {
       this.eventBus.emit({
         kind: 'componentSelect',
-        data: [this.cm.findById(selectedComponentId)],
+        data: [this.cm.findById(selectedComponent.id)],
       });
     }
 
