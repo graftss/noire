@@ -1,12 +1,12 @@
 import Konva from 'konva';
 
 import * as T from '../../types';
-import { applyBinding } from '../gamepad/applyBinding';
+import { applyBinding } from '../../input/applyBinding';
 import { ComponentManager } from './ComponentManager';
 import { ComponentTransformerPlugin } from './plugin/ComponentTransformerPlugin';
 import { DisplayEventBus } from './DisplayEventBus';
 import { DisplayPlugin } from './plugin/DisplayPlugin';
-import { NextInputListener } from './NextInputListener';
+import { NextInputListener } from '../../input/NextInputListener';
 import { deserializeComponent } from '../component/deserializeComponent';
 import { selectComponent, deselectComponent } from '../../state/actions';
 import { selectedComponentId } from '../../state/stateMaps';

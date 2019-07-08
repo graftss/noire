@@ -1,6 +1,6 @@
 import Konva from 'konva';
 
-import { GamepadManager } from './canvas/gamepad/GamepadManager';
+import { GamepadManager } from './input/GamepadManager';
 import { Display } from './canvas/display';
 import { createEditorApp } from './editor';
 

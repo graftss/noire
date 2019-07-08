@@ -1,4 +1,4 @@
-import * as T from '../../types';
+import * as T from '../types';
 
 export interface PS2Map {
   padU: T.ButtonInputBinding;

@@ -1,5 +1,5 @@
-import * as T from '../../types';
-import { clone, uuid } from '../../utils';
+import * as T from '../types';
+import { clone, uuid } from '../utils';
 
 const newBindingId = uuid;
 
