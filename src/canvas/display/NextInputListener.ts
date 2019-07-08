@@ -1,5 +1,7 @@
 import * as T from '../../types';
-import { clone } from '../../utils';
+import { clone, uuid } from '../../utils';
+
+const newBindingId = uuid;
 
 type AxisCallback = (binding: T.AxisBinding) => void;
 type ButtonCallback = (binding: T.ButtonInputBinding) => void;
@@ -57,6 +59,8 @@ export class NextInputListener {
             Math.abs(axes[i]) > MIN_AXIS_MAGNITUDE
           ) {
             this.state.callback({
+              id: newBindingId(),
+              kind: 'axis',
               index: i,
               inverted: axes[i] < 0,
             });
@@ -78,8 +82,9 @@ export class NextInputListener {
         for (let i = 0; i < buttons.length; i++) {
           if (buttons[i].value !== baselineInput.buttons[i]) {
             this.state.callback({
+              id: newBindingId(),
               kind: 'button',
-              binding: { index: i },
+              index: i,
             });
             return this.deactivate();
           }
@@ -88,8 +93,10 @@ export class NextInputListener {
         for (let i = 0; i < axes.length; i++) {
           if (axes[i] !== baselineInput.axes[i]) {
             this.state.callback({
+              id: newBindingId(),
               kind: 'axisValue',
-              binding: { axis: i, value: axes[i] },
+              axis: i,
+              value: axes[i],
             });
             return this.deactivate();
           }

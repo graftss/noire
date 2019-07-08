@@ -9,7 +9,7 @@ import { selectComponent } from '../../state/actions';
 import { selectedComponentBinding } from '../../state/stateMaps';
 
 interface PropsFromState {
-  binding: T.BindingData;
+  binding: T.Binding;
   selected: T.SerializedComponent;
   components: T.SerializedComponent[];
 }
@@ -20,7 +20,7 @@ interface PropsFromDispatch {
 
 type EditorProps = PropsFromState & PropsFromDispatch;
 
-const mapStateToProps = (state: T.EditorState) => ({
+const mapStateToProps = (state: T.EditorState): PropsFromState => ({
   binding: selectedComponentBinding(state.display),
   selected: state.display.selectedComponent,
   components: state.display.components,
@@ -29,11 +29,23 @@ const mapStateToProps = (state: T.EditorState) => ({
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators({ selectComponent }, dispatch);
 
-const BaseEditor: React.SFC<EditorProps> = ({ binding, components, selected, selectComponent }) => (
+const BaseEditor: React.SFC<EditorProps> = ({
+  binding,
+  components,
+  selected,
+  selectComponent,
+}) => (
   <div>
-    <ComponentSelect components={components} selected={selected} select={selectComponent} />
-    <ComponentBinding binding={binding}/>
+    <ComponentSelect
+      components={components}
+      selected={selected}
+      select={selectComponent}
+    />
+    <ComponentBinding binding={binding} />
   </div>
-)
+);
 
-export const Editor = connect(mapStateToProps, mapDispatchToProps)(BaseEditor);
+export const Editor = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(BaseEditor);

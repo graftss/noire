@@ -10,19 +10,19 @@ export type Handler =
   | { kind: 'stageClick'; cb: F1<Konva.Stage> }
   | { kind: 'componentSelect'; cb: F1<T.Component> }
   | { kind: 'componentAdd'; cb: F1<T.Component> }
-  | { kind: 'bindingAdd'; cb: F2<T.Component, T.BindingData> };
+  | { kind: 'bindingAdd'; cb: F2<T.Component, T.Binding> };
 
 export type DisplayEvent =
   | { kind: 'stageClick'; data: [Konva.Stage] }
   | { kind: 'componentSelect'; data: [T.Component] }
   | { kind: 'componentAdd'; data: [T.Component] }
-  | { kind: 'bindingAdd'; data: [T.Component, T.BindingData] };
+  | { kind: 'bindingAdd'; data: [T.Component, T.Binding] };
 
 export class DisplayEventBus {
   private stageClickHandlers: F1<Konva.Stage>[] = [];
   private componentClickHandlers: F1<T.Component>[] = [];
   private componentAddHandlers: F1<T.Component>[] = [];
-  private bindingAddHandlers: F2<T.Component, T.BindingData>[] = [];
+  private bindingAddHandlers: F2<T.Component, T.Binding>[] = [];
 
   emit(event: DisplayEvent): void {
     switch (event.kind) {

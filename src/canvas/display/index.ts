@@ -91,7 +91,7 @@ export class Display {
     const result = {};
 
     this.lastState.bindings.forEach(
-      ({ id, binding }) => (result[id] = applyBinding(binding, gamepad)),
+      binding => (result[binding.id] = applyBinding(binding, gamepad)),
     );
 
     return result;

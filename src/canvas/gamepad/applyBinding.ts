@@ -33,8 +33,8 @@ export const buttonInputMap: T.InputMap<
   T.ButtonInput
 > = binding => gamepad =>
   binding.kind === 'button'
-    ? buttonMap(binding.binding)(gamepad)
-    : axisValueMap(binding.binding)(gamepad);
+    ? buttonMap(binding)(gamepad)
+    : axisValueMap(binding)(gamepad);
 
 export const dPadMap: T.InputMap<T.DPadBinding, T.DPadInput> = ({
   u,
@@ -50,45 +50,45 @@ export const dPadMap: T.InputMap<T.DPadBinding, T.DPadInput> = ({
 
 export const stickMap: T.InputMap<T.StickBinding, T.StickInput> = binding => {
   const inputMaps = {
-    h: axisMap(binding.h),
-    v: axisMap(binding.v),
-    down: buttonMap(binding.down),
+    h: axisMap(binding.x),
+    v: axisMap(binding.y),
+    down: binding.down && buttonInputMap(binding.down),
   };
 
   return gamepad => ({
     x: inputMaps.h(gamepad),
     y: inputMaps.v(gamepad),
-    down: inputMaps.down(gamepad),
+    down: binding.down && inputMaps.down(gamepad),
   });
 };
 
 export const applyBinding = (
-  b: T.Binding,
+  binding: T.Binding,
   gamepad: Gamepad,
 ): T.Input | undefined => {
-  switch (b.kind) {
+  switch (binding.kind) {
     case 'axis':
       return {
         kind: 'axis',
-        input: axisMap(b.binding)(gamepad),
+        input: axisMap(binding)(gamepad),
       };
 
     case 'button':
       return {
         kind: 'button',
-        input: buttonInputMap(b.binding)(gamepad),
+        input: buttonInputMap(binding)(gamepad),
       };
 
     case 'dpad':
       return {
         kind: 'dpad',
-        input: dPadMap(b.binding)(gamepad),
+        input: dPadMap(binding)(gamepad),
       };
 
     case 'stick':
       return {
         kind: 'stick',
-        input: stickMap(b.binding)(gamepad),
+        input: stickMap(binding)(gamepad),
       };
   }
 };

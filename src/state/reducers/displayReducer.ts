@@ -9,10 +9,7 @@ export const displayReducer = (
 ): T.DisplayState => {
   switch (action.type) {
     case 'addBinding': {
-      return find(
-        (b: T.BindingData) => b.id === action.data.id,
-        state.bindings,
-      ) !== undefined
+      return find(b => b.id === action.data.id, state.bindings) !== undefined
         ? state
         : {
             ...state,

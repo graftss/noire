@@ -4,11 +4,85 @@ import { TypedComponent } from './canvas/component';
 
 export type InputMap<T, U> = (binding: T) => (g: Gamepad) => U;
 
+export type BindingId = string;
+
+export interface BaseBinding {
+  id: BindingId;
+  kind: string;
+}
+
+export interface AxisBinding extends BaseBinding {
+  kind: 'axis';
+  index: number;
+  inverted: boolean;
+  deadzone?: number;
+}
+
+export type AxisInput = number;
+
+export interface AxisValueBinding extends BaseBinding {
+  kind: 'axisValue';
+  axis: number;
+  value: number;
+  marginOfError?: number;
+}
+
+export interface ButtonBinding extends BaseBinding {
+  kind: 'button';
+  index: number;
+}
+
+export type ButtonInputBinding = ButtonBinding | AxisValueBinding;
+
+export interface ButtonInput {
+  pressed: boolean;
+}
+
+export type Dir = 'u' | 'l' | 'd' | 'r';
+
+export interface DPadBinding extends BaseBinding {
+  kind: 'dpad';
+  u: ButtonInputBinding;
+  l: ButtonInputBinding;
+  d: ButtonInputBinding;
+  r: ButtonInputBinding;
+}
+
+export interface DPadBindingRef extends BaseBinding {
+  kind: 'dpadref';
+  u: BindingId;
+  l: BindingId;
+  d: BindingId;
+  r: BindingId;
+}
+
+export type DPadInput = Record<Dir, ButtonInput>;
+
+export interface StickBinding extends BaseBinding {
+  kind: 'stick';
+  x: AxisBinding;
+  y: AxisBinding;
+  down?: ButtonInputBinding;
+}
+
+export interface StickBindingRef extends BaseBinding {
+  kind: 'stickref';
+  x: BindingId;
+  y: BindingId;
+  down?: BindingId;
+}
+
+export interface StickInput {
+  x: AxisInput;
+  y: AxisInput;
+  down: ButtonInput;
+}
+
 export type Binding =
-  | { kind: 'axis'; binding: AxisBinding }
-  | { kind: 'button'; binding: ButtonInputBinding }
-  | { kind: 'dpad'; binding: DPadBinding }
-  | { kind: 'stick'; binding: StickBinding };
+  | AxisBinding
+  | ButtonInputBinding
+  | DPadBinding
+  | StickBinding;
 
 // TODO: add `RawInput` (or something) export type to characterize just the
 // `input` property of the `Input` export type, to better export type the input
@@ -19,50 +93,6 @@ export type Input =
   | { kind: 'button'; input: ButtonInput }
   | { kind: 'dpad'; input: DPadInput }
   | { kind: 'stick'; input: StickInput };
-
-export interface AxisBinding {
-  index: number;
-  inverted: boolean;
-  deadzone?: number;
-}
-
-export type AxisInput = number;
-
-export interface AxisValueBinding {
-  axis: number;
-  value: number;
-  marginOfError?: number;
-}
-
-export interface ButtonBinding {
-  index: number;
-}
-
-export type ButtonInputBinding =
-  | { kind: 'button'; binding: ButtonBinding }
-  | { kind: 'axisValue'; binding: AxisValueBinding };
-
-export interface ButtonInput {
-  pressed: boolean;
-}
-
-export type Dir = 'u' | 'l' | 'd' | 'r';
-
-export type DPadBinding = Record<Dir, ButtonInputBinding>;
-
-export type DPadInput = Record<Dir, ButtonInput>;
-
-export interface StickBinding {
-  h: AxisBinding;
-  v: AxisBinding;
-  down?: ButtonBinding;
-}
-
-export interface StickInput {
-  x: AxisInput;
-  y: AxisInput;
-  down: ButtonInput;
-}
 
 export interface BaseComponentConfig {
   x?: number;
@@ -101,20 +131,13 @@ export type SerializedComponent =
   | StickComponentConfig
   | DPadComponentConfig;
 
-export type BindingId = string;
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Component = TypedComponent<any>;
 
 export type ComponentCallback = (c: Component) => void;
 
-export interface BindingData {
-  id?: BindingId;
-  binding: Binding;
-}
-
 export interface DisplayState {
-  bindings: BindingData[];
+  bindings: Binding[];
   components: SerializedComponent[];
   selectedComponent?: SerializedComponent;
 }
@@ -124,7 +147,7 @@ export interface EditorState {
 }
 
 export type EditorAction =
-  | { type: 'addBinding'; data: BindingData }
+  | { type: 'addBinding'; data: Binding }
   | { type: 'selectComponent'; data: string | undefined };
 
 export type EditorStore = Store<EditorState, EditorAction>;
