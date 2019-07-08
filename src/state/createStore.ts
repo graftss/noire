@@ -1,10 +1,12 @@
-import { applyMiddleware, createStore as baseCreateStore } from 'redux';
+import { applyMiddleware, createStore as baseCreateStore, Store } from 'redux';
 import { createLogger } from 'redux-logger';
 
 import * as T from '../types';
-import { reducer } from './reducers';
+import { rootReducer } from './reducers';
 
-export const createStore = (): T.EditorStore => {
+export type EditorStore = Store<T.EditorState, T.EditorAction>;
+
+export const createStore = (): EditorStore => {
   const logger = createLogger();
-  return baseCreateStore(reducer, applyMiddleware(logger));
+  return baseCreateStore(rootReducer, applyMiddleware(logger));
 };

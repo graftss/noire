@@ -1,10 +1,18 @@
 import Konva from 'konva';
 
 import * as T from '../../types';
-import { TypedComponent } from '.';
+import { TypedComponent } from './Component';
 import { defaults } from '../../utils';
 
-export const defaultButtonComponentConfig: T.ButtonComponentConfig = {
+export interface ButtonComponentConfig extends T.BaseComponentConfig {
+  kind: 'button';
+  width?: number;
+  height?: number;
+  fill?: string;
+  pressedFill?: string;
+}
+
+export const defaultButtonComponentConfig: ButtonComponentConfig = {
   kind: 'button',
   width: 30,
   height: 40,
@@ -15,7 +23,7 @@ export const defaultButtonComponentConfig: T.ButtonComponentConfig = {
 export class ButtonComponent extends TypedComponent<T.ButtonInput> {
   private rect: Konva.Rect;
 
-  constructor(protected config: T.ButtonComponentConfig) {
+  constructor(protected config: ButtonComponentConfig) {
     super(config);
     this.config = defaults(defaultButtonComponentConfig, config);
 

@@ -1,10 +1,19 @@
 import Konva from 'konva';
 
 import * as T from '../../types';
-import { TypedComponent } from '.';
+import { TypedComponent } from './Component';
 import { defaults, sign } from '../../utils';
 
-export const defaultStickComponentConfig: T.StickComponentConfig = {
+export interface StickComponentConfig extends T.BaseComponentConfig {
+  kind: 'stick';
+  boundaryRadius?: number;
+  stickRadius?: number;
+  rangeScaling?: number;
+  stickFill?: string;
+  pressedStickFill?: string;
+}
+
+export const defaultStickComponentConfig: StickComponentConfig = {
   kind: 'stick',
   boundaryRadius: 26,
   stickRadius: 40,
@@ -20,7 +29,7 @@ export class StickComponent extends TypedComponent<T.StickInput> {
   private center: Konva.Circle;
   private stick: Konva.Ellipse;
 
-  constructor(protected config: T.StickComponentConfig) {
+  constructor(protected config: StickComponentConfig) {
     super(config);
     this.config = defaults(defaultStickComponentConfig, config);
 

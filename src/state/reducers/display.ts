@@ -3,10 +3,16 @@ import { find } from '../../utils';
 import { testInitialState } from '../testInitialState';
 import { componentById } from '../stateMaps';
 
+export interface DisplayState {
+  bindings: T.Binding[];
+  components: T.SerializedComponent[];
+  selectedComponent?: T.SerializedComponent;
+}
+
 export const displayReducer = (
-  state: T.DisplayState = testInitialState.display,
+  state: DisplayState = testInitialState.display,
   action: T.EditorAction,
-): T.DisplayState => {
+): DisplayState => {
   switch (action.type) {
     case 'addBinding': {
       return find(b => b.id === action.data.id, state.bindings) !== undefined

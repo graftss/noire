@@ -1,12 +1,20 @@
 import Konva from 'konva';
 
 import * as T from '../../types';
-import { TypedComponent } from '.';
+import { TypedComponent } from './Component';
 import { defaults } from '../../utils';
 
 const dirs = ['u', 'l', 'd', 'r'];
 
-export const defaultDPadComponentConfig: T.DPadComponentConfig = {
+export interface DPadComponentConfig extends T.BaseComponentConfig {
+  kind: 'dpad';
+  buttonWidth?: number;
+  buttonHeight?: number;
+  fill?: string;
+  pressedFill?: string;
+}
+
+export const defaultDPadComponentConfig: DPadComponentConfig = {
   kind: 'dpad',
   buttonWidth: 20,
   buttonHeight: 20,
@@ -17,7 +25,7 @@ export const defaultDPadComponentConfig: T.DPadComponentConfig = {
 export class DPadComponent extends TypedComponent<T.DPadInput> {
   private rects: Record<T.Dir, Konva.Rect>;
 
-  constructor(protected config: T.DPadComponentConfig) {
+  constructor(protected config: DPadComponentConfig) {
     super(config);
     this.config = defaults(defaultDPadComponentConfig, config);
 

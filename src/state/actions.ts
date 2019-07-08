@@ -1,11 +1,15 @@
 import * as T from '../types';
 
-export const selectComponent = (componentId: string): T.EditorAction => ({
+export type EditorAction =
+  | { type: 'addBinding'; data: T.Binding }
+  | { type: 'selectComponent'; data: string | undefined };
+
+export const selectComponent = (componentId: string): EditorAction => ({
   type: 'selectComponent',
   data: componentId,
 });
 
-export const deselectComponent = (): T.EditorAction => ({
+export const deselectComponent = (): EditorAction => ({
   type: 'selectComponent',
   data: undefined,
 });

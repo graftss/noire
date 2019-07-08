@@ -1,28 +1,26 @@
 import Konva from 'konva';
 
 import * as T from '../../types';
+import { Component } from '../component';
 import { without } from '../../utils';
 
-type F1<T> = (t: T) => void;
-type F2<T, U> = (t: T, u: U) => void;
-
 export type Handler =
-  | { kind: 'stageClick'; cb: F1<Konva.Stage> }
-  | { kind: 'componentSelect'; cb: F1<T.Component> }
-  | { kind: 'componentAdd'; cb: F1<T.Component> }
-  | { kind: 'bindingAdd'; cb: F2<T.Component, T.Binding> };
+  | { kind: 'stageClick'; cb: T.CB1<Konva.Stage> }
+  | { kind: 'componentSelect'; cb: T.CB1<Component> }
+  | { kind: 'componentAdd'; cb: T.CB1<Component> }
+  | { kind: 'bindingAdd'; cb: T.CB2<Component, T.Binding> };
 
 export type DisplayEvent =
   | { kind: 'stageClick'; data: [Konva.Stage] }
-  | { kind: 'componentSelect'; data: [T.Component] }
-  | { kind: 'componentAdd'; data: [T.Component] }
-  | { kind: 'bindingAdd'; data: [T.Component, T.Binding] };
+  | { kind: 'componentSelect'; data: [Component] }
+  | { kind: 'componentAdd'; data: [Component] }
+  | { kind: 'bindingAdd'; data: [Component, T.Binding] };
 
 export class DisplayEventBus {
-  private stageClickHandlers: F1<Konva.Stage>[] = [];
-  private componentClickHandlers: F1<T.Component>[] = [];
-  private componentAddHandlers: F1<T.Component>[] = [];
-  private bindingAddHandlers: F2<T.Component, T.Binding>[] = [];
+  private stageClickHandlers: T.CB1<Konva.Stage>[] = [];
+  private componentClickHandlers: T.CB1<Component>[] = [];
+  private componentAddHandlers: T.CB1<Component>[] = [];
+  private bindingAddHandlers: T.CB2<Component, T.Binding>[] = [];
 
   emit(event: DisplayEvent): void {
     switch (event.kind) {

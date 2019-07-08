@@ -1,9 +1,8 @@
 import * as T from '../types';
-import { PS2Map } from '../canvas/gamepad/controllers';
 
 const ids = 'qwertyuiopasdfghjklzxcvbnm,';
 
-const c: PS2Map = {
+const c: T.PS2Map = {
   padU: { id: ids[0], kind: 'axisValue', axis: 9, value: -1 },
   padL: { id: ids[1], kind: 'axisValue', axis: 9, value: 0.7142857 },
   padR: { id: ids[2], kind: 'axisValue', axis: 9, value: -0.428571 },
@@ -19,7 +18,7 @@ const c: PS2Map = {
   l3: { id: ids[12], kind: 'button', index: 10 },
   r1: { id: ids[13], kind: 'button', index: 7 },
   r2: { id: ids[14], kind: 'button', index: 5 },
-  r3: { id: ids[15], kind: 'button', index: 9 },
+  r3: { id: ids[15], kind: 'button', index: 11 },
   lsX: { id: ids[16], kind: 'axis', index: 0, inverted: false },
   lsY: { id: ids[17], kind: 'axis', index: 1, inverted: false },
   rsX: { id: ids[18], kind: 'axis', index: 5, inverted: false },

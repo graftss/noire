@@ -1,13 +1,14 @@
 import Konva from 'konva';
 
 import * as T from '../../types';
+import { Component } from '../component';
 import { DisplayEventBus } from './DisplayEventBus';
 import { find, keyBy } from '../../utils';
 
 const CLICK_EVENT = `click.ComponentManager`;
 
 export class ComponentManager {
-  private components: T.Component[] = [];
+  private components: Component[] = [];
   private selectedId?: string;
 
   constructor(
@@ -18,7 +19,7 @@ export class ComponentManager {
     this.layer = layer;
   }
 
-  reset(components: T.Component[] = []): void {
+  reset(components: Component[] = []): void {
     this.components.forEach(component => component.group.destroy());
 
     this.components = components;
@@ -26,7 +27,7 @@ export class ComponentManager {
   }
 
   // TODO: update binding ids here too
-  sync(components: T.Component[]): void {
+  sync(components: Component[]): void {
     const currentById = keyBy(this.components, c => c.getBindingId());
     // const newById = keyBy(components, c => c.getBindingId());
 
@@ -39,7 +40,7 @@ export class ComponentManager {
     // });
   }
 
-  add = (component: T.Component) => {
+  add = (component: Component) => {
     this.components.push(component);
     this.layer.add(component.group);
 
@@ -69,7 +70,7 @@ export class ComponentManager {
   // }
 
   update(inputDict: { [bindingId: number]: T.Input }, dt: number): void {
-    this.components.forEach((component: T.Component) => {
+    this.components.forEach((component: Component) => {
       const bindingId = component.getBindingId();
       const input = inputDict[bindingId];
       if (input) {
@@ -78,7 +79,7 @@ export class ComponentManager {
     });
   }
 
-  findById(componentId: string): T.Component {
+  findById(componentId: string): Component {
     return find(c => c.getId() === componentId, this.components);
   }
 }

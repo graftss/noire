@@ -3,18 +3,15 @@ import { clone, uuid } from '../utils';
 
 const newBindingId = uuid;
 
-type AxisCallback = (binding: T.AxisBinding) => void;
-type ButtonCallback = (binding: T.ButtonInputBinding) => void;
-
 type ListeningState =
   | {
       kind: 'axis';
-      callback: AxisCallback;
+      callback: T.CB1<T.AxisBinding>;
       baselineInput?: number[];
     }
   | {
       kind: 'button';
-      callback: ButtonCallback;
+      callback: T.CB1<T.ButtonInputBinding>;
       baselineInput?: { axes: number[]; buttons: number[] };
     };
 
@@ -24,12 +21,12 @@ export class NextInputListener {
   private state?: ListeningState;
   pollingBaselineInput: boolean = false;
 
-  awaitButton(callback: ButtonCallback): void {
+  awaitButton(callback: T.CB1<T.ButtonInputBinding>): void {
     this.state = { kind: 'button', callback };
     this.pollingBaselineInput = true;
   }
 
-  awaitPositiveAxis(callback: AxisCallback): void {
+  awaitPositiveAxis(callback: T.CB1<T.AxisBinding>): void {
     this.state = { kind: 'axis', callback };
     this.pollingBaselineInput = true;
   }

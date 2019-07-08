@@ -1,18 +1,51 @@
 import * as T from '../types';
 
-export const axisMap: T.InputMap<
-  T.AxisBinding,
-  T.AxisInput
-> = binding => gamepad => {
+export type InputMap<T, U> = (binding: T) => (g: Gamepad) => U;
+
+export type BindingId = string;
+
+export interface BaseBinding {
+  id: BindingId;
+  kind: string;
+}
+
+export interface AxisBinding extends BaseBinding {
+  kind: 'axis';
+  index: number;
+  inverted: boolean;
+  deadzone?: number;
+}
+
+export type AxisInput = number;
+
+export const axisMap: InputMap<AxisBinding, AxisInput> = binding => gamepad => {
   const { index, inverted, deadzone = 0 } = binding;
 
   const raw = gamepad.axes[index] * (inverted ? -1 : 1);
   return Math.abs(raw) < deadzone ? 0 : raw;
 };
 
-export const axisValueMap: T.InputMap<
-  T.AxisValueBinding,
-  T.ButtonInput
+export interface AxisValueBinding extends BaseBinding {
+  kind: 'axisValue';
+  axis: number;
+  value: number;
+  marginOfError?: number;
+}
+
+export interface ButtonBinding extends BaseBinding {
+  kind: 'button';
+  index: number;
+}
+
+export type ButtonInputBinding = ButtonBinding | AxisValueBinding;
+
+export interface ButtonInput {
+  pressed: boolean;
+}
+
+export const axisValueMap: InputMap<
+  AxisValueBinding,
+  ButtonInput
 > = binding => gamepad => {
   const { axis, value, marginOfError = 0.001 } = binding;
 
@@ -21,22 +54,36 @@ export const axisValueMap: T.InputMap<
   };
 };
 
-export const buttonMap: T.InputMap<
-  T.ButtonBinding,
-  T.ButtonInput
+export const buttonMap: InputMap<
+  ButtonBinding,
+  ButtonInput
 > = binding => gamepad => {
   return { pressed: gamepad.buttons[binding.index].pressed };
 };
 
-export const buttonInputMap: T.InputMap<
-  T.ButtonInputBinding,
-  T.ButtonInput
+export const buttonInputMap: InputMap<
+  ButtonInputBinding,
+  ButtonInput
 > = binding => gamepad =>
   binding.kind === 'button'
     ? buttonMap(binding)(gamepad)
     : axisValueMap(binding)(gamepad);
 
-export const dPadMap: T.InputMap<T.DPadBinding, T.DPadInput> = ({
+export type Dir = 'u' | 'l' | 'd' | 'r';
+
+export interface DPadBinding
+  extends BaseBinding,
+    Record<Dir, ButtonInputBinding> {
+  kind: 'dpad';
+}
+
+export type DPadInput = Record<Dir, ButtonInput>;
+
+export interface DPadBindingRef extends BaseBinding, Record<Dir, BindingId> {
+  kind: 'dpadref';
+}
+
+export const dPadMap: InputMap<DPadBinding, DPadInput> = ({
   u,
   l,
   d,
@@ -48,7 +95,27 @@ export const dPadMap: T.InputMap<T.DPadBinding, T.DPadInput> = ({
   r: buttonInputMap(r)(gamepad),
 });
 
-export const stickMap: T.InputMap<T.StickBinding, T.StickInput> = binding => {
+export interface StickBinding extends BaseBinding {
+  kind: 'stick';
+  x: AxisBinding;
+  y: AxisBinding;
+  down?: ButtonInputBinding;
+}
+
+export interface StickBindingRef extends BaseBinding {
+  kind: 'stickref';
+  x: BindingId;
+  y: BindingId;
+  down?: BindingId;
+}
+
+export interface StickInput {
+  x: AxisInput;
+  y: AxisInput;
+  down: ButtonInput;
+}
+
+export const stickMap: InputMap<StickBinding, StickInput> = binding => {
   const inputMaps = {
     h: axisMap(binding.x),
     v: axisMap(binding.y),
@@ -62,10 +129,26 @@ export const stickMap: T.InputMap<T.StickBinding, T.StickInput> = binding => {
   });
 };
 
+export type Binding =
+  | AxisBinding
+  | ButtonInputBinding
+  | DPadBinding
+  | StickBinding;
+
+// TODO: add `RawInput` (or something) export type to characterize just the
+// `input` property of the `Input` export type, to better export type the input
+// argument of `Component.input`.
+
+export type Input =
+  | { kind: 'axis'; input: AxisInput }
+  | { kind: 'button'; input: ButtonInput }
+  | { kind: 'dpad'; input: DPadInput }
+  | { kind: 'stick'; input: StickInput };
+
 export const applyBinding = (
-  binding: T.Binding,
+  binding: Binding,
   gamepad: Gamepad,
-): T.Input | undefined => {
+): Input | undefined => {
   switch (binding.kind) {
     case 'axis':
       return {

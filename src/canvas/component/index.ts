@@ -1,25 +1,14 @@
-import Konva from 'konva';
+export * from './ButtonComponent';
+export * from './Component';
+export * from './deserializeComponent';
+export * from './DPadComponent';
+export * from './StickComponent';
 
-import * as T from '../../types';
+import { ButtonComponentConfig } from './ButtonComponent';
+import { DPadComponentConfig } from './DPadComponent';
+import { StickComponentConfig } from './StickComponent';
 
-export abstract class TypedComponent<I> {
-  protected config: T.BaseComponentConfig;
-  group: Konva.Group;
-
-  constructor(config: T.BaseComponentConfig) {
-    const { x, y } = config;
-
-    this.config = config;
-    this.group = new Konva.Group({ x, y });
-  }
-
-  getBindingId(): T.BindingId | undefined {
-    return this.config.bindingId;
-  }
-
-  getId(): string {
-    return this.config.id;
-  }
-
-  abstract update(input: I, dt: number): void;
-}
+export type SerializedComponent =
+  | ButtonComponentConfig
+  | StickComponentConfig
+  | DPadComponentConfig;

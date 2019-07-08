@@ -7,7 +7,7 @@ import { ComponentTransformerPlugin } from './plugin/ComponentTransformerPlugin'
 import { DisplayEventBus } from './DisplayEventBus';
 import { DisplayPlugin } from './plugin/DisplayPlugin';
 import { NextInputListener } from '../../input/NextInputListener';
-import { deserializeComponent } from '../component/deserializeComponent';
+import { Component, deserializeComponent } from '../component';
 import { selectComponent, deselectComponent } from '../../state/actions';
 import { selectedComponentId } from '../../state/stateMaps';
 
@@ -45,7 +45,7 @@ export class Display {
 
     this.eventBus.on({
       kind: 'componentSelect',
-      cb: (component: T.Component) => {
+      cb: (component: Component) => {
         if (selectedComponentId(this.lastState) !== component.getId()) {
           store.dispatch(selectComponent(component.getId()));
         }
