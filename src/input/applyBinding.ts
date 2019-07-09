@@ -137,6 +137,8 @@ export type Binding =
 
 export type SimpleBinding = ButtonInputBinding | AxisBinding;
 
+export type SimpleBindingKind = 'axis' | 'button';
+
 export type ComplexBinding = StickBinding | DPadBinding;
 
 // TODO: add `RawInput` (or something) export type to characterize just the

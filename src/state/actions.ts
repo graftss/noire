@@ -4,7 +4,7 @@ export type EditorAction =
   | { type: 'addBinding'; data: T.Binding }
   | { type: 'selectComponent'; data: string | undefined }
   | { type: 'selectGamepad'; data: number | undefined }
-  | { type: 'listenNextInput'; data: T.ListeningKind }
+  | { type: 'listenNextInput'; data: T.RemapState }
   | { type: 'stopListening' };
 
 export const selectComponent = (componentId: string): EditorAction => ({
@@ -27,9 +27,9 @@ export const deselectGamepad = (): EditorAction => ({
   data: undefined,
 });
 
-export const listenNextInput = (kind: T.ListeningKind): EditorAction => ({
+export const listenNextInput = (remapState: T.RemapState): EditorAction => ({
   type: 'listenNextInput',
-  data: kind,
+  data: remapState,
 });
 
 export const stopListening = (): EditorAction => ({

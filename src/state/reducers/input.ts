@@ -1,13 +1,16 @@
 import * as T from '../../types';
 import { testInitialState } from '../testInitialState';
 
-export interface NextInputListenerState {
-  inputKind: T.ListeningKind;
+export interface RemapState {
+  kind: 'component';
+  componentId: string;
+  bindingKind: T.SimpleBindingKind;
+  inputKey?: string;
 }
 
 export interface InputState {
   gamepadIndex?: number;
-  nextInputListener?: NextInputListenerState;
+  remapping?: RemapState;
   controller?: T.Controller;
 }
 
@@ -24,11 +27,11 @@ export const inputReducer = (
     }
 
     case 'listenNextInput': {
-      return { ...state, nextInputListener: { inputKind: action.data } };
+      return { ...state, remapping: action.data };
     }
 
     case 'stopListening': {
-      return { ...state, nextInputListener: undefined };
+      return { ...state, remapping: undefined };
     }
   }
 

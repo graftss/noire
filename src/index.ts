@@ -35,6 +35,10 @@ export class Noire {
     if (gamepad) {
       this.display.update(gamepad, dt);
       this.display.draw();
+
+      if (this.nextInputListener.isActive()) {
+        this.nextInputListener.update(gamepad);
+      }
     }
 
     requestAnimationFrame(this.updateLoop);
@@ -42,15 +46,16 @@ export class Noire {
 
   private storeListener = (state: T.EditorState): void => {
     const store = this.editorApp.store;
-    const { nextInputListener } = state.input;
+    const { remapping } = state.input;
 
-    if (!this.nextInputListener.isActive() && nextInputListener) {
-      switch (nextInputListener.inputKind) {
+    if (!this.nextInputListener.isActive() && remapping !== undefined) {
+      switch (remapping.bindingKind) {
         case 'axis':
           this.nextInputListener.awaitPositiveAxis(binding => {
-            console.log('button', binding);
+            console.log('axis', binding);
             store.dispatch(stopListening());
           });
+          break;
 
         case 'button':
           this.nextInputListener.awaitButton(binding => {

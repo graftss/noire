@@ -32,18 +32,24 @@ export type ControllerMap = PS2Map;
 
 export type Controller = PS2Controller;
 
-export type ControllerKeyBinding = [keyof ControllerMap, T.BindingId, string?];
+export type ControllerKeyBinding = [
+  keyof ControllerMap,
+  T.BindingId,
+  T.SimpleBindingKind,
+  string,
+];
 
 const simpleControllerKey = (
   c: Controller,
   b: T.SimpleBinding,
-  complexKey?: string,
+  inputKind: T.SimpleBindingKind,
+  inputKey: string,
 ): ControllerKeyBinding | undefined => {
   if (!c || !b) return;
 
   for (let key in c.map) {
     if (c.map[key].id === b.id) {
-      return [key as keyof ControllerMap, b.id, complexKey];
+      return [key as keyof ControllerMap, b.id, inputKind, inputKey];
     }
   }
 };
@@ -57,21 +63,21 @@ export const controllerKey = (
   switch (b.kind) {
     case 'button':
     case 'axis':
-      return [simpleControllerKey(c, b)];
+      return [simpleControllerKey(c, b, b.kind, null)];
 
     case 'stick':
       return [
-        simpleControllerKey(c, b.x, 'x'),
-        simpleControllerKey(c, b.y, 'y'),
-        simpleControllerKey(c, b.down, 'down'),
+        simpleControllerKey(c, b.x, 'axis', 'x'),
+        simpleControllerKey(c, b.y, 'axis', 'y'),
+        simpleControllerKey(c, b.down, 'button', 'down'),
       ];
 
     case 'dpad':
       return [
-        simpleControllerKey(c, b.u, 'u'),
-        simpleControllerKey(c, b.l, 'l'),
-        simpleControllerKey(c, b.d, 'd'),
-        simpleControllerKey(c, b.r, 'r'),
+        simpleControllerKey(c, b.u, 'button', 'u'),
+        simpleControllerKey(c, b.l, 'button', 'l'),
+        simpleControllerKey(c, b.d, 'button', 'd'),
+        simpleControllerKey(c, b.r, 'button', 'r'),
       ];
   }
 };

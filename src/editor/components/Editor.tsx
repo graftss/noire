@@ -4,9 +4,13 @@ import { bindActionCreators } from 'redux';
 
 import * as T from '../../types';
 import { ComponentSelect } from './ComponentSelect';
-import { ComponentBinding } from './ComponentBinding';
+import { ComponentBindings } from './ComponentBindings';
 import { GamepadSelect } from './GamepadSelect';
-import { selectComponent, selectGamepad } from '../../state/actions';
+import {
+  listenNextInput,
+  selectComponent,
+  selectGamepad,
+} from '../../state/actions';
 import { selectedComponentBinding } from '../../state/stateMaps';
 
 interface PropsFromState {
@@ -18,6 +22,7 @@ interface PropsFromState {
 }
 
 interface PropsFromDispatch {
+  listenNextInput: (remapState: T.RemapState) => void;
   selectComponent: (componentId: string) => void;
   selectGamepad: (index?: number) => void;
 }
@@ -33,12 +38,16 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 });
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
-  bindActionCreators({ selectComponent, selectGamepad }, dispatch);
+  bindActionCreators(
+    { listenNextInput, selectComponent, selectGamepad },
+    dispatch,
+  );
 
 const BaseEditor: React.SFC<EditorProps> = ({
   binding,
   components,
   controller,
+  listenNextInput,
   selected,
   selectedGamepadIndex,
   selectComponent,
@@ -54,7 +63,18 @@ const BaseEditor: React.SFC<EditorProps> = ({
       selected={selected}
       select={selectComponent}
     />
-    <ComponentBinding binding={binding} controller={controller} />
+    <ComponentBindings
+      binding={binding}
+      controller={controller}
+      remap={binding =>
+        listenNextInput({
+          kind: 'component',
+          componentId: selected.id,
+          bindingKind: binding[2],
+          inputKey: binding[3],
+        })
+      }
+    />
   </div>
 );
 
