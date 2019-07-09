@@ -3,6 +3,8 @@ import { clone, uuid } from '../utils';
 
 const newBindingId = uuid;
 
+export type ListeningKind = 'axis' | 'button';
+
 type ListeningState =
   | {
       kind: 'axis';

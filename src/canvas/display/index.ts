@@ -6,13 +6,11 @@ import { ComponentManager } from './ComponentManager';
 import { ComponentTransformerPlugin } from './plugin/ComponentTransformerPlugin';
 import { DisplayEventBus } from './DisplayEventBus';
 import { DisplayPlugin } from './plugin/DisplayPlugin';
-import { NextInputListener } from '../../input/NextInputListener';
 import { Component, deserializeComponent } from '../component';
 import { selectComponent, deselectComponent } from '../../state/actions';
 import { selectedComponentId } from '../../state/stateMaps';
 
 export class Display {
-  private nextInputListener: NextInputListener;
   private eventBus: DisplayEventBus;
   private cm: ComponentManager;
   private lastState?: T.DisplayState;
@@ -25,7 +23,6 @@ export class Display {
   ) {
     this.stage = stage;
     this.layer = layer;
-    this.nextInputListener = new NextInputListener();
     this.eventBus = new DisplayEventBus();
     this.plugins = [new ComponentTransformerPlugin(this.eventBus)];
 
@@ -102,8 +99,6 @@ export class Display {
   }
 
   update(gamepad: Gamepad, dt: number): void {
-    this.nextInputListener.update(gamepad);
-
     const inputDict = this.getInputDict(gamepad);
     this.cm.update(inputDict, dt);
   }

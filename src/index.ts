@@ -3,6 +3,8 @@ import Konva from 'konva';
 import * as T from './types';
 import { Display } from './canvas/display';
 import { createEditorApp } from './editor';
+import { NextInputListener } from './input/NextInputListener';
+import { stopListening } from './state/actions';
 
 export class Noire {
   private stage: Konva.Stage;
@@ -10,18 +12,21 @@ export class Noire {
   private tLast: number = 0;
   private editorApp: T.EditorApp;
   private display: Display;
+  private nextInputListener: NextInputListener;
 
   constructor(
     private editorTarget: HTMLElement,
     private canvasTarget: HTMLDivElement,
-  ) {}
+  ) {
+    this.nextInputListener = new NextInputListener();
+  }
 
   private getActiveGamepad(): Gamepad {
     const idx = this.editorApp.store.getState().input.gamepadIndex;
     return navigator.getGamepads()[idx];
   }
 
-  updateLoop = (tNext: number): void => {
+  private updateLoop = (tNext: number): void => {
     const dt = tNext - this.tLast;
     this.tLast = tNext;
 
@@ -35,6 +40,27 @@ export class Noire {
     requestAnimationFrame(this.updateLoop);
   };
 
+  private storeListener = (state: T.EditorState): void => {
+    const store = this.editorApp.store;
+    const { nextInputListener } = state.input;
+
+    if (!this.nextInputListener.isActive() && nextInputListener) {
+      switch (nextInputListener.inputKind) {
+        case 'axis':
+          this.nextInputListener.awaitPositiveAxis(binding => {
+            console.log('button', binding);
+            store.dispatch(stopListening());
+          });
+
+        case 'button':
+          this.nextInputListener.awaitButton(binding => {
+            console.log('button', binding);
+            store.dispatch(stopListening());
+          });
+      }
+    }
+  };
+
   init(): void {
     this.stage = new Konva.Stage({
       width: 800,
@@ -46,7 +72,10 @@ export class Noire {
     this.stage.add(this.layer);
 
     this.editorApp = createEditorApp(this.editorTarget);
-    this.display = new Display(this.stage, this.layer, this.editorApp.store);
+    const store = this.editorApp.store;
+    store.subscribe(() => this.storeListener(store.getState()));
+
+    this.display = new Display(this.stage, this.layer, store);
 
     this.editorApp.render();
     this.updateLoop(this.tLast);
