@@ -1,11 +1,12 @@
 import * as T from '../types';
+import { find, uuid } from '../utils';
 
 export type InputMap<T, U> = (binding: T) => (g: Gamepad) => U;
 
 export type BindingId = string;
 
 export interface BaseBinding {
-  id: BindingId;
+  id?: BindingId;
   kind: string;
 }
 
@@ -137,7 +138,7 @@ export type Binding =
 
 export type SimpleBinding = ButtonInputBinding | AxisBinding;
 
-export type SimpleBindingKind = 'axis' | 'button';
+export type SimpleBindingKind = 'axis' | 'button' | 'axisValue';
 
 export type ComplexBinding = StickBinding | DPadBinding;
 
@@ -180,4 +181,15 @@ export const applyBinding = (
         input: stickMap(binding)(gamepad),
       };
   }
+};
+
+export const assignBindingId = (
+  bindings: Binding[],
+  binding: Binding,
+): T.Binding => {
+  const existing: T.Binding | undefined = find(
+    b => b.id === binding.id,
+    bindings,
+  );
+  return existing === undefined ? { ...existing, id: uuid() } : existing;
 };

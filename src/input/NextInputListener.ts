@@ -1,9 +1,5 @@
 import * as T from '../types';
-import { clone, uuid } from '../utils';
-
-const newBindingId = uuid;
-
-export type ListeningKind = 'axis' | 'button';
+import { clone } from '../utils';
 
 type ListeningState =
   | {
@@ -58,7 +54,6 @@ export class NextInputListener {
             Math.abs(axes[i]) > MIN_AXIS_MAGNITUDE
           ) {
             this.state.callback({
-              id: newBindingId(),
               kind: 'axis',
               index: i,
               inverted: axes[i] < 0,
@@ -81,7 +76,6 @@ export class NextInputListener {
         for (let i = 0; i < buttons.length; i++) {
           if (buttons[i].value !== baselineInput.buttons[i]) {
             this.state.callback({
-              id: newBindingId(),
               kind: 'button',
               index: i,
             });
@@ -92,7 +86,6 @@ export class NextInputListener {
         for (let i = 0; i < axes.length; i++) {
           if (axes[i] !== baselineInput.axes[i]) {
             this.state.callback({
-              id: newBindingId(),
               kind: 'axisValue',
               axis: i,
               value: axes[i],

@@ -52,6 +52,7 @@ export class Noire {
       switch (remapping.bindingKind) {
         case 'axis':
           this.nextInputListener.awaitPositiveAxis(binding => {
+            const bindings = store.getState().display.bindings;
             console.log('axis', binding);
             store.dispatch(stopListening());
           });

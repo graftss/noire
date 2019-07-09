@@ -6,7 +6,7 @@ import { controllerKey } from '../../input/controllers';
 interface ComponentBindingProps {
   controller: T.Controller;
   binding: T.Binding;
-  remap: (b: T.ControllerKeyBinding) => void;
+  remap: (b: T.ControllerBindingRelation) => void;
 }
 
 export const ComponentBindings: React.SFC<ComponentBindingProps> = ({
@@ -15,12 +15,10 @@ export const ComponentBindings: React.SFC<ComponentBindingProps> = ({
   remap,
 }) => (
   <div>
-    {(controllerKey(controller, binding) || []).map(
-      (binding: T.ControllerKeyBinding, i) => (
-        <button key={i} onClick={() => remap(binding)}>
-          {`${binding[2]}: ${binding[0]}`}
-        </button>
-      ),
-    )}
+    {(controllerKey(controller, binding) || []).map(relation => (
+      <button key={relation.binding.id} onClick={() => remap(relation)}>
+        {`${relation.displayName}: ${relation.controllerKey}`}
+      </button>
+    ))}
   </div>
 );

@@ -32,24 +32,31 @@ export type ControllerMap = PS2Map;
 
 export type Controller = PS2Controller;
 
-export type ControllerKeyBinding = [
-  keyof ControllerMap,
-  T.BindingId,
-  T.SimpleBindingKind,
-  string,
-];
+export interface ControllerBindingRelation {
+  controllerKey: keyof ControllerMap;
+  binding: T.SimpleBinding;
+  displayName: string;
+  parentKey?: string;
+  parentId?: T.BindingId;
+}
 
-const simpleControllerKey = (
+const simpleBindingRelation = (
   c: Controller,
-  b: T.SimpleBinding,
-  inputKind: T.SimpleBindingKind,
-  inputKey: string,
-): ControllerKeyBinding | undefined => {
-  if (!c || !b) return;
+  binding: T.SimpleBinding,
+  parentKey?: string,
+  parentId?: T.BindingId,
+): ControllerBindingRelation | undefined => {
+  if (!c || !binding) return;
 
   for (let key in c.map) {
-    if (c.map[key].id === b.id) {
-      return [key as keyof ControllerMap, b.id, inputKind, inputKey];
+    if (c.map[key].id === binding.id) {
+      return {
+        controllerKey: key as keyof ControllerMap,
+        binding,
+        displayName: parentKey || binding.kind,
+        parentKey,
+        parentId,
+      };
     }
   }
 };
@@ -57,27 +64,27 @@ const simpleControllerKey = (
 export const controllerKey = (
   c: Controller,
   b: T.Binding,
-): ControllerKeyBinding[] => {
+): ControllerBindingRelation[] => {
   if (!c || !b) return;
 
   switch (b.kind) {
     case 'button':
     case 'axis':
-      return [simpleControllerKey(c, b, b.kind, null)];
+      return [simpleBindingRelation(c, b)];
 
     case 'stick':
       return [
-        simpleControllerKey(c, b.x, 'axis', 'x'),
-        simpleControllerKey(c, b.y, 'axis', 'y'),
-        simpleControllerKey(c, b.down, 'button', 'down'),
+        simpleBindingRelation(c, b.x, 'x', b.id),
+        simpleBindingRelation(c, b.y, 'y', b.id),
+        simpleBindingRelation(c, b.down, 'down', b.id),
       ];
 
     case 'dpad':
       return [
-        simpleControllerKey(c, b.u, 'button', 'u'),
-        simpleControllerKey(c, b.l, 'button', 'l'),
-        simpleControllerKey(c, b.d, 'button', 'd'),
-        simpleControllerKey(c, b.r, 'button', 'r'),
+        simpleBindingRelation(c, b.u, 'u', b.id),
+        simpleBindingRelation(c, b.l, 'l', b.id),
+        simpleBindingRelation(c, b.d, 'd', b.id),
+        simpleBindingRelation(c, b.r, 'r', b.id),
       ];
   }
 };

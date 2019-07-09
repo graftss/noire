@@ -1,7 +1,7 @@
 import Konva from 'konva';
 
 import * as T from '../../types';
-import { applyBinding } from '../../input/applyBinding';
+import { applyBinding } from '../../input/bindings';
 import { ComponentManager } from './ComponentManager';
 import { ComponentTransformerPlugin } from './plugin/ComponentTransformerPlugin';
 import { DisplayEventBus } from './DisplayEventBus';

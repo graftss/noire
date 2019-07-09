@@ -2,9 +2,8 @@ export {
   Controller,
   PS2Controller,
   PS2Map,
-  ControllerKeyBinding,
+  ControllerBindingRelation,
 } from './input/controllers';
-export { ListeningKind } from './input/NextInputListener';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export {
   ButtonComponentConfig,
@@ -41,7 +40,7 @@ export {
   SimpleBindingKind,
   ComplexBinding,
   Input,
-} from './input/applyBinding';
+} from './input/bindings';
 
 export type CB1<T> = (t: T) => void;
 export type CB2<T, U> = (t: T, u: U) => void;
