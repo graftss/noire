@@ -14,6 +14,7 @@ interface PropsFromState {
   selected: T.SerializedComponent;
   selectedGamepadIndex?: number;
   components: T.SerializedComponent[];
+  controller: T.Controller;
 }
 
 interface PropsFromDispatch {
@@ -28,6 +29,7 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
   selected: state.display.selectedComponent,
   selectedGamepadIndex: state.input.gamepadIndex,
   components: state.display.components,
+  controller: state.input.controller,
 });
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
@@ -36,6 +38,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
 const BaseEditor: React.SFC<EditorProps> = ({
   binding,
   components,
+  controller,
   selected,
   selectedGamepadIndex,
   selectComponent,
@@ -51,7 +54,7 @@ const BaseEditor: React.SFC<EditorProps> = ({
       selected={selected}
       select={selectComponent}
     />
-    <ComponentBinding binding={binding} />
+    <ComponentBinding binding={binding} controller={controller} />
   </div>
 );
 

@@ -1,4 +1,9 @@
-export { Controller, PS2Controller, PS2Map } from './input/controllers';
+export {
+  Controller,
+  PS2Controller,
+  PS2Map,
+  ControllerKeyBinding,
+} from './input/controllers';
 export { ListeningKind } from './input/NextInputListener';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export {
@@ -32,6 +37,8 @@ export {
   StickBindingRef,
   StickInput,
   Binding,
+  SimpleBinding,
+  ComplexBinding,
   Input,
 } from './input/applyBinding';
 

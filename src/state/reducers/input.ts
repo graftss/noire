@@ -1,4 +1,5 @@
 import * as T from '../../types';
+import { testInitialState } from '../testInitialState';
 
 export interface NextInputListenerState {
   inputKind: T.ListeningKind;
@@ -10,7 +11,8 @@ export interface InputState {
   controller?: T.Controller;
 }
 
-const defaultInputState: InputState = {};
+// const defaultInputState: InputState = {};
+const defaultInputState = testInitialState.input;
 
 export const inputReducer = (
   state: InputState = defaultInputState,

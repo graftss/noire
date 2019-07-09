@@ -28,4 +28,50 @@ export interface PS2Controller {
   map: PS2Map;
 }
 
+export type ControllerMap = PS2Map;
+
 export type Controller = PS2Controller;
+
+export type ControllerKeyBinding = [keyof ControllerMap, T.BindingId, string?];
+
+const simpleControllerKey = (
+  c: Controller,
+  b: T.SimpleBinding,
+  complexKey?: string,
+): ControllerKeyBinding | undefined => {
+  if (!c || !b) return;
+
+  for (let key in c.map) {
+    if (c.map[key].id === b.id) {
+      return [key as keyof ControllerMap, b.id, complexKey];
+    }
+  }
+};
+
+export const controllerKey = (
+  c: Controller,
+  b: T.Binding,
+): ControllerKeyBinding[] => {
+  if (!c || !b) return;
+
+  switch (b.kind) {
+    case 'button':
+    case 'axis':
+      return [simpleControllerKey(c, b)];
+
+    case 'stick':
+      return [
+        simpleControllerKey(c, b.x, 'x'),
+        simpleControllerKey(c, b.y, 'y'),
+        simpleControllerKey(c, b.down, 'down'),
+      ];
+
+    case 'dpad':
+      return [
+        simpleControllerKey(c, b.u, 'u'),
+        simpleControllerKey(c, b.l, 'l'),
+        simpleControllerKey(c, b.d, 'd'),
+        simpleControllerKey(c, b.r, 'r'),
+      ];
+  }
+};

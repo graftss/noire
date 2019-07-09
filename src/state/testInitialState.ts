@@ -25,6 +25,8 @@ const c: T.PS2Map = {
   rsY: { id: ids[19], kind: 'axis', index: 2, inverted: false },
 };
 
+const controller: T.Controller = { kind: 'ps2', map: c };
+
 const dpad: T.DPadBinding = {
   id: ids[20],
   kind: 'dpad',
@@ -98,5 +100,7 @@ export const testInitialState: T.EditorState = {
     bindings,
     components,
   },
-  input: {},
+  input: {
+    controller,
+  },
 };

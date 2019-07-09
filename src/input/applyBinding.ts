@@ -135,6 +135,10 @@ export type Binding =
   | DPadBinding
   | StickBinding;
 
+export type SimpleBinding = ButtonInputBinding | AxisBinding;
+
+export type ComplexBinding = StickBinding | DPadBinding;
+
 // TODO: add `RawInput` (or something) export type to characterize just the
 // `input` property of the `Input` export type, to better export type the input
 // argument of `Component.input`.
