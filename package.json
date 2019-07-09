@@ -1,9 +1,9 @@
 {
   "private": true,
-  "name": "konva-typescript",
-  "version": "1.0.0",
-  "description": "",
-  "main": "public/index.js",
+  "name": "noire",
+  "version": "0.0.1",
+  "description": "flexible and programmable input display in the browser",
+  "main": "src/index.ts",
   "scripts": {
     "start": "webpack-dev-server --mode development --open --hot",
     "lint": "eslint --ext .ts,.tsx --fix src/**/* || exit 0"
@@ -15,6 +15,7 @@
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
     "@types/react-redux": "^7.1.1",
+    "@types/react-select": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^1.11.0",
     "@typescript-eslint/parser": "^1.11.0",
     "acorn": "^6.1.1",
@@ -31,7 +32,6 @@
     "webpack-dev-server": "^3.7.2"
   },
   "dependencies": {
-    "@types/react-select": "^3.0.0",
     "konva": "^3.2.5",
     "ramda": "^0.26.1",
     "react": "^16.8.6",
