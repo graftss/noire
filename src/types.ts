@@ -1,17 +1,21 @@
 export {
+  AllInput,
   Controller,
+  ControllerKey,
+  ControllerMap,
   PS2Controller,
   PS2Map,
   ControllerBindingRelation,
 } from './input/controllers';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
+export { ButtonComponentConfig } from './canvas/component/ButtonComponent';
+export { DPadComponentConfig } from './canvas/component/DPadComponent';
+export { StickComponentConfig } from './canvas/component/StickComponent';
+export { SerializedComponent } from './canvas/component/';
 export {
-  ButtonComponentConfig,
-  DPadComponentConfig,
-  StickComponentConfig,
   BaseComponentConfig,
-  SerializedComponent,
-} from './canvas/component/';
+  TypedComponent,
+} from './canvas/component/Component';
 export { EditorApp } from './editor';
 export { EditorAction } from './state/actions';
 export { DisplayState } from './state/reducers/display';
@@ -30,16 +34,15 @@ export {
   ButtonInputBinding,
   Dir,
   DPadBinding,
-  DPadBindingRef,
   DPadInput,
   StickBinding,
-  StickBindingRef,
   StickInput,
   Binding,
   SimpleBinding,
   SimpleBindingKind,
   ComplexBinding,
   Input,
+  RawInput,
 } from './input/bindings';
 
 export type CB1<T> = (t: T) => void;

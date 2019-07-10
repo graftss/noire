@@ -11,14 +11,13 @@ import {
   selectComponent,
   selectGamepad,
 } from '../../state/actions';
-import { selectedComponentBinding } from '../../state/stateMaps';
+import { selectedComponentProp } from '../../state/stateMaps';
 
 interface PropsFromState {
-  binding: T.Binding;
   selected: T.SerializedComponent;
   selectedGamepadIndex?: number;
   components: T.SerializedComponent[];
-  controller: T.Controller;
+  controllers: T.Controller[];
 }
 
 interface PropsFromDispatch {
@@ -30,11 +29,10 @@ interface PropsFromDispatch {
 type EditorProps = PropsFromState & PropsFromDispatch;
 
 const mapStateToProps = (state: T.EditorState): PropsFromState => ({
-  binding: selectedComponentBinding(state.display),
   selected: state.display.selectedComponent,
   selectedGamepadIndex: state.input.gamepadIndex,
   components: state.display.components,
-  controller: state.input.controller,
+  controllers: state.input.controllers,
 });
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
@@ -44,9 +42,8 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   );
 
 const BaseEditor: React.SFC<EditorProps> = ({
-  binding,
   components,
-  controller,
+  controllers,
   listenNextInput,
   selected,
   selectedGamepadIndex,
@@ -62,18 +59,6 @@ const BaseEditor: React.SFC<EditorProps> = ({
       components={components}
       selected={selected}
       select={selectComponent}
-    />
-    <ComponentBindings
-      binding={binding}
-      controller={controller}
-      remap={binding =>
-        listenNextInput({
-          kind: 'component',
-          componentId: selected.id,
-          bindingKind: binding[2],
-          inputKey: binding[3],
-        })
-      }
     />
   </div>
 );

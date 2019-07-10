@@ -28,9 +28,10 @@ export const find = <T>(pred: (t: T) => boolean, list: T[]): T | undefined => {
   }
 };
 
-export const defaults = <T extends {}>(source: T, target: T): T => {
+export const defaults = <T extends {}>(source: Partial<T>, target: T): T => {
   for (let key in source) {
-    target[key] = target[key] !== undefined ? target[key] : source[key];
+    target[key] =
+      target && target[key] !== undefined ? target[key] : source[key];
   }
 
   return target;

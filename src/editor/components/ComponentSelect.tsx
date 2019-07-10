@@ -20,7 +20,7 @@ const toOption = (c: T.SerializedComponent): ComponentOption | undefined =>
     ? undefined
     : {
         value: c.id,
-        label: c.kind,
+        label: c.id,
       };
 
 export const ComponentSelect: React.SFC<ComponentSelectProps> = ({

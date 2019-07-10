@@ -7,14 +7,8 @@ export const componentById = (
 ): T.SerializedComponent =>
   state ? find(c => c.id === id, state.components) : undefined;
 
-export const selectedComponentId = (
+export const selectedComponentProp = <K extends keyof T.SerializedComponent>(
   state: T.DisplayState,
-): string | undefined =>
-  state && state.selectedComponent && state.selectedComponent.id;
-
-export const selectedComponentBinding = (
-  state: T.DisplayState,
-): T.Binding | undefined => {
-  const id = state.selectedComponent && state.selectedComponent.bindingId;
-  return id && find(b => b.id === id, state.bindings);
-};
+  prop: K,
+): T.SerializedComponent[K] =>
+  state && state.selectedComponent && state.selectedComponent[prop];

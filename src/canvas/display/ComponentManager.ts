@@ -1,7 +1,9 @@
 import Konva from 'konva';
+import { map } from 'ramda';
 
 import * as T from '../../types';
-import { Component } from '../component';
+import { deserializeComponent } from '../component/deserializeComponent';
+import { Component } from '../component/Component';
 import { DisplayEventBus } from './DisplayEventBus';
 import { find, keyBy } from '../../utils';
 
@@ -27,12 +29,12 @@ export class ComponentManager {
   }
 
   // TODO: update binding ids here too
-  sync(components: Component[]): void {
-    const currentById = keyBy(this.components, c => c.getBindingId());
+  sync(components: T.SerializedComponent[]): void {
+    const currentById = keyBy(this.components, c => c.getId());
     // const newById = keyBy(components, c => c.getBindingId());
 
     components.forEach(component => {
-      if (!currentById[component.getBindingId()]) this.add(component);
+      if (!currentById[component.id]) this.add(deserializeComponent(component));
     });
 
     // this.components.forEach(component => {
@@ -69,14 +71,20 @@ export class ComponentManager {
   //   return false;
   // }
 
-  update(inputDict: { [bindingId: number]: T.Input }, dt: number): void {
-    this.components.forEach((component: Component) => {
-      const bindingId = component.getBindingId();
-      const input = inputDict[bindingId];
-      if (input) {
-        component.update(inputDict[bindingId].input, dt);
-      }
-    });
+  update(input: T.AllInput, dt: number): void {
+    this.components.forEach(
+      <I extends Record<string, T.RawInput>>(
+        component: T.TypedComponent<I>,
+      ) => {
+        // TODO: understand what the hell is going on with the types here
+        const componentInput: Record<keyof I, T.RawInput> = map(
+          (key): T.RawInput => key && input[key.controllerId][key.key].input,
+          component.getInputMap(),
+        );
+
+        component.update(componentInput as I, dt);
+      },
+    );
   }
 
   findById(componentId: string): Component {

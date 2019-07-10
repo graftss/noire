@@ -1,5 +1,4 @@
 import * as T from '../types';
-import { find, uuid } from '../utils';
 
 export type InputMap<T, U> = (binding: T) => (g: Gamepad) => U;
 
@@ -80,10 +79,6 @@ export interface DPadBinding
 
 export type DPadInput = Record<Dir, ButtonInput>;
 
-export interface DPadBindingRef extends BaseBinding, Record<Dir, BindingId> {
-  kind: 'dpadref';
-}
-
 export const dPadMap: InputMap<DPadBinding, DPadInput> = ({
   u,
   l,
@@ -100,33 +95,26 @@ export interface StickBinding extends BaseBinding {
   kind: 'stick';
   x: AxisBinding;
   y: AxisBinding;
-  down?: ButtonInputBinding;
+  button?: ButtonInputBinding;
 }
 
-export interface StickBindingRef extends BaseBinding {
-  kind: 'stickref';
-  x: BindingId;
-  y: BindingId;
-  down?: BindingId;
-}
-
-export interface StickInput {
+export interface StickInput extends Record<string, RawInput> {
   x: AxisInput;
   y: AxisInput;
-  down: ButtonInput;
+  button: ButtonInput;
 }
 
 export const stickMap: InputMap<StickBinding, StickInput> = binding => {
   const inputMaps = {
-    h: axisMap(binding.x),
-    v: axisMap(binding.y),
-    down: binding.down && buttonInputMap(binding.down),
+    x: axisMap(binding.x),
+    y: axisMap(binding.y),
+    button: binding.button && buttonInputMap(binding.button),
   };
 
   return gamepad => ({
-    x: inputMaps.h(gamepad),
-    y: inputMaps.v(gamepad),
-    down: binding.down && inputMaps.down(gamepad),
+    x: inputMaps.x(gamepad),
+    y: inputMaps.y(gamepad),
+    button: binding.button && inputMaps.button(gamepad),
   });
 };
 
@@ -142,15 +130,13 @@ export type SimpleBindingKind = 'axis' | 'button' | 'axisValue';
 
 export type ComplexBinding = StickBinding | DPadBinding;
 
-// TODO: add `RawInput` (or something) export type to characterize just the
-// `input` property of the `Input` export type, to better export type the input
-// argument of `Component.input`.
-
 export type Input =
   | { kind: 'axis'; input: AxisInput }
   | { kind: 'button'; input: ButtonInput }
   | { kind: 'dpad'; input: DPadInput }
   | { kind: 'stick'; input: StickInput };
+
+export type RawInput = AxisInput | ButtonInput | DPadInput | StickInput;
 
 export const applyBinding = (
   binding: Binding,
@@ -164,6 +150,7 @@ export const applyBinding = (
       };
 
     case 'button':
+    case 'axisValue':
       return {
         kind: 'button',
         input: buttonInputMap(binding)(gamepad),
@@ -181,15 +168,4 @@ export const applyBinding = (
         input: stickMap(binding)(gamepad),
       };
   }
-};
-
-export const assignBindingId = (
-  bindings: Binding[],
-  binding: Binding,
-): T.Binding => {
-  const existing: T.Binding | undefined = find(
-    b => b.id === binding.id,
-    bindings,
-  );
-  return existing === undefined ? { ...existing, id: uuid() } : existing;
 };

@@ -11,7 +11,7 @@ export interface RemapState {
 export interface InputState {
   gamepadIndex?: number;
   remapping?: RemapState;
-  controller?: T.Controller;
+  controllers?: T.Controller[];
 }
 
 // const defaultInputState: InputState = {};

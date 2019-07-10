@@ -1,6 +1,6 @@
 import Konva from 'konva';
 
-import { Component } from '../../component';
+import { Component } from '../../component/Component';
 import { DisplayPlugin } from './DisplayPlugin';
 import { DisplayEventBus } from '../DisplayEventBus';
 
@@ -30,6 +30,7 @@ export class ComponentTransformerPlugin extends DisplayPlugin {
     }
 
     if (target) {
+      console.log(target);
       this.transformerTarget = target;
       this.transformer = new Konva.Transformer();
       this.transformer.attachTo(target);

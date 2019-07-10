@@ -2,11 +2,10 @@ import Konva from 'konva';
 
 import * as T from '../../types';
 import { TypedComponent } from './Component';
-import { defaults } from '../../utils';
 
 const dirs = ['u', 'l', 'd', 'r'];
 
-export interface DPadComponentConfig extends T.BaseComponentConfig {
+export interface DPadConfig {
   kind: 'dpad';
   buttonWidth?: number;
   buttonHeight?: number;
@@ -14,7 +13,7 @@ export interface DPadComponentConfig extends T.BaseComponentConfig {
   pressedFill?: string;
 }
 
-export const defaultDPadComponentConfig: DPadComponentConfig = {
+export const defaultDPadConfig: DPadConfig = {
   kind: 'dpad',
   buttonWidth: 20,
   buttonHeight: 20,
@@ -22,14 +21,26 @@ export const defaultDPadComponentConfig: DPadComponentConfig = {
   pressedFill: 'darkred',
 };
 
+export type DPadComponentConfig = DPadConfig &
+  T.BaseComponentConfig<T.DPadInput>;
+
+const defaultInput: T.DPadInput = {
+  l: { pressed: false },
+  u: { pressed: false },
+  d: { pressed: false },
+  r: { pressed: false },
+};
+
 export class DPadComponent extends TypedComponent<T.DPadInput> {
+  protected config: DPadComponentConfig;
   private rects: Record<T.Dir, Konva.Rect>;
 
-  constructor(protected config: DPadComponentConfig) {
-    super(config);
-    this.config = defaults(defaultDPadComponentConfig, config);
+  constructor(config: DPadComponentConfig) {
+    super(
+      TypedComponent.generateConfig(config, defaultDPadConfig, defaultInput),
+    );
 
-    const { buttonWidth, buttonHeight, fill } = config;
+    const { buttonWidth, buttonHeight, fill } = this.config;
 
     this.rects = {
       u: new Konva.Rect({
@@ -65,11 +76,14 @@ export class DPadComponent extends TypedComponent<T.DPadInput> {
     dirs.forEach(dir => this.group.add(this.rects[dir]));
   }
 
-  update(input: T.DPadInput): void {
+  update(rawInput: T.DPadInput): void {
+    const input = this.applyDefaultInput(rawInput);
     const { pressedFill, fill } = this.config;
 
-    dirs.forEach(dir => {
-      this.rects[dir].fill(input[dir].pressed ? pressedFill : fill);
-    });
+    dirs.forEach(dir =>
+      this.rects[dir].fill(
+        input[dir] && input[dir].pressed ? pressedFill : fill,
+      ),
+    );
   }
 }

@@ -2,7 +2,7 @@ import * as T from '../types';
 
 const ids = 'qwertyuiopasdfghjklzxcvbnm,';
 
-const c: T.PS2Map = {
+const c: T.PS2Map & Record<string, T.Binding> = {
   padU: { id: ids[0], kind: 'axisValue', axis: 9, value: -1 },
   padL: { id: ids[1], kind: 'axisValue', axis: 9, value: 0.7142857 },
   padR: { id: ids[2], kind: 'axisValue', axis: 9, value: -0.428571 },
@@ -10,9 +10,9 @@ const c: T.PS2Map = {
   select: { id: ids[4], kind: 'button', index: 8 },
   start: { id: ids[5], kind: 'button', index: 9 },
   square: { id: ids[6], kind: 'button', index: 3 },
-  triangle: { id: ids[7], kind: 'button', index: 2 },
+  triangle: { id: ids[7], kind: 'button', index: 0 },
   circle: { id: ids[8], kind: 'button', index: 1 },
-  x: { id: ids[9], kind: 'button', index: 0 },
+  x: { id: ids[9], kind: 'button', index: 2 },
   l1: { id: ids[10], kind: 'button', index: 6 },
   l2: { id: ids[11], kind: 'button', index: 4 },
   l3: { id: ids[12], kind: 'button', index: 10 },
@@ -25,67 +25,53 @@ const c: T.PS2Map = {
   rsY: { id: ids[19], kind: 'axis', index: 2, inverted: false },
 };
 
-const controller: T.Controller = { kind: 'ps2', map: c };
-
-const dpad: T.DPadBinding = {
-  id: ids[20],
-  kind: 'dpad',
-  u: c.padU,
-  l: c.padL,
-  r: c.padR,
-  d: c.padD,
-};
-
-const ls: T.StickBinding = {
-  id: ids[21],
-  kind: 'stick',
-  x: c.lsX,
-  y: c.lsY,
-  down: c.l3,
-};
-
-const rs: T.StickBinding = {
-  id: ids[22],
-  kind: 'stick',
-  x: c.rsX,
-  y: c.rsY,
-  down: c.r3,
-};
-
-const bindings: T.Binding[] = [c.square, dpad, ls, rs];
+const controllers: T.Controller[] = [{ id: 'a', kind: 'ps2', map: c }];
 
 const leftStick: T.StickComponentConfig = {
   kind: 'stick',
   x: 200,
   y: 200,
-  bindingId: ls.id,
   id: ids[0],
+  inputMap: {
+    x: { controllerId: 'a', key: 'lsX' },
+    y: { controllerId: 'a', key: 'lsY' },
+    button: { controllerId: 'a', key: 'l3' },
+  },
 };
 
 const rightStick: T.StickComponentConfig = {
   kind: 'stick',
   x: 310,
   y: 200,
-  bindingId: rs.id,
   id: ids[1],
+  inputMap: {
+    x: { controllerId: 'a', key: 'rsX' },
+    y: { controllerId: 'a', key: 'rsY' },
+    button: { controllerId: 'a', key: 'r3' },
+  },
 };
 
 const dPad: T.DPadComponentConfig = {
   kind: 'dpad',
   x: 50,
   y: 50,
-  bindingId: dpad.id,
   id: ids[2],
   buttonWidth: 30,
   buttonHeight: 30,
+  inputMap: {
+    u: { controllerId: 'a', key: 'padU' },
+    l: { controllerId: 'a', key: 'padL' },
+    d: { controllerId: 'a', key: 'padD' },
+    r: { controllerId: 'a', key: 'padR' },
+  },
 };
 
 const button: T.ButtonComponentConfig = {
   kind: 'button',
   x: 150,
   y: 100,
-  bindingId: c.square.id,
   id: ids[3],
+  inputMap: { button: { controllerId: 'a', key: 'triangle' } },
 };
 
 const components: T.SerializedComponent[] = [
@@ -97,10 +83,10 @@ const components: T.SerializedComponent[] = [
 
 export const testInitialState: T.EditorState = {
   display: {
-    bindings,
+    bindings: [],
     components,
   },
   input: {
-    controller,
+    controllers,
   },
 };

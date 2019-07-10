@@ -2,9 +2,8 @@ import Konva from 'konva';
 
 import * as T from '../../types';
 import { TypedComponent } from './Component';
-import { defaults } from '../../utils';
 
-export interface ButtonComponentConfig extends T.BaseComponentConfig {
+export interface ButtonConfig {
   kind: 'button';
   width?: number;
   height?: number;
@@ -12,7 +11,7 @@ export interface ButtonComponentConfig extends T.BaseComponentConfig {
   pressedFill?: string;
 }
 
-export const defaultButtonComponentConfig: ButtonComponentConfig = {
+export const defaultButtonConfig: ButtonConfig = {
   kind: 'button',
   width: 30,
   height: 40,
@@ -20,27 +19,43 @@ export const defaultButtonComponentConfig: ButtonComponentConfig = {
   pressedFill: 'darkred',
 };
 
-export class ButtonComponent extends TypedComponent<T.ButtonInput> {
+export type ButtonComponentConfig = ButtonConfig &
+  T.BaseComponentConfig<ButtonComponentInput>;
+
+export interface ButtonComponentInput extends Record<string, T.RawInput> {
+  button: T.ButtonInput;
+}
+
+const defaultInput: ButtonComponentInput = {
+  button: { pressed: false },
+};
+
+export class ButtonComponent extends TypedComponent<ButtonComponentInput> {
+  protected config: ButtonComponentConfig;
   private rect: Konva.Rect;
 
-  constructor(protected config: ButtonComponentConfig) {
-    super(config);
-    this.config = defaults(defaultButtonComponentConfig, config);
+  constructor(config: ButtonComponentConfig) {
+    super(
+      TypedComponent.generateConfig(config, defaultButtonConfig, defaultInput),
+    );
 
-    const { width, height, fill } = config;
+    const { width, height, fill } = this.config;
 
     this.rect = new Konva.Rect({
       height,
       width,
       fill,
+      x: 0,
+      y: 0,
     });
 
     this.group.add(this.rect);
   }
 
-  update({ pressed }: T.ButtonInput): void {
+  update(input: ButtonComponentInput): void {
+    const { button } = this.applyDefaultInput(input);
     const { fill, pressedFill } = this.config;
 
-    this.rect.fill(pressed ? pressedFill : fill);
+    this.rect.fill(button.pressed ? pressedFill : fill);
   }
 }

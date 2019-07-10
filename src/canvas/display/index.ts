@@ -1,14 +1,13 @@
 import Konva from 'konva';
 
 import * as T from '../../types';
-import { applyBinding } from '../../input/bindings';
 import { ComponentManager } from './ComponentManager';
 import { ComponentTransformerPlugin } from './plugin/ComponentTransformerPlugin';
 import { DisplayEventBus } from './DisplayEventBus';
 import { DisplayPlugin } from './plugin/DisplayPlugin';
-import { Component, deserializeComponent } from '../component';
+import { Component } from '../component/Component';
 import { selectComponent, deselectComponent } from '../../state/actions';
-import { selectedComponentId } from '../../state/stateMaps';
+import { selectedComponentProp } from '../../state/stateMaps';
 
 export class Display {
   private eventBus: DisplayEventBus;
@@ -43,7 +42,8 @@ export class Display {
     this.eventBus.on({
       kind: 'componentSelect',
       cb: (component: Component) => {
-        if (selectedComponentId(this.lastState) !== component.getId()) {
+        console.log('selected', component);
+        if (selectedComponentProp(this.lastState, 'id') !== component.getId()) {
           store.dispatch(selectComponent(component.getId()));
         }
       },
@@ -71,8 +71,8 @@ export class Display {
     lastState: T.DisplayState,
   ): void {
     const { components, selectedComponent } = state;
-    const lastSelectedId = selectedComponentId(lastState);
-    const selectedId = selectedComponentId(state);
+    const lastSelectedId = selectedComponentProp(lastState, 'id');
+    const selectedId = selectedComponentProp(state, 'id');
 
     if (selectedId && lastSelectedId !== selectedId) {
       this.eventBus.emit({
@@ -81,25 +81,14 @@ export class Display {
       });
     }
 
-    this.cm.sync(components.map(deserializeComponent));
-  }
-
-  private getInputDict(gamepad: Gamepad): Record<T.BindingId, T.Input> {
-    const result = {};
-
-    this.lastState.bindings.forEach(
-      binding => (result[binding.id] = applyBinding(binding, gamepad)),
-    );
-
-    return result;
+    this.cm.sync(components);
   }
 
   draw(): void {
     this.layer.draw();
   }
 
-  update(gamepad: Gamepad, dt: number): void {
-    const inputDict = this.getInputDict(gamepad);
-    this.cm.update(inputDict, dt);
+  update(input: T.AllInput, dt: number): void {
+    this.cm.update(input, dt);
   }
 }

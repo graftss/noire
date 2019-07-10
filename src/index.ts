@@ -1,10 +1,13 @@
 import Konva from 'konva';
+import { map } from 'ramda';
 
 import * as T from './types';
 import { Display } from './canvas/display';
 import { createEditorApp } from './editor';
 import { NextInputListener } from './input/NextInputListener';
 import { stopListening } from './state/actions';
+import { applyControllerBindings } from './input/controllers';
+import { keyBy } from './utils';
 
 export class Noire {
   private stage: Konva.Stage;
@@ -33,7 +36,13 @@ export class Noire {
     const gamepad = this.getActiveGamepad();
 
     if (gamepad) {
-      this.display.update(gamepad, dt);
+      const cs = this.editorApp.store.getState().input.controllers;
+      const input: T.AllInput = map(
+        c => applyControllerBindings(gamepad, c),
+        keyBy(cs, c => c.id),
+      );
+
+      this.display.update(input, dt);
       this.display.draw();
 
       if (this.nextInputListener.isActive()) {
@@ -52,7 +61,6 @@ export class Noire {
       switch (remapping.bindingKind) {
         case 'axis':
           this.nextInputListener.awaitPositiveAxis(binding => {
-            const bindings = store.getState().display.bindings;
             console.log('axis', binding);
             store.dispatch(stopListening());
           });

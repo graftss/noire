@@ -1,4 +1,7 @@
+import { map } from 'ramda';
+
 import * as T from '../types';
+import { applyBinding } from './bindings';
 
 export interface PS2Map {
   padU: T.ButtonInputBinding;
@@ -30,7 +33,15 @@ export interface PS2Controller {
 
 export type ControllerMap = PS2Map;
 
-export type Controller = PS2Controller;
+export type Controller = {
+  id: string;
+  map: Record<string, T.Binding>;
+} & PS2Controller;
+
+export interface ControllerKey {
+  controllerId: string;
+  key: string;
+}
 
 export interface ControllerBindingRelation {
   controllerKey: keyof ControllerMap;
@@ -61,7 +72,7 @@ const simpleBindingRelation = (
   }
 };
 
-export const controllerKey = (
+export const controllerKeyRelation = (
   c: Controller,
   b: T.Binding,
 ): ControllerBindingRelation[] => {
@@ -76,7 +87,7 @@ export const controllerKey = (
       return [
         simpleBindingRelation(c, b.x, 'x', b.id),
         simpleBindingRelation(c, b.y, 'y', b.id),
-        simpleBindingRelation(c, b.down, 'down', b.id),
+        simpleBindingRelation(c, b.button, 'button', b.id),
       ];
 
     case 'dpad':
@@ -88,3 +99,11 @@ export const controllerKey = (
       ];
   }
 };
+
+export const applyControllerBindings = (
+  g: Gamepad,
+  c: Controller,
+): Record<string, T.Input> => map((b: T.Binding) => applyBinding(b, g), c.map);
+
+// keyed first by controllerId and second by controllerKey
+export type AllInput = Record<string, Record<string, T.Input>>;

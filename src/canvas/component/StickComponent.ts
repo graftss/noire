@@ -2,9 +2,9 @@ import Konva from 'konva';
 
 import * as T from '../../types';
 import { TypedComponent } from './Component';
-import { defaults, sign } from '../../utils';
+import { sign } from '../../utils';
 
-export interface StickComponentConfig extends T.BaseComponentConfig {
+export interface StickConfig {
   kind: 'stick';
   boundaryRadius?: number;
   stickRadius?: number;
@@ -13,7 +13,7 @@ export interface StickComponentConfig extends T.BaseComponentConfig {
   pressedStickFill?: string;
 }
 
-export const defaultStickComponentConfig: StickComponentConfig = {
+export const defaultStickComponentConfig: StickConfig = {
   kind: 'stick',
   boundaryRadius: 26,
   stickRadius: 40,
@@ -22,18 +22,33 @@ export const defaultStickComponentConfig: StickComponentConfig = {
   pressedStickFill: 'darkred',
 };
 
+const defaultInput: T.StickInput = {
+  x: 0,
+  y: 0,
+  button: { pressed: false },
+};
+
+export type StickComponentConfig = StickConfig &
+  T.BaseComponentConfig<T.StickInput>;
+
 const depthFactor = (t: number): number =>
   t > 0.2 ? 1 - 0.08 * Math.abs(t) : 1 - 0.02 * Math.abs(t);
 
 export class StickComponent extends TypedComponent<T.StickInput> {
+  protected config: StickComponentConfig;
   private center: Konva.Circle;
   private stick: Konva.Ellipse;
 
-  constructor(protected config: StickComponentConfig) {
-    super(config);
-    this.config = defaults(defaultStickComponentConfig, config);
+  constructor(config: StickComponentConfig) {
+    super(
+      TypedComponent.generateConfig(
+        config,
+        defaultStickComponentConfig,
+        defaultInput,
+      ),
+    );
 
-    const { boundaryRadius, stickRadius, stickFill } = config;
+    const { boundaryRadius, stickRadius, stickFill } = this.config;
 
     this.center = new Konva.Circle({
       radius: boundaryRadius * 0.43,
@@ -58,7 +73,9 @@ export class StickComponent extends TypedComponent<T.StickInput> {
     this.group.add(this.stick);
   }
 
-  update({ x, y, down }: T.StickInput): void {
+  update(input: T.StickInput): void {
+    const { x, y, button } = this.applyDefaultInput(input);
+
     const {
       boundaryRadius,
       stickRadius,
@@ -77,7 +94,7 @@ export class StickComponent extends TypedComponent<T.StickInput> {
       y: stickRadius * depthFactor(y),
     });
 
-    this.stick.fill(down.pressed ? pressedStickFill : stickFill);
+    this.stick.fill(button.pressed ? pressedStickFill : stickFill);
 
     this.stick.shadowOffset({
       x: sign(x) * depthFactor(x) * -1,
