@@ -69,74 +69,15 @@ export const buttonInputMap: InputMap<
     ? buttonMap(binding)(gamepad)
     : axisValueMap(binding)(gamepad);
 
-export type Dir = 'u' | 'l' | 'd' | 'r';
-
-export interface DPadBinding
-  extends BaseBinding,
-    Record<Dir, ButtonInputBinding> {
-  kind: 'dpad';
-}
-
-export type DPadInput = Record<Dir, ButtonInput>;
-
-export const dPadMap: InputMap<DPadBinding, DPadInput> = ({
-  u,
-  l,
-  d,
-  r,
-}) => gamepad => ({
-  u: buttonInputMap(u)(gamepad),
-  l: buttonInputMap(l)(gamepad),
-  d: buttonInputMap(d)(gamepad),
-  r: buttonInputMap(r)(gamepad),
-});
-
-export interface StickBinding extends BaseBinding {
-  kind: 'stick';
-  x: AxisBinding;
-  y: AxisBinding;
-  button?: ButtonInputBinding;
-}
-
-export interface StickInput extends Record<string, RawInput> {
-  x: AxisInput;
-  y: AxisInput;
-  button: ButtonInput;
-}
-
-export const stickMap: InputMap<StickBinding, StickInput> = binding => {
-  const inputMaps = {
-    x: axisMap(binding.x),
-    y: axisMap(binding.y),
-    button: binding.button && buttonInputMap(binding.button),
-  };
-
-  return gamepad => ({
-    x: inputMaps.x(gamepad),
-    y: inputMaps.y(gamepad),
-    button: binding.button && inputMaps.button(gamepad),
-  });
-};
-
-export type Binding =
-  | AxisBinding
-  | ButtonInputBinding
-  | DPadBinding
-  | StickBinding;
-
-export type SimpleBinding = ButtonInputBinding | AxisBinding;
+export type Binding = AxisBinding | ButtonInputBinding;
 
 export type SimpleBindingKind = 'axis' | 'button' | 'axisValue';
 
-export type ComplexBinding = StickBinding | DPadBinding;
-
 export type Input =
   | { kind: 'axis'; input: AxisInput }
-  | { kind: 'button'; input: ButtonInput }
-  | { kind: 'dpad'; input: DPadInput }
-  | { kind: 'stick'; input: StickInput };
+  | { kind: 'button'; input: ButtonInput };
 
-export type RawInput = AxisInput | ButtonInput | DPadInput | StickInput;
+export type RawInput = AxisInput | ButtonInput;
 
 export const applyBinding = (
   binding: Binding,
@@ -154,18 +95,6 @@ export const applyBinding = (
       return {
         kind: 'button',
         input: buttonInputMap(binding)(gamepad),
-      };
-
-    case 'dpad':
-      return {
-        kind: 'dpad',
-        input: dPadMap(binding)(gamepad),
-      };
-
-    case 'stick':
-      return {
-        kind: 'stick',
-        input: stickMap(binding)(gamepad),
       };
   }
 };

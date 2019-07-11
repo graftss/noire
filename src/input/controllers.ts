@@ -43,67 +43,7 @@ export interface ControllerKey {
   key: string;
 }
 
-export interface ControllerBindingRelation {
-  controllerKey: keyof ControllerMap;
-  binding: T.SimpleBinding;
-  displayName: string;
-  parentKey?: string;
-  parentId?: T.BindingId;
-}
-
-const simpleBindingRelation = (
-  c: Controller,
-  binding: T.SimpleBinding,
-  parentKey?: string,
-  parentId?: T.BindingId,
-): ControllerBindingRelation | undefined => {
-  if (!c || !binding) return;
-
-  for (let key in c.map) {
-    if (c.map[key].id === binding.id) {
-      return {
-        controllerKey: key as keyof ControllerMap,
-        binding,
-        displayName: parentKey || binding.kind,
-        parentKey,
-        parentId,
-      };
-    }
-  }
-};
-
-export const controllerKeyRelation = (
-  c: Controller,
-  b: T.Binding,
-): ControllerBindingRelation[] => {
-  if (!c || !b) return;
-
-  switch (b.kind) {
-    case 'button':
-    case 'axis':
-      return [simpleBindingRelation(c, b)];
-
-    case 'stick':
-      return [
-        simpleBindingRelation(c, b.x, 'x', b.id),
-        simpleBindingRelation(c, b.y, 'y', b.id),
-        simpleBindingRelation(c, b.button, 'button', b.id),
-      ];
-
-    case 'dpad':
-      return [
-        simpleBindingRelation(c, b.u, 'u', b.id),
-        simpleBindingRelation(c, b.l, 'l', b.id),
-        simpleBindingRelation(c, b.d, 'd', b.id),
-        simpleBindingRelation(c, b.r, 'r', b.id),
-      ];
-  }
-};
-
 export const applyControllerBindings = (
   g: Gamepad,
   c: Controller,
 ): Record<string, T.Input> => map((b: T.Binding) => applyBinding(b, g), c.map);
-
-// keyed first by controllerId and second by controllerKey
-export type AllInput = Record<string, Record<string, T.Input>>;

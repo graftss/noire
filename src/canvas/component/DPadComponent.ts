@@ -21,19 +21,22 @@ export const defaultDPadConfig: DPadConfig = {
   pressedFill: 'darkred',
 };
 
-export type DPadComponentConfig = DPadConfig &
-  T.BaseComponentConfig<T.DPadInput>;
+export type Dir = 'u' | 'l' | 'd' | 'r';
 
-const defaultInput: T.DPadInput = {
+export type DPadInput = Record<Dir, T.ButtonInput>;
+
+export type DPadComponentConfig = DPadConfig & T.BaseComponentConfig<DPadInput>;
+
+const defaultInput: DPadInput = {
   l: { pressed: false },
   u: { pressed: false },
   d: { pressed: false },
   r: { pressed: false },
 };
 
-export class DPadComponent extends TypedComponent<T.DPadInput> {
+export class DPadComponent extends TypedComponent<DPadInput> {
   protected config: DPadComponentConfig;
-  private rects: Record<T.Dir, Konva.Rect>;
+  private rects: Record<Dir, Konva.Rect>;
 
   constructor(config: DPadComponentConfig) {
     super(
@@ -76,7 +79,7 @@ export class DPadComponent extends TypedComponent<T.DPadInput> {
     dirs.forEach(dir => this.group.add(this.rects[dir]));
   }
 
-  update(rawInput: T.DPadInput): void {
+  update(rawInput: DPadInput): void {
     const input = this.applyDefaultInput(rawInput);
     const { pressedFill, fill } = this.config;
 

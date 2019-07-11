@@ -1,11 +1,10 @@
+export { AllInput } from './input/InputManager';
 export {
-  AllInput,
   Controller,
   ControllerKey,
   ControllerMap,
   PS2Controller,
   PS2Map,
-  ControllerBindingRelation,
 } from './input/controllers';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export { ButtonComponentConfig } from './canvas/component/ButtonComponent';
@@ -32,15 +31,8 @@ export {
   ButtonBinding,
   ButtonInput,
   ButtonInputBinding,
-  Dir,
-  DPadBinding,
-  DPadInput,
-  StickBinding,
-  StickInput,
   Binding,
-  SimpleBinding,
   SimpleBindingKind,
-  ComplexBinding,
   Input,
   RawInput,
 } from './input/bindings';

@@ -11,7 +11,6 @@ import {
   selectComponent,
   selectGamepad,
 } from '../../state/actions';
-import { selectedComponentProp } from '../../state/stateMaps';
 
 interface PropsFromState {
   selected: T.SerializedComponent;

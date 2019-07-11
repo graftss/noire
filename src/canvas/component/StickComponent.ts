@@ -22,19 +22,25 @@ export const defaultStickComponentConfig: StickConfig = {
   pressedStickFill: 'darkred',
 };
 
-const defaultInput: T.StickInput = {
+export interface StickInput extends Record<string, T.RawInput> {
+  x: T.AxisInput;
+  y: T.AxisInput;
+  button: T.ButtonInput;
+}
+
+const defaultInput: StickInput = {
   x: 0,
   y: 0,
   button: { pressed: false },
 };
 
 export type StickComponentConfig = StickConfig &
-  T.BaseComponentConfig<T.StickInput>;
+  T.BaseComponentConfig<StickInput>;
 
 const depthFactor = (t: number): number =>
   t > 0.2 ? 1 - 0.08 * Math.abs(t) : 1 - 0.02 * Math.abs(t);
 
-export class StickComponent extends TypedComponent<T.StickInput> {
+export class StickComponent extends TypedComponent<StickInput> {
   protected config: StickComponentConfig;
   private center: Konva.Circle;
   private stick: Konva.Ellipse;
@@ -73,7 +79,7 @@ export class StickComponent extends TypedComponent<T.StickInput> {
     this.group.add(this.stick);
   }
 
-  update(input: T.StickInput): void {
+  update(input: StickInput): void {
     const { x, y, button } = this.applyDefaultInput(input);
 
     const {
