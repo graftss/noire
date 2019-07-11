@@ -25,7 +25,7 @@ const c: T.PS2Map & Record<string, T.Binding> = {
   rsY: { id: ids[19], kind: 'axis', index: 2, inverted: false },
 };
 
-const controllers: T.Controller[] = [{ id: 'a', kind: 'ps2', map: c }];
+const controllers: T.GamepadMap[] = [{ id: 'a', kind: 'ps2', map: c }];
 
 const leftStick: T.StickComponentConfig = {
   kind: 'stick',

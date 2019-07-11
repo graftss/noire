@@ -1,11 +1,12 @@
-export { AllInput } from './input/InputManager';
+export { GlobalInput } from './input/ControllerManager';
 export {
-  Controller,
-  ControllerKey,
-  ControllerMap,
-  PS2Controller,
+  GamepadMap,
+  PS2GamepadMap,
   PS2Map,
+  ControllerKey,
+  Controller,
 } from './input/controllers';
+export { GamepadSource, KeyboardSource, InputSource } from './input/sources';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export { ButtonComponentConfig } from './canvas/component/ButtonComponent';
 export { DPadComponentConfig } from './canvas/component/DPadComponent';

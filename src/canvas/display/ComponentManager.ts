@@ -71,14 +71,17 @@ export class ComponentManager {
   //   return false;
   // }
 
-  update(input: T.AllInput, dt: number): void {
+  update(input: T.GlobalInput, dt: number): void {
     this.components.forEach(
       <I extends Record<string, T.RawInput>>(
         component: T.TypedComponent<I>,
       ) => {
         // TODO: understand what the hell is going on with the types here
         const componentInput: Record<keyof I, T.RawInput> = map(
-          (key): T.RawInput => key && input[key.controllerId][key.key].input,
+          (key): T.RawInput =>
+            key &&
+            input[key.controllerId] &&
+            input[key.controllerId][key.key].input,
           component.getInputMap(),
         );
 

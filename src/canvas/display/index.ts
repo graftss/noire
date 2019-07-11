@@ -88,7 +88,7 @@ export class Display {
     this.layer.draw();
   }
 
-  update(input: T.AllInput, dt: number): void {
+  update(input: T.GlobalInput, dt: number): void {
     this.cm.update(input, dt);
   }
 }

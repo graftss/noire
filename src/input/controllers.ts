@@ -26,24 +26,24 @@ export interface PS2Map {
   rsY: T.AxisBinding;
 }
 
-export interface PS2Controller {
+export interface PS2GamepadMap {
   kind: 'ps2';
   map: PS2Map;
 }
 
-export type ControllerMap = PS2Map;
-
-export type Controller = {
+export type GamepadMap = {
   id: string;
   map: Record<string, T.Binding>;
-} & PS2Controller;
+} & PS2GamepadMap;
+
+export type Controller = GamepadMap;
 
 export interface ControllerKey {
   controllerId: string;
   key: string;
 }
 
-export const applyControllerBindings = (
+export const applyGamepadBindings = (
   g: Gamepad,
-  c: Controller,
+  c: GamepadMap,
 ): Record<string, T.Input> => map((b: T.Binding) => applyBinding(b, g), c.map);

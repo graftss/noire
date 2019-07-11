@@ -39,6 +39,15 @@ export const defaults = <T extends {}>(source: Partial<T>, target: T): T => {
 
 export const uuid = (): string => uuidv4();
 
-export const keyBy = <T>(ts: T[], map: (t: T) => string): Record<string, T> => {
-  return ts.reduce((result, t) => ({ ...result, [map(t)]: t }), {});
+export const keyBy = <T>(
+  ts: T[],
+  map: (t: T) => string | number,
+): Record<string, T> => {
+  return (ts || []).reduce((result, t) => ({ ...result, [map(t)]: t }), {});
+};
+
+export const values = <T>(map: Record<number | string, T>): T[] => {
+  const result = [];
+  for (const k in map) result.push(map[k]);
+  return result;
 };
