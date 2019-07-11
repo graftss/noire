@@ -26,6 +26,8 @@ export class Noire {
     this.display.update(input, dt);
     this.display.draw();
 
+    this.controllerManager.update();
+
     requestAnimationFrame(this.updateLoop);
   };
 
@@ -49,6 +51,13 @@ export class Noire {
 
     this.editorApp.render();
     this.updateLoop(this.tLast);
+
+    setTimeout(() => {
+      console.log('awaiting...');
+      this.controllerManager.awaitButton((a, b) => {
+        console.log(a, b);
+      });
+    }, 400);
   }
 
   // private storeListener = (state: T.EditorState): void => {

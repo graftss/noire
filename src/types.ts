@@ -1,3 +1,7 @@
+export {
+  AwaitAxisCallback,
+  AwaitButtonCallback,
+} from './input/NextInputListener';
 export { GlobalInput } from './input/ControllerManager';
 export {
   GamepadMap,
@@ -6,7 +10,14 @@ export {
   ControllerKey,
   Controller,
 } from './input/controllers';
-export { GamepadSource, KeyboardSource, InputSource } from './input/sources';
+export {
+  GamepadSource,
+  KeyboardSource,
+  InputSource,
+  GlobalSources,
+  ButtonSource,
+  AxisSource,
+} from './input/sources';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export { ButtonComponentConfig } from './canvas/component/ButtonComponent';
 export { DPadComponentConfig } from './canvas/component/DPadComponent';

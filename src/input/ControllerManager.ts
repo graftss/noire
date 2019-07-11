@@ -1,17 +1,14 @@
 import * as T from '../types';
 import { keyBy, uuid, values } from '../utils';
 import { applyGamepadBindings } from './controllers';
+import { NextInputListener } from './NextInputListener';
 
 // keyed first by controller id and second by controller key
 export type GlobalInput = Record<string, Record<string, T.Input>>;
 
-interface GlobalInputSources {
-  gamepads?: (T.GamepadSource)[];
-}
-
 type GamepadId = string;
 
-const getGamepads = (): Gamepad[] => navigator.getGamepads();
+const getGamepads = (): Gamepad[] => [...navigator.getGamepads()];
 
 const forEachGamepad = (
   f: (f: Gamepad, n: number) => void,
@@ -23,13 +20,17 @@ const forEachGamepad = (
 };
 
 export class ControllerManager {
-  private sources: GlobalInputSources = {
+  private nextInputListener: NextInputListener;
+  private sources: T.GlobalSources = {
     gamepads: [],
+    keyboard: { kind: 'keyboard', id: 'KEYBOARD_ID' },
   };
 
   constructor(private store: T.EditorStore) {
     window.addEventListener('gamepadconnected', this.syncGamepadSources);
     window.addEventListener('gamepaddisconnected', this.syncGamepadSources);
+
+    this.nextInputListener = new NextInputListener();
   }
 
   private syncGamepadSources = (): void => {
@@ -46,6 +47,10 @@ export class ControllerManager {
 
     this.sources.gamepads = values(gamepadsByIndex);
   };
+
+  awaitButton(callback: T.AwaitButtonCallback): void {
+    this.nextInputListener.awaitButton(callback);
+  }
 
   getInput(): GlobalInput {
     const result = {};
@@ -66,5 +71,11 @@ export class ControllerManager {
     });
 
     return result;
+  }
+
+  update(): void {
+    if (this.nextInputListener.isActive()) {
+      this.nextInputListener.update(getGamepads());
+    }
   }
 }

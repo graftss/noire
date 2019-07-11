@@ -13,6 +13,7 @@ export const without = <T>(t: T, ts: T[]): T[] => {
 
 export const sign = (x: number): number => (x > 0 ? 1 : x < 0 ? -1 : 0);
 
+// TODO: how do generics interact with readonly?
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const clone = (obj: Record<string, any>): any =>
   JSON.parse(JSON.stringify(obj));
