@@ -48,8 +48,9 @@ export {
   ButtonInput,
   ButtonInputBinding,
   Binding,
-  SimpleBindingKind,
+  BindingKind,
   Input,
+  InputKind,
   RawInput,
 } from './input/bindings';
 

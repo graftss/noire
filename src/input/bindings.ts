@@ -72,13 +72,25 @@ export const buttonInputMap: InputMap<
 
 export type Binding = AxisBinding | ButtonInputBinding;
 
-export type SimpleBindingKind = 'axis' | 'button' | 'axisValue';
+export type BindingKind = 'axis' | 'button' | 'axisValue';
 
 export type Input =
   | { kind: 'axis'; input: AxisInput }
   | { kind: 'button'; input: ButtonInput };
 
+export type InputKind = 'axis' | 'button';
+
 export type RawInput = AxisInput | ButtonInput;
+
+export const bindingToInputKind = (bindingKind: BindingKind): InputKind => {
+  switch (bindingKind) {
+    case 'button':
+    case 'axisValue':
+      return 'button';
+    case 'axis':
+      return 'axis';
+  }
+};
 
 export const applyBinding = (
   binding: Binding,

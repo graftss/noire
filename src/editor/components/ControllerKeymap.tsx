@@ -2,7 +2,7 @@ import * as React from 'react';
 import { toPairs } from 'ramda';
 
 import * as T from '../../types';
-import { stringifyBinding } from '../../input/bindings';
+import { bindingToInputKind, stringifyBinding } from '../../input/bindings';
 import { stringifyControllerKey } from '../../input/controllers';
 
 interface ControllerBindingsProps {
@@ -29,7 +29,7 @@ const generateRemapState = (
   kind: 'controller',
   controllerId: c.id,
   key,
-  bindingKind: binding.kind,
+  inputKind: bindingToInputKind(binding.kind),
 });
 
 const isRemappingControllerKey = (

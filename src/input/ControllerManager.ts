@@ -56,7 +56,7 @@ export class ControllerManager {
     const { remap } = state.input;
 
     if (remap && remap.kind === 'controller') {
-      switch (remap.bindingKind) {
+      switch (remap.inputKind) {
         case 'button': {
           this.nextInputListener.awaitButton((source, binding) => {
             this.store.dispatch(stopListening());
@@ -68,6 +68,23 @@ export class ControllerManager {
               }),
             );
           });
+
+          break;
+        }
+
+        case 'axis': {
+          this.nextInputListener.awaitPositiveAxis((source, binding) => {
+            this.store.dispatch(stopListening());
+            this.store.dispatch(
+              bindControllerKey({
+                controllerId: remap.controllerId,
+                key: remap.key,
+                binding,
+              }),
+            );
+          });
+
+          break;
         }
       }
     }

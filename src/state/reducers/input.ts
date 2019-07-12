@@ -7,12 +7,12 @@ export type RemapState =
       kind: 'controller';
       controllerId: string;
       key: string;
-      bindingKind: T.SimpleBindingKind;
+      inputKind: T.InputKind;
     }
   | {
       kind: 'component';
       componentId: string;
-      bindingKind: T.SimpleBindingKind;
+      inputKind: T.InputKind;
     };
 
 export interface ControllerKeyBinding {
