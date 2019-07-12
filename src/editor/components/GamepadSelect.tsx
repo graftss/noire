@@ -1,9 +1,10 @@
 import * as React from 'react';
 import Select from 'react-select';
+import * as T from '../../types';
 
 interface GamepadSelectProps {
   selectedIndex?: number;
-  selectGamepad: (index: number) => void;
+  selectEditorOption: (o: T.EditorOption) => void;
 }
 
 interface GamepadOption {
@@ -47,14 +48,16 @@ export class GamepadSelect extends React.Component<
 
   render(): JSX.Element {
     const { options } = this.state;
-    const { selectedIndex, selectGamepad } = this.props;
+    const { selectedIndex, selectEditorOption } = this.props;
 
     return (
       <Select
         value={options[selectedIndex] || null}
         options={options}
         placeholder="Gamepads"
-        onChange={(i: GamepadOption) => selectGamepad(i.value)}
+        onChange={(i: GamepadOption) =>
+          selectEditorOption({ kind: 'gamepad', index: i.value })
+        }
       />
     );
   }

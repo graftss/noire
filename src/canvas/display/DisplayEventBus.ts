@@ -5,19 +5,19 @@ import { without } from '../../utils';
 
 export type Handler =
   | { kind: 'stageClick'; cb: T.CB1<Konva.Stage> }
-  | { kind: 'componentSelect'; cb: T.CB1<Component> }
+  | { kind: 'componentSelect'; cb: T.CB1<Component | undefined> }
   | { kind: 'componentAdd'; cb: T.CB1<Component> }
   | { kind: 'bindingAdd'; cb: T.CB2<Component, T.Binding> };
 
 export type DisplayEvent =
   | { kind: 'stageClick'; data: [Konva.Stage] }
-  | { kind: 'componentSelect'; data: [Component] }
+  | { kind: 'componentSelect'; data: [Component | undefined] }
   | { kind: 'componentAdd'; data: [Component] }
   | { kind: 'bindingAdd'; data: [Component, T.Binding] };
 
 export class DisplayEventBus {
   private stageClickHandlers: T.CB1<Konva.Stage>[] = [];
-  private componentClickHandlers: T.CB1<Component>[] = [];
+  private componentClickHandlers: T.CB1<Component | undefined>[] = [];
   private componentAddHandlers: T.CB1<Component>[] = [];
   private bindingAddHandlers: T.CB2<Component, T.Binding>[] = [];
 

@@ -22,7 +22,7 @@ export interface ControllerKeyBinding {
 }
 
 export interface InputState {
-  gamepadIndex?: number;
+  selectedGamepadIndex?: number;
   remap?: RemapState;
   controllers?: T.Controller[];
   selectedControllerId?: string;
@@ -48,8 +48,14 @@ export const inputReducer = (
   action: T.EditorAction,
 ): InputState => {
   switch (action.type) {
-    case 'selectGamepad': {
-      return { ...state, gamepadIndex: action.data };
+    case 'selectEditorOption': {
+      return {
+        ...state,
+        selectedGamepadIndex:
+          action.data.kind === 'gamepad' ? action.data.index : undefined,
+        selectedControllerId:
+          action.data.kind === 'controller' ? action.data.id : undefined,
+      };
     }
 
     case 'listenNextInput': {
@@ -58,10 +64,6 @@ export const inputReducer = (
 
     case 'stopListening': {
       return { ...state, remap: undefined };
-    }
-
-    case 'selectController': {
-      return { ...state, selectedControllerId: action.data };
     }
 
     case 'bindControllerKey': {

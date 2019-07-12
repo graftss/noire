@@ -12,8 +12,14 @@ export const displayReducer = (
   action: T.EditorAction,
 ): DisplayState => {
   switch (action.type) {
-    case 'selectComponent': {
-      return { ...state, selectedComponent: componentById(state, action.data) };
+    case 'selectEditorOption': {
+      return {
+        ...state,
+        selectedComponent:
+          action.data.kind === 'component'
+            ? componentById(state, action.data.id)
+            : undefined,
+      };
     }
   }
 

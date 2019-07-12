@@ -3,13 +3,12 @@ import Select from 'react-select';
 import * as T from '../../types';
 
 interface ComponentOption {
-  componentId?: string;
-  value?: string;
+  value: string;
   label: string;
 }
 
 interface ComponentSelectProps {
-  select: (componentId: string) => void;
+  selectEditorOption: (o: T.EditorOption) => void;
   components: T.SerializedComponent[];
   selected: T.SerializedComponent;
 }
@@ -25,12 +24,14 @@ const toOption = (c: T.SerializedComponent): ComponentOption | undefined =>
 export const ComponentSelect: React.SFC<ComponentSelectProps> = ({
   selected,
   components,
-  select,
+  selectEditorOption,
 }) => (
   <Select
     value={toOption(selected) || null}
     options={components.map(toOption)}
-    onChange={o => select(o.value)}
+    onChange={(o: ComponentOption) =>
+      selectEditorOption({ kind: 'component', id: o.value })
+    }
     placeholder="Components"
   />
 );

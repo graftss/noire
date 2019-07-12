@@ -2,12 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../types';
-import {
-  listenNextInput,
-  selectComponent,
-  selectController,
-  selectGamepad,
-} from '../../state/actions';
+import { listenNextInput, selectEditorOption } from '../../state/actions';
 import { selectedController } from '../../state/selectors';
 import { ComponentSelect } from './ComponentSelect';
 import { ControllerKeymap } from './ControllerKeymap';
@@ -25,16 +20,14 @@ interface PropsFromState {
 
 interface PropsFromDispatch {
   listenNextInput: (remapState: T.RemapState) => void;
-  selectComponent: (componentId: string) => void;
-  selectGamepad: (index: number) => void;
-  selectController: (id: string) => void;
+  selectEditorOption: (o: T.EditorOption) => void;
 }
 
 type EditorProps = PropsFromState & PropsFromDispatch;
 
 const mapStateToProps = (state: T.EditorState): PropsFromState => ({
   selected: state.display.selectedComponent,
-  selectedGamepadIndex: state.input.gamepadIndex,
+  selectedGamepadIndex: state.input.selectedGamepadIndex,
   components: state.display.components,
   controllers: state.input.controllers,
   selectedController: selectedController(state.input),
@@ -42,37 +35,32 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 });
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
-  bindActionCreators(
-    { listenNextInput, selectComponent, selectGamepad, selectController },
-    dispatch,
-  );
+  bindActionCreators({ listenNextInput, selectEditorOption }, dispatch);
 
 const BaseEditor: React.SFC<EditorProps> = ({
   components,
   controllers,
   listenNextInput,
-  remapState,
   selected,
-  selectedGamepadIndex,
-  selectComponent,
-  selectController,
   selectedController,
-  selectGamepad,
+  selectEditorOption,
+  selectedGamepadIndex,
+  remapState,
 }) => (
   <div>
     <GamepadSelect
       selectedIndex={selectedGamepadIndex}
-      selectGamepad={selectGamepad}
+      selectEditorOption={selectEditorOption}
     />
     <ComponentSelect
       components={components}
       selected={selected}
-      select={selectComponent}
+      selectEditorOption={selectEditorOption}
     />
     <ControllerSelect
       controllers={controllers}
       selectedController={selectedController}
-      selectController={selectController}
+      selectEditorOption={selectEditorOption}
     />
     {selectedController ? (
       <ControllerKeymap

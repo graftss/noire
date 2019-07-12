@@ -18,8 +18,8 @@ export class ComponentTransformerPlugin extends DisplayPlugin {
     if (this.transformer) this.assignTransformer();
   };
 
-  private onComponentSelect = (component: Component): void => {
-    this.assignTransformer(component.group);
+  private onComponentSelect = (component: Component | undefined): void => {
+    this.assignTransformer(component && component.group);
   };
 
   private assignTransformer(target?: Konva.Node): void {

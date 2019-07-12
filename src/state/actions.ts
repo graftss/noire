@@ -1,36 +1,19 @@
 import * as T from '../types';
 
+export type EditorOption =
+  | { kind: 'component'; id: string | undefined }
+  | { kind: 'gamepad'; index: number | undefined }
+  | { kind: 'controller'; id: string | undefined };
+
 export type EditorAction =
-  | { type: 'selectComponent'; data: string | undefined }
-  | { type: 'selectGamepad'; data: number | undefined }
-  | { type: 'selectController'; data: string | undefined }
+  | { type: 'selectEditorOption'; data: EditorOption }
   | { type: 'bindControllerKey'; data: T.ControllerKeyBinding }
   | { type: 'listenNextInput'; data: T.RemapState }
   | { type: 'stopListening' };
 
-export const selectComponent = (componentId: string): EditorAction => ({
-  type: 'selectComponent',
-  data: componentId,
-});
-
-export const deselectComponent = (): EditorAction => ({
-  type: 'selectComponent',
-  data: undefined,
-});
-
-export const selectGamepad = (index: number): EditorAction => ({
-  type: 'selectGamepad',
-  data: index,
-});
-
-export const deselectGamepad = (): EditorAction => ({
-  type: 'selectGamepad',
-  data: undefined,
-});
-
-export const selectController = (id: string): EditorAction => ({
-  type: 'selectController',
-  data: id,
+export const selectEditorOption = (data: EditorOption): EditorAction => ({
+  type: 'selectEditorOption',
+  data,
 });
 
 export const bindControllerKey = (

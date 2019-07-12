@@ -28,7 +28,7 @@ export {
   TypedComponent,
 } from './canvas/component/Component';
 export { EditorApp } from './editor';
-export { EditorAction } from './state/actions';
+export { EditorAction, EditorOption } from './state/actions';
 export { DisplayState } from './state/reducers/display';
 export { EditorState } from './state/reducers/root';
 export {

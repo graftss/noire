@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import * as T from '../../types';
 import { Component } from '../component/Component';
-import { selectComponent, deselectComponent } from '../../state/actions';
+import { selectEditorOption } from '../../state/actions';
 import { selectedComponentProp } from '../../state/selectors';
 import { ComponentManager } from './ComponentManager';
 import { ComponentTransformerPlugin } from './plugin/ComponentTransformerPlugin';
@@ -40,10 +40,16 @@ export class Display {
 
     this.eventBus.on({
       kind: 'componentSelect',
-      cb: (component: Component) => {
-        console.log('selected', component);
-        if (selectedComponentProp(this.lastState, 'id') !== component.getId()) {
-          store.dispatch(selectComponent(component.getId()));
+      cb: (component: Component | undefined) => {
+        const id = component && component.getId();
+
+        if (id !== selectedComponentProp(this.lastState, 'id')) {
+          store.dispatch(
+            selectEditorOption({
+              kind: 'component',
+              id,
+            }),
+          );
         }
       },
     });
@@ -51,7 +57,12 @@ export class Display {
     this.eventBus.on({
       kind: 'stageClick',
       cb: () => {
-        store.dispatch(deselectComponent());
+        store.dispatch(
+          selectEditorOption({
+            kind: 'component',
+            id: undefined,
+          }),
+        );
       },
     });
   }
@@ -69,14 +80,14 @@ export class Display {
     state: T.DisplayState,
     lastState: T.DisplayState,
   ): void {
-    const { components, selectedComponent } = state;
+    const { components } = state;
     const lastSelectedId = selectedComponentProp(lastState, 'id');
     const selectedId = selectedComponentProp(state, 'id');
 
-    if (selectedId && lastSelectedId !== selectedId) {
+    if (lastSelectedId !== selectedId) {
       this.eventBus.emit({
         kind: 'componentSelect',
-        data: [this.cm.findById(selectedComponent.id)],
+        data: [selectedId ? this.cm.findById(selectedId) : undefined],
       });
     }
 
