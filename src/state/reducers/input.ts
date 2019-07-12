@@ -31,7 +31,11 @@ export interface InputState {
 // const defaultInputState: InputState = {};
 const defaultInputState = testInitialState.input;
 
-const bindControllerKey = (c: T.Controller, key: string, binding: T.Binding): T.Controller => ({
+const bindControllerKey = (
+  c: T.Controller,
+  key: string,
+  binding: T.Binding,
+): T.Controller => ({
   ...c,
   map: {
     ...c.map,

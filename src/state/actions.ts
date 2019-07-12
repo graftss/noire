@@ -33,7 +33,9 @@ export const selectController = (id: string): EditorAction => ({
   data: id,
 });
 
-export const bindControllerKey = (data: T.ControllerKeyBinding): EditorAction => ({
+export const bindControllerKey = (
+  data: T.ControllerKeyBinding,
+): EditorAction => ({
   type: 'bindControllerKey',
   data,
 });

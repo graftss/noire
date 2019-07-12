@@ -53,6 +53,8 @@ export const values = <T>(map: Record<number | string, T>): T[] => {
   return result;
 };
 
-export const mapIf = <T>(ts: T[], pred: (t: T) => boolean, f: (t: T) => T): T[] => (
-  ts.map(t => pred(t) ? f(t) : t)
-);
+export const mapIf = <T>(
+  ts: T[],
+  pred: (t: T) => boolean,
+  f: (t: T) => T,
+): T[] => ts.map(t => (pred(t) ? f(t) : t));

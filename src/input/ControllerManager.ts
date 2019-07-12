@@ -60,11 +60,13 @@ export class ControllerManager {
         case 'button': {
           this.nextInputListener.awaitButton((source, binding) => {
             this.store.dispatch(stopListening());
-            this.store.dispatch(bindControllerKey({
-              controllerId: remap.controllerId,
-              key: remap.key,
-              binding,
-            }));
+            this.store.dispatch(
+              bindControllerKey({
+                controllerId: remap.controllerId,
+                key: remap.key,
+                binding,
+              }),
+            );
           });
         }
       }

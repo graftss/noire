@@ -7,6 +7,7 @@ export type BindingId = string;
 export interface BaseBinding {
   id?: BindingId;
   kind: string;
+  source: T.InputSource;
 }
 
 export interface AxisBinding extends BaseBinding {
@@ -100,14 +101,32 @@ export const applyBinding = (
 };
 
 export const stringifyBinding = (b: Binding): string => {
-  switch (b.kind) {
-    case 'axis':
-      return `Axis ${b.index}${b.inverted ? '-' : '+'}`;
-    case 'button':
-      return `Button ${b.index}`;
-    case 'axisValue':
-      return `Axis ${b.axis} @ ${b.value}`;
+  let sourceStr, bindingStr;
+
+  switch (b.source.kind) {
+    case 'gamepad':
+      sourceStr = `Player ${b.source.index + 1}`;
+      break;
+    case 'keyboard':
+      sourceStr = 'Keyboard';
+      break;
+    default:
+      sourceStr = '(??)';
   }
 
-  return 'unrecognized binding';
+  switch (b.kind) {
+    case 'axis':
+      bindingStr = `Axis ${b.index}${b.inverted ? '-' : '+'}`;
+      break;
+    case 'button':
+      bindingStr = `Button ${b.index}`;
+      break;
+    case 'axisValue':
+      bindingStr = `Axis ${b.axis} @ ${b.value}`;
+      break;
+    default:
+      bindingStr = '(??)';
+  }
+
+  return `${sourceStr}, ${bindingStr}`;
 };
