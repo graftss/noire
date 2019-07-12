@@ -1,5 +1,4 @@
 import Konva from 'konva';
-
 import * as T from '../../types';
 import { TypedComponent } from './Component';
 

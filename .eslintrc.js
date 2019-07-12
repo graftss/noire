@@ -16,6 +16,10 @@ module.exports = {
     },
   },
 
+  plugins: [
+    'import',
+  ],
+
   rules: {
     '@typescript-eslint/explicit-function-return-type': ['error', {
       allowExpressions: true,
@@ -26,6 +30,9 @@ module.exports = {
       accessibility: 'no-public'
     }],
     '@typescript-eslint/no-parameter-properties': 'off',
+    'import/order': ['error', {
+      'newlines-between': 'never',
+    }],
     'react/no-render-return-value': 'off',
     'react/prop-types': 'off',
   },

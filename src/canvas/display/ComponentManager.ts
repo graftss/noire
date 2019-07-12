@@ -1,11 +1,10 @@
 import Konva from 'konva';
 import { map } from 'ramda';
-
 import * as T from '../../types';
 import { deserializeComponent } from '../component/deserializeComponent';
 import { Component } from '../component/Component';
-import { DisplayEventBus } from './DisplayEventBus';
 import { find, keyBy } from '../../utils';
+import { DisplayEventBus } from './DisplayEventBus';
 
 const CLICK_EVENT = `click.ComponentManager`;
 

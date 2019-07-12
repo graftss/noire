@@ -1,6 +1,5 @@
 import Konva from 'konva';
 import { map } from 'ramda';
-
 import * as T from '../../types';
 import { defaults } from '../../utils';
 

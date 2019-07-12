@@ -1,13 +1,12 @@
 import Konva from 'konva';
-
 import * as T from '../../types';
+import { Component } from '../component/Component';
+import { selectComponent, deselectComponent } from '../../state/actions';
+import { selectedComponentProp } from '../../state/selectors';
 import { ComponentManager } from './ComponentManager';
 import { ComponentTransformerPlugin } from './plugin/ComponentTransformerPlugin';
 import { DisplayEventBus } from './DisplayEventBus';
 import { DisplayPlugin } from './plugin/DisplayPlugin';
-import { Component } from '../component/Component';
-import { selectComponent, deselectComponent } from '../../state/actions';
-import { selectedComponentProp } from '../../state/selectors';
 
 export class Display {
   private eventBus: DisplayEventBus;

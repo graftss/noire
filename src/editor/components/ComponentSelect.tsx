@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Select from 'react-select';
-
 import * as T from '../../types';
 
 interface ComponentOption {

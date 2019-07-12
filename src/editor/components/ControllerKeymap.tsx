@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { toPairs } from 'ramda';
-
 import * as T from '../../types';
 import { bindingToInputKind, stringifyBinding } from '../../input/bindings';
 import { stringifyControllerKey } from '../../input/controllers';

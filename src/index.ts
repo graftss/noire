@@ -1,5 +1,4 @@
 import Konva from 'konva';
-
 import * as T from './types';
 import { ControllerManager } from './input/ControllerManager';
 import { Display } from './canvas/display';

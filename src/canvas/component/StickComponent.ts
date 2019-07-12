@@ -1,8 +1,7 @@
 import Konva from 'konva';
-
 import * as T from '../../types';
-import { TypedComponent } from './Component';
 import { sign } from '../../utils';
+import { TypedComponent } from './Component';
 
 export interface StickConfig {
   kind: 'stick';

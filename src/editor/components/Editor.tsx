@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
 import * as T from '../../types';
-import { ComponentSelect } from './ComponentSelect';
-import { ControllerKeymap } from './ControllerKeymap';
-import { ControllerSelect } from './ControllerSelect';
-import { GamepadSelect } from './GamepadSelect';
 import {
   listenNextInput,
   selectComponent,
@@ -14,6 +9,10 @@ import {
   selectGamepad,
 } from '../../state/actions';
 import { selectedController } from '../../state/selectors';
+import { ComponentSelect } from './ComponentSelect';
+import { ControllerKeymap } from './ControllerKeymap';
+import { ControllerSelect } from './ControllerSelect';
+import { GamepadSelect } from './GamepadSelect';
 
 interface PropsFromState {
   selected: T.SerializedComponent;

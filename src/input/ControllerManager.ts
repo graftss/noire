@@ -1,8 +1,8 @@
 import * as T from '../types';
 import { keyBy, uuid, values } from '../utils';
+import { bindControllerKey, stopListening } from '../state/actions';
 import { applyGamepadBindings } from './controllers';
 import { NextInputListener } from './NextInputListener';
-import { bindControllerKey, stopListening } from '../state/actions';
 
 // keyed first by controller id and second by controller key
 export type GlobalInput = Record<string, Record<string, T.Input>>;

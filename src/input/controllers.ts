@@ -1,5 +1,4 @@
 import { map } from 'ramda';
-
 import * as T from '../types';
 import { applyBinding } from './bindings';
 

@@ -1,5 +1,4 @@
 import { combineReducers, Reducer } from 'redux';
-
 import * as T from '../../types';
 import { displayReducer } from './display';
 import { inputReducer } from './input';

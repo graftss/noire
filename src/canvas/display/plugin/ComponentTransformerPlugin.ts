@@ -1,8 +1,7 @@
 import Konva from 'konva';
-
 import { Component } from '../../component/Component';
-import { DisplayPlugin } from './DisplayPlugin';
 import { DisplayEventBus } from '../DisplayEventBus';
+import { DisplayPlugin } from './DisplayPlugin';
 
 export class ComponentTransformerPlugin extends DisplayPlugin {
   transformer?: Konva.Transformer;
