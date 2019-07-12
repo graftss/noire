@@ -1,9 +1,9 @@
 import * as T from '../types';
 
 export type EditorAction =
-  | { type: 'addBinding'; data: T.Binding }
   | { type: 'selectComponent'; data: string | undefined }
   | { type: 'selectGamepad'; data: number | undefined }
+  | { type: 'selectController'; data: string | undefined }
   | { type: 'listenNextInput'; data: T.RemapState }
   | { type: 'stopListening' };
 
@@ -25,6 +25,11 @@ export const selectGamepad = (index: number): EditorAction => ({
 export const deselectGamepad = (): EditorAction => ({
   type: 'selectGamepad',
   data: undefined,
+});
+
+export const selectController = (id: string): EditorAction => ({
+  type: 'selectController',
+  data: id,
 });
 
 export const listenNextInput = (remapState: T.RemapState): EditorAction => ({

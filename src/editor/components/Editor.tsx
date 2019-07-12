@@ -4,11 +4,13 @@ import { bindActionCreators } from 'redux';
 
 import * as T from '../../types';
 import { ComponentSelect } from './ComponentSelect';
-import { ComponentBindings } from './ComponentBindings';
+import { ControllerBindings } from './ControllerBindings';
+import { ControllerSelect } from './ControllerSelect';
 import { GamepadSelect } from './GamepadSelect';
 import {
   listenNextInput,
   selectComponent,
+  selectController,
   selectGamepad,
 } from '../../state/actions';
 
@@ -17,12 +19,14 @@ interface PropsFromState {
   selectedGamepadIndex?: number;
   components: T.SerializedComponent[];
   controllers: T.Controller[];
+  selectedControllerId: string | undefined;
 }
 
 interface PropsFromDispatch {
   listenNextInput: (remapState: T.RemapState) => void;
   selectComponent: (componentId: string) => void;
-  selectGamepad: (index?: number) => void;
+  selectGamepad: (index: number) => void;
+  selectController: (id: string) => void;
 }
 
 type EditorProps = PropsFromState & PropsFromDispatch;
@@ -32,21 +36,23 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
   selectedGamepadIndex: state.input.gamepadIndex,
   components: state.display.components,
   controllers: state.input.controllers,
+  selectedControllerId: state.input.selectedControllerId,
 });
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(
-    { listenNextInput, selectComponent, selectGamepad },
+    { listenNextInput, selectComponent, selectGamepad, selectController },
     dispatch,
   );
 
 const BaseEditor: React.SFC<EditorProps> = ({
   components,
   controllers,
-  listenNextInput,
   selected,
   selectedGamepadIndex,
   selectComponent,
+  selectController,
+  selectedControllerId,
   selectGamepad,
 }) => (
   <div>
@@ -59,6 +65,12 @@ const BaseEditor: React.SFC<EditorProps> = ({
       selected={selected}
       select={selectComponent}
     />
+    <ControllerSelect
+      controllers={controllers}
+      selectedControllerId={selectedControllerId}
+      selectController={selectController}
+    />
+    <ControllerBindings />
   </div>
 );
 

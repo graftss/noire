@@ -12,6 +12,7 @@ export interface InputState {
   gamepadIndex?: number;
   remapping?: RemapState;
   controllers?: T.Controller[];
+  selectedControllerId?: string;
 }
 
 // const defaultInputState: InputState = {};
@@ -32,6 +33,10 @@ export const inputReducer = (
 
     case 'stopListening': {
       return { ...state, remapping: undefined };
+    }
+
+    case 'selectController': {
+      return { ...state, selectedControllerId: action.data };
     }
   }
 

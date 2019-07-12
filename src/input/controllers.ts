@@ -32,11 +32,13 @@ export interface PS2GamepadMap {
 }
 
 export type GamepadMap = {
-  id: string;
   map: Record<string, T.Binding>;
 } & PS2GamepadMap;
 
-export type Controller = GamepadMap;
+export type Controller = {
+  id: string;
+  name: string;
+} & GamepadMap;
 
 export interface ControllerKey {
   controllerId: string;
