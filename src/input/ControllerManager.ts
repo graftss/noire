@@ -2,6 +2,7 @@ import * as T from '../types';
 import { keyBy, uuid, values } from '../utils';
 import { applyGamepadBindings } from './controllers';
 import { NextInputListener } from './NextInputListener';
+import { bindControllerKey, stopListening } from '../state/actions';
 
 // keyed first by controller id and second by controller key
 export type GlobalInput = Record<string, Record<string, T.Input>>;
@@ -31,6 +32,8 @@ export class ControllerManager {
     window.addEventListener('gamepaddisconnected', this.syncGamepadSources);
 
     this.nextInputListener = new NextInputListener();
+
+    store.subscribe(() => this.storeSubscriber());
   }
 
   private syncGamepadSources = (): void => {
@@ -46,6 +49,26 @@ export class ControllerManager {
     }, liveGamepads);
 
     this.sources.gamepads = values(gamepadsByIndex);
+  };
+
+  private storeSubscriber = (): void => {
+    const state = this.store.getState();
+    const { remap } = state.input;
+
+    if (remap && remap.kind === 'controller') {
+      switch (remap.bindingKind) {
+        case 'button': {
+          this.nextInputListener.awaitButton((source, binding) => {
+            this.store.dispatch(stopListening());
+            this.store.dispatch(bindControllerKey({
+              controllerId: remap.controllerId,
+              key: remap.key,
+              binding,
+            }));
+          });
+        }
+      }
+    }
   };
 
   awaitButton(callback: T.AwaitButtonCallback): void {

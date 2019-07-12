@@ -4,6 +4,7 @@ export type EditorAction =
   | { type: 'selectComponent'; data: string | undefined }
   | { type: 'selectGamepad'; data: number | undefined }
   | { type: 'selectController'; data: string | undefined }
+  | { type: 'bindControllerKey'; data: T.ControllerKeyBinding }
   | { type: 'listenNextInput'; data: T.RemapState }
   | { type: 'stopListening' };
 
@@ -30,6 +31,11 @@ export const deselectGamepad = (): EditorAction => ({
 export const selectController = (id: string): EditorAction => ({
   type: 'selectController',
   data: id,
+});
+
+export const bindControllerKey = (data: T.ControllerKeyBinding): EditorAction => ({
+  type: 'bindControllerKey',
+  data,
 });
 
 export const listenNextInput = (remapState: T.RemapState): EditorAction => ({

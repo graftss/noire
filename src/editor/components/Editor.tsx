@@ -21,6 +21,7 @@ interface PropsFromState {
   components: T.SerializedComponent[];
   controllers: T.Controller[];
   selectedController: T.Controller | undefined;
+  remapState: T.RemapState;
 }
 
 interface PropsFromDispatch {
@@ -38,6 +39,7 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
   components: state.display.components,
   controllers: state.input.controllers,
   selectedController: selectedController(state.input),
+  remapState: state.input.remap,
 });
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
@@ -49,6 +51,8 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
 const BaseEditor: React.SFC<EditorProps> = ({
   components,
   controllers,
+  listenNextInput,
+  remapState,
   selected,
   selectedGamepadIndex,
   selectComponent,
@@ -72,7 +76,11 @@ const BaseEditor: React.SFC<EditorProps> = ({
       selectController={selectController}
     />
     {selectedController ? (
-      <ControllerKeymap controller={selectedController} />
+      <ControllerKeymap
+        controller={selectedController}
+        listenNextInput={listenNextInput}
+        remapState={remapState}
+      />
     ) : null}
   </div>
 );

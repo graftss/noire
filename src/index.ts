@@ -43,21 +43,14 @@ export class Noire {
 
     this.editorApp = createEditorApp(this.editorTarget);
     const store = this.editorApp.store;
+    this.editorApp.render();
     // store.subscribe(() => this.storeListener(store.getState()));
 
     this.controllerManager = new ControllerManager(store);
 
     this.display = new Display(this.stage, this.layer, store);
 
-    this.editorApp.render();
     this.updateLoop(this.tLast);
-
-    setTimeout(() => {
-      console.log('awaiting...');
-      this.controllerManager.awaitButton((a, b) => {
-        console.log(a, b);
-      });
-    }, 400);
   }
 
   // private storeListener = (state: T.EditorState): void => {

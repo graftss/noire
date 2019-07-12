@@ -31,7 +31,7 @@ export { EditorApp } from './editor';
 export { EditorAction } from './state/actions';
 export { DisplayState } from './state/reducers/display';
 export { EditorState } from './state/reducers/root';
-export { InputState, RemapState } from './state/reducers/input';
+export { InputState, RemapState, ControllerKeyBinding } from './state/reducers/input';
 export { EditorStore } from './state/createStore';
 export {
   InputMap,
