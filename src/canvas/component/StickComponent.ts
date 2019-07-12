@@ -21,6 +21,10 @@ export const defaultStickComponentConfig: StickConfig = {
   pressedStickFill: 'darkred',
 };
 
+export const stickEditorConfig: T.ComponentEditorConfig = [
+  { kind: 'fixed', data: { label: 'Stick'} },
+];
+
 export interface StickInput extends Record<string, T.RawInput> {
   x: T.AxisInput;
   y: T.AxisInput;

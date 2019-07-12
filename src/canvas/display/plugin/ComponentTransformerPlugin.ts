@@ -29,7 +29,6 @@ export class ComponentTransformerPlugin extends DisplayPlugin {
     }
 
     if (target) {
-      console.log(target);
       this.transformerTarget = target;
       this.transformer = new Konva.Transformer();
       this.transformer.attachTo(target);

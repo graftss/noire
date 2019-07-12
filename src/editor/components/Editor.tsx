@@ -3,17 +3,21 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../types';
 import { listenNextInput, selectEditorOption } from '../../state/actions';
-import { selectedController } from '../../state/selectors';
+import { selectedController, selectedComponentProp } from '../../state/selectors';
+import { ComponentEditor } from './ComponentEditor';
 import { ComponentSelect } from './ComponentSelect';
 import { ControllerKeymap } from './ControllerKeymap';
 import { ControllerSelect } from './ControllerSelect';
 import { GamepadSelect } from './GamepadSelect';
+import { componentConfigs } from '../../canvas/component';
 
 interface PropsFromState {
   selected: T.SerializedComponent;
   selectedGamepadIndex?: number;
   components: T.SerializedComponent[];
   controllers: T.Controller[];
+  selectedComponent: T.SerializedComponent;
+  selectedComponentEditorConfig: T.ComponentEditorConfig;
   selectedController: T.Controller | undefined;
   remapState: T.RemapState;
 }
@@ -30,6 +34,8 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
   selectedGamepadIndex: state.input.selectedGamepadIndex,
   components: state.display.components,
   controllers: state.input.controllers,
+  selectedComponent: state.display.selectedComponent,
+  selectedComponentEditorConfig: componentConfigs[selectedComponentProp(state.display, 'kind')],
   selectedController: selectedController(state.input),
   remapState: state.input.remap,
 });
@@ -42,6 +48,8 @@ const BaseEditor: React.SFC<EditorProps> = ({
   controllers,
   listenNextInput,
   selected,
+  selectedComponent,
+  selectedComponentEditorConfig,
   selectedController,
   selectEditorOption,
   selectedGamepadIndex,
@@ -67,6 +75,12 @@ const BaseEditor: React.SFC<EditorProps> = ({
         controller={selectedController}
         listenNextInput={listenNextInput}
         remapState={remapState}
+      />
+    ) : null}
+    {selectedComponent ?(
+      <ComponentEditor
+        component={selectedComponent}
+        config={selectedComponentEditorConfig}
       />
     ) : null}
   </div>

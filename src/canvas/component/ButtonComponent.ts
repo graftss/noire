@@ -18,6 +18,10 @@ export const defaultButtonConfig: ButtonConfig = {
   pressedFill: 'darkred',
 };
 
+export const buttonEditorConfig: T.ComponentEditorConfig = [
+  { kind: 'fixed', data: { label: 'Button' } },
+];
+
 export type ButtonComponentConfig = ButtonConfig &
   T.BaseComponentConfig<ButtonComponentInput>;
 

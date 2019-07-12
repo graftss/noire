@@ -20,6 +20,10 @@ export const defaultDPadConfig: DPadConfig = {
   pressedFill: 'darkred',
 };
 
+export const dPadEditorConfig: T.ComponentEditorConfig = [
+  { kind: 'fixed', data: { label: 'DPad'} },
+];
+
 export type Dir = 'u' | 'l' | 'd' | 'r';
 
 export type DPadInput = Record<Dir, T.ButtonInput>;

@@ -22,7 +22,7 @@ export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export { ButtonComponentConfig } from './canvas/component/ButtonComponent';
 export { DPadComponentConfig } from './canvas/component/DPadComponent';
 export { StickComponentConfig } from './canvas/component/StickComponent';
-export { SerializedComponent } from './canvas/component/';
+export { SerializedComponent, ComponentKind, ComponentEditorField, ComponentEditorConfig } from './canvas/component/';
 export {
   BaseComponentConfig,
   TypedComponent,
