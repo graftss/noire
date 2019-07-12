@@ -68,10 +68,14 @@ export interface ControllerKey {
 }
 
 export const applyGamepadBindings = (
-  g: Gamepad,
-  c: GamepadMap,
+  gamepad: Gamepad,
+  controller: T.Controller,
 ): Record<string, Maybe<T.Input>> =>
-  mapObj(c.map, (b: T.Binding) => applyBinding(b, g));
+  mapObj(controller.map, (b: T.Binding) => applyBinding(b, gamepad));
+
+export const applyControllerBindings = (
+  c: T.Controller
+): Record<string, Maybe<T.Input>> => ({});
 
 export const stringifyControllerKey = <T extends Controller>(
   c: T,

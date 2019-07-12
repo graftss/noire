@@ -11,12 +11,12 @@ export {
   Controller,
 } from './input/controllers';
 export {
-  GamepadSource,
-  KeyboardSource,
-  InputSource,
-  GlobalSources,
-  ButtonSource,
-  AxisSource,
+  GamepadSourceRef,
+  KeyboardSourceRef,
+  InputSourceRef,
+  GlobalSourceRefs,
+  ButtonSourceRef,
+  AxisSourceRef,
 } from './input/sources';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export { ButtonComponentConfig } from './canvas/component/ButtonComponent';

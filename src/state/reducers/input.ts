@@ -26,6 +26,7 @@ export interface InputState {
   remap?: RemapState;
   controllers: T.Controller[];
   selectedControllerId?: string;
+  sourceRefs: T.InputSourceRef[];
 }
 
 // const defaultInputState: InputState = {};

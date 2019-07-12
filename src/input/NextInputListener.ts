@@ -1,8 +1,8 @@
 import * as T from '../types';
 import { clone } from '../utils';
 
-export type AwaitAxisCallback = T.CB2<T.AxisSource, T.AxisBinding>;
-export type AwaitButtonCallback = T.CB2<T.ButtonSource, T.ButtonInputBinding>;
+export type AwaitAxisCallback = T.CB1<T.AxisBinding>;
+export type AwaitButtonCallback = T.CB1<T.ButtonInputBinding>;
 
 type AwaitAxisInput = number[];
 
@@ -34,7 +34,7 @@ const compareAwaitAxisInput = (
   gamepadIndex: number,
 ): Maybe<T.AxisBinding> => {
   if (!axes) return;
-  const source: T.GamepadSource = { kind: 'gamepad', index: gamepadIndex };
+  const source: T.GamepadSourceRef = { kind: 'gamepad', index: gamepadIndex };
 
   for (let index = 0; index < axes.length; index++) {
     const axis = axes[index];
@@ -59,7 +59,7 @@ const compareAwaitButtonInput = (
   gamepadIndex: number,
 ): Maybe<T.ButtonInputBinding> => {
   if (!input) return;
-  const source: T.GamepadSource = { kind: 'gamepad', index: gamepadIndex };
+  const source: T.GamepadSourceRef = { kind: 'gamepad', index: gamepadIndex };
 
   const { axes, buttons } = input;
 
@@ -133,8 +133,7 @@ export class NextInputListener {
               index,
             );
             if (awaitedBinding) {
-              const source: T.GamepadSource = { kind: 'gamepad', index };
-              this.state.callback(source, awaitedBinding);
+              this.state.callback(awaitedBinding);
               return this.deactivate();
             }
           }
@@ -155,8 +154,8 @@ export class NextInputListener {
               index,
             );
             if (awaitedBinding) {
-              const source: T.GamepadSource = { kind: 'gamepad', index };
-              this.state.callback(source, awaitedBinding);
+              const source: T.GamepadSourceRef = { kind: 'gamepad', index };
+              this.state.callback(awaitedBinding);
               return this.deactivate();
             }
           }

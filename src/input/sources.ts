@@ -1,21 +1,19 @@
-export interface GamepadSource {
+export interface GamepadSourceRef {
   kind: 'gamepad';
   index: number;
-  id?: string;
 }
 
-export interface KeyboardSource {
+export interface KeyboardSourceRef {
   kind: 'keyboard';
-  id?: string;
 }
 
-export type InputSource = GamepadSource | KeyboardSource;
+export type InputSourceRef = GamepadSourceRef | KeyboardSourceRef;
 
-export type ButtonSource = GamepadSource | KeyboardSource;
+export type ButtonSourceRef = GamepadSourceRef | KeyboardSourceRef;
 
-export type AxisSource = GamepadSource;
+export type AxisSourceRef = GamepadSourceRef;
 
-export interface GlobalSources {
-  gamepads: GamepadSource[];
-  keyboard: KeyboardSource;
+export interface GlobalSourceRefs {
+  gamepads: GamepadSourceRef[];
+  keyboard: KeyboardSourceRef;
 }

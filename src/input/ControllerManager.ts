@@ -22,9 +22,9 @@ const forEachGamepad = (
 
 export class ControllerManager {
   private nextInputListener: NextInputListener;
-  private sources: T.GlobalSources = {
+  private sources: T.GlobalSourceRefs = {
     gamepads: [],
-    keyboard: { kind: 'keyboard', id: 'KEYBOARD_ID' },
+    keyboard: { kind: 'keyboard' },
   };
 
   constructor(private store: T.EditorStore) {
@@ -42,7 +42,7 @@ export class ControllerManager {
 
     forEachGamepad((gamepad, index) => {
       if (!gamepadsByIndex[index] && gamepad) {
-        gamepadsByIndex[index] = { kind: 'gamepad', id: uuid(), index };
+        gamepadsByIndex[index] = { kind: 'gamepad', index };
       } else if (gamepadsByIndex[index] && !gamepad) {
         delete gamepadsByIndex[index];
       }
@@ -58,7 +58,7 @@ export class ControllerManager {
     if (remap && remap.kind === 'controller') {
       switch (remap.inputKind) {
         case 'button': {
-          this.nextInputListener.awaitButton((source, binding) => {
+          this.nextInputListener.awaitButton((binding) => {
             this.store.dispatch(stopListening());
             this.store.dispatch(
               bindControllerKey({
@@ -73,7 +73,7 @@ export class ControllerManager {
         }
 
         case 'axis': {
-          this.nextInputListener.awaitPositiveAxis((source, binding) => {
+          this.nextInputListener.awaitPositiveAxis((binding) => {
             this.store.dispatch(stopListening());
             this.store.dispatch(
               bindControllerKey({
@@ -96,22 +96,14 @@ export class ControllerManager {
 
   getInput(): GlobalInput {
     const result = {};
-
-    const controllersById = keyBy(
-      this.store.getState().input.controllers,
-      c => c.id,
-    );
+    const controllers = this.store.getState().input.controllers;
 
     const gamepads = getGamepads();
-    this.sources.gamepads.forEach(({ id, index }) => {
-      if (!id) return;
-
-      const gamepadMap = controllersById[id] as T.GamepadMap;
-      const gamepad = gamepads[index];
-
-      if (gamepadMap && gamepad) {
-        result[id] = applyGamepadBindings(gamepad, gamepadMap);
-      }
+    this.sources.gamepads.forEach(({ index }) => {
+      controllers.forEach(controller => {
+        const gamepad = gamepads[index] as Gamepad;
+        result[controller.id] = applyGamepadBindings(gamepad, controller);
+      });
     });
 
     return result;

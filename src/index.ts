@@ -4,6 +4,11 @@ import { ControllerManager } from './input/ControllerManager';
 import { Display } from './canvas/display';
 import { createEditorApp } from './editor';
 
+// too lazy to figure out how to get webpack to watch these via
+// the config right now
+import './types';
+import './input/sources';
+
 export class Noire {
   private stage: Konva.Stage;
   private layer: Konva.Layer;

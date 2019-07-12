@@ -2,7 +2,7 @@ import * as T from '../types';
 
 const ids = 'qwertyuiopasdfghjklzxcvbnm,';
 
-const source: T.GamepadSource = { kind: 'gamepad', index: 1 };
+const source: T.GamepadSourceRef = { kind: 'gamepad', index: 1 };
 
 const c: T.PS2Map & Record<string, T.Binding> = {
   padU: { source, id: ids[0], kind: 'axisValue', axis: 9, value: -1 },
@@ -91,5 +91,6 @@ export const testInitialState: T.EditorState = {
   },
   input: {
     controllers,
+    sourceRefs: [],
   },
 };

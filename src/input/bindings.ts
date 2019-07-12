@@ -7,7 +7,7 @@ export type BindingId = string;
 export interface BaseBinding {
   id?: BindingId;
   kind: string;
-  source: T.InputSource;
+  source: T.InputSourceRef;
 }
 
 export interface AxisBinding extends BaseBinding {
@@ -92,7 +92,7 @@ export const bindingToInputKind = (bindingKind: BindingKind): InputKind => {
   }
 };
 
-export const applyBinding = (binding: Binding, gamepad: Gamepad): Input => {
+export const applyGamepadBinding = (binding: Binding, gamepad: Gamepad): Input => {
   switch (binding.kind) {
     case 'axis':
       return {
@@ -108,6 +108,8 @@ export const applyBinding = (binding: Binding, gamepad: Gamepad): Input => {
       };
   }
 };
+
+export const applyBinding = applyGamepadBinding;
 
 export const stringifyBinding = (b: Binding): string => {
   let sourceStr, bindingStr;
