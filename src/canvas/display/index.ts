@@ -7,7 +7,7 @@ import { DisplayEventBus } from './DisplayEventBus';
 import { DisplayPlugin } from './plugin/DisplayPlugin';
 import { Component } from '../component/Component';
 import { selectComponent, deselectComponent } from '../../state/actions';
-import { selectedComponentProp } from '../../state/stateMaps';
+import { selectedComponentProp } from '../../state/selectors';
 
 export class Display {
   private eventBus: DisplayEventBus;

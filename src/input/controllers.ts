@@ -26,6 +26,29 @@ export interface PS2Map {
   rsY: T.AxisBinding;
 }
 
+const PS2KeyNames: Record<keyof PS2Map, string> = {
+  padU: 'D-Pad Up',
+  padL: 'D-Pad Left',
+  padD: 'D-Pad Down',
+  padR: 'D-Pad Right',
+  select: 'Select',
+  start: 'Start',
+  square: 'Square',
+  triangle: 'Triangle',
+  circle: 'Circle',
+  x: 'X',
+  l1: 'L1',
+  l2: 'L2',
+  l3: 'L3',
+  r1: 'R1',
+  r2: 'R2',
+  r3: 'R3',
+  lsX: 'Left Stick X',
+  lsY: 'Left Stick Y',
+  rsX: 'Right Stick X',
+  rsY: 'Right Stick Y',
+};
+
 export interface PS2GamepadMap {
   kind: 'ps2';
   map: PS2Map;
@@ -49,3 +72,17 @@ export const applyGamepadBindings = (
   g: Gamepad,
   c: GamepadMap,
 ): Record<string, T.Input> => map((b: T.Binding) => applyBinding(b, g), c.map);
+
+export const stringifyControllerKey = <T extends Controller>(
+  c: T,
+  key: keyof T['map'],
+): string => {
+  switch (c.kind) {
+    case 'ps2': {
+      const _key = key as keyof PS2Map;
+      return PS2KeyNames[_key];
+    }
+  }
+
+  return 'unrecognized key';
+};

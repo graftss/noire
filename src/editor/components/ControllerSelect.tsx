@@ -2,11 +2,10 @@ import * as React from 'react';
 import Select from 'react-select';
 
 import * as T from '../../types';
-import { find } from '../../utils';
 
 interface ControllerSelectProps {
   controllers: T.Controller[];
-  selectedControllerId?: string;
+  selectedController: T.Controller | undefined;
   selectController: (id: string) => void;
 }
 
@@ -23,13 +22,11 @@ const toOption = (c: T.Controller): ControllerOption | undefined =>
 
 export const ControllerSelect: React.SFC<ControllerSelectProps> = ({
   controllers,
-  selectedControllerId,
+  selectedController,
   selectController,
 }) => (
   <Select
-    value={
-      toOption(find(c => c.id === selectedControllerId, controllers)) || null
-    }
+    value={toOption(selectedController) || null}
     options={controllers.map(toOption)}
     onChange={o => selectController(o.value)}
     placeholder="Controllers"

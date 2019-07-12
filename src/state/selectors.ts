@@ -12,3 +12,8 @@ export const selectedComponentProp = <K extends keyof T.SerializedComponent>(
   prop: K,
 ): T.SerializedComponent[K] =>
   state && state.selectedComponent && state.selectedComponent[prop];
+
+export const selectedController = (
+  state: T.InputState,
+): T.Controller | undefined =>
+  find(c => c.id === state.selectedControllerId, state.controllers);

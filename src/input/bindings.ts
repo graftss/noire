@@ -98,3 +98,16 @@ export const applyBinding = (
       };
   }
 };
+
+export const stringifyBinding = (b: Binding): string => {
+  switch (b.kind) {
+    case 'axis':
+      return `Axis ${b.index}${b.inverted ? '-' : '+'}`;
+    case 'button':
+      return `Button ${b.index}`;
+    case 'axisValue':
+      return `Axis ${b.axis} @ ${b.value}`;
+  }
+
+  return 'unrecognized binding';
+};

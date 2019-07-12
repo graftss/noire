@@ -1,6 +1,6 @@
 import * as T from '../../types';
 import { testInitialState } from '../testInitialState';
-import { componentById } from '../stateMaps';
+import { componentById } from '../selectors';
 
 export interface DisplayState {
   components: T.SerializedComponent[];

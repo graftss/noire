@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 
 import * as T from '../../types';
 import { ComponentSelect } from './ComponentSelect';
-import { ControllerBindings } from './ControllerBindings';
+import { ControllerKeymap } from './ControllerKeymap';
 import { ControllerSelect } from './ControllerSelect';
 import { GamepadSelect } from './GamepadSelect';
 import {
@@ -13,13 +13,14 @@ import {
   selectController,
   selectGamepad,
 } from '../../state/actions';
+import { selectedController } from '../../state/selectors';
 
 interface PropsFromState {
   selected: T.SerializedComponent;
   selectedGamepadIndex?: number;
   components: T.SerializedComponent[];
   controllers: T.Controller[];
-  selectedControllerId: string | undefined;
+  selectedController: T.Controller | undefined;
 }
 
 interface PropsFromDispatch {
@@ -36,7 +37,7 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
   selectedGamepadIndex: state.input.gamepadIndex,
   components: state.display.components,
   controllers: state.input.controllers,
-  selectedControllerId: state.input.selectedControllerId,
+  selectedController: selectedController(state.input),
 });
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
@@ -52,7 +53,7 @@ const BaseEditor: React.SFC<EditorProps> = ({
   selectedGamepadIndex,
   selectComponent,
   selectController,
-  selectedControllerId,
+  selectedController,
   selectGamepad,
 }) => (
   <div>
@@ -67,10 +68,12 @@ const BaseEditor: React.SFC<EditorProps> = ({
     />
     <ControllerSelect
       controllers={controllers}
-      selectedControllerId={selectedControllerId}
+      selectedController={selectedController}
       selectController={selectController}
     />
-    <ControllerBindings />
+    {selectedController ? (
+      <ControllerKeymap controller={selectedController} />
+    ) : null}
   </div>
 );
 
