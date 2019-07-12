@@ -10,7 +10,7 @@ export type EditorAction =
   | { type: 'bindControllerKey'; data: T.ControllerKeyBinding }
   | { type: 'listenNextInput'; data: T.RemapState }
   | { type: 'stopListening' }
-  | { type: 'addSourceRef', data: T.InputSourceRef };
+  | { type: 'addSourceRef'; data: T.InputSourceRef };
 
 export const selectEditorOption = (data: EditorOption): EditorAction => ({
   type: 'selectEditorOption',

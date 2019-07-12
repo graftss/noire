@@ -56,28 +56,6 @@ export class Noire {
 
     this.updateLoop(this.tLast);
   }
-
-  // private storeListener = (state: T.EditorState): void => {
-  //   const store = this.editorApp.store;
-  //   const { remapping } = state.input;
-
-  //   if (!this.nextInputListener.isActive() && remapping !== undefined) {
-  //     switch (remapping.bindingKind) {
-  //       case 'axis':
-  //         this.nextInputListener.awaitPositiveAxis(binding => {
-  //           console.log('axis', binding);
-  //           store.dispatch(stopListening());
-  //         });
-  //         break;
-
-  //       case 'button':
-  //         this.nextInputListener.awaitButton(binding => {
-  //           console.log('button', binding);
-  //           store.dispatch(stopListening());
-  //         });
-  //     }
-  //   }
-  // };
 }
 
 const test = new Noire(

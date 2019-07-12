@@ -7,7 +7,7 @@ export type BindingId = string;
 export interface BaseBinding {
   id?: BindingId;
   kind: string;
-  source: T.InputSourceRef;
+  sourceRef: T.InputSourceRef;
 }
 
 export interface AxisBinding extends BaseBinding {
@@ -82,6 +82,8 @@ export type InputKind = 'axis' | 'button';
 
 export type RawInput = AxisInput | ButtonInput;
 
+export type Keymap = Record<string, Maybe<Input>>;
+
 export const bindingToInputKind = (bindingKind: BindingKind): InputKind => {
   switch (bindingKind) {
     case 'button':
@@ -92,7 +94,10 @@ export const bindingToInputKind = (bindingKind: BindingKind): InputKind => {
   }
 };
 
-export const applyGamepadBinding = (binding: Binding, gamepad: Gamepad): Input => {
+export const applyGamepadBinding = (
+  gamepad: Gamepad,
+  binding: Binding,
+): Input => {
   switch (binding.kind) {
     case 'axis':
       return {
@@ -109,14 +114,24 @@ export const applyGamepadBinding = (binding: Binding, gamepad: Gamepad): Input =
   }
 };
 
-export const applyBinding = applyGamepadBinding;
+export const applyBinding = (
+  source: T.InputSource,
+  binding: Binding,
+): Maybe<Input> => {
+  switch (source.kind) {
+    case 'gamepad':
+      return source.gamepad
+        ? applyGamepadBinding(source.gamepad, binding)
+        : undefined;
+  }
+};
 
 export const stringifyBinding = (b: Binding): string => {
   let sourceStr, bindingStr;
 
-  switch (b.source.kind) {
+  switch (b.sourceRef.kind) {
     case 'gamepad':
-      sourceStr = `Player ${b.source.index + 1}`;
+      sourceStr = `Player ${b.sourceRef.index + 1}`;
       break;
     case 'keyboard':
       sourceStr = 'Keyboard';

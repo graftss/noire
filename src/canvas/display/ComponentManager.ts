@@ -58,29 +58,17 @@ export class ComponentManager {
     });
   };
 
-  // setBindingId(newData: T.Component): boolean {
-  //   for (let i = 0; i < this.componentData.length; i++) {
-  //     const data = this.componentData[i];
-  //     if (newData.component === data.component) {
-  //       data.bindingId = newData.bindingId;
-  //       return true;
-  //     }
-  //   }
-
-  //   return false;
-  // }
-
   update(input: T.GlobalInput, dt: number): void {
     this.components.forEach(
       <I extends Record<string, T.RawInput>>(
         component: T.TypedComponent<I>,
       ) => {
-        // TODO: understand what the hell is going on with the types here
-        const componentInput: Record<keyof I, T.RawInput> = map(
-          (key): T.RawInput =>
-            key &&
-            input[key.controllerId] &&
-            input[key.controllerId][key.key].input,
+        const componentInput: Record<keyof I, Maybe<T.RawInput>> = map(
+          (controllerKey): Maybe<T.RawInput> => {
+            if (!controllerKey) return;
+            const { controllerId: id, key } = controllerKey;
+            return input[id] && input[id][key] && input[id][key].input;
+          },
           component.getInputMap(),
         );
 

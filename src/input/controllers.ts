@@ -1,6 +1,7 @@
 import * as T from '../types';
 import { mapObj } from '../utils';
 import { applyBinding } from './bindings';
+import { isSourceNull } from './sources';
 
 export interface PS2Map {
   padU: T.ButtonInputBinding;
@@ -67,15 +68,13 @@ export interface ControllerKey {
   key: string;
 }
 
-export const applyGamepadBindings = (
-  gamepad: Gamepad,
+export const applyControllerKeymap = (
+  source: T.InputSource,
   controller: T.Controller,
-): Record<string, Maybe<T.Input>> =>
-  mapObj(controller.map, (b: T.Binding) => applyBinding(b, gamepad));
-
-export const applyControllerBindings = (
-  c: T.Controller
-): Record<string, Maybe<T.Input>> => ({});
+): Maybe<T.Keymap> =>
+  isSourceNull(source)
+    ? undefined
+    : mapObj(controller.map, b => applyBinding(source, b));
 
 export const stringifyControllerKey = <T extends Controller>(
   c: T,

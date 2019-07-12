@@ -12,11 +12,16 @@ export {
 } from './input/controllers';
 export {
   GamepadSourceRef,
+  GamepadSource,
   KeyboardSourceRef,
+  KeyboardSource,
   InputSourceRef,
+  InputSource,
   GlobalSourceRefs,
   ButtonSourceRef,
+  ButtonSource,
   AxisSourceRef,
+  AxisSource,
 } from './input/sources';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export { ButtonComponentConfig } from './canvas/component/ButtonComponent';
@@ -57,6 +62,7 @@ export {
   Input,
   InputKind,
   RawInput,
+  Keymap,
 } from './input/bindings';
 
 export type CB1<T> = (t: T) => void;

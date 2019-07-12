@@ -1,5 +1,6 @@
 import * as T from '../types';
 import { clone } from '../utils';
+import { dereferenceSource } from './sources';
 
 export type AwaitAxisCallback = T.CB1<T.AxisBinding>;
 export type AwaitButtonCallback = T.CB1<T.ButtonInputBinding>;
@@ -15,68 +16,68 @@ type ListeningState =
   | {
       kind: 'axis';
       callback: AwaitAxisCallback;
-      baselineInput?: (AwaitAxisInput | null)[];
+      baselineInput?: Maybe<AwaitAxisInput>[];
     }
   | {
       kind: 'button';
       callback: AwaitButtonCallback;
-      baselineInput?: (AwaitButtonInput | null)[];
+      baselineInput?: Maybe<AwaitButtonInput>[];
     };
 
 const MIN_AXIS_MAGNITUDE = 0.5;
 
-const getAwaitAxisInput = (g: Gamepad | null): AwaitAxisInput | null =>
-  g && clone(g.axes);
+const getAwaitAxisInput = (s: T.InputSource): Maybe<AwaitAxisInput> => {
+  switch (s.kind) {
+    case 'gamepad':
+      return s.gamepad ? clone(s.gamepad.axes) : undefined;
+  }
+};
 
 const compareAwaitAxisInput = (
   axes: AwaitAxisInput,
   baseline: AwaitAxisInput,
-  gamepadIndex: number,
+  sourceRef: T.InputSourceRef,
 ): Maybe<T.AxisBinding> => {
-  if (!axes) return;
-  const source: T.GamepadSourceRef = { kind: 'gamepad', index: gamepadIndex };
-
   for (let index = 0; index < axes.length; index++) {
     const axis = axes[index];
     if (axis !== baseline[index] && Math.abs(axis) > MIN_AXIS_MAGNITUDE) {
-      return { kind: 'axis', source, index, inverted: axis < 0 };
+      return { kind: 'axis', sourceRef, index, inverted: axis < 0 };
     }
   }
 };
 
-const getAwaitButtonInput = (g: Gamepad | null): AwaitButtonInput | null =>
-  g &&
-  clone({
-    buttons: g.buttons.map(b => b.value),
-    axes: g.axes,
-  });
+const getAwaitButtonInput = (s: T.InputSource): Maybe<AwaitButtonInput> => {
+  switch (s.kind) {
+    case 'gamepad': {
+      return s.gamepad
+        ? {
+            axes: clone(s.gamepad.axes),
+            buttons: clone(s.gamepad.buttons.map(b => b.value)),
+          }
+        : undefined;
+    }
+  }
+};
 
 // TODO: force axisValue bindings to be held for multiple frames?
 // something to distinguish them from axis input
 const compareAwaitButtonInput = (
   input: AwaitButtonInput,
   baseline: AwaitButtonInput,
-  gamepadIndex: number,
+  sourceRef: T.InputSourceRef,
 ): Maybe<T.ButtonInputBinding> => {
-  if (!input) return;
-  const source: T.GamepadSourceRef = { kind: 'gamepad', index: gamepadIndex };
-
   const { axes, buttons } = input;
 
   for (let index = 0; index < buttons.length; index++) {
     if (buttons[index] !== baseline.buttons[index]) {
-      return {
-        kind: 'button',
-        source: { kind: 'gamepad', index: gamepadIndex },
-        index,
-      };
+      return { kind: 'button', sourceRef, index };
     }
   }
 
   for (let axis = 0; axis < axes.length; axis++) {
     const value = axes[axis];
     if (value !== baseline.axes[axis]) {
-      return { kind: 'axisValue', source, axis, value };
+      return { kind: 'axisValue', sourceRef, axis, value };
     }
   }
 };
@@ -104,36 +105,76 @@ export class NextInputListener {
     this.state = undefined;
   }
 
-  update(gamepads: (Gamepad | null)[]): void {
+  update(sourceRefs: T.InputSourceRef[]): void {
     if (this.state === undefined) return;
+    const state: ListeningState = this.state;
+    const sources: T.InputSource[] = sourceRefs.map(dereferenceSource);
 
     if (this.pollingBaselineInput) {
-      switch (this.state.kind) {
+      this.pollingBaselineInput = false;
+      switch (state.kind) {
         case 'axis':
-          this.state.baselineInput = gamepads.map(getAwaitAxisInput);
+          state.baselineInput = sources.map(getAwaitAxisInput);
           break;
         case 'button':
-          this.state.baselineInput = gamepads.map(getAwaitButtonInput);
+          state.baselineInput = sources.map(getAwaitButtonInput);
           break;
       }
-
-      this.pollingBaselineInput = false;
     } else {
-      switch (this.state.kind) {
-        case 'axis': {
-          const allInput = gamepads.map(getAwaitAxisInput);
+      for (let index = 0; index < sources.length; index++) {
+        const baseline = state.baselineInput && state.baselineInput[index];
+        const ref = sourceRefs[index];
 
-          for (let index = 0; index < gamepads.length; index++) {
-            const input = allInput[index];
-            if (!input || !this.state.baselineInput) continue;
+        switch (state.kind) {
+          case 'axis': {
+            const input = getAwaitAxisInput(sources[index]);
+            if (!input || !baseline) continue;
 
             const awaitedBinding = compareAwaitAxisInput(
               input,
-              this.state.baselineInput[index] as AwaitAxisInput,
-              index,
+              baseline as AwaitAxisInput,
+              ref,
             );
             if (awaitedBinding) {
-              this.state.callback(awaitedBinding);
+              state.callback(awaitedBinding);
+              return this.deactivate();
+            }
+
+            break;
+          }
+
+          case 'button': {
+            const input = getAwaitButtonInput(sources[index]);
+            if (!input || !baseline) continue;
+
+            const awaitedBinding = compareAwaitButtonInput(
+              input,
+              baseline as AwaitButtonInput,
+              ref,
+            );
+            if (awaitedBinding) {
+              state.callback(awaitedBinding);
+              return this.deactivate();
+            }
+
+            break;
+          }
+        }
+      }
+      switch (state.kind) {
+        case 'axis': {
+          const allInput = sources.map(getAwaitAxisInput);
+
+          for (let index = 0; index < sources.length; index++) {
+            const input = allInput[index];
+            const baseline = state.baselineInput && state.baselineInput[index];
+
+            if (!input || !baseline) continue;
+
+            const ref = sourceRefs[index];
+            const awaitedBinding = compareAwaitAxisInput(input, baseline, ref);
+            if (awaitedBinding) {
+              state.callback(awaitedBinding);
               return this.deactivate();
             }
           }
@@ -142,23 +183,27 @@ export class NextInputListener {
         }
 
         case 'button': {
-          const allInput = gamepads.map(getAwaitButtonInput);
+          const allInput = sources.map(getAwaitButtonInput);
 
-          for (let index = 0; index < gamepads.length; index++) {
+          for (let index = 0; index < sources.length; index++) {
             const input = allInput[index];
-            if (!input || !this.state.baselineInput) continue;
+            const baseline = state.baselineInput && state.baselineInput[index];
+            const ref = sourceRefs[index];
+
+            if (!input || !baseline) continue;
 
             const awaitedBinding = compareAwaitButtonInput(
-              input[index],
-              this.state.baselineInput[index] as AwaitButtonInput,
-              index,
+              input,
+              baseline,
+              ref,
             );
             if (awaitedBinding) {
-              const source: T.GamepadSourceRef = { kind: 'gamepad', index };
-              this.state.callback(awaitedBinding);
+              state.callback(awaitedBinding);
               return this.deactivate();
             }
           }
+
+          break;
         }
       }
     }
