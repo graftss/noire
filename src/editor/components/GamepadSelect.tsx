@@ -16,10 +16,11 @@ interface GamepadSelectState {
   options: GamepadOption[];
 }
 
-const toOption = (g: Gamepad): GamepadOption => ({
-  value: g.index,
-  label: `Player ${g.index + 1}: ${g.id}`,
-});
+const toOption = (g: Gamepad): GamepadOption =>
+  g && {
+    value: g.index,
+    label: `Player ${g.index + 1}: ${g.id}`,
+  };
 
 export class GamepadSelect extends React.Component<
   GamepadSelectProps,
@@ -37,10 +38,11 @@ export class GamepadSelect extends React.Component<
 
   updateGamepads = (): void => {
     const gamepads = navigator.getGamepads();
-    const options = [];
+    const options: GamepadOption[] = [];
 
     for (let i = 0; i < gamepads.length; i++) {
-      if (gamepads[i]) options.push(toOption(gamepads[i]));
+      const g = gamepads[i];
+      if (g !== null) options.push(toOption(g));
     }
 
     this.setState({ options });
@@ -52,7 +54,7 @@ export class GamepadSelect extends React.Component<
 
     return (
       <Select
-        value={options[selectedIndex] || null}
+        value={selectedIndex ? options[selectedIndex] : null}
         options={options}
         placeholder="Gamepads"
         onChange={(i: GamepadOption) =>

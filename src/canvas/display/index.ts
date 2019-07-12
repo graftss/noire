@@ -40,7 +40,7 @@ export class Display {
 
     this.eventBus.on({
       kind: 'componentSelect',
-      cb: (component: Component | undefined) => {
+      cb: (component: Maybe<Component>) => {
         const id = component && component.getId();
 
         if (id !== selectedComponentProp(this.lastState, 'id')) {
@@ -78,7 +78,7 @@ export class Display {
 
   private syncWithState(
     state: T.DisplayState,
-    lastState: T.DisplayState,
+    lastState: Maybe<T.DisplayState>,
   ): void {
     const { components } = state;
     const lastSelectedId = selectedComponentProp(lastState, 'id');

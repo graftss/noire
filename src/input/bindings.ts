@@ -92,10 +92,7 @@ export const bindingToInputKind = (bindingKind: BindingKind): InputKind => {
   }
 };
 
-export const applyBinding = (
-  binding: Binding,
-  gamepad: Gamepad,
-): Input | undefined => {
+export const applyBinding = (binding: Binding, gamepad: Gamepad): Input => {
   switch (binding.kind) {
     case 'axis':
       return {

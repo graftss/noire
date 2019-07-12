@@ -1,9 +1,9 @@
 import * as T from '../types';
 
 export type EditorOption =
-  | { kind: 'component'; id: string | undefined }
-  | { kind: 'gamepad'; index: number | undefined }
-  | { kind: 'controller'; id: string | undefined };
+  | { kind: 'component'; id: Maybe<string> }
+  | { kind: 'gamepad'; index: Maybe<number> }
+  | { kind: 'controller'; id: Maybe<string> };
 
 export type EditorAction =
   | { type: 'selectEditorOption'; data: EditorOption }

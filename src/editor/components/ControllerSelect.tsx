@@ -4,7 +4,7 @@ import * as T from '../../types';
 
 interface ControllerSelectProps {
   controllers: T.Controller[];
-  selectedController: T.Controller | undefined;
+  selectedController?: T.Controller;
   selectEditorOption: (o: T.EditorOption) => void;
 }
 
@@ -13,11 +13,10 @@ interface ControllerOption {
   label: string;
 }
 
-const toOption = (c: T.Controller): ControllerOption | undefined =>
-  c && {
-    value: c.id,
-    label: c.name,
-  };
+const toOption = (c: T.Controller): ControllerOption => ({
+  value: c.id,
+  label: c.name,
+});
 
 export const ControllerSelect: React.SFC<ControllerSelectProps> = ({
   controllers,
@@ -25,7 +24,7 @@ export const ControllerSelect: React.SFC<ControllerSelectProps> = ({
   selectEditorOption,
 }) => (
   <Select
-    value={toOption(selectedController) || null}
+    value={selectedController ? toOption(selectedController) : null}
     options={controllers.map(toOption)}
     onChange={(o: ControllerOption) =>
       selectEditorOption({ kind: 'controller', id: o.value })

@@ -12,7 +12,7 @@ export interface DPadConfig {
   pressedFill?: string;
 }
 
-export const defaultDPadConfig: DPadConfig = {
+export const defaultDPadConfig: Required<DPadConfig> = {
   kind: 'dpad',
   buttonWidth: 20,
   buttonHeight: 20,
@@ -21,7 +21,7 @@ export const defaultDPadConfig: DPadConfig = {
 };
 
 export const dPadEditorConfig: T.ComponentEditorConfig = [
-  { kind: 'fixed', data: { label: 'DPad'} },
+  { kind: 'fixed', data: { label: 'DPad' } },
 ];
 
 export type Dir = 'u' | 'l' | 'd' | 'r';
@@ -38,7 +38,7 @@ const defaultInput: DPadInput = {
 };
 
 export class DPadComponent extends TypedComponent<DPadInput> {
-  protected config: DPadComponentConfig;
+  protected config: Required<DPadComponentConfig>;
   private rects: Record<Dir, Konva.Rect>;
 
   constructor(config: DPadComponentConfig) {

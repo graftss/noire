@@ -12,7 +12,7 @@ export interface StickConfig {
   pressedStickFill?: string;
 }
 
-export const defaultStickComponentConfig: StickConfig = {
+export const defaultStickComponentConfig: Required<StickConfig> = {
   kind: 'stick',
   boundaryRadius: 26,
   stickRadius: 40,
@@ -22,7 +22,7 @@ export const defaultStickComponentConfig: StickConfig = {
 };
 
 export const stickEditorConfig: T.ComponentEditorConfig = [
-  { kind: 'fixed', data: { label: 'Stick'} },
+  { kind: 'fixed', data: { label: 'Stick' } },
 ];
 
 export interface StickInput extends Record<string, T.RawInput> {
@@ -44,7 +44,7 @@ const depthFactor = (t: number): number =>
   t > 0.2 ? 1 - 0.08 * Math.abs(t) : 1 - 0.02 * Math.abs(t);
 
 export class StickComponent extends TypedComponent<StickInput> {
-  protected config: StickComponentConfig;
+  protected config: Required<StickComponentConfig>;
   private center: Konva.Circle;
   private stick: Konva.Ellipse;
 

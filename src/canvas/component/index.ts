@@ -10,8 +10,11 @@ export type SerializedComponent =
 export type ComponentKind = SerializedComponent['kind'];
 
 export type ComponentEditorField =
-  { kind: 'fixed', data: { label: string } }
-  | { kind: 'slider', data: { key: string, label: string, max: number, min: number } };
+  | { kind: 'fixed'; data: { label: string } }
+  | {
+      kind: 'slider';
+      data: { key: string; label: string; max: number; min: number };
+    };
 
 export type ComponentEditorConfig = ComponentEditorField[];
 

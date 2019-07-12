@@ -89,7 +89,7 @@ export class ComponentManager {
     );
   }
 
-  findById(componentId: string): Component {
+  findById(componentId: string): Maybe<Component> {
     return find(c => c.getId() === componentId, this.components);
   }
 }

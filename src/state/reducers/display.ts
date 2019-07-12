@@ -16,7 +16,7 @@ export const displayReducer = (
       return {
         ...state,
         selectedComponent:
-          action.data.kind === 'component'
+          action.data.kind === 'component' && action.data.id
             ? componentById(state, action.data.id)
             : undefined,
       };

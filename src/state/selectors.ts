@@ -2,18 +2,16 @@ import * as T from '../types';
 import { find } from '../utils';
 
 export const componentById = (
-  state: T.DisplayState,
+  state: Maybe<T.DisplayState>,
   id: string,
-): T.SerializedComponent =>
-  state ? find(c => c.id === id, state.components) : undefined;
+): Maybe<T.SerializedComponent> =>
+  state && find(c => c.id === id, state.components);
 
 export const selectedComponentProp = <K extends keyof T.SerializedComponent>(
-  state: T.DisplayState,
+  state: Maybe<T.DisplayState>,
   prop: K,
-): T.SerializedComponent[K] =>
+): Maybe<T.SerializedComponent[K]> =>
   state && state.selectedComponent && state.selectedComponent[prop];
 
-export const selectedController = (
-  state: T.InputState,
-): T.Controller | undefined =>
+export const selectedController = (state: T.InputState): Maybe<T.Controller> =>
   find(c => c.id === state.selectedControllerId, state.controllers);

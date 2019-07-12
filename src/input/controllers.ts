@@ -1,5 +1,5 @@
-import { map } from 'ramda';
 import * as T from '../types';
+import { mapObj } from '../utils';
 import { applyBinding } from './bindings';
 
 export interface PS2Map {
@@ -70,7 +70,8 @@ export interface ControllerKey {
 export const applyGamepadBindings = (
   g: Gamepad,
   c: GamepadMap,
-): Record<string, T.Input> => map((b: T.Binding) => applyBinding(b, g), c.map);
+): Record<string, Maybe<T.Input>> =>
+  mapObj(c.map, (b: T.Binding) => applyBinding(b, g));
 
 export const stringifyControllerKey = <T extends Controller>(
   c: T,

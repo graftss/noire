@@ -14,7 +14,7 @@ export interface BaseComponentConfig<I> {
 
   // relates props of the component's expected input to the controller
   // keys they're bound to
-  inputMap?: Record<keyof I, T.ControllerKey>;
+  inputMap: Record<keyof I, T.ControllerKey>;
 }
 
 export abstract class TypedComponent<I extends Record<string, T.RawInput>> {
@@ -29,15 +29,16 @@ export abstract class TypedComponent<I extends Record<string, T.RawInput>> {
 
   protected static generateConfig<I, C>(
     baseConfig: BaseComponentConfig<I>,
-    defaultComponentConfig: C,
+    defaultComponentConfig: Required<C>,
     defaultInput: I,
-  ): BaseComponentConfig<I> & C {
+  ): BaseComponentConfig<I> & Required<C> {
     const result = {
       ...baseConfig,
       ...defaultComponentConfig,
       defaultInput,
       inputMap: {
-        ...(map(() => undefined, defaultInput) as Record<keyof I, null>),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ...map(() => undefined, defaultInput as any),
         ...baseConfig.inputMap,
       },
     };
@@ -46,7 +47,9 @@ export abstract class TypedComponent<I extends Record<string, T.RawInput>> {
   }
 
   protected applyDefaultInput(input: I): I {
-    return defaults(this.config.defaultInput, input);
+    return this.config.defaultInput
+      ? defaults(this.config.defaultInput, input)
+      : input;
   }
 
   getId(): string {

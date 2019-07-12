@@ -76,7 +76,7 @@ export class Noire {
 }
 
 const test = new Noire(
-  document.getElementById('editor'),
+  document.getElementById('editor') as HTMLElement,
   document.getElementById('canvas') as HTMLDivElement,
 );
 

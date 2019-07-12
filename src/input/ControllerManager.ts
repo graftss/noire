@@ -9,11 +9,11 @@ export type GlobalInput = Record<string, Record<string, T.Input>>;
 
 type GamepadId = string;
 
-const getGamepads = (): Gamepad[] => [...navigator.getGamepads()];
+const getGamepads = (): (Gamepad | null)[] => [...navigator.getGamepads()];
 
 const forEachGamepad = (
-  f: (f: Gamepad, n: number) => void,
-  gs: Gamepad[],
+  f: (g: Gamepad | null, n: number) => void,
+  gs: (Gamepad | null)[],
 ): void => {
   for (let i = 0; i < gs.length; i++) {
     f(gs[i], i);
@@ -44,7 +44,7 @@ export class ControllerManager {
       if (!gamepadsByIndex[index] && gamepad) {
         gamepadsByIndex[index] = { kind: 'gamepad', id: uuid(), index };
       } else if (gamepadsByIndex[index] && !gamepad) {
-        gamepadsByIndex[index] = null;
+        delete gamepadsByIndex[index];
       }
     }, liveGamepads);
 
@@ -104,6 +104,8 @@ export class ControllerManager {
 
     const gamepads = getGamepads();
     this.sources.gamepads.forEach(({ id, index }) => {
+      if (!id) return;
+
       const gamepadMap = controllersById[id] as T.GamepadMap;
       const gamepad = gamepads[index];
 

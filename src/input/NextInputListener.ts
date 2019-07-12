@@ -15,24 +15,24 @@ type ListeningState =
   | {
       kind: 'axis';
       callback: AwaitAxisCallback;
-      baselineInput?: AwaitAxisInput[];
+      baselineInput?: (AwaitAxisInput | null)[];
     }
   | {
       kind: 'button';
       callback: AwaitButtonCallback;
-      baselineInput?: AwaitButtonInput[];
+      baselineInput?: (AwaitButtonInput | null)[];
     };
 
 const MIN_AXIS_MAGNITUDE = 0.5;
 
-const getAwaitAxisInput = (g: Gamepad): AwaitAxisInput | null =>
+const getAwaitAxisInput = (g: Gamepad | null): AwaitAxisInput | null =>
   g && clone(g.axes);
 
 const compareAwaitAxisInput = (
   axes: AwaitAxisInput,
   baseline: AwaitAxisInput,
   gamepadIndex: number,
-): T.AxisBinding | undefined => {
+): Maybe<T.AxisBinding> => {
   if (!axes) return;
   const source: T.GamepadSource = { kind: 'gamepad', index: gamepadIndex };
 
@@ -44,7 +44,7 @@ const compareAwaitAxisInput = (
   }
 };
 
-const getAwaitButtonInput = (g: Gamepad): AwaitButtonInput | null =>
+const getAwaitButtonInput = (g: Gamepad | null): AwaitButtonInput | null =>
   g &&
   clone({
     buttons: g.buttons.map(b => b.value),
@@ -57,7 +57,7 @@ const compareAwaitButtonInput = (
   input: AwaitButtonInput,
   baseline: AwaitButtonInput,
   gamepadIndex: number,
-): T.ButtonInputBinding | undefined => {
+): Maybe<T.ButtonInputBinding> => {
   if (!input) return;
   const source: T.GamepadSource = { kind: 'gamepad', index: gamepadIndex };
 
@@ -104,10 +104,8 @@ export class NextInputListener {
     this.state = undefined;
   }
 
-  update(gamepads: Gamepad[]): void {
-    if (!this.isActive()) return;
-
-    console.log('hello');
+  update(gamepads: (Gamepad | null)[]): void {
+    if (this.state === undefined) return;
 
     if (this.pollingBaselineInput) {
       switch (this.state.kind) {
@@ -123,12 +121,15 @@ export class NextInputListener {
     } else {
       switch (this.state.kind) {
         case 'axis': {
-          const input = gamepads.map(getAwaitAxisInput);
+          const allInput = gamepads.map(getAwaitAxisInput);
 
           for (let index = 0; index < gamepads.length; index++) {
+            const input = allInput[index];
+            if (!input || !this.state.baselineInput) continue;
+
             const awaitedBinding = compareAwaitAxisInput(
-              input[index],
-              this.state.baselineInput[index],
+              input,
+              this.state.baselineInput[index] as AwaitAxisInput,
               index,
             );
             if (awaitedBinding) {
@@ -142,12 +143,15 @@ export class NextInputListener {
         }
 
         case 'button': {
-          const input = gamepads.map(getAwaitButtonInput);
+          const allInput = gamepads.map(getAwaitButtonInput);
 
           for (let index = 0; index < gamepads.length; index++) {
+            const input = allInput[index];
+            if (!input || !this.state.baselineInput) continue;
+
             const awaitedBinding = compareAwaitButtonInput(
               input[index],
-              this.state.baselineInput[index],
+              this.state.baselineInput[index] as AwaitButtonInput,
               index,
             );
             if (awaitedBinding) {

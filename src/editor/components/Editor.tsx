@@ -3,23 +3,26 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../types';
 import { listenNextInput, selectEditorOption } from '../../state/actions';
-import { selectedController, selectedComponentProp } from '../../state/selectors';
+import {
+  selectedController,
+  selectedComponentProp,
+} from '../../state/selectors';
+import { componentConfigs } from '../../canvas/component';
 import { ComponentEditor } from './ComponentEditor';
 import { ComponentSelect } from './ComponentSelect';
 import { ControllerKeymap } from './ControllerKeymap';
 import { ControllerSelect } from './ControllerSelect';
 import { GamepadSelect } from './GamepadSelect';
-import { componentConfigs } from '../../canvas/component';
 
 interface PropsFromState {
-  selected: T.SerializedComponent;
+  selected?: T.SerializedComponent;
   selectedGamepadIndex?: number;
   components: T.SerializedComponent[];
   controllers: T.Controller[];
-  selectedComponent: T.SerializedComponent;
-  selectedComponentEditorConfig: T.ComponentEditorConfig;
-  selectedController: T.Controller | undefined;
-  remapState: T.RemapState;
+  selectedComponent?: T.SerializedComponent;
+  selectedComponentEditorConfig?: T.ComponentEditorConfig;
+  selectedController?: T.Controller;
+  remapState?: T.RemapState;
 }
 
 interface PropsFromDispatch {
@@ -29,16 +32,21 @@ interface PropsFromDispatch {
 
 type EditorProps = PropsFromState & PropsFromDispatch;
 
-const mapStateToProps = (state: T.EditorState): PropsFromState => ({
-  selected: state.display.selectedComponent,
-  selectedGamepadIndex: state.input.selectedGamepadIndex,
-  components: state.display.components,
-  controllers: state.input.controllers,
-  selectedComponent: state.display.selectedComponent,
-  selectedComponentEditorConfig: componentConfigs[selectedComponentProp(state.display, 'kind')],
-  selectedController: selectedController(state.input),
-  remapState: state.input.remap,
-});
+const mapStateToProps = (state: T.EditorState): PropsFromState => {
+  const configKind = selectedComponentProp(state.display, 'kind');
+  const config = configKind && componentConfigs[configKind];
+
+  return {
+    selected: state.display.selectedComponent,
+    selectedGamepadIndex: state.input.selectedGamepadIndex,
+    components: state.display.components,
+    controllers: state.input.controllers,
+    selectedComponent: state.display.selectedComponent,
+    selectedComponentEditorConfig: config,
+    selectedController: selectedController(state.input),
+    remapState: state.input.remap,
+  };
+};
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators({ listenNextInput, selectEditorOption }, dispatch);
@@ -74,13 +82,13 @@ const BaseEditor: React.SFC<EditorProps> = ({
       <ControllerKeymap
         controller={selectedController}
         listenNextInput={listenNextInput}
-        remapState={remapState}
+        remapState={remapState as T.RemapState}
       />
     ) : null}
-    {selectedComponent ?(
+    {selectedComponent ? (
       <ComponentEditor
         component={selectedComponent}
-        config={selectedComponentEditorConfig}
+        config={selectedComponentEditorConfig as T.ComponentEditorConfig}
       />
     ) : null}
   </div>

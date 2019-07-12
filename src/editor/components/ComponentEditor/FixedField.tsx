@@ -4,10 +4,6 @@ interface FixedFieldProps {
   label: string;
 }
 
-export const FixedField: React.SFC<FixedFieldProps> = ({
-  label,
-}) => (
-  <span>
-    {label}
-  </span>
+export const FixedField: React.SFC<FixedFieldProps> = ({ label }) => (
+  <span>{label}</span>
 );

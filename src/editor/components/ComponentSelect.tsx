@@ -10,10 +10,10 @@ interface ComponentOption {
 interface ComponentSelectProps {
   selectEditorOption: (o: T.EditorOption) => void;
   components: T.SerializedComponent[];
-  selected: T.SerializedComponent;
+  selected?: T.SerializedComponent;
 }
 
-const toOption = (c: T.SerializedComponent): ComponentOption | undefined =>
+const toOption = (c: T.SerializedComponent): Maybe<ComponentOption> =>
   !c
     ? undefined
     : {
@@ -27,7 +27,7 @@ export const ComponentSelect: React.SFC<ComponentSelectProps> = ({
   selectEditorOption,
 }) => (
   <Select
-    value={toOption(selected) || null}
+    value={selected ? toOption(selected) : null}
     options={components.map(toOption)}
     onChange={(o: ComponentOption) =>
       selectEditorOption({ kind: 'component', id: o.value })

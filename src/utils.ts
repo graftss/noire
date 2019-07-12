@@ -23,16 +23,17 @@ export const mappedApply = (maps): any => mapObjIndexed((v, k) => maps[k](v));
 
 export const mappedEval = maps => k => map(f => f(k), maps);
 
-export const find = <T>(pred: (t: T) => boolean, list: T[]): T | undefined => {
+export const find = <T>(pred: (t: T) => boolean, list: T[]): Maybe<T> => {
   for (let i = 0; i < list.length; i++) {
     if (pred(list[i])) return list[i];
   }
 };
 
-export const defaults = <T extends {}>(source: Partial<T>, target: T): T => {
+export const defaults = <T>(source: Partial<T>, target: T): T => {
   for (let key in source) {
-    target[key] =
-      target && target[key] !== undefined ? target[key] : source[key];
+    target[key] = (target[key] !== undefined
+      ? target[key]
+      : source[key]) as T[typeof key];
   }
 
   return target;
@@ -47,8 +48,8 @@ export const keyBy = <T>(
   return (ts || []).reduce((result, t) => ({ ...result, [map(t)]: t }), {});
 };
 
-export const values = <T>(map: Record<number | string, T>): T[] => {
-  const result = [];
+export const values = <T>(map: Record<string, T>): T[] => {
+  const result: T[] = [];
   for (const k in map) result.push(map[k]);
   return result;
 };
@@ -58,3 +59,12 @@ export const mapIf = <T>(
   pred: (t: T) => boolean,
   f: (t: T) => T,
 ): T[] => ts.map(t => (pred(t) ? f(t) : t));
+
+export const mapObj = <K extends string, T, U>(
+  ts: Record<K, T>,
+  f: (t: T) => U,
+): Record<K, U> => {
+  const result: Partial<Record<K, U>> = {};
+  for (let k in ts) result[k] = f(ts[k]);
+  return result as Record<K, U>;
+};

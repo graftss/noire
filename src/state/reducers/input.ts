@@ -24,7 +24,7 @@ export interface ControllerKeyBinding {
 export interface InputState {
   selectedGamepadIndex?: number;
   remap?: RemapState;
-  controllers?: T.Controller[];
+  controllers: T.Controller[];
   selectedControllerId?: string;
 }
 

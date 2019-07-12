@@ -18,12 +18,12 @@ export class ComponentTransformerPlugin extends DisplayPlugin {
     if (this.transformer) this.assignTransformer();
   };
 
-  private onComponentSelect = (component: Component | undefined): void => {
+  private onComponentSelect = (component: Maybe<Component>): void => {
     this.assignTransformer(component && component.group);
   };
 
   private assignTransformer(target?: Konva.Node): void {
-    if (this.transformer) {
+    if (this.transformer && this.transformerTarget) {
       this.transformer.destroy();
       this.transformerTarget.draggable(false);
     }

@@ -10,7 +10,7 @@ export interface ButtonConfig {
   pressedFill?: string;
 }
 
-export const defaultButtonConfig: ButtonConfig = {
+export const defaultButtonConfig: Required<ButtonConfig> = {
   kind: 'button',
   width: 30,
   height: 40,
@@ -34,7 +34,7 @@ const defaultInput: ButtonComponentInput = {
 };
 
 export class ButtonComponent extends TypedComponent<ButtonComponentInput> {
-  protected config: ButtonComponentConfig;
+  protected config: Required<ButtonComponentConfig>;
   private rect: Konva.Rect;
 
   constructor(config: ButtonComponentConfig) {

@@ -5,6 +5,7 @@
     "jsx": "react",
     "module": "commonjs",
     "sourceMap": true,
-    "target": "es6"
+    "target": "es6",
+    "strictNullChecks": true
   }
 }

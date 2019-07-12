@@ -5,8 +5,6 @@ import { Component } from './Component';
 import { DPadComponent } from './DPadComponent';
 
 export const deserializeComponent = (s: T.SerializedComponent): Component => {
-  let component: Component;
-
   switch (s.kind) {
     case 'button':
       return new ButtonComponent(s);
@@ -15,6 +13,4 @@ export const deserializeComponent = (s: T.SerializedComponent): Component => {
     case 'dpad':
       return new DPadComponent(s);
   }
-
-  return component;
 };
