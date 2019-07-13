@@ -30,6 +30,9 @@ module.exports = {
       accessibility: 'no-public'
     }],
     '@typescript-eslint/no-parameter-properties': 'off',
+    '@typescript-eslint/no-unused-vars': ['error', {
+      varsIgnorePattern: '_+',
+    }],
     'import/order': ['error', {
       'newlines-between': 'never',
     }],

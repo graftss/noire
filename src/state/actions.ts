@@ -33,7 +33,9 @@ export const bindComponentKey = (
   data,
 });
 
-export const unbindComponentKey = (data: T.ComponentKeyUnbinding): EditorAction => ({
+export const unbindComponentKey = (
+  data: T.ComponentKeyUnbinding,
+): EditorAction => ({
   type: 'unbindComponentKey',
   data,
 });

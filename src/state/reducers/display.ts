@@ -13,11 +13,16 @@ export interface ComponentKeyBinding {
   controllerKey: T.ControllerKey;
 }
 
-export type ComponentKeyUnbinding = Without<T.ComponentKeyBinding, 'controllerKey'>;
+export type ComponentKeyUnbinding = Without<
+  T.ComponentKeyBinding,
+  'controllerKey'
+>;
 
-const mapComponentWithId = (components: T.SerializedComponent[], id: string, f: (c: T.SerializedComponent) => T.SerializedComponent): T.SerializedComponent[] => (
-  mapIf(components, c => c.id === id, f)
-);
+const mapComponentWithId = (
+  components: T.SerializedComponent[],
+  id: string,
+  f: (c: T.SerializedComponent) => T.SerializedComponent,
+): T.SerializedComponent[] => mapIf(components, c => c.id === id, f);
 
 // TODO: generalize this into a utils function `assoc`
 const assocInputMap = <I>(
@@ -58,14 +63,18 @@ export const displayReducer = (
 
     case 'unbindComponentKey': {
       const { componentId, bindingKey } = action.data;
-      const removeKey = <I, C extends T.BaseComponentConfig<I>>(c: C) => ({
+      const removeKey = <I, C extends T.BaseComponentConfig<I>>(c: C): C => ({
         ...c,
         inputMap: withoutKey(c.inputMap, bindingKey as keyof I),
       });
 
       return {
         ...state,
-        components: mapComponentWithId(state.components, componentId, removeKey),
+        components: mapComponentWithId(
+          state.components,
+          componentId,
+          removeKey,
+        ),
       };
     }
   }

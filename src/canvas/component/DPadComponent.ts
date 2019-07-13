@@ -22,12 +22,17 @@ export const defaultDPadConfig: Required<DPadConfig> = {
 
 export const dPadEditorConfig: T.ComponentEditorConfig = [
   { kind: 'fixed', data: { label: 'DPad' } },
-  { kind: 'bindings', data: { bindings : [
-    { key: 'u', label: 'Up', inputKind: 'button' },
-    { key: 'l', label: 'Left', inputKind: 'button' },
-    { key: 'd', label: 'Down', inputKind: 'button' },
-    { key: 'r', label: 'Right', inputKind: 'button' },
-  ] } },
+  {
+    kind: 'bindings',
+    data: {
+      bindings: [
+        { key: 'u', label: 'Up', inputKind: 'button' },
+        { key: 'l', label: 'Left', inputKind: 'button' },
+        { key: 'd', label: 'Down', inputKind: 'button' },
+        { key: 'r', label: 'Right', inputKind: 'button' },
+      ],
+    },
+  },
 ];
 
 export type Dir = 'u' | 'l' | 'd' | 'r';
