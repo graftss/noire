@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { toPairs } from 'ramda';
 import * as T from '../../types';
-import { bindingToInputKind, stringifyBinding } from '../../input/bindings';
-import { stringifyControllerKey } from '../../input/controllers';
+import { stringifyBinding } from '../../input/bindings';
+import { controllerData, controllerKeyNames } from '../../input/keymaps';
 
 interface ControllerBindingsProps {
   controller: T.Controller;
@@ -13,22 +12,23 @@ interface ControllerBindingsProps {
 const stringifyKeymap = (
   c: T.Controller,
   key: string,
-  binding: T.Binding,
+  binding: Maybe<T.Binding>,
   listened: boolean,
-): string =>
-  listened
-    ? `${stringifyControllerKey(c, key)}: (listening)`
-    : `${stringifyControllerKey(c, key)}: ${stringifyBinding(binding)}`;
+): string => {
+  const keyString: string = controllerData[c.kind][key].name;
+  const bindingString: string = listened
+    ? '(listening)'
+    : binding
+    ? stringifyBinding(binding)
+    : 'NONE';
+  return `${keyString}: ${bindingString}`;
+};
 
-const generateRemapState = (
-  c: T.Controller,
-  key: string,
-  binding: T.Binding,
-): T.RemapState => ({
+const generateRemapState = (c: T.Controller, key: string): T.RemapState => ({
   kind: 'controller',
   controllerId: c.id,
   key,
-  inputKind: bindingToInputKind(binding.kind),
+  inputKind: controllerData[c.kind][key].inputKind,
 });
 
 const isRemappingControllerKey = (
@@ -47,21 +47,21 @@ export const ControllerKeymap: React.SFC<ControllerBindingsProps> = ({
   remapState,
 }) => (
   <div>
-    {toPairs(controller.map).map(([key, binding]) => (
-      <div key={key}>
-        <button
-          onClick={() =>
-            listenNextInput(generateRemapState(controller, key, binding))
-          }
-        >
-          {stringifyKeymap(
-            controller,
-            key,
-            binding,
-            isRemappingControllerKey(remapState, controller, key),
-          )}
-        </button>
-      </div>
-    ))}
+    {controllerKeyNames[controller.kind].map(
+      (key: keyof T.GamepadMap['map']) => (
+        <div key={key}>
+          <button
+            onClick={() => listenNextInput(generateRemapState(controller, key))}
+          >
+            {stringifyKeymap(
+              controller,
+              key,
+              controller.map[key],
+              isRemappingControllerKey(remapState, controller, key),
+            )}
+          </button>
+        </div>
+      ),
+    )}
   </div>
 );

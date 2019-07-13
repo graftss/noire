@@ -3,13 +3,8 @@ export {
   AwaitButtonCallback,
 } from './input/NextInputListener';
 export { GlobalInput } from './input/ControllerManager';
-export {
-  GamepadMap,
-  PS2GamepadMap,
-  PS2Map,
-  ControllerKey,
-  Controller,
-} from './input/controllers';
+export { ControllerKey, Controller } from './input/controllers';
+export { GamepadMap, KeyData, PS2GamepadMap, PS2Map } from './input/keymaps';
 export {
   GamepadSourceRef,
   GamepadSource,
