@@ -6,6 +6,7 @@ const dirs = ['u', 'l', 'd', 'r'];
 
 export interface DPadConfig {
   kind: 'dpad';
+  inputKinds: Record<Dir, 'button'>;
   buttonWidth?: number;
   buttonHeight?: number;
   fill?: string;
@@ -14,6 +15,7 @@ export interface DPadConfig {
 
 export const defaultDPadConfig: Required<DPadConfig> = {
   kind: 'dpad',
+  inputKinds: { u: 'button', l: 'button', d: 'button', r: 'button' },
   buttonWidth: 20,
   buttonHeight: 20,
   fill: 'black',
@@ -37,15 +39,15 @@ export const dPadEditorConfig: T.ComponentEditorConfig = [
 
 export type Dir = 'u' | 'l' | 'd' | 'r';
 
-export type DPadInput = Record<Dir, T.RawButtonInput>;
+export type DPadInput = Record<Dir, T.ButtonInput>;
 
 export type DPadComponentConfig = DPadConfig & T.BaseComponentConfig<DPadInput>;
 
 const defaultInput: DPadInput = {
-  l: false,
-  u: false,
-  d: false,
-  r: false,
+  l: { kind: 'button', input: false },
+  u: { kind: 'button', input: false },
+  d: { kind: 'button', input: false },
+  r: { kind: 'button', input: false },
 };
 
 export class DPadComponent extends TypedComponent<DPadInput> {
@@ -93,12 +95,12 @@ export class DPadComponent extends TypedComponent<DPadInput> {
     dirs.forEach(dir => this.group.add(this.rects[dir]));
   }
 
-  update(rawInput: DPadInput): void {
-    const input = this.applyDefaultInput(rawInput);
+  update(input: DPadInput): void {
+    const rawInput = this.computeRawInput(input);
     const { pressedFill, fill } = this.config;
 
     dirs.forEach(dir =>
-      this.rects[dir].fill(input[dir] ? pressedFill : fill),
+      this.rects[dir].fill(rawInput[dir] ? pressedFill : fill),
     );
   }
 }

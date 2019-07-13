@@ -1,5 +1,5 @@
 import * as T from '../types';
-import { equals } from '../utils';
+import { clone, equals } from '../utils';
 
 export type InputMap<B, I> = (b: B, s: T.InputSource) => Maybe<I>;
 
@@ -17,7 +17,10 @@ export interface AxisBinding extends BaseBinding {
 
 export type RawAxisInput = number;
 
-export type AxisInput = { kind: 'axis', input: RawAxisInput };
+export interface AxisInput {
+  kind: 'axis';
+  input: RawAxisInput;
+}
 
 export const axisMap: InputMap<AxisBinding, AxisInput> = (binding, source) => {
   const { index, inverted, deadzone = 0 } = binding;
@@ -54,10 +57,10 @@ export interface ButtonInput {
   input: RawButtonInput;
 }
 
-export const axisValueMap: InputMap<
-  AxisValueBinding,
-  ButtonInput
-> = (binding, source) => {
+export const axisValueMap: InputMap<AxisValueBinding, ButtonInput> = (
+  binding,
+  source,
+) => {
   const { axis, value, marginOfError = 0.001 } = binding;
   const kind = 'button';
 
@@ -70,10 +73,10 @@ export const axisValueMap: InputMap<
   }
 };
 
-export const buttonMap: InputMap<
-  ButtonBinding,
-  ButtonInput
-> = (binding, source) => {
+export const buttonMap: InputMap<ButtonBinding, ButtonInput> = (
+  binding,
+  source,
+) => {
   const { index } = binding;
   const kind = 'button';
 
@@ -85,10 +88,10 @@ export const buttonMap: InputMap<
   }
 };
 
-export const buttonInputMap: InputMap<
-  ButtonInputBinding,
-  ButtonInput
-> = (binding, source) =>
+export const buttonInputMap: InputMap<ButtonInputBinding, ButtonInput> = (
+  binding,
+  source,
+) =>
   binding.kind === 'button'
     ? buttonMap(binding, source)
     : axisValueMap(binding, source);
@@ -100,6 +103,22 @@ export type BindingKind = 'axis' | 'button' | 'axisValue';
 export type Input = AxisInput | ButtonInput;
 export type InputKind = Input['kind'];
 export type RawInput = Input['input'];
+
+export type Raw<I extends Record<string, Input>> = {
+  [A in keyof I]: I[A]['input'];
+};
+
+export const rawifyInputMap = <I extends Record<string, Input>>(
+  i: I,
+): Raw<I> => {
+  const result = clone(i);
+
+  for (const key in result) {
+    result[key] = result[key].input;
+  }
+
+  return result;
+};
 
 export const bindingToInputKind = (bindingKind: BindingKind): InputKind => {
   switch (bindingKind) {
@@ -164,12 +183,14 @@ export const stringifyBinding = (
 export const areBindingsEqual = (b1: Binding, b2: Binding): boolean =>
   equals(b1, b2);
 
-export function defaultInput(kind: 'axis'): T.AxisInput;
-export function defaultInput(kind: 'button'): T.ButtonInput;
-export function defaultInput(kind: T.InputKind): T.Input;
-export function defaultInput(kind: T.InputKind): T.Input {
+export function defaultInputByKind(kind: 'axis'): T.AxisInput;
+export function defaultInputByKind(kind: 'button'): T.ButtonInput;
+export function defaultInputByKind(kind: T.InputKind): T.Input;
+export function defaultInputByKind(kind: T.InputKind): T.Input {
   switch (kind) {
-    case 'axis': return { kind, input: 0 };
-    case 'button': return { kind, input: false };
+    case 'axis':
+      return { kind, input: 0 };
+    case 'button':
+      return { kind, input: false };
   }
 }

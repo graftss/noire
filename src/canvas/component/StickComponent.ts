@@ -5,6 +5,7 @@ import { TypedComponent } from './Component';
 
 export interface StickConfig {
   kind: 'stick';
+  inputKinds: { x: 'axis'; y: 'axis'; button: 'button' };
   boundaryRadius?: number;
   stickRadius?: number;
   rangeScaling?: number;
@@ -14,6 +15,7 @@ export interface StickConfig {
 
 export const defaultStickComponentConfig: Required<StickConfig> = {
   kind: 'stick',
+  inputKinds: { x: 'axis', y: 'axis', button: 'button' },
   boundaryRadius: 26,
   stickRadius: 40,
   rangeScaling: 0.5,
@@ -35,16 +37,16 @@ export const stickEditorConfig: T.ComponentEditorConfig = [
   },
 ];
 
-export interface StickInput extends Record<string, T.RawInput> {
-  x: T.RawAxisInput;
-  y: T.RawAxisInput;
-  button: T.RawButtonInput;
+export interface StickInput extends Record<string, T.Input> {
+  x: T.AxisInput;
+  y: T.AxisInput;
+  button: T.ButtonInput;
 }
 
 const defaultInput: StickInput = {
-  x: 0,
-  y: 0,
-  button: false,
+  x: { kind: 'axis', input: 0 },
+  y: { kind: 'axis', input: 0 },
+  button: { kind: 'button', input: false },
 };
 
 export type StickComponentConfig = StickConfig &
@@ -93,7 +95,7 @@ export class StickComponent extends TypedComponent<StickInput> {
   }
 
   update(input: StickInput): void {
-    const { x, y, button } = this.applyDefaultInput(input);
+    const { x, y, button } = this.computeRawInput(input);
 
     const {
       boundaryRadius,

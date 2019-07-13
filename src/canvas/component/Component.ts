@@ -1,7 +1,8 @@
 import Konva from 'konva';
 import { map } from 'ramda';
 import * as T from '../../types';
-import { defaults } from '../../utils';
+import { clone } from '../../utils';
+import { defaultInputByKind, rawifyInputMap } from '../../input/bindings';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Component = TypedComponent<any>;
@@ -11,13 +12,11 @@ export interface BaseComponentConfig<I> {
   y: number;
   id: string;
   defaultInput?: I;
-
-  // relates props of the component's expected input to the controller
-  // keys they're bound to
+  inputKinds: Record<keyof I, T.InputKind>;
   inputMap: Record<keyof I, T.ControllerKey>;
 }
 
-export abstract class TypedComponent<I extends Record<string, T.RawInput>> {
+export abstract class TypedComponent<I extends Record<string, T.Input>> {
   protected config: BaseComponentConfig<I>;
   group: Konva.Group;
 
@@ -46,10 +45,21 @@ export abstract class TypedComponent<I extends Record<string, T.RawInput>> {
     return result;
   }
 
-  protected applyDefaultInput(input: I): I {
-    return this.config.defaultInput
-      ? defaults(this.config.defaultInput, input)
-      : input;
+  protected applyDefaultInput(input: Record<keyof I, Maybe<T.Input>>): I {
+    const result = clone(input);
+    const { defaultInput } = this.config;
+
+    for (const key in input) {
+      if (result[key] !== undefined) continue;
+      if (defaultInput && defaultInput[key]) result[key] = defaultInput[key];
+      result[key] = defaultInputByKind(this.config.inputKinds[key]);
+    }
+
+    return result;
+  }
+
+  protected computeRawInput(input: I): T.Raw<I> {
+    return rawifyInputMap(this.applyDefaultInput(input));
   }
 
   getId(): string {

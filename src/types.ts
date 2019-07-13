@@ -63,4 +63,5 @@ export {
   Input,
   InputKind,
   RawInput,
+  Raw,
 } from './input/bindings';

@@ -63,17 +63,21 @@ export class ComponentManager {
     });
   };
 
-  update(input: T.GlobalInput, dt: number): void {
+  update(globalInput: T.GlobalInput, dt: number): void {
     this.components.forEach(
-      <I extends Record<string, T.RawInput>>(
-        component: T.TypedComponent<I>,
-      ) => {
-        const componentInput: Record<keyof I, Maybe<T.RawInput>> = map(
-          (controllerKey): Maybe<T.RawInput> => {
-            if (!controllerKey) return;
-            const { controllerId: id, key } = controllerKey;
-            return input[id] && input[id][key] && input[id][key].input;
-          },
+      <I extends Record<string, T.Input>>(component: T.TypedComponent<I>) => {
+        const getControllerKeyInput = (
+          controllerKey: Maybe<T.ControllerKey>,
+        ): Maybe<T.Input> => {
+          if (!controllerKey) return;
+
+          const { controllerId, key } = controllerKey;
+          const controllerInput = globalInput[controllerId];
+          return controllerInput && controllerInput[key];
+        };
+
+        const componentInput: Record<string, Maybe<T.Input>> = map(
+          getControllerKeyInput,
           component.getInputMap(),
         );
 

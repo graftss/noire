@@ -8,6 +8,7 @@ export interface ButtonConfig {
   height?: number;
   fill?: string;
   pressedFill?: string;
+  inputKinds: { button: 'button' };
 }
 
 export const defaultButtonConfig: Required<ButtonConfig> = {
@@ -16,17 +17,18 @@ export const defaultButtonConfig: Required<ButtonConfig> = {
   height: 40,
   fill: 'black',
   pressedFill: 'darkred',
+  inputKinds: { button: 'button' },
 };
 
 export type ButtonComponentConfig = ButtonConfig &
   T.BaseComponentConfig<ButtonComponentInput>;
 
-export interface ButtonComponentInput extends Record<string, T.RawInput> {
-  button: T.RawButtonInput;
+export interface ButtonComponentInput extends Record<string, T.Input> {
+  button: T.ButtonInput;
 }
 
 const defaultInput: ButtonComponentInput = {
-  button: false,
+  button: { kind: 'button', input: false },
 };
 
 export const buttonEditorConfig: T.ComponentEditorConfig = [
@@ -62,7 +64,7 @@ export class ButtonComponent extends TypedComponent<ButtonComponentInput> {
   }
 
   update(input: ButtonComponentInput): void {
-    const { button } = this.applyDefaultInput(input);
+    const { button } = this.computeRawInput(input);
     const { fill, pressedFill } = this.config;
 
     this.rect.fill(button ? pressedFill : fill);

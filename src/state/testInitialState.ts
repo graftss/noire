@@ -40,6 +40,7 @@ const leftStick: T.StickComponentConfig = {
     y: { controllerId: 'a', key: 'lsY' },
     button: { controllerId: 'a', key: 'l3' },
   },
+  inputKinds: { x: 'axis', y: 'axis', button: 'button' },
 };
 
 const rightStick: T.StickComponentConfig = {
@@ -52,6 +53,7 @@ const rightStick: T.StickComponentConfig = {
     y: { controllerId: 'a', key: 'rsY' },
     button: { controllerId: 'a', key: 'r3' },
   },
+  inputKinds: { x: 'axis', y: 'axis', button: 'button' },
 };
 
 const dPad: T.DPadComponentConfig = {
@@ -67,6 +69,7 @@ const dPad: T.DPadComponentConfig = {
     d: { controllerId: 'a', key: 'padD' },
     r: { controllerId: 'a', key: 'padR' },
   },
+  inputKinds: { u: 'button', l: 'button', d: 'button', r: 'button' },
 };
 
 const button: T.ButtonComponentConfig = {
@@ -75,6 +78,7 @@ const button: T.ButtonComponentConfig = {
   y: 100,
   id: ids[3],
   inputMap: {},
+  inputKinds: { button: 'button' },
 };
 
 const components: T.SerializedComponent[] = [
