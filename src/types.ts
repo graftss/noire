@@ -49,18 +49,18 @@ export {
 export { EditorStore } from './state/createStore';
 export {
   InputMap,
-  BindingId,
   BaseBinding,
   AxisBinding,
   AxisInput,
+  RawAxisInput,
   AxisValueBinding,
   ButtonBinding,
   ButtonInput,
+  RawButtonInput,
   ButtonInputBinding,
   Binding,
   BindingKind,
   Input,
   InputKind,
   RawInput,
-  Keymap,
 } from './input/bindings';

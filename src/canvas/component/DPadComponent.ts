@@ -37,15 +37,15 @@ export const dPadEditorConfig: T.ComponentEditorConfig = [
 
 export type Dir = 'u' | 'l' | 'd' | 'r';
 
-export type DPadInput = Record<Dir, T.ButtonInput>;
+export type DPadInput = Record<Dir, T.RawButtonInput>;
 
 export type DPadComponentConfig = DPadConfig & T.BaseComponentConfig<DPadInput>;
 
 const defaultInput: DPadInput = {
-  l: { pressed: false },
-  u: { pressed: false },
-  d: { pressed: false },
-  r: { pressed: false },
+  l: false,
+  u: false,
+  d: false,
+  r: false,
 };
 
 export class DPadComponent extends TypedComponent<DPadInput> {
@@ -98,9 +98,7 @@ export class DPadComponent extends TypedComponent<DPadInput> {
     const { pressedFill, fill } = this.config;
 
     dirs.forEach(dir =>
-      this.rects[dir].fill(
-        input[dir] && input[dir].pressed ? pressedFill : fill,
-      ),
+      this.rects[dir].fill(input[dir] ? pressedFill : fill),
     );
   }
 }

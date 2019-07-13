@@ -19,12 +19,12 @@ export interface ControllerKey {
 export const applyControllerKeymap = (
   source: T.InputSource,
   controller: T.Controller,
-): Maybe<T.Keymap> =>
+): Maybe<Record<string, Maybe<T.Input>>> =>
   isSourceNull(source)
     ? undefined
     : mapObj(
         controller.map,
-        (b: Maybe<T.Binding>) => b && applyBinding(source, b),
+        (b: Maybe<T.Binding>) => b && applyBinding(b, source),
       );
 
 export const stringifyControllerKey = (

@@ -36,15 +36,15 @@ export const stickEditorConfig: T.ComponentEditorConfig = [
 ];
 
 export interface StickInput extends Record<string, T.RawInput> {
-  x: T.AxisInput;
-  y: T.AxisInput;
-  button: T.ButtonInput;
+  x: T.RawAxisInput;
+  y: T.RawAxisInput;
+  button: T.RawButtonInput;
 }
 
 const defaultInput: StickInput = {
   x: 0,
   y: 0,
-  button: { pressed: false },
+  button: false,
 };
 
 export type StickComponentConfig = StickConfig &
@@ -113,7 +113,7 @@ export class StickComponent extends TypedComponent<StickInput> {
       y: stickRadius * depthFactor(y),
     });
 
-    this.stick.fill(button.pressed ? pressedStickFill : stickFill);
+    this.stick.fill(button ? pressedStickFill : stickFill);
 
     this.stick.shadowOffset({
       x: sign(x) * depthFactor(x) * -1,

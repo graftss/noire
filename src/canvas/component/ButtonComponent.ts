@@ -22,11 +22,11 @@ export type ButtonComponentConfig = ButtonConfig &
   T.BaseComponentConfig<ButtonComponentInput>;
 
 export interface ButtonComponentInput extends Record<string, T.RawInput> {
-  button: T.ButtonInput;
+  button: T.RawButtonInput;
 }
 
 const defaultInput: ButtonComponentInput = {
-  button: { pressed: false },
+  button: false,
 };
 
 export const buttonEditorConfig: T.ComponentEditorConfig = [
@@ -65,6 +65,6 @@ export class ButtonComponent extends TypedComponent<ButtonComponentInput> {
     const { button } = this.applyDefaultInput(input);
     const { fill, pressedFill } = this.config;
 
-    this.rect.fill(button.pressed ? pressedFill : fill);
+    this.rect.fill(button ? pressedFill : fill);
   }
 }

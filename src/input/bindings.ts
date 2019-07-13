@@ -1,9 +1,7 @@
 import * as T from '../types';
 import { equals } from '../utils';
 
-export type InputMap<T, U> = (binding: T) => (g: Gamepad) => U;
-
-export type BindingId = string;
+export type InputMap<B, I> = (b: B, s: T.InputSource) => Maybe<I>;
 
 export interface BaseBinding {
   kind: string;
@@ -17,13 +15,22 @@ export interface AxisBinding extends BaseBinding {
   deadzone?: number;
 }
 
-export type AxisInput = number;
+export type RawAxisInput = number;
 
-export const axisMap: InputMap<AxisBinding, AxisInput> = binding => gamepad => {
+export type AxisInput = { kind: 'axis', input: RawAxisInput };
+
+export const axisMap: InputMap<AxisBinding, AxisInput> = (binding, source) => {
   const { index, inverted, deadzone = 0 } = binding;
+  const kind = 'axis';
 
-  const raw = gamepad.axes[index] * (inverted ? -1 : 1);
-  return Math.abs(raw) < deadzone ? 0 : raw;
+  switch (source.kind) {
+    case 'gamepad': {
+      if (!source.gamepad) return;
+      const rawValue = source.gamepad.axes[index] * (inverted ? -1 : 1);
+      const input = Math.abs(rawValue) < deadzone ? 0 : rawValue;
+      return { kind, input };
+    }
+  }
 };
 
 export interface AxisValueBinding extends BaseBinding {
@@ -40,49 +47,59 @@ export interface ButtonBinding extends BaseBinding {
 
 export type ButtonInputBinding = ButtonBinding | AxisValueBinding;
 
+export type RawButtonInput = boolean;
+
 export interface ButtonInput {
-  pressed: boolean;
+  kind: 'button';
+  input: RawButtonInput;
 }
 
 export const axisValueMap: InputMap<
   AxisValueBinding,
   ButtonInput
-> = binding => gamepad => {
+> = (binding, source) => {
   const { axis, value, marginOfError = 0.001 } = binding;
+  const kind = 'button';
 
-  return {
-    pressed: Math.abs(gamepad.axes[axis] - value) < marginOfError,
-  };
+  switch (source.kind) {
+    case 'gamepad': {
+      if (!source.gamepad) return;
+      const input = Math.abs(source.gamepad.axes[axis] - value) < marginOfError;
+      return { kind, input };
+    }
+  }
 };
 
 export const buttonMap: InputMap<
   ButtonBinding,
   ButtonInput
-> = binding => gamepad => {
-  return { pressed: gamepad.buttons[binding.index].pressed };
+> = (binding, source) => {
+  const { index } = binding;
+  const kind = 'button';
+
+  switch (source.kind) {
+    case 'gamepad': {
+      if (!source.gamepad) return;
+      return { kind, input: source.gamepad.buttons[index].pressed };
+    }
+  }
 };
 
 export const buttonInputMap: InputMap<
   ButtonInputBinding,
   ButtonInput
-> = binding => gamepad =>
+> = (binding, source) =>
   binding.kind === 'button'
-    ? buttonMap(binding)(gamepad)
-    : axisValueMap(binding)(gamepad);
+    ? buttonMap(binding, source)
+    : axisValueMap(binding, source);
 
 export type Binding = AxisBinding | ButtonInputBinding;
 
 export type BindingKind = 'axis' | 'button' | 'axisValue';
 
-export type Input =
-  | { kind: 'axis'; input: AxisInput }
-  | { kind: 'button'; input: ButtonInput };
-
-export type InputKind = 'axis' | 'button';
-
-export type RawInput = AxisInput | ButtonInput;
-
-export type Keymap = Record<string, Maybe<Input>>;
+export type Input = AxisInput | ButtonInput;
+export type InputKind = Input['kind'];
+export type RawInput = Input['input'];
 
 export const bindingToInputKind = (bindingKind: BindingKind): InputKind => {
   switch (bindingKind) {
@@ -94,35 +111,16 @@ export const bindingToInputKind = (bindingKind: BindingKind): InputKind => {
   }
 };
 
-export const applyGamepadBinding = (
-  gamepad: Gamepad,
+export const applyBinding = (
   binding: Binding,
-): Input => {
+  source: T.InputSource,
+): Maybe<Input> => {
   switch (binding.kind) {
-    case 'axis':
-      return {
-        kind: 'axis',
-        input: axisMap(binding)(gamepad),
-      };
-
     case 'button':
     case 'axisValue':
-      return {
-        kind: 'button',
-        input: buttonInputMap(binding)(gamepad),
-      };
-  }
-};
-
-export const applyBinding = (
-  source: T.InputSource,
-  binding: Binding,
-): Maybe<Input> => {
-  switch (source.kind) {
-    case 'gamepad':
-      return source.gamepad
-        ? applyGamepadBinding(source.gamepad, binding)
-        : undefined;
+      return buttonInputMap(binding, source);
+    case 'axis':
+      return axisMap(binding, source);
   }
 };
 
@@ -165,3 +163,13 @@ export const stringifyBinding = (
 
 export const areBindingsEqual = (b1: Binding, b2: Binding): boolean =>
   equals(b1, b2);
+
+export function defaultInput(kind: 'axis'): T.AxisInput;
+export function defaultInput(kind: 'button'): T.ButtonInput;
+export function defaultInput(kind: T.InputKind): T.Input;
+export function defaultInput(kind: T.InputKind): T.Input {
+  switch (kind) {
+    case 'axis': return { kind, input: 0 };
+    case 'button': return { kind, input: false };
+  }
+}
