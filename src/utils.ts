@@ -9,6 +9,11 @@ export const without = <T>(t: T, ts: T[]): T[] => {
   return ts;
 };
 
+export const withoutKey = <O, K extends keyof O>(o: O, key: K): Pick<O, Exclude<keyof O, K>>  => {
+  const { [key]: _, ...rest } = o;
+  return rest;
+};
+
 export const sign = (x: number): number => (x > 0 ? 1 : x < 0 ? -1 : 0);
 
 // TODO: how do generics interact with readonly?

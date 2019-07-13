@@ -1,6 +1,7 @@
 import * as T from '../../types';
-import { mapIf } from '../../utils';
+import { mapIf, withoutKey } from '../../utils';
 import { testInitialState } from '../testInitialState';
+import { controllerHasBinding } from '../../input/controllers';
 
 export type RemapState =
   | {
@@ -70,10 +71,19 @@ export const inputReducer = (
 
     case 'bindControllerKey': {
       const { controllerId, key, binding } = action.data;
+
+      const withoutDupeBinding = state.controllers.map(<I>(c: T.Controller) => {
+        const maybeKey = controllerHasBinding(c, binding);
+        return {
+          ...c,
+          map: maybeKey ? withoutKey(c.map, maybeKey.key) : c.map,
+        };
+      });
+
       return {
         ...state,
         controllers: mapIf(
-          state.controllers,
+          withoutDupeBinding,
           c => c.id === controllerId,
           c => bindControllerKey(c, key, binding),
         ),
