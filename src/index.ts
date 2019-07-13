@@ -9,6 +9,13 @@ import { createEditorApp } from './editor';
 import './types';
 import './input/sources';
 
+export interface NoireConfig {
+  width?: number;
+  height?: number;
+  canvasTarget: HTMLDivElement;
+  editorTarget: HTMLElement;
+}
+
 export class Noire {
   private stage: Konva.Stage;
   private layer: Konva.Layer;
@@ -17,10 +24,7 @@ export class Noire {
   private display: Display;
   private controllerManager: ControllerManager;
 
-  constructor(
-    private editorTarget: HTMLElement,
-    private canvasTarget: HTMLDivElement,
-  ) {}
+  constructor(private config: NoireConfig) {}
 
   private updateLoop = (tNext: number): void => {
     const dt = tNext - this.tLast;
@@ -36,16 +40,23 @@ export class Noire {
   };
 
   init(): void {
+    const {
+      canvasTarget,
+      editorTarget,
+      width = 800,
+      height = 600,
+    } = this.config;
+
     this.stage = new Konva.Stage({
-      width: 800,
-      height: 600,
-      container: this.canvasTarget,
+      width,
+      height,
+      container: canvasTarget,
     });
 
     this.layer = new Konva.Layer();
     this.stage.add(this.layer);
 
-    this.editorApp = createEditorApp(this.editorTarget);
+    this.editorApp = createEditorApp(editorTarget);
     const store = this.editorApp.store;
     this.editorApp.render();
     // store.subscribe(() => this.storeListener(store.getState()));
@@ -58,9 +69,11 @@ export class Noire {
   }
 }
 
-const test = new Noire(
-  document.getElementById('editor') as HTMLElement,
-  document.getElementById('canvas') as HTMLDivElement,
-);
+const test = new Noire({
+  width: 800,
+  height: 300,
+  editorTarget: document.getElementById('editor') as HTMLElement,
+  canvasTarget: document.getElementById('canvas') as HTMLDivElement,
+});
 
 test.init();
