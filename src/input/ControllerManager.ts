@@ -1,6 +1,7 @@
 import * as T from '../types';
 import {
   bindComponentKey,
+  unbindComponentKey,
   bindControllerKey,
   stopListening,
 } from '../state/actions';
@@ -57,7 +58,7 @@ export class ControllerManager {
         }),
       );
     } else {
-      // TODO: handle unbound keys
+      this.store.dispatch(unbindComponentKey({ componentId, bindingKey }));
     }
 
     this.store.dispatch(stopListening());

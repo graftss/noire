@@ -62,7 +62,8 @@ const BaseBindingsField: React.SFC<BindingsFieldProps> = ({
         controllerKey,
         remapState &&
           remapState.kind === 'component' &&
-          remapState.componentId === componentId,
+          remapState.componentId === componentId &&
+          remapState.key === componentBinding.key,
       );
 
       return (

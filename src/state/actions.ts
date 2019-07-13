@@ -9,6 +9,7 @@ export type EditorAction =
   | { type: 'selectEditorOption'; data: EditorOption }
   | { type: 'bindControllerKey'; data: T.ControllerKeyBinding }
   | { type: 'bindComponentKey'; data: T.ComponentKeyBinding }
+  | { type: 'unbindComponentKey'; data: T.ComponentKeyUnbinding }
   | { type: 'listenNextInput'; data: T.RemapState }
   | { type: 'stopListening' }
   | { type: 'addSourceRef'; data: T.InputSourceRef };
@@ -29,6 +30,11 @@ export const bindComponentKey = (
   data: T.ComponentKeyBinding,
 ): EditorAction => ({
   type: 'bindComponentKey',
+  data,
+});
+
+export const unbindComponentKey = (data: T.ComponentKeyUnbinding): EditorAction => ({
+  type: 'unbindComponentKey',
   data,
 });
 

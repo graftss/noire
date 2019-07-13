@@ -1,6 +1,6 @@
 import * as T from '../../types';
 import { testInitialState } from '../testInitialState';
-import { mapIf } from '../../utils';
+import { mapIf, withoutKey } from '../../utils';
 
 export interface DisplayState {
   components: T.SerializedComponent[];
@@ -13,11 +13,17 @@ export interface ComponentKeyBinding {
   controllerKey: T.ControllerKey;
 }
 
+export type ComponentKeyUnbinding = Without<T.ComponentKeyBinding, 'controllerKey'>;
+
+const mapComponentWithId = (components: T.SerializedComponent[], id: string, f: (c: T.SerializedComponent) => T.SerializedComponent): T.SerializedComponent[] => (
+  mapIf(components, c => c.id === id, f)
+);
+
+// TODO: generalize this into a utils function `assoc`
 const assocInputMap = <I>(
+  inputMap: Record<keyof I, T.ControllerKey>,
   bindingKey: keyof I,
   controllerKey: T.ControllerKey,
-) => (
-  inputMap: Record<keyof I, T.ControllerKey>,
 ): Record<keyof I, T.ControllerKey> => ({
   ...inputMap,
   [bindingKey]: controllerKey,
@@ -39,15 +45,27 @@ export const displayReducer = (
 
     case 'bindComponentKey': {
       const { componentId, controllerKey, bindingKey } = action.data;
-      const update = assocInputMap(bindingKey, controllerKey);
+      const addKey = (c: T.SerializedComponent): T.SerializedComponent => ({
+        ...c,
+        inputMap: assocInputMap(c.inputMap, bindingKey, controllerKey),
+      });
 
       return {
         ...state,
-        components: mapIf(
-          state.components,
-          c => c.id === componentId,
-          c => ({ ...c, inputMap: update(c.inputMap) }),
-        ),
+        components: mapComponentWithId(state.components, componentId, addKey),
+      };
+    }
+
+    case 'unbindComponentKey': {
+      const { componentId, bindingKey } = action.data;
+      const removeKey = <I, C extends T.BaseComponentConfig<I>>(c: C) => ({
+        ...c,
+        inputMap: withoutKey(c.inputMap, bindingKey as keyof I),
+      });
+
+      return {
+        ...state,
+        components: mapComponentWithId(state.components, componentId, removeKey),
       };
     }
   }

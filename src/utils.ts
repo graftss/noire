@@ -9,7 +9,7 @@ export const without = <T>(t: T, ts: T[]): T[] => {
   return ts;
 };
 
-export const withoutKey = <O, K extends keyof O>(o: O, key: K): Pick<O, Exclude<keyof O, K>>  => {
+export const withoutKey = <O, K extends keyof O>(o: O, key: K): Without<O, K>  => {
   const { [key]: _, ...rest } = o;
   return rest;
 };
