@@ -78,9 +78,9 @@ const button: T.ButtonComponentConfig = {
 };
 
 const components: T.SerializedComponent[] = [
-  // leftStick,
-  // rightStick,
-  // dPad,
+  leftStick,
+  rightStick,
+  dPad,
   button,
 ];
 

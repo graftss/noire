@@ -23,6 +23,11 @@ export const defaultStickComponentConfig: Required<StickConfig> = {
 
 export const stickEditorConfig: T.ComponentEditorConfig = [
   { kind: 'fixed', data: { label: 'Stick' } },
+  { kind: 'bindings', data: { bindings : [
+    { key: 'x', label: 'X-Axis', inputKind: 'axis' },
+    { key: 'y', label: 'Y-Axis', inputKind: 'axis' },
+    { key: 'button', label: 'Button', inputKind: 'button' },
+  ] } },
 ];
 
 export interface StickInput extends Record<string, T.RawInput> {
