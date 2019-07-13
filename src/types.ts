@@ -64,6 +64,3 @@ export {
   RawInput,
   Keymap,
 } from './input/bindings';
-
-export type CB1<T> = (t: T) => void;
-export type CB2<T, U> = (t: T, u: U) => void;

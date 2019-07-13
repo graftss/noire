@@ -2,8 +2,8 @@ import * as T from '../types';
 import { clone } from '../utils';
 import { dereferenceSource } from './sources';
 
-export type AwaitAxisCallback = T.CB1<T.AxisBinding>;
-export type AwaitButtonCallback = T.CB1<T.ButtonInputBinding>;
+export type AwaitAxisCallback = CB1<T.AxisBinding>;
+export type AwaitButtonCallback = CB1<T.ButtonInputBinding>;
 
 type AwaitAxisInput = number[];
 

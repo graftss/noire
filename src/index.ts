@@ -4,10 +4,10 @@ import { ControllerManager } from './input/ControllerManager';
 import { Display } from './canvas/display';
 import { createEditorApp } from './editor';
 
-// too lazy to figure out how to get webpack to watch these via
-// the config right now
+// TODO: figure out how to not need this to recompile types.ts when the
+// watcher notices that it has changed. googling suggests that to do
+// so is more of a hassle than it's worth, so whatever. low priority.
 import './types';
-import './input/sources';
 
 export interface NoireConfig {
   width?: number;

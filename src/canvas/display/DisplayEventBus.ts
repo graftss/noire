@@ -4,10 +4,10 @@ import { Component } from '../component/Component';
 import { without } from '../../utils';
 
 export type Handler =
-  | { kind: 'stageClick'; cb: T.CB1<Konva.Stage> }
-  | { kind: 'componentSelect'; cb: T.CB1<Maybe<Component>> }
-  | { kind: 'componentAdd'; cb: T.CB1<Component> }
-  | { kind: 'bindingAdd'; cb: T.CB2<Component, T.Binding> };
+  | { kind: 'stageClick'; cb: CB1<Konva.Stage> }
+  | { kind: 'componentSelect'; cb: CB1<Maybe<Component>> }
+  | { kind: 'componentAdd'; cb: CB1<Component> }
+  | { kind: 'bindingAdd'; cb: CB2<Component, T.Binding> };
 
 export type DisplayEvent =
   | { kind: 'stageClick'; data: [Konva.Stage] }
@@ -16,10 +16,10 @@ export type DisplayEvent =
   | { kind: 'bindingAdd'; data: [Component, T.Binding] };
 
 export class DisplayEventBus {
-  private stageClickHandlers: T.CB1<Konva.Stage>[] = [];
-  private componentClickHandlers: T.CB1<Maybe<Component>>[] = [];
-  private componentAddHandlers: T.CB1<Component>[] = [];
-  private bindingAddHandlers: T.CB2<Component, T.Binding>[] = [];
+  private stageClickHandlers: CB1<Konva.Stage>[] = [];
+  private componentClickHandlers: CB1<Maybe<Component>>[] = [];
+  private componentAddHandlers: CB1<Component>[] = [];
+  private bindingAddHandlers: CB2<Component, T.Binding>[] = [];
 
   emit(event: DisplayEvent): void {
     switch (event.kind) {
