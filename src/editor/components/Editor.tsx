@@ -19,6 +19,7 @@ interface PropsFromState {
   selectedGamepadIndex?: number;
   components: T.SerializedComponent[];
   controllers: T.Controller[];
+  inputMap?: Record<string, T.ControllerKey>;
   selectedComponent?: T.SerializedComponent;
   selectedComponentEditorConfig?: T.ComponentEditorConfig;
   selectedController?: T.Controller;
@@ -41,6 +42,7 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => {
     selectedGamepadIndex: state.input.selectedGamepadIndex,
     components: state.display.components,
     controllers: state.input.controllers,
+    inputMap: selectedComponentProp(state.display, 'inputMap'),
     selectedComponent: state.display.selectedComponent,
     selectedComponentEditorConfig: config,
     selectedController: selectedController(state.input),
@@ -87,7 +89,6 @@ const BaseEditor: React.SFC<EditorProps> = ({
     ) : null}
     {selectedComponent ? (
       <ComponentEditor
-        component={selectedComponent}
         config={selectedComponentEditorConfig as T.ComponentEditorConfig}
       />
     ) : null}

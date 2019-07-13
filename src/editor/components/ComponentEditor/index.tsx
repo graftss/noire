@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as T from '../../../types';
 import { FixedField } from './FixedField';
+import { BindingsField } from './BindingsField';
 
 interface ComponentEditorProps {
-  component: T.SerializedComponent;
   config: T.ComponentEditorConfig;
 }
 
@@ -13,16 +13,17 @@ const renderField = (field: T.ComponentEditorField): React.SFCElement<{}> => {
       return <FixedField {...field.data} />;
     case 'slider':
       return <div>slider</div>;
+    case 'bindings':
+      return <BindingsField {...field.data} />;
   }
 };
 
 export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
-  component,
   config,
 }) => (
   <div>
-    {config.map(field => (
-      <div key={component.id}>{renderField(field)}</div>
+    {config.map((field, index) => (
+      <div key={index}> {renderField(field)} </div>
     ))}
   </div>
 );

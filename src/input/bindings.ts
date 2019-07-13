@@ -126,7 +126,13 @@ export const applyBinding = (
   }
 };
 
-export const stringifyBinding = (b: Binding): string => {
+export const stringifyBinding = (
+  b: Maybe<Binding>,
+  listened: boolean = false,
+): string => {
+  if (listened) return '(listening)';
+  if (b === undefined) return 'NONE';
+
   let sourceStr, bindingStr;
 
   switch (b.sourceRef.kind) {

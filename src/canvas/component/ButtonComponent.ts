@@ -18,10 +18,6 @@ export const defaultButtonConfig: Required<ButtonConfig> = {
   pressedFill: 'darkred',
 };
 
-export const buttonEditorConfig: T.ComponentEditorConfig = [
-  { kind: 'fixed', data: { label: 'Button' } },
-];
-
 export type ButtonComponentConfig = ButtonConfig &
   T.BaseComponentConfig<ButtonComponentInput>;
 
@@ -32,6 +28,16 @@ export interface ButtonComponentInput extends Record<string, T.RawInput> {
 const defaultInput: ButtonComponentInput = {
   button: { pressed: false },
 };
+
+export const buttonEditorConfig: T.ComponentEditorConfig = [
+  { kind: 'fixed', data: { label: 'Button' } },
+  {
+    kind: 'bindings',
+    data: {
+      bindings: [{ key: 'button', label: 'Button', inputKind: 'button' }],
+    },
+  },
+];
 
 export class ButtonComponent extends TypedComponent<ButtonComponentInput> {
   protected config: Required<ButtonComponentConfig>;

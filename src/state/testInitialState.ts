@@ -25,7 +25,7 @@ const c: Partial<T.PS2Map> & Record<string, T.Binding> = {
 };
 
 const controllers: T.Controller[] = [
-  { name: 'test', id: 'a', kind: 'ps2', map: c },
+  { name: 'Test', id: 'a', kind: 'ps2', map: c },
 ];
 
 const leftStick: T.StickComponentConfig = {

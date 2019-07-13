@@ -15,13 +15,10 @@ const stringifyKeymap = (
   binding: Maybe<T.Binding>,
   listened: boolean,
 ): string => {
-  const keyString: string = controllerData[c.kind][key].name;
-  const bindingString: string = listened
-    ? '(listening)'
-    : binding
-    ? stringifyBinding(binding)
-    : 'NONE';
-  return `${keyString}: ${bindingString}`;
+  return `${controllerData[c.kind][key].name}: ${stringifyBinding(
+    binding,
+    listened,
+  )}`;
 };
 
 const generateRemapState = (c: T.Controller, key: string): T.RemapState => ({

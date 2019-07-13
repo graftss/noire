@@ -1,3 +1,4 @@
+import * as T from '../../types';
 import { ButtonComponentConfig, buttonEditorConfig } from './ButtonComponent';
 import { DPadComponentConfig, dPadEditorConfig } from './DPadComponent';
 import { StickComponentConfig, stickEditorConfig } from './StickComponent';
@@ -9,11 +10,21 @@ export type SerializedComponent =
 
 export type ComponentKind = SerializedComponent['kind'];
 
+export interface ComponentBinding {
+  key: string;
+  label: string;
+  inputKind: T.InputKind;
+}
+
 export type ComponentEditorField =
   | { kind: 'fixed'; data: { label: string } }
   | {
       kind: 'slider';
       data: { key: string; label: string; max: number; min: number };
+    }
+  | {
+      kind: 'bindings';
+      data: { bindings: ComponentBinding[] };
     };
 
 export type ComponentEditorConfig = ComponentEditorField[];

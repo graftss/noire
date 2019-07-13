@@ -24,6 +24,7 @@ export { DPadComponentConfig } from './canvas/component/DPadComponent';
 export { StickComponentConfig } from './canvas/component/StickComponent';
 export {
   SerializedComponent,
+  ComponentBinding,
   ComponentKind,
   ComponentEditorField,
   ComponentEditorConfig,

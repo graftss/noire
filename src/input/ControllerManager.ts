@@ -25,40 +25,47 @@ export class ControllerManager {
     store.subscribe(() => this.storeSubscriber());
   }
 
+  private onAwaitedControllerBinding = (controllerId: string, key: string) => <
+    B extends T.Binding
+  >(
+    binding: B,
+  ): void => {
+    this.store.dispatch(stopListening());
+    this.store.dispatch(bindControllerKey({ controllerId, key, binding }));
+  };
+
+  private onAwaitedComponentBinding = () => <B extends T.Binding>(
+    binding: B,
+  ): void => {
+    this.store.dispatch(stopListening());
+    // this.store.dispatch(bindComponentKey({ }))
+  };
+
   private storeSubscriber = (): void => {
-    const state = this.store.getState();
-    const { remap } = state.input;
+    const { remap } = this.store.getState().input;
+    if (!remap) return;
 
-    if (remap && remap.kind === 'controller') {
-      switch (remap.inputKind) {
-        case 'button': {
-          this.nextInputListener.awaitButton(binding => {
-            this.store.dispatch(stopListening());
-            this.store.dispatch(
-              bindControllerKey({
-                controllerId: remap.controllerId,
-                key: remap.key,
-                binding,
-              }),
-            );
-          });
-
-          break;
+    switch (remap.kind) {
+      case 'controller': {
+        const handler = this.onAwaitedControllerBinding(
+          remap.controllerId,
+          remap.key,
+        );
+        switch (remap.inputKind) {
+          case 'button':
+            return this.nextInputListener.awaitButton(handler);
+          case 'axis':
+            return this.nextInputListener.awaitPositiveAxis(handler);
         }
+      }
 
-        case 'axis': {
-          this.nextInputListener.awaitPositiveAxis(binding => {
-            this.store.dispatch(stopListening());
-            this.store.dispatch(
-              bindControllerKey({
-                controllerId: remap.controllerId,
-                key: remap.key,
-                binding,
-              }),
-            );
-          });
-
-          break;
+      case 'component': {
+        const handler = this.onAwaitedComponentBinding();
+        switch (remap.inputKind) {
+          case 'button':
+            return this.nextInputListener.awaitButton(handler);
+          case 'axis':
+            return this.nextInputListener.awaitPositiveAxis(handler);
         }
       }
     }
