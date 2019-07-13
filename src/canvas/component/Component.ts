@@ -60,5 +60,9 @@ export abstract class TypedComponent<I extends Record<string, T.RawInput>> {
     return this.config.inputMap;
   }
 
+  setInputMap(inputMap: Record<keyof I, T.ControllerKey>): void {
+    this.config.inputMap = inputMap;
+  }
+
   abstract update(input: I, dt: number): void;
 }

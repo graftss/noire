@@ -8,6 +8,7 @@ export type EditorOption =
 export type EditorAction =
   | { type: 'selectEditorOption'; data: EditorOption }
   | { type: 'bindControllerKey'; data: T.ControllerKeyBinding }
+  | { type: 'bindComponentKey'; data: T.ComponentKeyBinding }
   | { type: 'listenNextInput'; data: T.RemapState }
   | { type: 'stopListening' }
   | { type: 'addSourceRef'; data: T.InputSourceRef };
@@ -21,6 +22,13 @@ export const bindControllerKey = (
   data: T.ControllerKeyBinding,
 ): EditorAction => ({
   type: 'bindControllerKey',
+  data,
+});
+
+export const bindComponentKey = (
+  data: T.ComponentKeyBinding,
+): EditorAction => ({
+  type: 'bindComponentKey',
   data,
 });
 

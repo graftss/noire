@@ -26,8 +26,9 @@ export class Display {
 
     this.cm = new ComponentManager(stage, layer, this.eventBus);
 
-    this.checkForStateChange();
-    store.subscribe(this.checkForStateChange);
+    // run the subscriber once to sync with initial state
+    this.storeSubscriber();
+    store.subscribe(this.storeSubscriber);
 
     stage.on('click', ({ target, currentTarget }) => {
       if (target === currentTarget) {
@@ -67,7 +68,7 @@ export class Display {
     });
   }
 
-  private checkForStateChange = (): void => {
+  private storeSubscriber = (): void => {
     const newState = this.store.getState().display;
     if (this.lastState !== newState) {
       const lastState = this.lastState;

@@ -27,13 +27,18 @@ export class ComponentManager {
     components.forEach(this.add);
   }
 
-  // TODO: update binding ids here too
   sync(components: T.SerializedComponent[]): void {
     const currentById = keyBy(this.components, c => c.getId());
     // const newById = keyBy(components, c => c.getBindingId());
 
     components.forEach(component => {
-      if (!currentById[component.id]) this.add(deserializeComponent(component));
+      const existing = currentById[component.id];
+
+      if (!existing) {
+        this.add(deserializeComponent(component));
+      } else if (component.inputMap !== existing.getInputMap()) {
+        existing.setInputMap(component.inputMap);
+      }
     });
 
     // this.components.forEach(component => {

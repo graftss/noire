@@ -51,9 +51,11 @@ const BaseBindingsField: React.SFC<BindingsFieldProps> = ({
   remapState,
 }) => (
   <div>
-    {bindings.map(binding => {
-      const { inputKind, key: bindingKey } = binding;
-      const { controllerId, key: controllerKey } = inputMap[bindingKey];
+    {bindings.map(componentBinding => {
+      const { inputKind, key } = componentBinding;
+      const controllerId: Maybe<string> =
+        inputMap[key] && inputMap[key].controllerId;
+      const controllerKey: Maybe<string> = inputMap[key] && inputMap[key].key;
 
       const controllerKeyString = stringifyControllerKey(
         controllersById[controllerId],
@@ -64,17 +66,18 @@ const BaseBindingsField: React.SFC<BindingsFieldProps> = ({
       );
 
       return (
-        <div key={bindingKey}>
+        <div key={key}>
           <button
             onClick={() =>
               listenNextInput({
                 kind: 'component',
                 componentId: componentId,
                 inputKind,
+                key,
               })
             }
           >
-            {stringifyKeymap(binding, controllerKeyString)}
+            {stringifyKeymap(componentBinding, controllerKeyString)}
           </button>
         </div>
       );
@@ -85,4 +88,6 @@ const BaseBindingsField: React.SFC<BindingsFieldProps> = ({
 export const BindingsField = connect(
   mapStateToProps,
   mapDispatchToProps,
+  undefined,
+  { areStatesEqual: () => false },
 )(BaseBindingsField);

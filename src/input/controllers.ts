@@ -1,6 +1,6 @@
 import * as T from '../types';
 import { mapObj } from '../utils';
-import { applyBinding } from './bindings';
+import { applyBinding, areBindingsEqual } from './bindings';
 import { isSourceNull } from './sources';
 import { controllerData } from './keymaps';
 
@@ -28,10 +28,24 @@ export const applyControllerKeymap = (
       );
 
 export const stringifyControllerKey = (
-  controller: Controller,
-  key: string,
+  controller?: Controller,
+  key?: string,
   listening?: boolean,
-): string =>
-  listening
-    ? '(listening)'
-    : `${controller.name} -> ${controllerData[controller.kind][key].name}`;
+): string => {
+  if (listening) return '(listening)';
+  if (!controller) return 'NONE';
+
+  const keyString = key ? controllerData[controller.kind][key].name : 'NONE';
+  return `${controller.name} -> ${keyString}`;
+};
+
+export const controllerHasBinding = (
+  { map, id: controllerId }: Controller,
+  binding: T.Binding,
+): Maybe<ControllerKey> => {
+  for (const key in map) {
+    if (map[key] && areBindingsEqual(binding, map[key])) {
+      return { controllerId, key };
+    }
+  }
+};

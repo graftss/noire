@@ -1,11 +1,11 @@
 import * as T from '../types';
+import { equals } from '../utils';
 
 export type InputMap<T, U> = (binding: T) => (g: Gamepad) => U;
 
 export type BindingId = string;
 
 export interface BaseBinding {
-  id?: BindingId;
   kind: string;
   sourceRef: T.InputSourceRef;
 }
@@ -162,3 +162,6 @@ export const stringifyBinding = (
 
   return `${sourceStr}, ${bindingStr}`;
 };
+
+export const areBindingsEqual = (b1: Binding, b2: Binding): boolean =>
+  equals(b1, b2);

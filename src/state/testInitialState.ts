@@ -2,6 +2,8 @@ import * as T from '../types';
 
 const ids = 'qwertyuiopasdfghjklzxcvbnm,';
 
+const sourceRef: T.GamepadSourceRef = { kind: 'gamepad', index: 1 };
+
 const c: Partial<T.PS2Map> & Record<string, T.Binding> = {
   // padU: { sourceRef, id: ids[0], kind: 'axisValue', axis: 9, value: -1 },
   // padL: { sourceRef, id: ids[1], kind: 'axisValue', axis: 9, value: 0.7142857 },
@@ -9,8 +11,8 @@ const c: Partial<T.PS2Map> & Record<string, T.Binding> = {
   // padD: { sourceRef, id: ids[3], kind: 'axisValue', axis: 9, value: 0.1428571 },
   // select: { sourceRef, id: ids[4], kind: 'button', index: 8 },
   // start: { sourceRef, id: ids[5], kind: 'button', index: 9 },
-  // square: { sourceRef, id: ids[6], kind: 'button', index: 3 },
-  // circle: { sourceRef, id: ids[8], kind: 'button', index: 1 },
+  square: { sourceRef, kind: 'button', index: 3 },
+  circle: { sourceRef, kind: 'button', index: 1 },
   // x: { sourceRef, id: ids[9], kind: 'button', index: 2 },
   // l1: { sourceRef, id: ids[10], kind: 'button', index: 6 },
   // l2: { sourceRef, id: ids[11], kind: 'button', index: 4 },
@@ -72,13 +74,13 @@ const button: T.ButtonComponentConfig = {
   x: 150,
   y: 100,
   id: ids[3],
-  inputMap: { button: { controllerId: 'a', key: 'triangle' } },
+  inputMap: {},
 };
 
 const components: T.SerializedComponent[] = [
-  leftStick,
-  rightStick,
-  dPad,
+  // leftStick,
+  // rightStick,
+  // dPad,
   button,
 ];
 

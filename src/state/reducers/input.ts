@@ -13,6 +13,7 @@ export type RemapState =
       kind: 'component';
       componentId: string;
       inputKind: T.InputKind;
+      key: string;
     };
 
 export interface ControllerKeyBinding {

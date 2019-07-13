@@ -1,13 +1,11 @@
 import { map, mapObjIndexed } from 'ramda';
 import uuidv4 from 'uuid/v4';
 
+export { equals } from 'ramda';
+
 export const without = <T>(t: T, ts: T[]): T[] => {
   const idx = ts.indexOf(t);
-
-  if (idx > -1) {
-    ts.splice(idx, 1);
-  }
-
+  if (idx > -1) ts.splice(idx, 1);
   return ts;
 };
 

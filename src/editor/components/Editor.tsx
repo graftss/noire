@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import * as T from '../../types';
 import { listenNextInput, selectEditorOption } from '../../state/actions';
 import {
+  selectedComponent,
   selectedController,
   selectedComponentProp,
 } from '../../state/selectors';
@@ -15,15 +16,15 @@ import { ControllerSelect } from './ControllerSelect';
 import { GamepadSelect } from './GamepadSelect';
 
 interface PropsFromState {
-  selected?: T.SerializedComponent;
-  selectedGamepadIndex?: number;
   components: T.SerializedComponent[];
   controllers: T.Controller[];
   inputMap?: Record<string, T.ControllerKey>;
+  remapState?: T.RemapState;
   selectedComponent?: T.SerializedComponent;
   selectedComponentEditorConfig?: T.ComponentEditorConfig;
   selectedController?: T.Controller;
-  remapState?: T.RemapState;
+  selected?: T.SerializedComponent;
+  selectedGamepadIndex?: number;
 }
 
 interface PropsFromDispatch {
@@ -38,12 +39,11 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => {
   const config = configKind && componentConfigs[configKind];
 
   return {
-    selected: state.display.selectedComponent,
     selectedGamepadIndex: state.input.selectedGamepadIndex,
     components: state.display.components,
     controllers: state.input.controllers,
     inputMap: selectedComponentProp(state.display, 'inputMap'),
-    selectedComponent: state.display.selectedComponent,
+    selectedComponent: selectedComponent(state.display),
     selectedComponentEditorConfig: config,
     selectedController: selectedController(state.input),
     remapState: state.input.remap,
@@ -57,7 +57,6 @@ const BaseEditor: React.SFC<EditorProps> = ({
   components,
   controllers,
   listenNextInput,
-  selected,
   selectedComponent,
   selectedComponentEditorConfig,
   selectedController,
@@ -72,7 +71,7 @@ const BaseEditor: React.SFC<EditorProps> = ({
     />
     <ComponentSelect
       components={components}
-      selected={selected}
+      selected={selectedComponent}
       selectEditorOption={selectEditorOption}
     />
     <ControllerSelect

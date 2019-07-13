@@ -35,7 +35,7 @@ export {
 } from './canvas/component/Component';
 export { EditorApp } from './editor';
 export { EditorAction, EditorOption } from './state/actions';
-export { DisplayState } from './state/reducers/display';
+export { DisplayState, ComponentKeyBinding } from './state/reducers/display';
 export { EditorState } from './state/reducers/root';
 export {
   InputState,
