@@ -121,46 +121,6 @@ export class NextInputListener {
           break;
       }
     } else {
-      for (let index = 0; index < sources.length; index++) {
-        const baseline = state.baselineInput && state.baselineInput[index];
-        const ref = sourceRefs[index];
-
-        switch (state.kind) {
-          case 'axis': {
-            const input = getAwaitAxisInput(sources[index]);
-            if (!input || !baseline) continue;
-
-            const awaitedBinding = compareAwaitAxisInput(
-              input,
-              baseline as AwaitAxisInput,
-              ref,
-            );
-            if (awaitedBinding) {
-              state.callback(awaitedBinding);
-              return this.deactivate();
-            }
-
-            break;
-          }
-
-          case 'button': {
-            const input = getAwaitButtonInput(sources[index]);
-            if (!input || !baseline) continue;
-
-            const awaitedBinding = compareAwaitButtonInput(
-              input,
-              baseline as AwaitButtonInput,
-              ref,
-            );
-            if (awaitedBinding) {
-              state.callback(awaitedBinding);
-              return this.deactivate();
-            }
-
-            break;
-          }
-        }
-      }
       switch (state.kind) {
         case 'axis': {
           const allInput = sources.map(getAwaitAxisInput);
@@ -197,6 +157,7 @@ export class NextInputListener {
               baseline,
               ref,
             );
+
             if (awaitedBinding) {
               state.callback(awaitedBinding);
               return this.deactivate();
