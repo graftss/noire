@@ -65,7 +65,7 @@ export class ComponentManager {
 
   update(globalInput: T.GlobalInput, dt: number): void {
     this.components.forEach(
-      <I extends Record<string, T.Input>>(component: T.TypedComponent<I>) => {
+      <I extends Dict<T.Input>>(component: T.TypedComponent<I>) => {
         const getControllerKeyInput = (
           controllerKey: Maybe<T.ControllerKey>,
         ): Maybe<T.Input> => {
@@ -76,7 +76,7 @@ export class ComponentManager {
           return controllerInput && controllerInput[key];
         };
 
-        const componentInput: Record<string, Maybe<T.Input>> = map(
+        const componentInput: Dict<Maybe<T.Input>> = map(
           getControllerKeyInput,
           component.getInputMap(),
         );

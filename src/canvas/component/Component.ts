@@ -2,7 +2,7 @@ import Konva from 'konva';
 import { map } from 'ramda';
 import * as T from '../../types';
 import { clone } from '../../utils';
-import { defaultInputByKind, rawifyInputMap } from '../../input/bindings';
+import { defaultInputByKind, rawifyInputDict } from '../../input/bindings';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Component = TypedComponent<any>;
@@ -16,7 +16,7 @@ export interface BaseComponentConfig<I> {
   inputMap: Record<keyof I, T.ControllerKey>;
 }
 
-export abstract class TypedComponent<I extends Record<string, T.Input>> {
+export abstract class TypedComponent<I extends Dict<T.Input>> {
   protected config: BaseComponentConfig<I>;
   group: Konva.Group;
 
@@ -59,7 +59,7 @@ export abstract class TypedComponent<I extends Record<string, T.Input>> {
   }
 
   protected computeRawInput(input: I): T.Raw<I> {
-    return rawifyInputMap(this.applyDefaultInput(input));
+    return rawifyInputDict(this.applyDefaultInput(input));
   }
 
   getId(): string {

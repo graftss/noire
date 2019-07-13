@@ -11,7 +11,7 @@ import { NextInputListener } from './NextInputListener';
 import { dereferenceSource } from './sources';
 
 // keyed first by controller id and second by controller key
-export type GlobalInput = Record<string, Record<string, T.Input>>;
+export type GlobalInput = Dict<Dict<T.Input>>;
 
 const gamepadSourceRefs: T.GamepadSourceRef[] = [0, 1, 2, 3].map(index => ({
   kind: 'gamepad',

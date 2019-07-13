@@ -37,7 +37,7 @@ export const stickEditorConfig: T.ComponentEditorConfig = [
   },
 ];
 
-export interface StickInput extends Record<string, T.Input> {
+export interface StickInput extends Dict<T.Input> {
   x: T.AxisInput;
   y: T.AxisInput;
   button: T.ButtonInput;

@@ -1,7 +1,7 @@
 import * as T from '../types';
 import { clone, equals } from '../utils';
 
-export type InputMap<B, I> = (b: B, s: T.InputSource) => Maybe<I>;
+export type BindingParser<B, I> = (b: B, s: T.InputSource) => Maybe<I>;
 
 export interface BaseBinding {
   kind: string;
@@ -22,7 +22,10 @@ export interface AxisInput {
   input: RawAxisInput;
 }
 
-export const axisMap: InputMap<AxisBinding, AxisInput> = (binding, source) => {
+export const axisMap: BindingParser<AxisBinding, AxisInput> = (
+  binding,
+  source,
+) => {
   const { index, inverted, deadzone = 0 } = binding;
   const kind = 'axis';
 
@@ -57,7 +60,7 @@ export interface ButtonInput {
   input: RawButtonInput;
 }
 
-export const axisValueMap: InputMap<AxisValueBinding, ButtonInput> = (
+export const axisValueMap: BindingParser<AxisValueBinding, ButtonInput> = (
   binding,
   source,
 ) => {
@@ -73,7 +76,7 @@ export const axisValueMap: InputMap<AxisValueBinding, ButtonInput> = (
   }
 };
 
-export const buttonMap: InputMap<ButtonBinding, ButtonInput> = (
+export const buttonMap: BindingParser<ButtonBinding, ButtonInput> = (
   binding,
   source,
 ) => {
@@ -88,10 +91,10 @@ export const buttonMap: InputMap<ButtonBinding, ButtonInput> = (
   }
 };
 
-export const buttonInputMap: InputMap<ButtonInputBinding, ButtonInput> = (
-  binding,
-  source,
-) =>
+export const buttonBindingParser: BindingParser<
+  ButtonInputBinding,
+  ButtonInput
+> = (binding, source) =>
   binding.kind === 'button'
     ? buttonMap(binding, source)
     : axisValueMap(binding, source);
@@ -104,13 +107,11 @@ export type Input = AxisInput | ButtonInput;
 export type InputKind = Input['kind'];
 export type RawInput = Input['input'];
 
-export type Raw<I extends Record<string, Input>> = {
+export type Raw<I extends Dict<Input>> = {
   [A in keyof I]: I[A]['input'];
 };
 
-export const rawifyInputMap = <I extends Record<string, Input>>(
-  i: I,
-): Raw<I> => {
+export const rawifyInputDict = <I extends Dict<Input>>(i: I): Raw<I> => {
   const result = clone(i);
 
   for (const key in result) {
@@ -137,7 +138,7 @@ export const applyBinding = (
   switch (binding.kind) {
     case 'button':
     case 'axisValue':
-      return buttonInputMap(binding, source);
+      return buttonBindingParser(binding, source);
     case 'axis':
       return axisMap(binding, source);
   }

@@ -15,8 +15,8 @@ interface BindingsFieldProps extends PropsFromState, PropsFromDispatch {
 
 interface PropsFromState {
   componentId: string;
-  controllersById: Record<string, T.Controller>;
-  inputMap: Record<string, T.ControllerKey>;
+  controllersById: Dict<T.Controller>;
+  inputMap: Dict<T.ControllerKey>;
   remapState?: T.RemapState;
 }
 

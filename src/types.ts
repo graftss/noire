@@ -48,7 +48,6 @@ export {
 } from './state/reducers/input';
 export { EditorStore } from './state/createStore';
 export {
-  InputMap,
   BaseBinding,
   AxisBinding,
   AxisInput,

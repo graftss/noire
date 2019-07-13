@@ -4,7 +4,7 @@ const ids = 'qwertyuiopasdfghjklzxcvbnm,';
 
 const sourceRef: T.GamepadSourceRef = { kind: 'gamepad', index: 1 };
 
-const c: Partial<T.PS2Map> & Record<string, T.Binding> = {
+const c: Partial<T.PS2Map> & Dict<T.Binding> = {
   // padU: { sourceRef, id: ids[0], kind: 'axisValue', axis: 9, value: -1 },
   // padL: { sourceRef, id: ids[1], kind: 'axisValue', axis: 9, value: 0.7142857 },
   // padR: { sourceRef, id: ids[2], kind: 'axisValue', axis: 9, value: -0.428571 },

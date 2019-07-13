@@ -23,7 +23,7 @@ export const defaultButtonConfig: Required<ButtonConfig> = {
 export type ButtonComponentConfig = ButtonConfig &
   T.BaseComponentConfig<ButtonComponentInput>;
 
-export interface ButtonComponentInput extends Record<string, T.Input> {
+export interface ButtonComponentInput extends Dict<T.Input> {
   button: T.ButtonInput;
 }
 

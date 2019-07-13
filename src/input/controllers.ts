@@ -7,7 +7,7 @@ import { controllerData } from './keymaps';
 export type Controller = {
   id: string;
   name: string;
-  map: Record<string, T.Binding>;
+  map: Dict<T.Binding>;
   kind: string;
 } & T.GamepadMap;
 
@@ -19,7 +19,7 @@ export interface ControllerKey {
 export const applyControllerKeymap = (
   source: T.InputSource,
   controller: T.Controller,
-): Maybe<Record<string, Maybe<T.Input>>> =>
+): Maybe<Dict<Maybe<T.Input>>> =>
   isSourceNull(source)
     ? undefined
     : mapObj(

@@ -58,7 +58,7 @@ export interface PS2GamepadMap {
 
 export type GamepadMap = PS2GamepadMap;
 
-export const controllerData: Record<string, Record<string, KeyData>> = {
+export const controllerData: Dict<Dict<KeyData>> = {
   ps2: ps2KeyData,
 };
 

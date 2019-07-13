@@ -21,8 +21,7 @@ export const sign = (x: number): number => (x > 0 ? 1 : x < 0 ? -1 : 0);
 
 // TODO: how do generics interact with readonly?
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const clone = (obj: Record<string, any>): any =>
-  JSON.parse(JSON.stringify(obj));
+export const clone = (obj: Dict<any>): any => JSON.parse(JSON.stringify(obj));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mappedApply = (maps): any => mapObjIndexed((v, k) => maps[k](v));
@@ -47,14 +46,11 @@ export const defaults = <T>(source: Partial<T>, target: T): T => {
 
 export const uuid = (): string => uuidv4();
 
-export const keyBy = <T>(
-  ts: T[],
-  map: (t: T) => string | number,
-): Record<string, T> => {
+export const keyBy = <T>(ts: T[], map: (t: T) => string | number): Dict<T> => {
   return (ts || []).reduce((result, t) => ({ ...result, [map(t)]: t }), {});
 };
 
-export const values = <T>(map: Record<string, T>): T[] => {
+export const values = <T>(map: Dict<T>): T[] => {
   const result: T[] = [];
   for (const k in map) result.push(map[k]);
   return result;

@@ -18,7 +18,7 @@ import { GamepadSelect } from './GamepadSelect';
 interface PropsFromState {
   components: T.SerializedComponent[];
   controllers: T.Controller[];
-  inputMap?: Record<string, T.ControllerKey>;
+  inputMap?: Dict<T.ControllerKey>;
   remapState?: T.RemapState;
   selectedComponent?: T.SerializedComponent;
   selectedComponentEditorConfig?: T.ComponentEditorConfig;
