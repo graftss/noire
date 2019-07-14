@@ -2,20 +2,30 @@ import Konva from 'konva';
 import * as T from '../../types';
 import { TypedComponent } from './Component';
 
-const dirs = ['u', 'l', 'd', 'r'];
+type Dir = 'u' | 'l' | 'd' | 'r';
+const dirs: Dir[] = ['u', 'l', 'd', 'r'];
 
-export interface DPadConfig {
-  kind: 'dpad';
-  inputKinds: Record<Dir, 'button'>;
-  buttonWidth?: number;
-  buttonHeight?: number;
-  fill?: string;
-  pressedFill?: string;
+export type DPadInput = Record<Dir, T.ButtonInput>;
+
+export const dPadInputKinds: T.Kinds<DPadInput> = {
+  u: 'button',
+  l: 'button',
+  d: 'button',
+  r: 'button',
+};
+
+export interface DPadState extends T.BaseComponentState<DPadInput> {
+  x: number;
+  y: number;
+  buttonWidth: number;
+  buttonHeight: number;
+  fill: string;
+  pressedFill: string;
 }
 
-export const defaultDPadConfig: Required<DPadConfig> = {
-  kind: 'dpad',
-  inputKinds: { u: 'button', l: 'button', d: 'button', r: 'button' },
+export const defaultDPadState: DPadState = {
+  x: 0,
+  y: 0,
   buttonWidth: 20,
   buttonHeight: 20,
   fill: 'black',
@@ -37,30 +47,17 @@ export const dPadEditorConfig: T.ComponentEditorConfig = [
   },
 ];
 
-export type Dir = 'u' | 'l' | 'd' | 'r';
-
-export type DPadInput = Record<Dir, T.ButtonInput>;
-
-export type DPadComponentConfig = DPadConfig & T.BaseComponentConfig<DPadInput>;
-
-const defaultInput: DPadInput = {
-  l: { kind: 'button', input: false },
-  u: { kind: 'button', input: false },
-  d: { kind: 'button', input: false },
-  r: { kind: 'button', input: false },
-};
-
-export class DPadComponent extends TypedComponent<DPadInput> {
-  protected config: Required<DPadComponentConfig>;
+export class DPadComponent extends TypedComponent<DPadInput, DPadState>
+  implements T.GroupContainer {
+  group: Konva.Group;
   private rects: Record<Dir, Konva.Rect>;
 
-  constructor(config: DPadComponentConfig) {
-    super(
-      TypedComponent.generateConfig(config, defaultDPadConfig, defaultInput),
-    );
+  constructor(id: string, state?: Partial<DPadState>) {
+    super(id, { ...defaultDPadState, ...state }, dPadInputKinds);
 
-    const { buttonWidth, buttonHeight, fill } = this.config;
+    const { buttonWidth, buttonHeight, fill, x, y } = this.state;
 
+    this.group = new Konva.Group({ x, y });
     this.rects = {
       u: new Konva.Rect({
         x: 0,
@@ -97,7 +94,7 @@ export class DPadComponent extends TypedComponent<DPadInput> {
 
   update(input: DPadInput): void {
     const rawInput = this.computeRawInput(input);
-    const { pressedFill, fill } = this.config;
+    const { pressedFill, fill } = this.state;
 
     dirs.forEach(dir =>
       this.rects[dir].fill(rawInput[dir] ? pressedFill : fill),

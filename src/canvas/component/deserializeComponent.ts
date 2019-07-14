@@ -7,10 +7,10 @@ import { DPadComponent } from './DPadComponent';
 export const deserializeComponent = (s: T.SerializedComponent): Component => {
   switch (s.kind) {
     case 'button':
-      return new ButtonComponent(s);
+      return new ButtonComponent(s.id, s.state);
     case 'stick':
-      return new StickComponent(s);
+      return new StickComponent(s.id, s.state);
     case 'dpad':
-      return new DPadComponent(s);
+      return new DPadComponent(s.id, s.state);
   }
 };

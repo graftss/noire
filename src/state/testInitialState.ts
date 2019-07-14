@@ -1,90 +1,77 @@
 import * as T from '../types';
+import { buttonInputKinds } from '../canvas/component/ButtonComponent';
+import { stickInputKinds } from '../canvas/component/StickComponent';
+import { dPadInputKinds } from '../canvas/component/DPadComponent';
 
 const ids = 'qwertyuiopasdfghjklzxcvbnm,';
 
 const sourceRef: T.GamepadSourceRef = { kind: 'gamepad', index: 1 };
 
 const c: Partial<T.PS2Map> & Dict<T.Binding> = {
-  // padU: { sourceRef, id: ids[0], kind: 'axisValue', axis: 9, value: -1 },
-  // padL: { sourceRef, id: ids[1], kind: 'axisValue', axis: 9, value: 0.7142857 },
-  // padR: { sourceRef, id: ids[2], kind: 'axisValue', axis: 9, value: -0.428571 },
-  // padD: { sourceRef, id: ids[3], kind: 'axisValue', axis: 9, value: 0.1428571 },
-  // select: { sourceRef, id: ids[4], kind: 'button', index: 8 },
-  // start: { sourceRef, id: ids[5], kind: 'button', index: 9 },
+  padU: { sourceRef, kind: 'axisValue', axis: 9, value: -1 },
+  padL: { sourceRef, kind: 'axisValue', axis: 9, value: 0.7142857 },
+  padR: { sourceRef, kind: 'axisValue', axis: 9, value: -0.428571 },
+  padD: { sourceRef, kind: 'axisValue', axis: 9, value: 0.1428571 },
+  select: { sourceRef, kind: 'button', index: 8 },
+  start: { sourceRef, kind: 'button', index: 9 },
   square: { sourceRef, kind: 'button', index: 3 },
   circle: { sourceRef, kind: 'button', index: 1 },
-  // x: { sourceRef, id: ids[9], kind: 'button', index: 2 },
-  // l1: { sourceRef, id: ids[10], kind: 'button', index: 6 },
-  // l2: { sourceRef, id: ids[11], kind: 'button', index: 4 },
-  // l3: { sourceRef, id: ids[12], kind: 'button', index: 10 },
-  // r1: { sourceRef, id: ids[13], kind: 'button', index: 7 },
-  // r2: { sourceRef, id: ids[14], kind: 'button', index: 5 },
-  // r3: { sourceRef, id: ids[15], kind: 'button', index: 11 },
-  // lsX: { sourceRef, id: ids[16], kind: 'axis', index: 0, inverted: false },
-  // lsY: { sourceRef, id: ids[17], kind: 'axis', index: 1, inverted: false },
-  // rsX: { sourceRef, id: ids[18], kind: 'axis', index: 5, inverted: false },
-  // rsY: { sourceRef, id: ids[19], kind: 'axis', index: 2, inverted: false },
+  x: { sourceRef, kind: 'button', index: 2 },
+  l1: { sourceRef, kind: 'button', index: 6 },
+  l2: { sourceRef, kind: 'button', index: 4 },
+  l3: { sourceRef, kind: 'button', index: 10 },
+  r1: { sourceRef, kind: 'button', index: 7 },
+  r2: { sourceRef, kind: 'button', index: 5 },
+  r3: { sourceRef, kind: 'button', index: 11 },
+  lsX: { sourceRef, kind: 'axis', index: 0, inverted: false },
+  lsY: { sourceRef, kind: 'axis', index: 1, inverted: false },
+  rsX: { sourceRef, kind: 'axis', index: 5, inverted: false },
+  rsY: { sourceRef, kind: 'axis', index: 2, inverted: false },
 };
 
 const controllers: T.Controller[] = [
   { name: 'Test', id: 'a', kind: 'ps2', map: c },
 ];
 
-const leftStick: T.StickComponentConfig = {
-  kind: 'stick',
-  x: 200,
-  y: 200,
+const leftStick: T.SerializedComponent = {
   id: ids[0],
-  inputMap: {
-    x: { controllerId: 'a', key: 'lsX' },
-    y: { controllerId: 'a', key: 'lsY' },
-    button: { controllerId: 'a', key: 'l3' },
-  },
-  inputKinds: { x: 'axis', y: 'axis', button: 'button' },
-};
-
-const rightStick: T.StickComponentConfig = {
   kind: 'stick',
-  x: 310,
-  y: 200,
+  state: {},
+  inputKinds: stickInputKinds,
+};
+
+const rightStick: T.SerializedComponent = {
   id: ids[1],
-  inputMap: {
-    x: { controllerId: 'a', key: 'rsX' },
-    y: { controllerId: 'a', key: 'rsY' },
-    button: { controllerId: 'a', key: 'r3' },
-  },
-  inputKinds: { x: 'axis', y: 'axis', button: 'button' },
+  kind: 'stick',
+  state: {},
+  inputKinds: stickInputKinds,
 };
 
-const dPad: T.DPadComponentConfig = {
-  kind: 'dpad',
-  x: 50,
-  y: 50,
+const dPad: T.SerializedComponent = {
   id: ids[2],
-  buttonWidth: 30,
-  buttonHeight: 30,
-  inputMap: {
-    u: { controllerId: 'a', key: 'padU' },
-    l: { controllerId: 'a', key: 'padL' },
-    d: { controllerId: 'a', key: 'padD' },
-    r: { controllerId: 'a', key: 'padR' },
-  },
-  inputKinds: { u: 'button', l: 'button', d: 'button', r: 'button' },
+  kind: 'dpad',
+  state: {},
+  inputKinds: dPadInputKinds,
 };
 
-const button: T.ButtonComponentConfig = {
-  kind: 'button',
-  x: 150,
-  y: 100,
+const button: T.SerializedComponent = {
   id: ids[3],
-  inputMap: {},
+  kind: 'button',
+  state: {
+    x: 50,
+    y: 50,
+    width: 30,
+    height: 40,
+    fill: 'black',
+    pressedFill: 'red',
+  },
   inputKinds: { button: 'button' },
 };
 
 const components: T.SerializedComponent[] = [
-  leftStick,
-  rightStick,
-  dPad,
+  // leftStick,
+  // rightStick,
+  // dPad,
   button,
 ];
 

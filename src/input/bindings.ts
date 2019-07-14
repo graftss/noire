@@ -107,8 +107,12 @@ export type Input = AxisInput | ButtonInput;
 export type InputKind = Input['kind'];
 export type RawInput = Input['input'];
 
+export type Kinds<I extends Dict<Input>> = {
+  [K in keyof I]: I[K]['kind'];
+};
+
 export type Raw<I extends Dict<Input>> = {
-  [A in keyof I]: I[A]['input'];
+  [K in keyof I]: I[K]['input'];
 };
 
 export const rawifyInputDict = <I extends Dict<Input>>(i: I): Raw<I> => {

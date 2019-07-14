@@ -2,33 +2,31 @@ import Konva from 'konva';
 import * as T from '../../types';
 import { TypedComponent } from './Component';
 
-export interface ButtonConfig {
-  kind: 'button';
-  width?: number;
-  height?: number;
-  fill?: string;
-  pressedFill?: string;
-  inputKinds: { button: 'button' };
-}
-
-export const defaultButtonConfig: Required<ButtonConfig> = {
-  kind: 'button',
-  width: 30,
-  height: 40,
-  fill: 'black',
-  pressedFill: 'darkred',
-  inputKinds: { button: 'button' },
-};
-
-export type ButtonComponentConfig = ButtonConfig &
-  T.BaseComponentConfig<ButtonComponentInput>;
-
 export interface ButtonComponentInput extends Dict<T.Input> {
   button: T.ButtonInput;
 }
 
-const defaultInput: ButtonComponentInput = {
-  button: { kind: 'button', input: false },
+export const buttonInputKinds: T.Kinds<ButtonComponentInput> = {
+  button: 'button',
+};
+
+export interface ButtonState
+  extends T.BaseComponentState<ButtonComponentInput> {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fill: string;
+  pressedFill: string;
+}
+
+export const defaultButtonState: ButtonState = {
+  x: 0,
+  y: 0,
+  width: 30,
+  height: 40,
+  fill: 'black',
+  pressedFill: 'darkred',
 };
 
 export const buttonEditorConfig: T.ComponentEditorConfig = [
@@ -41,17 +39,18 @@ export const buttonEditorConfig: T.ComponentEditorConfig = [
   },
 ];
 
-export class ButtonComponent extends TypedComponent<ButtonComponentInput> {
-  protected config: Required<ButtonComponentConfig>;
+export class ButtonComponent
+  extends TypedComponent<ButtonComponentInput, ButtonState>
+  implements T.GroupContainer {
+  group: Konva.Group;
   private rect: Konva.Rect;
 
-  constructor(config: ButtonComponentConfig) {
-    super(
-      TypedComponent.generateConfig(config, defaultButtonConfig, defaultInput),
-    );
+  constructor(id: string, state?: Partial<ButtonState>) {
+    super(id, { ...defaultButtonState, ...state }, buttonInputKinds);
 
-    const { width, height, fill } = this.config;
+    const { width, height, fill, x, y } = this.state;
 
+    this.group = new Konva.Group({ x, y });
     this.rect = new Konva.Rect({
       height,
       width,
@@ -63,9 +62,9 @@ export class ButtonComponent extends TypedComponent<ButtonComponentInput> {
     this.group.add(this.rect);
   }
 
-  update(input: ButtonComponentInput): void {
+  update(input: Partial<ButtonComponentInput>): void {
     const { button } = this.computeRawInput(input);
-    const { fill, pressedFill } = this.config;
+    const { fill, pressedFill } = this.state;
 
     this.rect.fill(button ? pressedFill : fill);
   }

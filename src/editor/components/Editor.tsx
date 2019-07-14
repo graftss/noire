@@ -3,12 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../types';
 import { listenNextInput, selectEditorOption } from '../../state/actions';
-import {
-  selectedComponent,
-  selectedController,
-  selectedComponentProp,
-} from '../../state/selectors';
-import { componentConfigs } from '../../canvas/component';
+import { selectedComponent, selectedController } from '../../state/selectors';
+import { componentEditorConfigs } from '../../canvas/component';
 import { ComponentEditor } from './ComponentEditor';
 import { ComponentSelect } from './ComponentSelect';
 import { ControllerKeymap } from './ControllerKeymap';
@@ -34,20 +30,23 @@ interface PropsFromDispatch {
 
 type EditorProps = PropsFromState & PropsFromDispatch;
 
+// TODO: not sure I'm a fan of the monolothic editor anymore
 const mapStateToProps = (state: T.EditorState): PropsFromState => {
-  const configKind = selectedComponentProp(state.display, 'kind');
-  const config = configKind && componentConfigs[configKind];
+  const sc = selectedComponent(state.display);
+  const scProps = sc && {
+    selectedComponent: sc,
+    selectedComponentEditorConfig: componentEditorConfigs[sc.kind],
+    inputMap: sc.state.inputMap,
+  };
 
   return {
     selectedGamepadIndex: state.input.selectedGamepadIndex,
     components: state.display.components,
     controllers: state.input.controllers,
-    inputMap: selectedComponentProp(state.display, 'inputMap'),
-    selectedComponent: selectedComponent(state.display),
-    selectedComponentEditorConfig: config,
     selectedController: selectedController(state.input),
     remapState: state.input.remap,
-  };
+    ...scProps,
+  } as PropsFromState;
 };
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>

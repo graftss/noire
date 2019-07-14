@@ -2,8 +2,8 @@ import Konva from 'konva';
 import { map } from 'ramda';
 import * as T from '../../types';
 import { deserializeComponent } from '../component/deserializeComponent';
-import { Component } from '../component/Component';
-import { find, keyBy } from '../../utils';
+import { Component, TypedComponent } from '../component/Component';
+import { cast, find, keyBy } from '../../utils';
 import { DisplayEventBus } from './DisplayEventBus';
 
 const CLICK_EVENT = `click.ComponentManager`;
@@ -21,14 +21,23 @@ export class ComponentManager {
   }
 
   reset(components: Component[] = []): void {
-    this.components.forEach(component => component.group.destroy());
+    components.forEach(this.add);
+
+    this.components.forEach(component => {
+      const gc: Maybe<Component & T.GroupContainer> = cast(
+        c => c && c.group,
+        component,
+      );
+      if (gc) {
+        gc.group.destroy();
+      }
+    });
 
     this.components = components;
-    components.forEach(this.add);
   }
 
   sync(components: T.SerializedComponent[]): void {
-    const currentById = keyBy(this.components, c => c.getId());
+    const currentById = keyBy(this.components, c => c.id);
     // const newById = keyBy(components, c => c.getBindingId());
 
     components.forEach(component => {
@@ -36,8 +45,8 @@ export class ComponentManager {
 
       if (!existing) {
         this.add(deserializeComponent(component));
-      } else if (component.inputMap !== existing.getInputMap()) {
-        existing.setInputMap(component.inputMap);
+      } else if (component.state.inputMap !== existing.state.inputMap) {
+        existing.state.inputMap = component.state.inputMap;
       }
     });
 
@@ -48,24 +57,38 @@ export class ComponentManager {
 
   add = (component: Component) => {
     this.components.push(component);
-    this.layer.add(component.group);
 
     this.eventBus.emit({
       kind: 'componentAdd',
       data: [component],
     });
 
-    component.group.on(CLICK_EVENT, () => {
-      this.eventBus.emit({
-        kind: 'componentSelect',
-        data: [component],
+    const gc: Maybe<Component & T.GroupContainer> = cast(
+      c => c && c.group,
+      component,
+    );
+    if (gc) {
+      this.layer.add(gc.group);
+
+      gc.group.on(CLICK_EVENT, () => {
+        this.eventBus.emit({
+          kind: 'componentSelect',
+          data: [gc],
+        });
+
+        this.eventBus.emit({
+          kind: 'groupComponentSelect',
+          data: [gc],
+        });
       });
-    });
+    }
   };
 
   update(globalInput: T.GlobalInput, dt: number): void {
     this.components.forEach(
-      <I extends Dict<T.Input>>(component: T.TypedComponent<I>) => {
+      <I extends Dict<T.Input>, S extends T.BaseComponentState<I>>(
+        component: TypedComponent<I, S>,
+      ) => {
         const getControllerKeyInput = (
           controllerKey: Maybe<T.ControllerKey>,
         ): Maybe<T.Input> => {
@@ -78,7 +101,7 @@ export class ComponentManager {
 
         const componentInput: Dict<Maybe<T.Input>> = map(
           getControllerKeyInput,
-          component.getInputMap(),
+          component.state.inputMap || {},
         );
 
         component.update(componentInput as I, dt);
@@ -86,7 +109,7 @@ export class ComponentManager {
     );
   }
 
-  findById(componentId: string): Maybe<Component> {
-    return find(c => c.getId() === componentId, this.components);
+  findById(id: string): Maybe<Component> {
+    return find(c => c.id === id, this.components);
   }
 }

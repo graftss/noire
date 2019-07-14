@@ -2,36 +2,36 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
-import {
-  controllersById,
-  selectedComponentProp,
-} from '../../../state/selectors';
+import { controllersById, selectedComponent } from '../../../state/selectors';
 import { stringifyControllerKey } from '../../../input/controllers';
 import { listenNextInput } from '../../../state/actions';
 
-interface BindingsFieldProps extends PropsFromState, PropsFromDispatch {
-  bindings: T.ComponentBinding[];
-}
-
 interface PropsFromState {
-  componentId: string;
+  componentId?: string;
   controllersById: Dict<T.Controller>;
-  inputMap: Dict<T.ControllerKey>;
+  inputMap?: Dict<T.ControllerKey>;
   remapState?: T.RemapState;
 }
 
-const mapStateToProps = (state: T.EditorState): PropsFromState => ({
-  componentId: selectedComponentProp(state.display, 'id') as string,
-  controllersById: controllersById(state.input),
-  inputMap: selectedComponentProp(state.display, 'inputMap') as Record<
-    string,
-    T.ControllerKey
-  >,
-  remapState: state.input.remap,
-});
+const mapStateToProps = (state: T.EditorState): PropsFromState => {
+  const c = selectedComponent(state.display);
+
+  return {
+    controllersById: controllersById(state.input),
+    remapState: state.input.remap,
+    ...(c && {
+      componentId: c.id,
+      inputMap: c.state.inputMap as Record<string, T.ControllerKey>,
+    }),
+  };
+};
 
 interface PropsFromDispatch {
   listenNextInput: (t: T.RemapState) => void;
+}
+
+interface BindingsFieldProps extends PropsFromState, PropsFromDispatch {
+  bindings: T.ComponentBinding[];
 }
 
 const stringifyKeymap = (
@@ -42,6 +42,8 @@ const stringifyKeymap = (
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators({ listenNextInput }, dispatch);
 
+// TODO: disconnect this so that we don't have to render it when we
+// don't need to
 const BaseBindingsField: React.SFC<BindingsFieldProps> = ({
   bindings,
   componentId,
@@ -49,42 +51,46 @@ const BaseBindingsField: React.SFC<BindingsFieldProps> = ({
   inputMap,
   listenNextInput,
   remapState,
-}) => (
-  <div>
-    {bindings.map(componentBinding => {
-      const { inputKind, key } = componentBinding;
-      const controllerId: Maybe<string> =
-        inputMap[key] && inputMap[key].controllerId;
-      const controllerKey: Maybe<string> = inputMap[key] && inputMap[key].key;
+}) =>
+  !componentId ? (
+    <div></div>
+  ) : (
+    <div>
+      {console.log('b', bindings)}
+      {bindings.map(binding => {
+        const { inputKind, key: bindingKey } = binding;
+        const controllerKey = inputMap && inputMap[bindingKey];
+        const controllerId = controllerKey && controllerKey.controllerId;
+        const key = controllerKey && controllerKey.key;
 
-      const controllerKeyString = stringifyControllerKey(
-        controllersById[controllerId],
-        controllerKey,
-        remapState &&
-          remapState.kind === 'component' &&
-          remapState.componentId === componentId &&
-          remapState.key === componentBinding.key,
-      );
+        const controllerKeyString = stringifyControllerKey(
+          controllerId ? controllersById[controllerId] : undefined,
+          key,
+          remapState &&
+            remapState.kind === 'component' &&
+            remapState.componentId === componentId &&
+            remapState.key === bindingKey,
+        );
 
-      return (
-        <div key={key}>
-          <button
-            onClick={() =>
-              listenNextInput({
-                kind: 'component',
-                componentId: componentId,
-                inputKind,
-                key,
-              })
-            }
-          >
-            {stringifyKeymap(componentBinding, controllerKeyString)}
-          </button>
-        </div>
-      );
-    })}
-  </div>
-);
+        return (
+          <div key={bindingKey}>
+            <button
+              onClick={() =>
+                listenNextInput({
+                  kind: 'component',
+                  componentId: componentId,
+                  inputKind,
+                  key: bindingKey,
+                })
+              }
+            >
+              {stringifyKeymap(binding, controllerKeyString)}
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  );
 
 export const BindingsField = connect(
   mapStateToProps,

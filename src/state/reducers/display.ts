@@ -1,6 +1,6 @@
 import * as T from '../../types';
 import { testInitialState } from '../testInitialState';
-import { mapIf, withoutKey } from '../../utils';
+import { mapIf, withoutKey, mapPath } from '../../utils';
 
 export interface DisplayState {
   components: T.SerializedComponent[];
@@ -50,10 +50,13 @@ export const displayReducer = (
 
     case 'bindComponentKey': {
       const { componentId, controllerKey, bindingKey } = action.data;
-      const addKey = (c: T.SerializedComponent): T.SerializedComponent => ({
-        ...c,
-        inputMap: assocInputMap(c.inputMap, bindingKey, controllerKey),
-      });
+      const addKey = (c: T.SerializedComponent): T.SerializedComponent =>
+        mapPath(
+          ['state', 'inputMap'],
+          (m: Record<string, T.ControllerKey>) =>
+            assocInputMap(m, bindingKey, controllerKey),
+          c,
+        );
 
       return {
         ...state,
@@ -63,10 +66,12 @@ export const displayReducer = (
 
     case 'unbindComponentKey': {
       const { componentId, bindingKey } = action.data;
-      const removeKey = <I, C extends T.BaseComponentConfig<I>>(c: C): C => ({
-        ...c,
-        inputMap: withoutKey(c.inputMap, bindingKey as keyof I),
-      });
+      const removeKey = (c: T.SerializedComponent): T.SerializedComponent =>
+        mapPath(
+          ['state', 'inputMap'],
+          (m: Record<string, T.ControllerKey>) => withoutKey(m, bindingKey),
+          c,
+        );
 
       return {
         ...state,

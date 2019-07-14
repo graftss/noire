@@ -1,12 +1,20 @@
+import Konva from 'konva';
 import * as T from '../../types';
-import { ButtonComponentConfig, buttonEditorConfig } from './ButtonComponent';
-import { DPadComponentConfig, dPadEditorConfig } from './DPadComponent';
-import { StickComponentConfig, stickEditorConfig } from './StickComponent';
+import { buttonEditorConfig, ButtonComponentInput } from './ButtonComponent';
+import { dPadEditorConfig } from './DPadComponent';
+import { stickEditorConfig } from './StickComponent';
+
+interface Serialized<K, S, I extends Record<string, T.Input>> {
+  id: string;
+  kind: K;
+  state: Partial<S>;
+  inputKinds: T.Kinds<I>;
+}
 
 export type SerializedComponent =
-  | ButtonComponentConfig
-  | StickComponentConfig
-  | DPadComponentConfig;
+  | Serialized<'button', T.ButtonState, T.ButtonComponentInput>
+  | Serialized<'stick', T.StickState, T.StickInput>
+  | Serialized<'dpad', T.DPadState, T.DPadInput>;
 
 export type ComponentKind = SerializedComponent['kind'];
 
@@ -29,8 +37,15 @@ export type ComponentEditorField =
 
 export type ComponentEditorConfig = ComponentEditorField[];
 
-export const componentConfigs: Record<ComponentKind, ComponentEditorConfig> = {
+export const componentEditorConfigs: Record<
+  ComponentKind,
+  ComponentEditorConfig
+> = {
   button: buttonEditorConfig,
   stick: stickEditorConfig,
   dpad: dPadEditorConfig,
 };
+
+export interface GroupContainer {
+  group: Konva.Group;
+}

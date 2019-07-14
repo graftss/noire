@@ -42,7 +42,7 @@ export class Display {
     this.eventBus.on({
       kind: 'componentSelect',
       cb: (component: Maybe<Component>) => {
-        const id = component && component.getId();
+        const id = component && component.id;
 
         if (id !== selectedComponentProp(this.lastState, 'id')) {
           store.dispatch(

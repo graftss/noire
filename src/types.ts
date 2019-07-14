@@ -19,20 +19,21 @@ export {
   AxisSource,
 } from './input/sources';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
-export { ButtonComponentConfig } from './canvas/component/ButtonComponent';
-export { DPadComponentConfig } from './canvas/component/DPadComponent';
-export { StickComponentConfig } from './canvas/component/StickComponent';
 export {
   SerializedComponent,
   ComponentBinding,
   ComponentKind,
   ComponentEditorField,
   ComponentEditorConfig,
+  GroupContainer,
 } from './canvas/component/';
+export { BaseComponentState, Component } from './canvas/component/Component';
+export { StickState, StickInput } from './canvas/component/StickComponent';
+export { DPadState, DPadInput } from './canvas/component/DPadComponent';
 export {
-  BaseComponentConfig,
-  TypedComponent,
-} from './canvas/component/Component';
+  ButtonState,
+  ButtonComponentInput,
+} from './canvas/component/ButtonComponent';
 export { EditorApp } from './editor';
 export { EditorAction, EditorOption } from './state/actions';
 export {
@@ -63,4 +64,5 @@ export {
   InputKind,
   RawInput,
   Raw,
+  Kinds,
 } from './input/bindings';

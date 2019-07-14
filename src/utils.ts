@@ -1,4 +1,4 @@
-import { map, mapObjIndexed } from 'ramda';
+import { assocPath, map, mapObjIndexed, path } from 'ramda';
 import uuidv4 from 'uuid/v4';
 
 export { equals } from 'ramda';
@@ -70,3 +70,10 @@ export const mapObj = <K extends string, T, U>(
   for (let k in ts) result[k] = f(ts[k]);
   return result as Record<K, U>;
 };
+
+export const mapPath = <T, O>(p: string[], f: (t: Maybe<T>) => T, o: O): O =>
+  assocPath(p, f(path(p, o)), o);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const cast = <T, U>(isU: (t: any) => boolean, t: any): Maybe<U> =>
+  isU(t) ? t : undefined;

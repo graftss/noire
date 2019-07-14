@@ -3,24 +3,37 @@ import * as T from '../../types';
 import { sign } from '../../utils';
 import { TypedComponent } from './Component';
 
-export interface StickConfig {
-  kind: 'stick';
-  inputKinds: { x: 'axis'; y: 'axis'; button: 'button' };
-  boundaryRadius?: number;
-  stickRadius?: number;
-  rangeScaling?: number;
-  stickFill?: string;
-  pressedStickFill?: string;
+export interface StickInput extends Dict<T.Input> {
+  x: T.AxisInput;
+  y: T.AxisInput;
+  button: T.ButtonInput;
 }
 
-export const defaultStickComponentConfig: Required<StickConfig> = {
-  kind: 'stick',
-  inputKinds: { x: 'axis', y: 'axis', button: 'button' },
+export const stickInputKinds: T.Kinds<StickInput> = {
+  x: 'axis',
+  y: 'axis',
+  button: 'button',
+};
+
+export interface StickState extends T.BaseComponentState<StickInput> {
+  x: number;
+  y: number;
+  boundaryRadius: number;
+  stickRadius: number;
+  rangeScaling: number;
+  stickFill: string;
+  pressedStickFill: string;
+}
+
+export const defaultStickState: StickState = {
+  x: 0,
+  y: 0,
   boundaryRadius: 26,
-  stickRadius: 40,
+  stickRadius: 4,
   rangeScaling: 0.5,
   stickFill: 'black',
   pressedStickFill: 'darkred',
+  inputMap: {},
 };
 
 export const stickEditorConfig: T.ComponentEditorConfig = [
@@ -37,40 +50,21 @@ export const stickEditorConfig: T.ComponentEditorConfig = [
   },
 ];
 
-export interface StickInput extends Dict<T.Input> {
-  x: T.AxisInput;
-  y: T.AxisInput;
-  button: T.ButtonInput;
-}
-
-const defaultInput: StickInput = {
-  x: { kind: 'axis', input: 0 },
-  y: { kind: 'axis', input: 0 },
-  button: { kind: 'button', input: false },
-};
-
-export type StickComponentConfig = StickConfig &
-  T.BaseComponentConfig<StickInput>;
-
 const depthFactor = (t: number): number =>
   t > 0.2 ? 1 - 0.08 * Math.abs(t) : 1 - 0.02 * Math.abs(t);
 
-export class StickComponent extends TypedComponent<StickInput> {
-  protected config: Required<StickComponentConfig>;
+export class StickComponent extends TypedComponent<StickInput, StickState>
+  implements T.GroupContainer {
+  group: Konva.Group;
   private center: Konva.Circle;
   private stick: Konva.Ellipse;
 
-  constructor(config: StickComponentConfig) {
-    super(
-      TypedComponent.generateConfig(
-        config,
-        defaultStickComponentConfig,
-        defaultInput,
-      ),
-    );
+  constructor(id: string, state?: Partial<StickState>) {
+    super(id, { ...defaultStickState, ...state }, stickInputKinds);
 
-    const { boundaryRadius, stickRadius, stickFill } = this.config;
+    const { boundaryRadius, stickRadius, stickFill, x, y } = this.state;
 
+    this.group = new Konva.Group({ x, y });
     this.center = new Konva.Circle({
       radius: boundaryRadius * 0.43,
       stroke: 'black',
@@ -103,7 +97,7 @@ export class StickComponent extends TypedComponent<StickInput> {
       rangeScaling,
       stickFill,
       pressedStickFill,
-    } = this.config;
+    } = this.state;
 
     this.stick.position({
       x: boundaryRadius * x * rangeScaling,

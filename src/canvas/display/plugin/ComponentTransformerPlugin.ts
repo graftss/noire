@@ -1,6 +1,8 @@
 import Konva from 'konva';
+import { GroupContainer } from '../../component';
 import { Component } from '../../component/Component';
 import { DisplayEventBus } from '../DisplayEventBus';
+import { cast } from '../../../utils';
 import { DisplayPlugin } from './DisplayPlugin';
 
 export class ComponentTransformerPlugin extends DisplayPlugin {
@@ -15,11 +17,19 @@ export class ComponentTransformerPlugin extends DisplayPlugin {
   }
 
   private onStageClick = (): void => {
-    if (this.transformer) this.assignTransformer();
+    this.assignTransformer();
   };
 
   private onComponentSelect = (component: Maybe<Component>): void => {
-    this.assignTransformer(component && component.group);
+    const gc: Maybe<Component & GroupContainer> = cast(
+      c => c && c.group,
+      component,
+    );
+    if (gc) {
+      this.assignTransformer(gc.group);
+    } else {
+      this.assignTransformer();
+    }
   };
 
   private assignTransformer(target?: Konva.Node): void {
