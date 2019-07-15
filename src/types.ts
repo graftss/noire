@@ -3,21 +3,28 @@ export {
   AwaitButtonCallback,
 } from './input/NextInputListener';
 export { GlobalInput } from './input/ControllerManager';
-export { ControllerKey, Controller } from './input/controllers';
-export { GamepadMap, KeyData, PS2GamepadMap, PS2Map } from './input/keymaps';
+export { ControllerKey, TypedController, Controller } from './input/controller';
+export { PS2Controller } from './input/controller/ps2';
 export {
-  GamepadSourceRef,
-  GamepadSource,
-  KeyboardSourceRef,
-  KeyboardSource,
-  InputSourceRef,
+  Binding,
   InputSource,
-  GlobalSourceRefs,
-  ButtonSourceRef,
-  ButtonSource,
-  AxisSourceRef,
-  AxisSource,
-} from './input/sources';
+  SourceContainer,
+  SourceKind,
+  SourceRef,
+  TypedInputSource,
+  TypedSourceRef,
+  TypedSourceContainer,
+  TypedBinding,
+} from './input/source';
+export {
+  GamepadAxisBinding,
+  GamepadAxisValueBinding,
+  GamepadBinding,
+  GamepadButtonBinding,
+  GamepadSource,
+  GamepadSourceRef,
+  GamepadSourceContainer,
+} from './input/source/gamepad';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export {
   SerializedComponent,
@@ -49,20 +56,13 @@ export {
 } from './state/reducers/input';
 export { EditorStore } from './state/createStore';
 export {
-  BaseBinding,
-  AxisBinding,
   AxisInput,
   RawAxisInput,
-  AxisValueBinding,
-  ButtonBinding,
   ButtonInput,
   RawButtonInput,
-  ButtonInputBinding,
-  Binding,
-  BindingKind,
   Input,
   InputKind,
+  InputKindProjection,
   RawInput,
-  Raw,
-  Kinds,
-} from './input/bindings';
+  RawInputProjection,
+} from './input/input';

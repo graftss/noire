@@ -6,7 +6,7 @@ export interface ButtonComponentInput extends Dict<T.Input> {
   button: T.ButtonInput;
 }
 
-export const buttonInputKinds: T.Kinds<ButtonComponentInput> = {
+export const buttonInputKinds: T.InputKindProjection<ButtonComponentInput> = {
   button: 'button',
 };
 
