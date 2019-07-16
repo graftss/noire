@@ -1,22 +1,18 @@
 import * as T from '../../types';
 import { testInitialState } from '../testInitialState';
-import { mapIf, withoutKey, mapPath } from '../../utils';
+import { mapIf, mapPath } from '../../utils';
 
 export interface DisplayState {
   components: T.SerializedComponent[];
   selectedComponentId?: string;
 }
 
-export interface ComponentKeyBinding {
+export interface ComponentKeyUpdate {
   componentId: string;
-  bindingKey: string;
-  controllerKey: T.ControllerKey;
+  inputKey: string;
+  bindingsId?: string;
+  bindingsKey?: string;
 }
-
-export type ComponentKeyUnbinding = Without<
-  T.ComponentKeyBinding,
-  'controllerKey'
->;
 
 const mapComponentWithId = (
   components: T.SerializedComponent[],
@@ -26,10 +22,10 @@ const mapComponentWithId = (
 
 // TODO: generalize this into a utils function `assoc`
 const assocInputMap = <I>(
-  inputMap: Record<keyof I, T.ControllerKey>,
+  inputMap: Record<keyof I, T.ControllerBindingsKey>,
   bindingKey: keyof I,
-  controllerKey: T.ControllerKey,
-): Record<keyof I, T.ControllerKey> => ({
+  controllerKey: Maybe<T.ControllerBindingsKey>,
+): Record<keyof I, T.ControllerBindingsKey> => ({
   ...inputMap,
   [bindingKey]: controllerKey,
 });
@@ -48,38 +44,23 @@ export const displayReducer = (
       };
     }
 
-    case 'bindComponentKey': {
-      const { componentId, controllerKey, bindingKey } = action.data;
+    case 'updateComponentKey': {
+      const { componentId, bindingsId, bindingsKey, inputKey } = action.data;
+      const controllerBindingsKey: Maybe<T.ControllerBindingsKey> =
+        bindingsId !== undefined && bindingsKey !== undefined
+          ? { bindingsId, key: bindingsKey }
+          : undefined;
       const addKey = (c: T.SerializedComponent): T.SerializedComponent =>
         mapPath(
           ['state', 'inputMap'],
-          (m: Record<string, T.ControllerKey>) =>
-            assocInputMap(m, bindingKey, controllerKey),
+          (m: Record<string, T.ControllerBindingsKey>) =>
+            assocInputMap(m, inputKey, controllerBindingsKey),
           c,
         );
 
       return {
         ...state,
         components: mapComponentWithId(state.components, componentId, addKey),
-      };
-    }
-
-    case 'unbindComponentKey': {
-      const { componentId, bindingKey } = action.data;
-      const removeKey = (c: T.SerializedComponent): T.SerializedComponent =>
-        mapPath(
-          ['state', 'inputMap'],
-          (m: Record<string, T.ControllerKey>) => withoutKey(m, bindingKey),
-          c,
-        );
-
-      return {
-        ...state,
-        components: mapComponentWithId(
-          state.components,
-          componentId,
-          removeKey,
-        ),
       };
     }
   }

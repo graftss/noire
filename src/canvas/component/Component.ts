@@ -1,13 +1,13 @@
 import * as T from '../../types';
 import { mapObj } from '../../utils';
-import { defaultInputByKind, rawifyInputDict } from '../../input/bindings';
+import { defaultInputByKind, rawifyInputDict } from '../../input/input';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Component = TypedComponent<any, any>;
 
 export interface BaseComponentState<I extends Dict<T.Input>> {
   defaultInput?: Partial<I>;
-  inputMap?: Partial<Record<keyof I, Maybe<T.ControllerKey>>>;
+  inputMap?: Partial<Record<keyof I, Maybe<T.ControllerBindingsKey>>>;
 }
 
 export abstract class TypedComponent<
@@ -28,13 +28,15 @@ export abstract class TypedComponent<
     return {
       // TODO: type this accurately
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(mapObj(defaultInputByKind, this.inputKinds as any) as Required<I>),
+      ...(mapObj(this.inputKinds, defaultInputByKind) as Required<I>),
       ...this.state.defaultInput,
       ...input,
     };
   }
 
-  protected computeRawInput(input: Partial<I>): T.Raw<Required<I>> {
+  protected computeRawInput(
+    input: Partial<I>,
+  ): T.RawInputProjection<Required<I>> {
     return rawifyInputDict(this.applyDefaultInput(input));
   }
 

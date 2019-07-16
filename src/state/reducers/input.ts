@@ -1,7 +1,7 @@
 import * as T from '../../types';
 import { mapIf, withoutKey } from '../../utils';
 import { testInitialState } from '../testInitialState';
-import { controllerHasBinding } from '../../input/controllers';
+import { hasKeyBoundTo } from '../../input/controller';
 
 export type RemapState =
   | {
@@ -17,31 +17,30 @@ export type RemapState =
       key: string;
     };
 
-export interface ControllerKeyBinding {
-  controllerId: string;
-  key: string;
-  binding: T.Binding;
-}
-
 export interface InputState {
   selectedGamepadIndex?: number;
   remap?: RemapState;
-  controllers: T.Controller[];
+  controllerBindings: T.ControllerBindings[];
   selectedControllerId?: string;
-  sourceRefs: T.InputSourceRef[];
 }
 
 // const defaultInputState: InputState = {};
 const defaultInputState = testInitialState.input;
 
-const bindControllerKey = (
-  c: T.Controller,
+export interface ControllerBindingsUpdate {
+  bindingsId: string;
+  key: string;
+  binding: Maybe<T.Binding>;
+}
+
+const updateControllerBindings = (
+  bindings: T.ControllerBindings,
   key: string,
-  binding: T.Binding,
-): T.Controller => ({
-  ...c,
-  map: {
-    ...c.map,
+  binding: Maybe<T.Binding>,
+): T.ControllerBindings => ({
+  ...bindings,
+  bindings: {
+    ...bindings.bindings,
     [key]: binding,
   },
 });
@@ -69,23 +68,28 @@ export const inputReducer = (
       return { ...state, remap: undefined };
     }
 
-    case 'bindControllerKey': {
-      const { controllerId, key, binding } = action.data;
+    case 'updateControllerBindings': {
+      const { bindingsId, key, binding } = action.data;
 
-      const withoutDupeBinding = state.controllers.map(<I>(c: T.Controller) => {
-        const maybeKey = controllerHasBinding(c, binding);
-        return {
-          ...c,
-          map: maybeKey ? withoutKey(c.map, maybeKey.key) : c.map,
-        };
-      });
+      let initialBindings = state.controllerBindings;
+
+      // remove other duplicate bindings if a new binding is being set
+      if (binding) {
+        initialBindings = initialBindings.map(b => {
+          const maybeKey = hasKeyBoundTo(b, binding);
+          return {
+            ...b,
+            bindings: maybeKey ? withoutKey(b.bindings, maybeKey) : b.bindings,
+          };
+        });
+      }
 
       return {
         ...state,
-        controllers: mapIf(
-          withoutDupeBinding,
-          c => c.id === controllerId,
-          c => bindControllerKey(c, key, binding),
+        controllerBindings: mapIf(
+          initialBindings,
+          bs => bs.id === bindingsId,
+          bs => updateControllerBindings(bs, key, binding),
         ),
       };
     }

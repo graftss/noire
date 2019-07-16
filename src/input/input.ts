@@ -1,5 +1,4 @@
-import * as T from '../types';
-import { shallowCloneObj } from '../utils';
+import { mapObj } from '../utils';
 
 export type RawAxisInput = number;
 
@@ -25,25 +24,25 @@ export type InputKindProjection<I extends Dict<Input>> = {
 
 export type RawInput = Input['input'];
 
-export type RawInputProjection<I extends Dict<Input>> = Record<keyof I, RawInput> & {
-  [K in keyof I]: I[K]['input'];
-};
+export type RawInputProjection<I extends Dict<Input>> = Record<
+  keyof I,
+  RawInput
+> &
+  {
+    [K in keyof I]: I[K]['input'];
+  };
 
-export const rawifyInputDict = <I extends Dict<Input>>(inputDict: I): RawInputProjection<I> => {
-  const result: Partial<RawInputProjection<I>> = {};
-
-  for (const key in inputDict) {
-    result[key] = inputDict[key].input;
-  }
-
-  // TODO: is there a way to give the compiler enough information to
-  // avoid this cast?
-  return result as RawInputProjection<I>;
+export const rawifyInputDict = <I extends Dict<Input>>(
+  inputDict: I,
+): RawInputProjection<I> => {
+  // TODO: is there a way to give the compiler enough information
+  // to avoid this cast?
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return mapObj(inputDict, i => i && i.input) as any;
 };
 
 export function defaultInputByKind(kind: 'axis'): AxisInput;
 export function defaultInputByKind(kind: 'button'): ButtonInput;
-export function defaultInputByKind(kind: InputKind): Input;
 export function defaultInputByKind(kind: InputKind): Input {
   switch (kind) {
     case 'axis':

@@ -13,7 +13,7 @@ export interface EditorApp {
 // I'm not really sure how to get around this right now, it seems like
 // you need to use the `ReactReduxContext` element from react-redux
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const _Editor: any = Editor;
+// const _Editor: any = Editor;
 
 export const createEditorApp = (target: HTMLElement): EditorApp => {
   const store: T.EditorStore = createStore();

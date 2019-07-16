@@ -2,11 +2,20 @@ export {
   AwaitAxisCallback,
   AwaitButtonCallback,
 } from './input/NextInputListener';
-export { GlobalInput } from './input/ControllerManager';
-export { ControllerKey, TypedController, Controller } from './input/controller';
-export { PS2Controller } from './input/controller/ps2';
+export { GlobalControllerInput } from './input/ControllerManager';
+export {
+  ControllerKey,
+  ControllerBindingsKey,
+  BaseController,
+  Controller,
+  ControllerBindings,
+  BaseControllerBindings,
+} from './input/controller';
+export { PS2Controller, PS2Bindings } from './input/controller/ps2';
 export {
   Binding,
+  BindingOfInputType,
+  GlobalSourceRefs,
   InputSource,
   SourceContainer,
   SourceKind,
@@ -25,6 +34,7 @@ export {
   GamepadSourceRef,
   GamepadSourceContainer,
 } from './input/source/gamepad';
+export { KeyboardSourceRef, KeyboardSource } from './input/source/keyboard';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export {
   SerializedComponent,
@@ -43,16 +53,12 @@ export {
 } from './canvas/component/ButtonComponent';
 export { EditorApp } from './editor';
 export { EditorAction, EditorOption } from './state/actions';
-export {
-  DisplayState,
-  ComponentKeyBinding,
-  ComponentKeyUnbinding,
-} from './state/reducers/display';
+export { DisplayState, ComponentKeyUpdate } from './state/reducers/display';
 export { EditorState } from './state/reducers/root';
 export {
   InputState,
   RemapState,
-  ControllerKeyBinding,
+  ControllerBindingsUpdate,
 } from './state/reducers/input';
 export { EditorStore } from './state/createStore';
 export {

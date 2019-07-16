@@ -10,15 +10,14 @@ export const buttonInputKinds: T.InputKindProjection<ButtonComponentInput> = {
   button: 'button',
 };
 
-export interface ButtonState
-  extends T.BaseComponentState<ButtonComponentInput> {
+export type ButtonState = T.BaseComponentState<ButtonComponentInput> & {
   x: number;
   y: number;
   width: number;
   height: number;
   fill: string;
   pressedFill: string;
-}
+};
 
 export const defaultButtonState: ButtonState = {
   x: 0,

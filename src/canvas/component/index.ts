@@ -8,7 +8,7 @@ interface Serialized<K, S, I extends Record<string, T.Input>> {
   id: string;
   kind: K;
   state: Partial<S>;
-  inputKinds: T.Kinds<I>;
+  inputKinds: T.InputKindProjection<I>;
 }
 
 export type SerializedComponent =

@@ -7,7 +7,7 @@ const dirs: Dir[] = ['u', 'l', 'd', 'r'];
 
 export type DPadInput = Record<Dir, T.ButtonInput>;
 
-export const dPadInputKinds: T.Kinds<DPadInput> = {
+export const dPadInputKinds: T.InputKindProjection<DPadInput> = {
   u: 'button',
   l: 'button',
   d: 'button',

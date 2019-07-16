@@ -5,33 +5,65 @@ import { dPadInputKinds } from '../canvas/component/DPadComponent';
 
 const ids = 'qwertyuiopasdfghjklzxcvbnm,';
 
-const sourceRef: T.GamepadSourceRef = { kind: 'gamepad', index: 1 };
+const ref: T.GamepadSourceRef = { kind: 'gamepad', index: 1 };
+const sourceKind = 'gamepad';
+const bindingsId = 'test';
 
-const c: Partial<T.PS2Map> & Dict<T.Binding> = {
-  padU: { sourceRef, kind: 'axisValue', axis: 9, value: -1 },
-  padL: { sourceRef, kind: 'axisValue', axis: 9, value: 0.7142857 },
-  padR: { sourceRef, kind: 'axisValue', axis: 9, value: -0.428571 },
-  padD: { sourceRef, kind: 'axisValue', axis: 9, value: 0.1428571 },
-  select: { sourceRef, kind: 'button', index: 8 },
-  start: { sourceRef, kind: 'button', index: 9 },
-  square: { sourceRef, kind: 'button', index: 3 },
-  circle: { sourceRef, kind: 'button', index: 1 },
-  x: { sourceRef, kind: 'button', index: 2 },
-  l1: { sourceRef, kind: 'button', index: 6 },
-  l2: { sourceRef, kind: 'button', index: 4 },
-  l3: { sourceRef, kind: 'button', index: 10 },
-  r1: { sourceRef, kind: 'button', index: 7 },
-  r2: { sourceRef, kind: 'button', index: 5 },
-  r3: { sourceRef, kind: 'button', index: 11 },
-  lsX: { sourceRef, kind: 'axis', index: 0, inverted: false },
-  lsY: { sourceRef, kind: 'axis', index: 1, inverted: false },
-  rsX: { sourceRef, kind: 'axis', index: 5, inverted: false },
-  rsY: { sourceRef, kind: 'axis', index: 2, inverted: false },
+const toAxisValue = (axis, value): T.GamepadAxisValueBinding => ({
+  ref,
+  sourceKind,
+  inputKind: 'button',
+  kind: 'axisValue',
+  axis,
+  value,
+});
+
+const toButton = (index): T.GamepadButtonBinding => ({
+  ref,
+  sourceKind,
+  inputKind: 'button',
+  kind: 'button',
+  index,
+});
+
+const toAxis = (index): T.GamepadAxisBinding => ({
+  ref,
+  sourceKind,
+  inputKind: 'axis',
+  kind: 'axis',
+  index,
+  inverted: false,
+});
+
+const b: Dict<T.GamepadBinding> = {
+  padU: toAxisValue(9, -1),
+  padL: toAxisValue(9, 0.7142857),
+  padR: toAxisValue(9, -0.428571),
+  padD: toAxisValue(9, 0.1428571),
+  select: toButton(8),
+  start: toButton(9),
+  square: toButton(3),
+  circle: toButton(1),
+  triangle: toButton(0),
+  x: toButton(2),
+  l1: toButton(6),
+  l2: toButton(4),
+  l3: toButton(10),
+  r1: toButton(7),
+  r2: toButton(5),
+  r3: toButton(11),
+  lsX: toAxis(0),
+  lsY: toAxis(1),
+  rsX: toAxis(5),
+  rsY: toAxis(2),
 };
 
-const controllers: T.Controller[] = [
-  { name: 'Test', id: 'a', kind: 'ps2', map: c },
-];
+const ps2Bindings: T.PS2Bindings = {
+  id: bindingsId,
+  controllerKind: 'ps2',
+  sourceKind: 'gamepad',
+  bindings: b,
+};
 
 const leftStick: T.SerializedComponent = {
   id: ids[0],
@@ -43,14 +75,29 @@ const leftStick: T.SerializedComponent = {
 const rightStick: T.SerializedComponent = {
   id: ids[1],
   kind: 'stick',
-  state: {},
+  state: {
+    x: 300,
+    y: 200,
+    inputMap: {
+      x: { bindingsId, key: 'lsX' },
+      y: { bindingsId, key: 'lsY' },
+    },
+  },
   inputKinds: stickInputKinds,
 };
 
 const dPad: T.SerializedComponent = {
   id: ids[2],
   kind: 'dpad',
-  state: {},
+  state: {
+    x: 150,
+    y: 150,
+    pressedFill: 'blue',
+    inputMap: {
+      d: { bindingsId, key: 'triangle' },
+      u: { bindingsId, key: 'padU' },
+    },
+  },
   inputKinds: dPadInputKinds,
 };
 
@@ -64,14 +111,17 @@ const button: T.SerializedComponent = {
     height: 40,
     fill: 'black',
     pressedFill: 'red',
+    inputMap: {
+      button: { bindingsId, key: 'square' },
+    },
   },
   inputKinds: { button: 'button' },
 };
 
 const components: T.SerializedComponent[] = [
   // leftStick,
-  // rightStick,
-  // dPad,
+  rightStick,
+  dPad,
   button,
 ];
 
@@ -80,7 +130,6 @@ export const testInitialState: T.EditorState = {
     components,
   },
   input: {
-    controllers,
-    sourceRefs: [],
+    controllerBindings: [ps2Bindings],
   },
 };

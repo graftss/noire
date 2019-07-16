@@ -7,37 +7,28 @@ export type EditorOption =
 
 export type EditorAction =
   | { type: 'selectEditorOption'; data: EditorOption }
-  | { type: 'bindControllerKey'; data: T.ControllerKeyBinding }
-  | { type: 'bindComponentKey'; data: T.ComponentKeyBinding }
-  | { type: 'unbindComponentKey'; data: T.ComponentKeyUnbinding }
+  | { type: 'updateControllerBindings'; data: T.ControllerBindingsUpdate }
+  | { type: 'updateComponentKey'; data: T.ComponentKeyUpdate }
   | { type: 'listenNextInput'; data: T.RemapState }
-  | { type: 'stopListening' }
-  | { type: 'addSourceRef'; data: T.InputSourceRef };
+  | { type: 'stopListening' };
 
 export const selectEditorOption = (data: EditorOption): EditorAction => ({
   type: 'selectEditorOption',
   data,
 });
 
-export const bindControllerKey = (
-  data: T.ControllerKeyBinding,
+export const updateControllerBindings = (
+  update: T.ControllerBindingsUpdate,
 ): EditorAction => ({
-  type: 'bindControllerKey',
-  data,
+  type: 'updateControllerBindings',
+  data: update,
 });
 
-export const bindComponentKey = (
-  data: T.ComponentKeyBinding,
+export const updateComponentKey = (
+  update: T.ComponentKeyUpdate,
 ): EditorAction => ({
-  type: 'bindComponentKey',
-  data,
-});
-
-export const unbindComponentKey = (
-  data: T.ComponentKeyUnbinding,
-): EditorAction => ({
-  type: 'unbindComponentKey',
-  data,
+  type: 'updateComponentKey',
+  data: update,
 });
 
 export const listenNextInput = (remapState: T.RemapState): EditorAction => ({

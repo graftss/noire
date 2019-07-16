@@ -84,18 +84,18 @@ export class ComponentManager {
     }
   };
 
-  update(globalInput: T.GlobalInput, dt: number): void {
+  update(globalInput: T.GlobalControllerInput, dt: number): void {
     this.components.forEach(
       <I extends Dict<T.Input>, S extends T.BaseComponentState<I>>(
         component: TypedComponent<I, S>,
       ) => {
         const getControllerKeyInput = (
-          controllerKey: Maybe<T.ControllerKey>,
+          controllerBindingsKey: Maybe<T.ControllerBindingsKey>,
         ): Maybe<T.Input> => {
-          if (!controllerKey) return;
+          if (!controllerBindingsKey) return;
 
-          const { controllerId, key } = controllerKey;
-          const controllerInput = globalInput[controllerId];
+          const { bindingsId, key } = controllerBindingsKey;
+          const controllerInput = globalInput[bindingsId];
           return controllerInput && controllerInput[key];
         };
 

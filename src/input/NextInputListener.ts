@@ -1,62 +1,93 @@
 import * as T from '../types';
 import { clone } from '../utils';
-import { dereferenceSource } from './sources';
+import { dereference } from './source';
 
-export type AwaitAxisCallback = CB1<T.AxisBinding>;
-export type AwaitButtonCallback = CB1<T.ButtonInputBinding>;
+export type AwaitAxisCallback = CB1<T.BindingOfInputType<'axis'>>;
+export type AwaitButtonCallback = CB1<T.BindingOfInputType<'button'>>;
 
-type AwaitAxisInput = number[];
+// TODO: move input collection/comparisons and their relevant types to
+// the individual source definition files
+
+interface AwaitAxisInput {
+  gamepads: Maybe<number[]>[];
+}
 
 interface AwaitButtonInput {
-  axes: number[];
-  buttons: number[];
+  gamepads: Maybe<{ axes: number[]; buttons: number[] }>[];
 }
 
 type ListeningState =
   | {
       kind: 'axis';
       callback: AwaitAxisCallback;
-      baselineInput?: Maybe<AwaitAxisInput>[];
+      baselineInput?: Maybe<AwaitAxisInput>;
     }
   | {
       kind: 'button';
       callback: AwaitButtonCallback;
-      baselineInput?: Maybe<AwaitButtonInput>[];
+      baselineInput?: Maybe<AwaitButtonInput>;
     };
 
-const MIN_AXIS_MAGNITUDE = 0.5;
+const getAwaitAxisInput = (s: T.GlobalSourceRefs): AwaitAxisInput => {
+  const result: AwaitAxisInput = { gamepads: [] };
+  const { gamepads } = s;
 
-const getAwaitAxisInput = (s: T.InputSource): Maybe<AwaitAxisInput> => {
-  switch (s.kind) {
-    case 'gamepad':
-      return s.gamepad ? clone(s.gamepad.axes) : undefined;
+  for (let i = 0; i < s.gamepads.length; i++) {
+    const gamepad = dereference(gamepads[i]).gamepad;
+    if (gamepad) result.gamepads[i] = clone(gamepad.axes);
   }
+
+  return result;
 };
+
+const MIN_AXIS_MAGNITUDE = 0.5;
+const MIN_AXIS_DIFFERENCE = 0.1;
 
 const compareAwaitAxisInput = (
-  axes: AwaitAxisInput,
+  input: AwaitAxisInput,
   baseline: AwaitAxisInput,
-  sourceRef: T.InputSourceRef,
-): Maybe<T.AxisBinding> => {
-  for (let index = 0; index < axes.length; index++) {
-    const axis = axes[index];
-    if (axis !== baseline[index] && Math.abs(axis) > MIN_AXIS_MAGNITUDE) {
-      return { kind: 'axis', sourceRef, index, inverted: axis < 0 };
+  refs: T.GlobalSourceRefs,
+): Maybe<T.BindingOfInputType<'axis'>> => {
+  for (let index = 0; index < input.gamepads.length; index++) {
+    const gamepadInput = input.gamepads[index];
+    const baselineGamepadInput = baseline.gamepads[index];
+    if (!gamepadInput || !baselineGamepadInput) continue;
+    for (let axisIndex = 0; axisIndex < gamepadInput.length; axisIndex++) {
+      const gamepadAxis = gamepadInput[axisIndex];
+
+      if (
+        Math.abs(gamepadAxis - baselineGamepadInput[axisIndex]) >
+          MIN_AXIS_DIFFERENCE &&
+        Math.abs(gamepadAxis) > MIN_AXIS_MAGNITUDE
+      ) {
+        return {
+          kind: 'axis',
+          inputKind: 'axis',
+          sourceKind: 'gamepad',
+          ref: refs.gamepads[index],
+          index: axisIndex,
+          inverted: gamepadAxis < 0,
+        };
+      }
     }
   }
 };
 
-const getAwaitButtonInput = (s: T.InputSource): Maybe<AwaitButtonInput> => {
-  switch (s.kind) {
-    case 'gamepad': {
-      return s.gamepad
-        ? {
-            axes: clone(s.gamepad.axes),
-            buttons: clone(s.gamepad.buttons.map(b => b.value)),
-          }
-        : undefined;
+const getAwaitButtonInput = (s: T.GlobalSourceRefs): AwaitButtonInput => {
+  const result: AwaitButtonInput = { gamepads: [] };
+  const { gamepads } = s;
+
+  for (let i = 0; i < s.gamepads.length; i++) {
+    const gamepad = dereference(gamepads[i]).gamepad;
+    if (gamepad) {
+      result.gamepads[i] = {
+        axes: clone(gamepad.axes),
+        buttons: clone(gamepad.buttons),
+      };
     }
   }
+
+  return result;
 };
 
 // TODO: force axisValue bindings to be held for multiple frames?
@@ -64,20 +95,44 @@ const getAwaitButtonInput = (s: T.InputSource): Maybe<AwaitButtonInput> => {
 const compareAwaitButtonInput = (
   input: AwaitButtonInput,
   baseline: AwaitButtonInput,
-  sourceRef: T.InputSourceRef,
-): Maybe<T.ButtonInputBinding> => {
-  const { axes, buttons } = input;
+  refs: T.GlobalSourceRefs,
+): Maybe<T.BindingOfInputType<'button'>> => {
+  for (let index = 0; index < input.gamepads.length; index++) {
+    const gamepadInput = input.gamepads[index];
+    const baselineGamepadInput = baseline.gamepads[index];
+    const ref = refs.gamepads[index];
 
-  for (let index = 0; index < buttons.length; index++) {
-    if (buttons[index] !== baseline.buttons[index]) {
-      return { kind: 'button', sourceRef, index };
+    if (!gamepadInput || !baselineGamepadInput) continue;
+
+    for (let axisIndex = 0; axisIndex < gamepadInput.axes.length; axisIndex++) {
+      const gamepadAxis = gamepadInput.axes[axisIndex];
+      if (gamepadAxis !== baselineGamepadInput.axes[axisIndex]) {
+        return {
+          kind: 'axisValue',
+          inputKind: 'button',
+          sourceKind: 'gamepad',
+          ref,
+          axis: axisIndex,
+          value: gamepadAxis,
+        };
+      }
     }
-  }
 
-  for (let axis = 0; axis < axes.length; axis++) {
-    const value = axes[axis];
-    if (value !== baseline.axes[axis]) {
-      return { kind: 'axisValue', sourceRef, axis, value };
+    for (
+      let buttonIndex = 0;
+      buttonIndex < gamepadInput.buttons.length;
+      buttonIndex++
+    ) {
+      const gamepadButton = gamepadInput.buttons[buttonIndex];
+      if (gamepadButton !== baselineGamepadInput.buttons[buttonIndex]) {
+        return {
+          kind: 'button',
+          inputKind: 'button',
+          sourceKind: 'gamepad',
+          ref,
+          index,
+        };
+      }
     }
   }
 };
@@ -105,63 +160,47 @@ export class NextInputListener {
     this.state = undefined;
   }
 
-  update(sourceRefs: T.InputSourceRef[]): void {
+  update(refs: T.GlobalSourceRefs): void {
     if (this.state === undefined) return;
     const state: ListeningState = this.state;
-    const sources: T.InputSource[] = sourceRefs.map(dereferenceSource);
 
     if (this.pollingBaselineInput) {
       this.pollingBaselineInput = false;
       switch (state.kind) {
         case 'axis':
-          state.baselineInput = sources.map(getAwaitAxisInput);
+          state.baselineInput = getAwaitAxisInput(refs);
           break;
         case 'button':
-          state.baselineInput = sources.map(getAwaitButtonInput);
+          state.baselineInput = getAwaitButtonInput(refs);
           break;
       }
     } else {
       switch (state.kind) {
         case 'axis': {
-          const allInput = sources.map(getAwaitAxisInput);
+          const awaitedBinding = compareAwaitAxisInput(
+            getAwaitAxisInput(refs),
+            state.baselineInput as AwaitAxisInput,
+            refs,
+          );
 
-          for (let index = 0; index < sources.length; index++) {
-            const input = allInput[index];
-            const baseline = state.baselineInput && state.baselineInput[index];
-
-            if (!input || !baseline) continue;
-
-            const ref = sourceRefs[index];
-            const awaitedBinding = compareAwaitAxisInput(input, baseline, ref);
-            if (awaitedBinding) {
-              state.callback(awaitedBinding);
-              return this.deactivate();
-            }
+          if (awaitedBinding) {
+            state.callback(awaitedBinding);
+            this.deactivate();
           }
 
           break;
         }
 
         case 'button': {
-          const allInput = sources.map(getAwaitButtonInput);
+          const awaitedBinding = compareAwaitButtonInput(
+            getAwaitButtonInput(refs),
+            state.baselineInput as AwaitButtonInput,
+            refs,
+          );
 
-          for (let index = 0; index < sources.length; index++) {
-            const input = allInput[index];
-            const baseline = state.baselineInput && state.baselineInput[index];
-            const ref = sourceRefs[index];
-
-            if (!input || !baseline) continue;
-
-            const awaitedBinding = compareAwaitButtonInput(
-              input,
-              baseline,
-              ref,
-            );
-
-            if (awaitedBinding) {
-              state.callback(awaitedBinding);
-              return this.deactivate();
-            }
+          if (awaitedBinding) {
+            state.callback(awaitedBinding);
+            this.deactivate();
           }
 
           break;

@@ -71,7 +71,9 @@ export const mapObj = <K extends string, T, U>(
   return result as Record<K, U>;
 };
 
-export const shallowCloneObj = <K extends string, T>(obj: Record<K, T>): Record<K, T> => mapObj(obj, x => x);
+export const shallowCloneObj = <K extends string, T>(
+  obj: Record<K, T>,
+): Record<K, T> => mapObj(obj, x => x);
 
 export const mapPath = <T, O>(p: string[], f: (t: Maybe<T>) => T, o: O): O =>
   assocPath(p, f(path(p, o)), o);

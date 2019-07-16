@@ -1,6 +1,6 @@
 import * as T from '../types';
 import { find, keyBy } from '../utils';
-import { controllerHasBinding } from '../input/controllers';
+import { hasKeyBoundTo } from '../input/controller';
 
 export const componentById = (
   state: Maybe<T.DisplayState>,
@@ -8,13 +8,15 @@ export const componentById = (
 ): Maybe<T.SerializedComponent> =>
   state && find(c => c.id === id, state.components);
 
-export const controllerById = (
+export const controllerBindingsById = (
   state: T.InputState,
   id: string,
-): Maybe<T.Controller> => state && find(c => c.id === id, state.controllers);
+): Maybe<T.ControllerBindings> =>
+  state && find(c => c.id === id, state.controllerBindings);
 
-export const controllersById = (state: T.InputState): Dict<T.Controller> =>
-  keyBy(state.controllers, c => c.id);
+export const controllerBindingsDict = (
+  state: T.InputState,
+): Dict<T.ControllerBindings> => keyBy(state.controllerBindings, c => c.id);
 
 export const selectedComponent = (
   state: T.DisplayState,
@@ -30,15 +32,17 @@ export const selectedComponentProp = <K extends keyof T.SerializedComponent>(
   return c && c[prop];
 };
 
-export const selectedController = (state: T.InputState): Maybe<T.Controller> =>
-  find(c => c.id === state.selectedControllerId, state.controllers);
+export const selectedControllerBindings = (
+  state: T.InputState,
+): Maybe<T.ControllerBindings> =>
+  find(c => c.id === state.selectedControllerId, state.controllerBindings);
 
-export const controllerKeyWithBinding = (
+export const controllerBindingsWithBinding = (
   state: T.InputState,
   binding: T.Binding,
-): Maybe<T.ControllerKey> => {
-  for (const c of state.controllers) {
-    const maybeKey = controllerHasBinding(c, binding);
-    if (maybeKey) return maybeKey;
+): Maybe<{ bindings: T.ControllerBindings; key: string }> => {
+  for (const bindings of state.controllerBindings) {
+    const key = hasKeyBoundTo(bindings, binding);
+    if (key) return { bindings, key };
   }
 };

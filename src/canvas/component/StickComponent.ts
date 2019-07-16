@@ -9,7 +9,7 @@ export interface StickInput extends Dict<T.Input> {
   button: T.ButtonInput;
 }
 
-export const stickInputKinds: T.Kinds<StickInput> = {
+export const stickInputKinds: T.InputKindProjection<StickInput> = {
   x: 'axis',
   y: 'axis',
   button: 'button',
@@ -29,7 +29,7 @@ export const defaultStickState: StickState = {
   x: 0,
   y: 0,
   boundaryRadius: 26,
-  stickRadius: 4,
+  stickRadius: 40,
   rangeScaling: 0.5,
   stickFill: 'black',
   pressedStickFill: 'darkred',

@@ -1,17 +1,16 @@
 import * as T from '../types';
 import {
-  bindComponentKey,
-  unbindComponentKey,
-  bindControllerKey,
+  updateComponentKey,
+  updateControllerBindings,
   stopListening,
 } from '../state/actions';
-import { controllerKeyWithBinding } from '../state/selectors';
-import { applyControllerKeymap } from './controllers';
+import { controllerBindingsWithBinding } from '../state/selectors';
+import { parseControllerBindings } from './controller';
 import { NextInputListener } from './NextInputListener';
-import { dereferenceSource } from './sources';
+import { dereference } from './source';
 
 // keyed first by controller id and second by controller key
-export type GlobalInput = Dict<Dict<T.Input>>;
+export type GlobalControllerInput = Dict<Dict<T.Input>>;
 
 const gamepadSourceRefs: T.GamepadSourceRef[] = [0, 1, 2, 3].map(index => ({
   kind: 'gamepad',
@@ -30,35 +29,33 @@ export class ControllerManager {
     store.subscribe(() => this.storeSubscriber());
   }
 
-  private onAwaitedControllerBinding = (controllerId: string, key: string) => <
-    B extends T.Binding
-  >(
-    binding: B,
+  private onAwaitedControllerBinding = (bindingsId: string, key: string) => (
+    binding: T.Binding,
   ): void => {
     this.store.dispatch(stopListening());
-    this.store.dispatch(bindControllerKey({ controllerId, key, binding }));
+    this.store.dispatch(updateControllerBindings({ bindingsId, key, binding }));
   };
 
   private onAwaitedComponentBinding = (
     componentId: string,
-    bindingKey: string,
-  ) => <B extends T.Binding>(binding: B): void => {
+    inputKey: string,
+  ) => (binding: T.Binding): void => {
     const state = this.store.getState();
-    const controllerKey: Maybe<T.ControllerKey> = controllerKeyWithBinding(
-      state.input,
-      binding,
-    );
+    const maybeBindings = controllerBindingsWithBinding(state.input, binding);
 
-    if (controllerKey) {
+    if (maybeBindings) {
+      const { bindings, key } = maybeBindings;
+
       this.store.dispatch(
-        bindComponentKey({
+        updateComponentKey({
           componentId,
-          bindingKey,
-          controllerKey,
+          inputKey,
+          bindingsId: bindings.id,
+          bindingsKey: key,
         }),
       );
     } else {
-      this.store.dispatch(unbindComponentKey({ componentId, bindingKey }));
+      this.store.dispatch(updateComponentKey({ componentId, inputKey }));
     }
 
     this.store.dispatch(stopListening());
@@ -103,20 +100,15 @@ export class ControllerManager {
     }
   };
 
-  private sourceRefArray(): T.InputSourceRef[] {
-    const { gamepads, keyboard } = this.sourceRefs;
-    return [...gamepads, keyboard];
-  }
-
-  getInput(): GlobalInput {
+  getInput(): GlobalControllerInput {
     const result = {};
-    const controllers = this.store.getState().input.controllers;
+    const controllerBindings = this.store.getState().input.controllerBindings;
 
     this.sourceRefs.gamepads.forEach(ref => {
-      controllers.forEach(controller => {
-        const source = dereferenceSource(ref);
-        const keymap = applyControllerKeymap(source, controller);
-        if (keymap) result[controller.id] = keymap;
+      controllerBindings.forEach(bindings => {
+        const source = dereference(ref);
+        const keymap = parseControllerBindings(source, bindings);
+        if (keymap) result[bindings.id] = keymap;
       });
     });
 
@@ -125,7 +117,7 @@ export class ControllerManager {
 
   update(): void {
     if (this.nextInputListener.isActive()) {
-      this.nextInputListener.update(this.sourceRefArray());
+      this.nextInputListener.update(this.sourceRefs);
     }
   }
 }

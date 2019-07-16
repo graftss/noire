@@ -99,7 +99,7 @@ export class Display {
     this.layer.draw();
   }
 
-  update(input: T.GlobalInput, dt: number): void {
+  update(input: T.GlobalControllerInput, dt: number): void {
     this.cm.update(input, dt);
   }
 }
