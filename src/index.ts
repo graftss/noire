@@ -58,7 +58,7 @@ export class Noire {
 
     this.editorApp = createEditorApp(editorTarget);
     const store = this.editorApp.store;
-    // this.editorApp.render();
+    this.editorApp.render();
 
     this.controllerManager = new ControllerManager(store);
 

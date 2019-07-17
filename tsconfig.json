@@ -7,8 +7,5 @@
     "sourceMap": true,
     "target": "es6",
     "strictNullChecks": true
-  },
-  "exclude": [
-    "src/editor/components/**/*.tsx"
-  ]
+  }
 }
