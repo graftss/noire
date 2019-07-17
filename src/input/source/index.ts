@@ -63,8 +63,10 @@ export function dereference(ref: SourceRef): SourceContainer {
   }
 }
 
-export const stringifyBinding = (b: Binding): string =>
-  sources[b.sourceKind].stringifyBinding(b);
+export const stringifyBinding = (
+  sourceKind: SourceKind,
+  b: Maybe<Binding>,
+): string => sources[sourceKind].stringifyBinding(b);
 
 export const parseBinding = (b: Binding, s: SourceContainer): Maybe<T.Input> =>
   sources[s.kind].parseBinding(b, s);

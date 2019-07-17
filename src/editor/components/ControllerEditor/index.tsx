@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
 import { selectedController, allController } from '../../../state/selectors';
-import { selectEditorOption } from '../../../state/actions';
-import { ControllerSelect } from './Select';
+import { listenNextInput, selectEditorOption } from '../../../state/actions';
+import { ControllerSelect } from './ControllerSelect';
+import { ControllerBindings } from './ControllerBindings';
 
 interface PropsFromState {
   controllers: T.Controller[];
@@ -13,6 +14,7 @@ interface PropsFromState {
 
 interface PropsFromDispatch {
   selectEditorOption: (o: T.EditorOption) => void;
+  listenNextInput: (o: T.RemapState) => void;
 }
 
 interface ControllerEditorProps extends PropsFromState, PropsFromDispatch {}
@@ -25,6 +27,7 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(
     {
+      listenNextInput,
       selectEditorOption,
     },
     dispatch,
@@ -37,6 +40,7 @@ const editorOption = (o): T.EditorOption => ({
 
 const BaseControllerEditor: React.SFC<ControllerEditorProps> = ({
   controllers,
+  listenNextInput,
   selectedController,
   selectEditorOption,
 }) => (
@@ -46,6 +50,12 @@ const BaseControllerEditor: React.SFC<ControllerEditorProps> = ({
       selected={selectedController}
       selectController={o => selectEditorOption(editorOption(o))}
     />
+    {selectedController ? (
+      <ControllerBindings
+        controller={selectedController}
+        listenNextInput={listenNextInput}
+      />
+    ) : null}
   </div>
 );
 

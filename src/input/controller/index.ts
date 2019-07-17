@@ -1,6 +1,7 @@
 import * as T from '../../types';
 import { areBindingsEqual, parseBinding, sourceExists } from '../source';
 import { mapObj } from '../../utils';
+import { ps2Map } from './ps2';
 
 export interface ControllerKeyData {
   name: string;
@@ -21,8 +22,8 @@ export interface BaseControllerClass {
 export interface BaseController<C extends BaseControllerClass> {
   id: string;
   name: string;
-  controllerKind: C['kind'];
-  sourceKind: C['sourceKind'];
+  controllerKind: ControllerKind & C['kind'];
+  sourceKind: T.SourceKind & C['sourceKind'];
   bindings: Partial<
     {
       [K in keyof C['map']]: T.Binding & {
@@ -51,14 +52,30 @@ export const parseController = <C extends BaseControllerClass>(
     : mapObj(bindings, (b: Maybe<T.Binding>) => b && parseBinding(b, source));
 };
 
+export const getControllerMap = (
+  kind: ControllerKind,
+): Dict<ControllerKeyData> => {
+  switch (kind) {
+    case 'ps2': {
+      return ps2Map as Dict<ControllerKeyData>;
+    }
+  }
+};
+
+export const getKeyInputKind = (
+  kind: ControllerKind,
+  key: string,
+): T.InputKind => getControllerMap(kind)[key].inputKind;
+
 export const stringifyControllerKey = (
-  controllerClass?: ControllerClass,
-  key?: string,
+  controllerKind: ControllerKind,
+  key: string,
   listening?: boolean,
 ): string => {
   if (listening) return '(listening)';
-  if (!controllerClass || !key || !controllerClass.map[key]) return 'NONE';
-  return `${controllerClass.kind} -> ${controllerClass.map[key].name}`;
+  const map = getControllerMap(controllerKind);
+  if (!map || !key || !map[key]) return 'NONE';
+  return map[key].name;
 };
 
 export const hasKeyBoundTo = <C extends BaseControllerClass>(

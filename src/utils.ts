@@ -79,5 +79,5 @@ export const mapPath = <T, O>(p: string[], f: (t: Maybe<T>) => T, o: O): O =>
   assocPath(p, f(path(p, o)), o);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const cast = <T, U>(isU: (t: any) => boolean, t: any): Maybe<U> =>
+export const cast = <U>(isU: (t: any) => boolean, t: any): Maybe<U> =>
   isU(t) ? t : undefined;
