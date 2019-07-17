@@ -57,7 +57,7 @@ export { EditorState } from './state/reducers/root';
 export {
   InputState,
   RemapState,
-  ControllerUpdate,
+  ControllerBindingsUpdate,
 } from './state/reducers/input';
 export { EditorStore } from './state/createStore';
 export {

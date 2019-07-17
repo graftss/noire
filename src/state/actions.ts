@@ -7,7 +7,8 @@ export type EditorOption =
 
 export type EditorAction =
   | { type: 'selectEditorOption'; data: EditorOption }
-  | { type: 'updateController'; data: T.ControllerUpdate }
+  | { type: 'updateControllerBindings'; data: T.ControllerBindingsUpdate }
+  | { type: 'updateControllerName'; data: { id: string; name: string } }
   | { type: 'updateComponentKey'; data: T.ComponentKeyUpdate }
   | { type: 'listenNextInput'; data: T.RemapState }
   | { type: 'stopListening' };
@@ -17,9 +18,19 @@ export const selectEditorOption = (data: EditorOption): EditorAction => ({
   data,
 });
 
-export const updateController = (update: T.ControllerUpdate): EditorAction => ({
-  type: 'updateController',
+export const updateControllerBindings = (
+  update: T.ControllerBindingsUpdate,
+): EditorAction => ({
+  type: 'updateControllerBindings',
   data: update,
+});
+
+export const updateControllerName = (
+  id: string,
+  name: string,
+): EditorAction => ({
+  type: 'updateControllerName',
+  data: { id, name },
 });
 
 export const updateComponentKey = (

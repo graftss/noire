@@ -11,6 +11,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/material-ui": "^0.21.6",
     "@types/ramda": "^0.26.15",
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
@@ -34,6 +35,7 @@
   },
   "dependencies": {
     "konva": "^3.2.5",
+    "material-ui": "^0.20.2",
     "ramda": "^0.26.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

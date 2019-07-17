@@ -57,12 +57,20 @@ const b: Dict<T.GamepadBinding> = {
   rsY: toAxis(2),
 };
 
-const ps2Bindings: T.PS2Controller = {
+const ps2Controller1: T.PS2Controller = {
   id: bindingsId,
   name: 'test controller',
   controllerKind: 'ps2',
   sourceKind: 'gamepad',
   bindings: b,
+};
+
+const ps2Controller2: T.PS2Controller = {
+  id: 'test 2',
+  name: 'other test controller',
+  controllerKind: 'ps2',
+  sourceKind: 'gamepad',
+  bindings: {},
 };
 
 const leftStick: T.SerializedComponent = {
@@ -131,7 +139,7 @@ export const testInitialState: T.EditorState = {
   },
   input: {
     controller: {
-      all: [ps2Bindings],
+      all: [ps2Controller1, ps2Controller2],
     },
   },
 };

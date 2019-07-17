@@ -1,5 +1,5 @@
 import * as T from '../../types';
-import { mapIf, withoutKey } from '../../utils';
+import { mapIf, mapPath, withoutKey } from '../../utils';
 import { testInitialState } from '../testInitialState';
 import { hasKeyBoundTo } from '../../input/controller';
 
@@ -29,7 +29,7 @@ export interface InputState {
 // const defaultInputState: InputState = {};
 const defaultInputState = testInitialState.input;
 
-export interface ControllerUpdate {
+export interface ControllerBindingsUpdate {
   bindingsId: string;
   key: string;
   binding: Maybe<T.Binding>;
@@ -73,7 +73,7 @@ export const inputReducer = (
       return { ...state, remap: undefined };
     }
 
-    case 'updateController': {
+    case 'updateControllerBindings': {
       const { bindingsId, key, binding } = action.data;
 
       let initialBindings = state.controller.all;
@@ -100,6 +100,24 @@ export const inputReducer = (
           ),
         },
       };
+    }
+
+    case 'updateControllerName': {
+      const { id, name } = action.data;
+
+      return mapPath(
+        ['controller', 'all'],
+        cs =>
+          mapIf(
+            cs as T.Controller[],
+            c => c.id === id,
+            c => ({
+              ...c,
+              name: name.length === 0 ? 'Unnamed controller' : name,
+            }),
+          ),
+        state,
+      );
     }
   }
 

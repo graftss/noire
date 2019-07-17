@@ -1,7 +1,7 @@
 import * as T from '../types';
 import {
   updateComponentKey,
-  updateController,
+  updateControllerBindings,
   stopListening,
 } from '../state/actions';
 import { controllerWithBinding, allController } from '../state/selectors';
@@ -33,7 +33,7 @@ export class ControllerManager {
     binding: T.Binding,
   ): void => {
     this.store.dispatch(stopListening());
-    this.store.dispatch(updateController({ bindingsId, key, binding }));
+    this.store.dispatch(updateControllerBindings({ bindingsId, key, binding }));
   };
 
   private onAwaitedComponentBinding = (

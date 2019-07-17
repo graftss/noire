@@ -3,9 +3,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
 import { selectedController, allController } from '../../../state/selectors';
-import { listenNextInput, selectEditorOption } from '../../../state/actions';
+import {
+  listenNextInput,
+  selectEditorOption,
+  updateControllerName,
+} from '../../../state/actions';
 import { ControllerSelect } from './ControllerSelect';
-import { ControllerBindings } from './ControllerBindings';
+import { ControllerEditor } from './ControllerEditor';
 
 interface PropsFromState {
   controllers: T.Controller[];
@@ -15,6 +19,7 @@ interface PropsFromState {
 interface PropsFromDispatch {
   selectEditorOption: (o: T.EditorOption) => void;
   listenNextInput: (o: T.RemapState) => void;
+  updateControllerName: (id: string, name: string) => void;
 }
 
 interface ControllerEditorProps extends PropsFromState, PropsFromDispatch {}
@@ -29,6 +34,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
     {
       listenNextInput,
       selectEditorOption,
+      updateControllerName,
     },
     dispatch,
   );
@@ -38,11 +44,12 @@ const editorOption = (o): T.EditorOption => ({
   id: o ? o.value : undefined,
 });
 
-const BaseControllerEditor: React.SFC<ControllerEditorProps> = ({
+const BaseControllerPane: React.SFC<ControllerEditorProps> = ({
   controllers,
   listenNextInput,
   selectedController,
   selectEditorOption,
+  updateControllerName,
 }) => (
   <div>
     <ControllerSelect
@@ -50,16 +57,15 @@ const BaseControllerEditor: React.SFC<ControllerEditorProps> = ({
       selected={selectedController}
       selectController={o => selectEditorOption(editorOption(o))}
     />
-    {selectedController ? (
-      <ControllerBindings
-        controller={selectedController}
-        listenNextInput={listenNextInput}
-      />
-    ) : null}
+    <ControllerEditor
+      controller={selectedController}
+      listenNextInput={listenNextInput}
+      updateControllerName={updateControllerName}
+    />
   </div>
 );
 
-export const ControllerEditor = connect(
+export const ControllerPane = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(BaseControllerEditor);
+)(BaseControllerPane);
