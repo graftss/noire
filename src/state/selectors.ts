@@ -8,33 +8,25 @@ export const componentById = (
 ): Maybe<T.SerializedComponent> =>
   state && find(c => c.id === id, state.components);
 
-export const allControllerBindings = (
-  state: T.InputState,
-): T.ControllerBindings[] => state && state.controllerBindings.all;
+export const allController = (state: T.InputState): T.Controller[] =>
+  state && state.controller.all;
 
-export const controllerBindingsById = (
+export const controllerById = (
   state: T.InputState,
   id: string,
-): Maybe<T.ControllerBindings> =>
-  state && find(c => c.id === id, state.controllerBindings.all);
+): Maybe<T.Controller> => state && find(c => c.id === id, state.controller.all);
 
-export const controllerBindingsDict = (
-  state: T.InputState,
-): Dict<T.ControllerBindings> => keyBy(state.controllerBindings.all, c => c.id);
+export const controllerDict = (state: T.InputState): Dict<T.Controller> =>
+  keyBy(state.controller.all, c => c.id);
 
-export const selectedControllerBindings = (
-  state: T.InputState,
-): Maybe<T.ControllerBindings> =>
-  find(
-    c => c.id === state.controllerBindings.selectedId,
-    state.controllerBindings.all,
-  );
+export const selectedController = (state: T.InputState): Maybe<T.Controller> =>
+  find(c => c.id === state.controller.selectedId, state.controller.all);
 
-export const controllerBindingsWithBinding = (
+export const controllerWithBinding = (
   state: T.InputState,
   binding: T.Binding,
-): Maybe<{ bindings: T.ControllerBindings; key: string }> => {
-  for (const bindings of state.controllerBindings.all) {
+): Maybe<{ bindings: T.Controller; key: string }> => {
+  for (const bindings of state.controller.all) {
     const key = hasKeyBoundTo(bindings, binding);
     if (key) return { bindings, key };
   }

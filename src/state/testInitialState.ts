@@ -57,7 +57,7 @@ const b: Dict<T.GamepadBinding> = {
   rsY: toAxis(2),
 };
 
-const ps2Bindings: T.PS2Bindings = {
+const ps2Bindings: T.PS2Controller = {
   id: bindingsId,
   name: 'test controller',
   controllerKind: 'ps2',
@@ -130,7 +130,7 @@ export const testInitialState: T.EditorState = {
     components,
   },
   input: {
-    controllerBindings: {
+    controller: {
       all: [ps2Bindings],
     },
   },

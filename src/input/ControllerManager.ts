@@ -1,14 +1,11 @@
 import * as T from '../types';
 import {
   updateComponentKey,
-  updateControllerBindings,
+  updateController,
   stopListening,
 } from '../state/actions';
-import {
-  controllerBindingsWithBinding,
-  allControllerBindings,
-} from '../state/selectors';
-import { parseControllerBindings } from './controller';
+import { controllerWithBinding, allController } from '../state/selectors';
+import { parseController } from './controller';
 import { NextInputListener } from './NextInputListener';
 import { dereference } from './source';
 
@@ -36,7 +33,7 @@ export class ControllerManager {
     binding: T.Binding,
   ): void => {
     this.store.dispatch(stopListening());
-    this.store.dispatch(updateControllerBindings({ bindingsId, key, binding }));
+    this.store.dispatch(updateController({ bindingsId, key, binding }));
   };
 
   private onAwaitedComponentBinding = (
@@ -44,7 +41,7 @@ export class ControllerManager {
     inputKey: string,
   ) => (binding: T.Binding): void => {
     const state = this.store.getState();
-    const maybeBindings = controllerBindingsWithBinding(state.input, binding);
+    const maybeBindings = controllerWithBinding(state.input, binding);
 
     if (maybeBindings) {
       const { bindings, key } = maybeBindings;
@@ -105,14 +102,12 @@ export class ControllerManager {
 
   getInput(): GlobalControllerInput {
     const result = {};
-    const controllerBindings = allControllerBindings(
-      this.store.getState().input,
-    );
+    const controller = allController(this.store.getState().input);
 
     this.sourceRefs.gamepads.forEach(ref => {
-      controllerBindings.forEach(bindings => {
+      controller.forEach(bindings => {
         const source = dereference(ref);
-        const keymap = parseControllerBindings(source, bindings);
+        const keymap = parseController(source, bindings);
         if (keymap) result[bindings.id] = keymap;
       });
     });

@@ -22,10 +22,10 @@ const mapComponentWithId = (
 
 // TODO: generalize this into a utils function `assoc`
 const assocInputMap = <I>(
-  inputMap: Record<keyof I, T.ControllerBindingsKey>,
+  inputMap: Record<keyof I, T.ControllerKey>,
   bindingKey: keyof I,
-  controllerKey: Maybe<T.ControllerBindingsKey>,
-): Record<keyof I, T.ControllerBindingsKey> => ({
+  controllerKey: Maybe<T.ControllerKey>,
+): Record<keyof I, T.ControllerKey> => ({
   ...inputMap,
   [bindingKey]: controllerKey,
 });
@@ -46,15 +46,15 @@ export const displayReducer = (
 
     case 'updateComponentKey': {
       const { componentId, bindingsId, bindingsKey, inputKey } = action.data;
-      const controllerBindingsKey: Maybe<T.ControllerBindingsKey> =
+      const controllerKey: Maybe<T.ControllerKey> =
         bindingsId !== undefined && bindingsKey !== undefined
           ? { bindingsId, key: bindingsKey }
           : undefined;
       const addKey = (c: T.SerializedComponent): T.SerializedComponent =>
         mapPath(
           ['state', 'inputMap'],
-          (m: Record<string, T.ControllerBindingsKey>) =>
-            assocInputMap(m, inputKey, controllerBindingsKey),
+          (m: Record<string, T.ControllerKey>) =>
+            assocInputMap(m, inputKey, controllerKey),
           c,
         );
 

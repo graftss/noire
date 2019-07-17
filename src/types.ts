@@ -5,13 +5,14 @@ export {
 export { GlobalControllerInput } from './input/ControllerManager';
 export {
   ControllerKeyData,
-  ControllerBindingsKey,
+  ControllerKey,
   BaseController,
   Controller,
-  ControllerBindings,
-  BaseControllerBindings,
+  BaseControllerClass,
+  ControllerClass,
+  ControllerKind,
 } from './input/controller';
-export { PS2Controller, PS2Bindings } from './input/controller/ps2';
+export { PS2Controller, PS2ControllerClass } from './input/controller/ps2';
 export {
   Binding,
   BindingOfInputType,
@@ -58,7 +59,7 @@ export { EditorState } from './state/reducers/root';
 export {
   InputState,
   RemapState,
-  ControllerBindingsUpdate,
+  ControllerUpdate,
 } from './state/reducers/input';
 export { EditorStore } from './state/createStore';
 export {

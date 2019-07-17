@@ -20,8 +20,8 @@ export type RemapState =
 export interface InputState {
   selectedGamepadIndex?: number;
   remap?: RemapState;
-  controllerBindings: {
-    all: T.ControllerBindings[];
+  controller: {
+    all: T.Controller[];
     selectedId?: string;
   };
 }
@@ -29,17 +29,17 @@ export interface InputState {
 // const defaultInputState: InputState = {};
 const defaultInputState = testInitialState.input;
 
-export interface ControllerBindingsUpdate {
+export interface ControllerUpdate {
   bindingsId: string;
   key: string;
   binding: Maybe<T.Binding>;
 }
 
-const updateControllerBindings = (
-  bindings: T.ControllerBindings,
+const updateController = (
+  bindings: T.Controller,
   key: string,
   binding: Maybe<T.Binding>,
-): T.ControllerBindings => ({
+): T.Controller => ({
   ...bindings,
   bindings: {
     ...bindings.bindings,
@@ -57,8 +57,8 @@ export const inputReducer = (
         ...state,
         selectedGamepadIndex:
           action.data.kind === 'gamepad' ? action.data.index : undefined,
-        controllerBindings: {
-          ...state.controllerBindings,
+        controller: {
+          ...state.controller,
           selectedId:
             action.data.kind === 'controller' ? action.data.id : undefined,
         },
@@ -73,10 +73,10 @@ export const inputReducer = (
       return { ...state, remap: undefined };
     }
 
-    case 'updateControllerBindings': {
+    case 'updateController': {
       const { bindingsId, key, binding } = action.data;
 
-      let initialBindings = state.controllerBindings.all;
+      let initialBindings = state.controller.all;
 
       // remove other duplicate bindings if a new binding is being set
       if (binding) {
@@ -91,12 +91,12 @@ export const inputReducer = (
 
       return {
         ...state,
-        controllerBindings: {
-          ...state.controllerBindings,
+        controller: {
+          ...state.controller,
           all: mapIf(
             initialBindings,
             bs => bs.id === bindingsId,
-            bs => updateControllerBindings(bs, key, binding),
+            bs => updateController(bs, key, binding),
           ),
         },
       };

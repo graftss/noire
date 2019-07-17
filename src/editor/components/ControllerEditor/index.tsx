@@ -2,16 +2,13 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
-import {
-  selectedControllerBindings,
-  allControllerBindings,
-} from '../../../state/selectors';
+import { selectedController, allController } from '../../../state/selectors';
 import { selectEditorOption } from '../../../state/actions';
 import { ControllerSelect } from './Select';
 
 interface PropsFromState {
-  controllers: T.ControllerBindings[];
-  selectedController: Maybe<T.ControllerBindings>;
+  controllers: T.Controller[];
+  selectedController: Maybe<T.Controller>;
 }
 
 interface PropsFromDispatch {
@@ -21,8 +18,8 @@ interface PropsFromDispatch {
 interface ControllerEditorProps extends PropsFromState, PropsFromDispatch {}
 
 const mapStateToProps = (state: T.EditorState): PropsFromState => ({
-  controllers: allControllerBindings(state.input),
-  selectedController: selectedControllerBindings(state.input),
+  controllers: allController(state.input),
+  selectedController: selectedController(state.input),
 });
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>

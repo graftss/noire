@@ -3,8 +3,8 @@ import Select from 'react-select';
 import * as T from '../../../types';
 
 interface ControllerSelectProps {
-  all: T.ControllerBindings[];
-  selected: Maybe<T.ControllerBindings>;
+  all: T.Controller[];
+  selected: Maybe<T.Controller>;
   selectController: (o: ControllerOption) => void;
 }
 
@@ -13,7 +13,7 @@ interface ControllerOption {
   label: string;
 }
 
-const toOption = (b: T.ControllerBindings): ControllerOption => ({
+const toOption = (b: T.Controller): ControllerOption => ({
   value: b.id,
   label: b.name,
 });

@@ -12,13 +12,13 @@ export interface ControllerKeyData {
   key: string;
 }
 
-export interface BaseController {
+export interface BaseControllerClass {
   kind: string;
   map: Dict<ControllerKeyData>;
   sourceKind: T.SourceKind;
 }
 
-export interface BaseControllerBindings<C extends BaseController> {
+export interface BaseController<C extends BaseControllerClass> {
   id: string;
   name: string;
   controllerKind: C['kind'];
@@ -32,19 +32,19 @@ export interface BaseControllerBindings<C extends BaseController> {
   >;
 }
 
+export type ControllerClass = T.PS2ControllerClass;
+export type ControllerKind = ControllerClass['kind'];
+
 export type Controller = T.PS2Controller;
-export type ControllerKind = Controller['kind'];
 
-export type ControllerBindings = T.PS2Bindings;
-
-export interface ControllerBindingsKey {
+export interface ControllerKey {
   bindingsId: string;
   key: string;
 }
 
-export const parseControllerBindings = <C extends BaseController>(
+export const parseController = <C extends BaseControllerClass>(
   source: T.SourceContainer,
-  { sourceKind, bindings }: BaseControllerBindings<C>,
+  { sourceKind, bindings }: BaseController<C>,
 ): Maybe<Dict<Maybe<T.Input>>> => {
   return !sourceExists(source) || sourceKind !== source.kind
     ? undefined
@@ -52,17 +52,17 @@ export const parseControllerBindings = <C extends BaseController>(
 };
 
 export const stringifyControllerKey = (
-  controller?: Controller,
+  controllerClass?: ControllerClass,
   key?: string,
   listening?: boolean,
 ): string => {
   if (listening) return '(listening)';
-  if (!controller || !key || !controller[key]) return 'NONE';
-  return `${controller.kind} -> ${controller[key].name}`;
+  if (!controllerClass || !key || !controllerClass.map[key]) return 'NONE';
+  return `${controllerClass.kind} -> ${controllerClass.map[key].name}`;
 };
 
-export const hasKeyBoundTo = <C extends BaseController>(
-  { bindings }: BaseControllerBindings<C>,
+export const hasKeyBoundTo = <C extends BaseControllerClass>(
+  { bindings }: BaseController<C>,
   binding: T.Binding,
 ): Maybe<keyof C['map']> => {
   for (const key in bindings) {

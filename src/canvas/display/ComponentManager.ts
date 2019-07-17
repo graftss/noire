@@ -90,11 +90,11 @@ export class ComponentManager {
         component: TypedComponent<I, S>,
       ) => {
         const getControllerKeyInput = (
-          controllerBindingsKey: Maybe<T.ControllerBindingsKey>,
+          controllerKey: Maybe<T.ControllerKey>,
         ): Maybe<T.Input> => {
-          if (!controllerBindingsKey) return;
+          if (!controllerKey) return;
 
-          const { bindingsId, key } = controllerBindingsKey;
+          const { bindingsId, key } = controllerKey;
           const controllerInput = globalInput[bindingsId];
           return controllerInput && controllerInput[key];
         };

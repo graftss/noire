@@ -23,10 +23,10 @@ export const PS2Map = {
   rsY: { name: 'Right Stick Y', inputKind: 'axis', key: 'rsY' },
 };
 
-export type PS2Controller = T.BaseController & {
+export type PS2ControllerClass = T.BaseControllerClass & {
   kind: 'ps2';
   map: typeof PS2Map;
   sourceKind: 'gamepad';
 };
 
-export type PS2Bindings = T.BaseControllerBindings<PS2Controller>;
+export type PS2Controller = T.BaseController<PS2ControllerClass>;
