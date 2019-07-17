@@ -91,7 +91,9 @@ function parseBinding(
   }
 }
 
-const stringifyBinding = (b: GamepadBinding): string => {
+const stringifyBinding = (b: Maybe<GamepadBinding>): string => {
+  if (!b) return 'NONE';
+
   const sourceStr = `Player ${b.ref.index + 1}`;
   let bindingStr: string;
 

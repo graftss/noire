@@ -81,3 +81,13 @@ export const mapPath = <T, O>(p: string[], f: (t: Maybe<T>) => T, o: O): O =>
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const cast = <U>(isU: (t: any) => boolean, t: any): Maybe<U> =>
   isU(t) ? t : undefined;
+
+export const toPairs = <T>(obj: Dict<T>): [string, T][] => {
+  const result: [string, T][] = [];
+
+  for (const key in obj) {
+    result.push([key, obj[key]]);
+  }
+
+  return result;
+};

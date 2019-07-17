@@ -82,7 +82,7 @@ const getAwaitButtonInput = (s: T.GlobalSourceRefs): AwaitButtonInput => {
     if (gamepad) {
       result.gamepads[i] = {
         axes: clone(gamepad.axes),
-        buttons: clone(gamepad.buttons),
+        buttons: clone(gamepad.buttons.map(b => b.pressed)),
       };
     }
   }
@@ -130,7 +130,7 @@ const compareAwaitButtonInput = (
           inputKind: 'button',
           sourceKind: 'gamepad',
           ref,
-          index,
+          index: buttonIndex,
         };
       }
     }
