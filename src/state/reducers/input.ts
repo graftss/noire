@@ -20,8 +20,10 @@ export type RemapState =
 export interface InputState {
   selectedGamepadIndex?: number;
   remap?: RemapState;
-  controllerBindings: T.ControllerBindings[];
-  selectedControllerId?: string;
+  controllerBindings: {
+    all: T.ControllerBindings[];
+    selectedId?: string;
+  };
 }
 
 // const defaultInputState: InputState = {};
@@ -55,8 +57,11 @@ export const inputReducer = (
         ...state,
         selectedGamepadIndex:
           action.data.kind === 'gamepad' ? action.data.index : undefined,
-        selectedControllerId:
-          action.data.kind === 'controller' ? action.data.id : undefined,
+        controllerBindings: {
+          ...state.controllerBindings,
+          selectedId:
+            action.data.kind === 'controller' ? action.data.id : undefined,
+        },
       };
     }
 
@@ -71,7 +76,7 @@ export const inputReducer = (
     case 'updateControllerBindings': {
       const { bindingsId, key, binding } = action.data;
 
-      let initialBindings = state.controllerBindings;
+      let initialBindings = state.controllerBindings.all;
 
       // remove other duplicate bindings if a new binding is being set
       if (binding) {
@@ -86,11 +91,14 @@ export const inputReducer = (
 
       return {
         ...state,
-        controllerBindings: mapIf(
-          initialBindings,
-          bs => bs.id === bindingsId,
-          bs => updateControllerBindings(bs, key, binding),
-        ),
+        controllerBindings: {
+          ...state.controllerBindings,
+          all: mapIf(
+            initialBindings,
+            bs => bs.id === bindingsId,
+            bs => updateControllerBindings(bs, key, binding),
+          ),
+        },
       };
     }
   }

@@ -1,5 +1,4 @@
 import * as T from '../types';
-import { buttonInputKinds } from '../canvas/component/ButtonComponent';
 import { stickInputKinds } from '../canvas/component/StickComponent';
 import { dPadInputKinds } from '../canvas/component/DPadComponent';
 
@@ -60,6 +59,7 @@ const b: Dict<T.GamepadBinding> = {
 
 const ps2Bindings: T.PS2Bindings = {
   id: bindingsId,
+  name: 'test controller',
   controllerKind: 'ps2',
   sourceKind: 'gamepad',
   bindings: b,
@@ -130,6 +130,8 @@ export const testInitialState: T.EditorState = {
     components,
   },
   input: {
-    controllerBindings: [ps2Bindings],
+    controllerBindings: {
+      all: [ps2Bindings],
+    },
   },
 };

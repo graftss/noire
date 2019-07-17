@@ -4,7 +4,10 @@ import {
   updateControllerBindings,
   stopListening,
 } from '../state/actions';
-import { controllerBindingsWithBinding } from '../state/selectors';
+import {
+  controllerBindingsWithBinding,
+  allControllerBindings,
+} from '../state/selectors';
 import { parseControllerBindings } from './controller';
 import { NextInputListener } from './NextInputListener';
 import { dereference } from './source';
@@ -102,7 +105,9 @@ export class ControllerManager {
 
   getInput(): GlobalControllerInput {
     const result = {};
-    const controllerBindings = this.store.getState().input.controllerBindings;
+    const controllerBindings = allControllerBindings(
+      this.store.getState().input,
+    );
 
     this.sourceRefs.gamepads.forEach(ref => {
       controllerBindings.forEach(bindings => {

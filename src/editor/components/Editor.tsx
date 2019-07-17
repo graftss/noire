@@ -1,13 +1,11 @@
 import * as React from 'react';
+import { ControllerEditor } from './ControllerEditor';
 
-interface EditorProps {
+interface EditorProps {}
 
-}
-
-export const Editor: React.SFC<EditorProps> = ({
-
-}) => (
+export const Editor: React.SFC<EditorProps> = ({}) => (
   <div>
     editor
+    <ControllerEditor />
   </div>
 );

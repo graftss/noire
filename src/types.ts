@@ -4,7 +4,7 @@ export {
 } from './input/NextInputListener';
 export { GlobalControllerInput } from './input/ControllerManager';
 export {
-  ControllerKey,
+  ControllerKeyData,
   ControllerBindingsKey,
   BaseController,
   Controller,

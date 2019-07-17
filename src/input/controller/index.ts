@@ -2,10 +2,9 @@ import * as T from '../../types';
 import { areBindingsEqual, parseBinding, sourceExists } from '../source';
 import { mapObj } from '../../utils';
 
-export interface ControllerKey {
+export interface ControllerKeyData {
   name: string;
   inputKind: T.InputKind;
-  controllerId: string;
 
   // should be the same key referencing it in the controller's map.
   // there doesn't seem to be a way to get typescript to enforce
@@ -15,12 +14,13 @@ export interface ControllerKey {
 
 export interface BaseController {
   kind: string;
-  map: Dict<ControllerKey>;
+  map: Dict<ControllerKeyData>;
   sourceKind: T.SourceKind;
 }
 
 export interface BaseControllerBindings<C extends BaseController> {
   id: string;
+  name: string;
   controllerKind: C['kind'];
   sourceKind: C['sourceKind'];
   bindings: Partial<
