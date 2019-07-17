@@ -1,4 +1,5 @@
 import * as T from '../../types';
+import { cloneArray } from '../../utils';
 
 type GamepadKind = 'gamepad';
 
@@ -51,6 +52,11 @@ export type GamepadBinding =
 
 const DEFAULT_AXIS_VALUE_MARGIN_OF_ERROR = 0.001;
 const DEFAULT_AXIS_DEADZONE = 0.005;
+
+export interface GamepadInputSnapshot extends Record<T.InputKind, object> {
+  axis: number[];
+  button: { buttons: boolean[]; axisValues: number[] };
+}
 
 function parseBinding(
   b: GamepadAxisValueBinding | GamepadButtonBinding,
@@ -133,11 +139,110 @@ const bindingsEqual = (b1: GamepadBinding, b2: GamepadBinding): boolean => {
   return false;
 };
 
+// TODO: how do I get typescript to infer what K is based on the value
+// of `kind`?
+const snapshotInput = <K extends T.InputKind>(
+  ref: GamepadSourceRef,
+  kind: K,
+): Maybe<GamepadInputSnapshot[K]> => {
+  const gamepad = dereference(ref).gamepad;
+  if (!gamepad) return;
+
+  switch (kind) {
+    case 'button':
+      return {
+        buttons: gamepad.buttons.map(b => b.pressed),
+        axisValues: cloneArray(gamepad.axes),
+      } as GamepadInputSnapshot[K];
+
+    case 'axis':
+      return cloneArray(gamepad.axes) as GamepadInputSnapshot[K];
+  }
+};
+
+const MIN_AXIS_MAGNITUDE = 0.5;
+const MIN_AXIS_DIFFERENCE = 0.1;
+
+const snapshotBindingDiff = <IK extends T.InputKind>(
+  ref: GamepadSourceRef,
+  kind: IK,
+  input: GamepadInputSnapshot[IK],
+  baseline: GamepadInputSnapshot[IK],
+): Maybe<T.BindingOfInputType<IK>> => {
+  switch (kind) {
+    case 'axis': {
+      const a1 = input as GamepadInputSnapshot['axis'];
+      const a2 = baseline as GamepadInputSnapshot['axis'];
+
+      for (let index = 0; index < a1.length; index++) {
+        if (a1[index] === undefined) continue;
+
+        if (
+          Math.abs(a1[index] - a2[index]) > MIN_AXIS_DIFFERENCE &&
+          Math.abs(a1[index]) > MIN_AXIS_MAGNITUDE
+        ) {
+          const result: GamepadAxisBinding = {
+            kind: 'axis',
+            inputKind: 'axis',
+            sourceKind: 'gamepad',
+            ref,
+            index,
+            inverted: a1[index] < 0,
+          };
+
+          return result as T.BindingOfInputType<IK>;
+        }
+      }
+    }
+
+    case 'button': {
+      const a1 = input as GamepadInputSnapshot['button'];
+      const a2 = baseline as GamepadInputSnapshot['button'];
+
+      for (let axisIndex = 0; axisIndex < a1.axisValues.length; axisIndex++) {
+        const axis1 = a1.axisValues[axisIndex];
+
+        if (axis1 !== a2.axisValues[axisIndex]) {
+          const result: GamepadAxisValueBinding = {
+            kind: 'axisValue',
+            inputKind: 'button',
+            sourceKind: 'gamepad',
+            ref,
+            axis: axisIndex,
+            value: axis1,
+          };
+
+          return result as T.BindingOfInputType<IK>;
+        }
+      }
+
+      for (
+        let buttonIndex = 0;
+        buttonIndex < a1.buttons.length;
+        buttonIndex++
+      ) {
+        if (a1.buttons[buttonIndex] !== a2.buttons[buttonIndex]) {
+          const result: GamepadButtonBinding = {
+            kind: 'button',
+            inputKind: 'button',
+            sourceKind: 'gamepad',
+            ref,
+            index: buttonIndex,
+          };
+
+          return result as T.BindingOfInputType<IK>;
+        }
+      }
+    }
+  }
+};
+
 export type GamepadSource = T.TypedInputSource<
   GamepadKind,
   GamepadSourceRef,
   GamepadSourceContainer,
-  GamepadBinding
+  GamepadBinding,
+  GamepadInputSnapshot
 >;
 
 export const gamepadSource: GamepadSource = {
@@ -147,4 +252,6 @@ export const gamepadSource: GamepadSource = {
   exists,
   parseBinding,
   stringifyBinding,
+  snapshotInput,
+  snapshotBindingDiff,
 };

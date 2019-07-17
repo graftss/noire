@@ -1,7 +1,3 @@
-export {
-  AwaitAxisCallback,
-  AwaitButtonCallback,
-} from './input/NextInputListener';
 export { GlobalControllerInput } from './input/ControllerManager';
 export {
   ControllerKeyData,
@@ -17,6 +13,7 @@ export {
   Binding,
   BindingOfInputType,
   GlobalSourceRefs,
+  GlobalInputSnapshot,
   InputSource,
   SourceContainer,
   SourceKind,
@@ -31,6 +28,7 @@ export {
   GamepadAxisValueBinding,
   GamepadBinding,
   GamepadButtonBinding,
+  GamepadInputSnapshot,
   GamepadSource,
   GamepadSourceRef,
   GamepadSourceContainer,

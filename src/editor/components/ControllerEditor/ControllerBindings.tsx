@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { keys } from 'ramda';
 import * as T from '../../../types';
 import {
   stringifyControllerKey,
@@ -6,7 +7,6 @@ import {
 } from '../../../input/controller';
 import { stringifyBinding } from '../../../input/source';
 import { getControllerMap } from '../../../input/controller';
-import { keys } from 'ramda';
 
 interface ControllerBindingsProps {
   controller: T.Controller;
@@ -28,17 +28,13 @@ export const ControllerBindings: React.SFC<ControllerBindingsProps> = ({
   listenNextInput,
 }) => (
   <div>
-    {keys(getControllerMap(controller.controllerKind)).map(
-      key => (
-        <div key={key}>
-          <span>{stringifyControllerKey(controller.controllerKind, key)} </span>
-          <button
-            onClick={() => listenNextInput(getRemapState(controller, key))}
-          >
-            {stringifyBinding(controller.sourceKind, controller.bindings[key])}
-          </button>
-        </div>
-      ),
-    )}
+    {keys(getControllerMap(controller.controllerKind)).map(key => (
+      <div key={key}>
+        <span>{stringifyControllerKey(controller.controllerKind, key)} </span>
+        <button onClick={() => listenNextInput(getRemapState(controller, key))}>
+          {stringifyBinding(controller.sourceKind, controller.bindings[key])}
+        </button>
+      </div>
+    ))}
   </div>
 );

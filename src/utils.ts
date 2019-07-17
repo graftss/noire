@@ -21,7 +21,7 @@ export const sign = (x: number): number => (x > 0 ? 1 : x < 0 ? -1 : 0);
 
 // TODO: how do generics interact with readonly?
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const clone = (obj: Dict<any>): any => JSON.parse(JSON.stringify(obj));
+export const cloneArray = <T>(ts: Readonly<T[]>): T[] => ts.map(t => t);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mappedApply = (maps): any => mapObjIndexed((v, k) => maps[k](v));
@@ -89,5 +89,11 @@ export const toPairs = <T>(obj: Dict<T>): [string, T][] => {
     result.push([key, obj[key]]);
   }
 
+  return result;
+};
+
+export const unMaybeList = <T>(mts: Maybe<T>[]): T[] => {
+  const result: T[] = [];
+  for (const mt of mts) mt && result.push(mt);
   return result;
 };

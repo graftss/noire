@@ -72,13 +72,7 @@ export class ControllerManager {
           remap.key,
         );
 
-        switch (remap.inputKind) {
-          case 'button':
-            return this.nextInputListener.awaitButton(handler);
-          case 'axis':
-            return this.nextInputListener.awaitPositiveAxis(handler);
-        }
-
+        this.nextInputListener.await(remap.inputKind, handler);
         break;
       }
 
@@ -88,13 +82,7 @@ export class ControllerManager {
           remap.key,
         );
 
-        switch (remap.inputKind) {
-          case 'button':
-            return this.nextInputListener.awaitButton(handler);
-          case 'axis':
-            return this.nextInputListener.awaitPositiveAxis(handler);
-        }
-
+        this.nextInputListener.await(remap.inputKind, handler);
         break;
       }
     }
