@@ -32,6 +32,8 @@ export const controllerWithBinding = (
   }
 };
 
+export const allComponents = (state: T.DisplayState): T.SerializedComponent[] => state.components;
+
 export const selectedComponent = (
   state: T.DisplayState,
 ): Maybe<T.SerializedComponent> =>

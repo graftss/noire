@@ -5,7 +5,7 @@ import * as T from '../../../types';
 interface ControllerSelectProps {
   all: T.Controller[];
   selected: Maybe<T.Controller>;
-  selectController: (o: ControllerOption) => void;
+  selectController: (id: string) => void;
 }
 
 interface ControllerOption {
@@ -27,7 +27,7 @@ export const ControllerSelect: React.SFC<ControllerSelectProps> = ({
     <Select
       value={selected ? toOption(selected) : null}
       options={all.map(toOption)}
-      onChange={selectController}
+      onChange={o => selectController(o.value)}
       placeholder="Controllers"
     />
   </div>
