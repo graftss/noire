@@ -25,16 +25,16 @@ const toButton = (index): T.GamepadButtonBinding => ({
   index,
 });
 
-const toAxis = (index): T.GamepadAxisBinding => ({
+const toAxis = (index, inverted): T.GamepadAxisBinding => ({
   ref,
   sourceKind,
   inputKind: 'axis',
   kind: 'axis',
   index,
-  inverted: false,
+  inverted,
 });
 
-const b: Dict<T.GamepadBinding> = {
+const b = {
   padU: toAxisValue(9, -1),
   padL: toAxisValue(9, 0.7142857),
   padR: toAxisValue(9, -0.428571),
@@ -51,10 +51,14 @@ const b: Dict<T.GamepadBinding> = {
   r1: toButton(7),
   r2: toButton(5),
   r3: toButton(11),
-  lsX: toAxis(0),
-  lsY: toAxis(1),
-  rsX: toAxis(5),
-  rsY: toAxis(2),
+  lsXP: toAxis(0, false),
+  lsXN: toAxis(0, true),
+  lsYP: toAxis(1, false),
+  lsYN: toAxis(1, true),
+  rsXP: toAxis(5, false),
+  rsXN: toAxis(5, true),
+  rsYP: toAxis(2, false),
+  rsYN: toAxis(2, true),
 };
 
 const ps2Controller1: T.PS2Controller = {
@@ -90,10 +94,7 @@ const rightStick: T.SerializedComponent = {
   state: {
     x: 300,
     y: 200,
-    inputMap: {
-      x: { controllerId, key: 'lsX' },
-      y: { controllerId, key: 'lsY' },
-    },
+    inputMap: {},
   },
   inputKinds: stickInputKinds,
 };

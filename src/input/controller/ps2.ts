@@ -17,10 +17,14 @@ export const ps2Map = {
   r1: { name: 'R1', inputKind: 'button', key: 'r1' },
   r2: { name: 'R2', inputKind: 'button', key: 'r2' },
   r3: { name: 'R3', inputKind: 'button', key: 'r3' },
-  lsX: { name: 'Left Stick X', inputKind: 'axis', key: 'lsX' },
-  lsY: { name: 'Left Stick Y', inputKind: 'axis', key: 'lsY' },
-  rsX: { name: 'Right Stick X', inputKind: 'axis', key: 'rsX' },
-  rsY: { name: 'Right Stick Y', inputKind: 'axis', key: 'rsY' },
+  lsXP: { name: 'LS Right', inputKind: 'axis', key: 'lsXP' },
+  lsXN: { name: 'LS Left', inputKind: 'axis', key: 'lsXN' },
+  lsYP: { name: 'LS Down', inputKind: 'axis', key: 'lsYP' },
+  lsYN: { name: 'LS Up', inputKind: 'axis', key: 'lsYN' },
+  rsXP: { name: 'RS Right', inputKind: 'axis', key: 'rsXP' },
+  rsXN: { name: 'RS Left', inputKind: 'axis', key: 'rsXN' },
+  rsYP: { name: 'RS Down', inputKind: 'axis', key: 'rsYP' },
+  rsYN: { name: 'RS Up', inputKind: 'axis', key: 'rsYN' },
 };
 
 export type PS2ControllerClass = T.BaseControllerClass & {

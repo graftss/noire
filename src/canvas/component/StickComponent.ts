@@ -4,14 +4,18 @@ import { sign } from '../../utils';
 import { TypedComponent } from './Component';
 
 export interface StickInput extends Dict<T.Input> {
-  x: T.AxisInput;
-  y: T.AxisInput;
+  xp: T.AxisInput;
+  xn: T.AxisInput;
+  yp: T.AxisInput;
+  yn: T.AxisInput;
   button: T.ButtonInput;
 }
 
 export const stickInputKinds: T.InputKindProjection<StickInput> = {
-  x: 'axis',
-  y: 'axis',
+  xp: 'axis',
+  xn: 'axis',
+  yp: 'axis',
+  yn: 'axis',
   button: 'button',
 };
 
@@ -42,8 +46,10 @@ export const stickEditorConfig: T.ComponentEditorConfig = [
     kind: 'keys',
     data: {
       keys: [
-        { key: 'x', label: 'X-Axis', inputKind: 'axis' },
-        { key: 'y', label: 'Y-Axis', inputKind: 'axis' },
+        { key: 'xp', label: 'Right', inputKind: 'axis' },
+        { key: 'xn', label: 'Left', inputKind: 'axis' },
+        { key: 'yp', label: 'Down', inputKind: 'axis' },
+        { key: 'yn', label: 'Up', inputKind: 'axis' },
         { key: 'button', label: 'Button', inputKind: 'button' },
       ],
     },
@@ -89,7 +95,9 @@ export class StickComponent extends TypedComponent<StickInput, StickState>
   }
 
   update(input: StickInput): void {
-    const { x, y, button } = this.computeRawInput(input);
+    const { xn, xp, yn, yp, button } = this.computeRawInput(input);
+    const x = xn > 0 ? -xn : xp > 0 ? xp : 0;
+    const y = yn > 0 ? -yn : yp > 0 ? yp : 0;
 
     const {
       boundaryRadius,
