@@ -6,6 +6,7 @@ import { stickEditorConfig } from './StickComponent';
 
 interface Serialized<K, S, I extends Record<string, T.Input>> {
   id: string;
+  name: string;
   kind: K;
   state: Partial<S>;
   inputKinds: T.InputKindProjection<I>;

@@ -75,6 +75,7 @@ const ps2Controller2: T.PS2Controller = {
 
 const leftStick: T.SerializedComponent = {
   id: ids[0],
+  name: 'left stick',
   kind: 'stick',
   state: {},
   inputKinds: stickInputKinds,
@@ -82,6 +83,7 @@ const leftStick: T.SerializedComponent = {
 
 const rightStick: T.SerializedComponent = {
   id: ids[1],
+  name: 'right stick',
   kind: 'stick',
   state: {
     x: 300,
@@ -96,6 +98,7 @@ const rightStick: T.SerializedComponent = {
 
 const dPad: T.SerializedComponent = {
   id: ids[2],
+  name: 'directional pad',
   kind: 'dpad',
   state: {
     x: 150,
@@ -111,6 +114,7 @@ const dPad: T.SerializedComponent = {
 
 const button: T.SerializedComponent = {
   id: ids[3],
+  name: 'my first button',
   kind: 'button',
   state: {
     x: 50,

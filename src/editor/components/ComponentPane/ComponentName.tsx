@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { TextInputWithDefault } from '../TextInputWithDefault';
 
-interface ControllerNameProps {
+interface ComponentNameProps {
   initialName: string;
   save: (o: string) => void;
 }
 
-export const ControllerName: React.SFC<ControllerNameProps> = ({
+export const ComponentName: React.SFC<ComponentNameProps> = ({
   initialName,
   save,
 }) => {

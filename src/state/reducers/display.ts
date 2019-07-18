@@ -1,6 +1,7 @@
 import * as T from '../../types';
 import { testInitialState } from '../testInitialState';
-import { mapIf, mapPath } from '../../utils';
+import { mapPath } from '../../utils';
+import { mapComponentWithId } from '../selectors';
 
 export interface DisplayState {
   components: T.SerializedComponent[];
@@ -13,12 +14,6 @@ export interface ComponentKeyUpdate {
   bindingsId?: string;
   bindingsKey?: string;
 }
-
-const mapComponentWithId = (
-  components: T.SerializedComponent[],
-  id: string,
-  f: (c: T.SerializedComponent) => T.SerializedComponent,
-): T.SerializedComponent[] => mapIf(components, c => c.id === id, f);
 
 // TODO: generalize this into a utils function `assoc`
 const assocInputMap = <I>(
@@ -58,10 +53,14 @@ export const displayReducer = (
           c,
         );
 
-      return {
-        ...state,
-        components: mapComponentWithId(state.components, componentId, addKey),
-      };
+      return mapComponentWithId(state, componentId, addKey);
+    }
+
+    case 'updateComponentName': {
+      const { id, name } = action.data;
+      const newName = name.length === 0 ? 'Unnamed component' : name;
+
+      return mapComponentWithId(state, id, c => ({ ...c, name: newName }));
     }
   }
 

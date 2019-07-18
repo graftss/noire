@@ -1,5 +1,5 @@
 import * as T from '../types';
-import { find, keyBy } from '../utils';
+import { find, keyBy, mapIf } from '../utils';
 import { hasKeyBoundTo } from '../input/controller';
 
 export const componentById = (
@@ -45,3 +45,12 @@ export const selectedComponentProp = <K extends keyof T.SerializedComponent>(
   const c = selectedComponent(state);
   return c && c[prop];
 };
+
+export const mapComponentWithId = (
+  state: T.DisplayState,
+  id: string,
+  f: Auto<T.SerializedComponent>,
+): T.DisplayState => ({
+  ...state,
+  components: mapIf(state.components, c => c.id === id, f),
+});
