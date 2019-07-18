@@ -35,9 +35,9 @@ export const defaultDPadState: DPadState = {
 export const dPadEditorConfig: T.ComponentEditorConfig = [
   { kind: 'fixed', data: { label: 'DPad' } },
   {
-    kind: 'bindings',
+    kind: 'keys',
     data: {
-      bindings: [
+      keys: [
         { key: 'u', label: 'Up', inputKind: 'button' },
         { key: 'l', label: 'Left', inputKind: 'button' },
         { key: 'd', label: 'Down', inputKind: 'button' },

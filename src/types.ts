@@ -37,7 +37,7 @@ export { KeyboardSourceRef, KeyboardSource } from './input/source/keyboard';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export {
   SerializedComponent,
-  ComponentBinding,
+  ComponentKey,
   ComponentKind,
   ComponentEditorField,
   ComponentEditorConfig,

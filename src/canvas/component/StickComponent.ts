@@ -39,9 +39,9 @@ export const defaultStickState: StickState = {
 export const stickEditorConfig: T.ComponentEditorConfig = [
   { kind: 'fixed', data: { label: 'Stick' } },
   {
-    kind: 'bindings',
+    kind: 'keys',
     data: {
-      bindings: [
+      keys: [
         { key: 'x', label: 'X-Axis', inputKind: 'axis' },
         { key: 'y', label: 'Y-Axis', inputKind: 'axis' },
         { key: 'button', label: 'Button', inputKind: 'button' },

@@ -68,14 +68,14 @@ export const getKeyInputKind = (
 ): T.InputKind => getControllerMap(kind)[key].inputKind;
 
 export const stringifyControllerKey = (
-  controllerKind: ControllerKind,
+  controller: Controller,
   key: string,
   listening?: boolean,
 ): string => {
   if (listening) return '(listening)';
-  const map = getControllerMap(controllerKind);
+  const map = getControllerMap(controller.controllerKind);
   if (!map || !key || !map[key]) return 'NONE';
-  return map[key].name;
+  return `${controller.name}, ${map[key].name}`;
 };
 
 export const hasKeyBoundTo = <C extends BaseControllerClass>(

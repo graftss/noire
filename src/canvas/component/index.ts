@@ -19,7 +19,7 @@ export type SerializedComponent =
 
 export type ComponentKind = SerializedComponent['kind'];
 
-export interface ComponentBinding {
+export interface ComponentKey {
   key: string;
   label: string;
   inputKind: T.InputKind;
@@ -32,8 +32,8 @@ export type ComponentEditorField =
       data: { key: string; label: string; max: number; min: number };
     }
   | {
-      kind: 'bindings';
-      data: { bindings: ComponentBinding[] };
+      kind: 'keys';
+      data: { keys: ComponentKey[] };
     };
 
 export type ComponentEditorConfig = ComponentEditorField[];
@@ -50,3 +50,8 @@ export const componentEditorConfigs: Record<
 export interface GroupContainer {
   group: Konva.Group;
 }
+
+export const stringifyComponentKey = ({
+  label,
+  inputKind,
+}: ComponentKey): string => `${label} (${inputKind})`;

@@ -31,9 +31,9 @@ export const defaultButtonState: ButtonState = {
 export const buttonEditorConfig: T.ComponentEditorConfig = [
   { kind: 'fixed', data: { label: 'Button' } },
   {
-    kind: 'bindings',
+    kind: 'keys',
     data: {
-      bindings: [{ key: 'button', label: 'Button', inputKind: 'button' }],
+      keys: [{ key: 'button', label: 'Button', inputKind: 'button' }],
     },
   },
 ];

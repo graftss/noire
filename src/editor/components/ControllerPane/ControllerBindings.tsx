@@ -30,7 +30,7 @@ export const ControllerBindings: React.SFC<ControllerBindingsProps> = ({
   <div>
     {keys(getControllerMap(controller.controllerKind)).map(key => (
       <div key={key}>
-        <span>{stringifyControllerKey(controller.controllerKind, key)} </span>
+        <span>{stringifyControllerKey(controller, key)} </span>
         <button onClick={() => listenNextInput(getRemapState(controller, key))}>
           {stringifyBinding(controller.sourceKind, controller.bindings[key])}
         </button>

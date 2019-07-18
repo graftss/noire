@@ -16,7 +16,7 @@ export const controllerById = (
   id: string,
 ): Maybe<T.Controller> => state && find(c => c.id === id, state.controller.all);
 
-export const controllerDict = (state: T.InputState): Dict<T.Controller> =>
+export const controllersById = (state: T.InputState): Dict<T.Controller> =>
   keyBy(state.controller.all, c => c.id);
 
 export const selectedController = (state: T.InputState): Maybe<T.Controller> =>
@@ -32,7 +32,8 @@ export const controllerWithBinding = (
   }
 };
 
-export const allComponents = (state: T.DisplayState): T.SerializedComponent[] => state.components;
+export const allComponents = (state: T.DisplayState): T.SerializedComponent[] =>
+  state.components;
 
 export const selectedComponent = (
   state: T.DisplayState,
