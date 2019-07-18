@@ -4,7 +4,7 @@ import {
   updateControllerBindings,
   stopListening,
 } from '../state/actions';
-import { controllerWithBinding, allController } from '../state/selectors';
+import { controllerWithBinding, allControllers } from '../state/selectors';
 import { parseController } from './controller';
 import { NextInputListener } from './NextInputListener';
 import { dereference } from './source';
@@ -29,11 +29,13 @@ export class ControllerManager {
     store.subscribe(() => this.storeSubscriber());
   }
 
-  private onAwaitedControllerBinding = (bindingsId: string, key: string) => (
+  private onAwaitedControllerBinding = (controllerId: string, key: string) => (
     binding: T.Binding,
   ): void => {
     this.store.dispatch(stopListening());
-    this.store.dispatch(updateControllerBindings({ bindingsId, key, binding }));
+    this.store.dispatch(
+      updateControllerBindings({ controllerId, key, binding }),
+    );
   };
 
   private onAwaitedComponentBinding = (
@@ -50,7 +52,7 @@ export class ControllerManager {
         updateComponentKey({
           componentId,
           inputKey,
-          bindingsId: bindings.id,
+          controllerId: bindings.id,
           bindingsKey: key,
         }),
       );
@@ -90,7 +92,7 @@ export class ControllerManager {
 
   getInput(): GlobalControllerInput {
     const result = {};
-    const controller = allController(this.store.getState().input);
+    const controller = allControllers(this.store.getState().input);
 
     this.sourceRefs.gamepads.forEach(ref => {
       controller.forEach(bindings => {

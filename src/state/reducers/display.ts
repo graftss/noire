@@ -11,7 +11,7 @@ export interface DisplayState {
 export interface ComponentKeyUpdate {
   componentId: string;
   inputKey: string;
-  bindingsId?: string;
+  controllerId?: string;
   bindingsKey?: string;
 }
 
@@ -40,10 +40,10 @@ export const displayReducer = (
     }
 
     case 'updateComponentKey': {
-      const { componentId, bindingsId, bindingsKey, inputKey } = action.data;
+      const { componentId, controllerId, bindingsKey, inputKey } = action.data;
       const controllerKey: Maybe<T.ControllerKey> =
-        bindingsId !== undefined && bindingsKey !== undefined
-          ? { bindingsId, key: bindingsKey }
+        controllerId !== undefined && bindingsKey !== undefined
+          ? { controllerId, key: bindingsKey }
           : undefined;
       const addKey = (c: T.SerializedComponent): T.SerializedComponent =>
         mapPath(

@@ -6,7 +6,7 @@ const ids = 'qwertyuiopasdfghjklzxcvbnm,';
 
 const ref: T.GamepadSourceRef = { kind: 'gamepad', index: 1 };
 const sourceKind = 'gamepad';
-const bindingsId = 'test';
+const controllerId = 'test';
 
 const toAxisValue = (axis, value): T.GamepadAxisValueBinding => ({
   ref,
@@ -58,7 +58,7 @@ const b: Dict<T.GamepadBinding> = {
 };
 
 const ps2Controller1: T.PS2Controller = {
-  id: bindingsId,
+  id: controllerId,
   name: 'test controller',
   controllerKind: 'ps2',
   sourceKind: 'gamepad',
@@ -89,8 +89,8 @@ const rightStick: T.SerializedComponent = {
     x: 300,
     y: 200,
     inputMap: {
-      x: { bindingsId, key: 'lsX' },
-      y: { bindingsId, key: 'lsY' },
+      x: { controllerId, key: 'lsX' },
+      y: { controllerId, key: 'lsY' },
     },
   },
   inputKinds: stickInputKinds,
@@ -105,8 +105,8 @@ const dPad: T.SerializedComponent = {
     y: 150,
     pressedFill: 'blue',
     inputMap: {
-      d: { bindingsId, key: 'triangle' },
-      u: { bindingsId, key: 'padU' },
+      d: { controllerId, key: 'triangle' },
+      u: { controllerId, key: 'padU' },
     },
   },
   inputKinds: dPadInputKinds,
@@ -124,7 +124,7 @@ const button: T.SerializedComponent = {
     fill: 'black',
     pressedFill: 'red',
     inputMap: {
-      button: { bindingsId, key: 'square' },
+      button: { controllerId, key: 'square' },
     },
   },
   inputKinds: { button: 'button' },

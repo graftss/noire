@@ -39,7 +39,7 @@ export type ControllerKind = ControllerClass['kind'];
 export type Controller = T.PS2Controller;
 
 export interface ControllerKey {
-  bindingsId: string;
+  controllerId: string;
   key: string;
 }
 

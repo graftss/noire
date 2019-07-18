@@ -30,7 +30,7 @@ export interface InputState {
 const defaultInputState = testInitialState.input;
 
 export interface ControllerBindingsUpdate {
-  bindingsId: string;
+  controllerId: string;
   key: string;
   binding: Maybe<T.Binding>;
 }
@@ -74,7 +74,7 @@ export const inputReducer = (
     }
 
     case 'updateControllerBindings': {
-      const { bindingsId, key, binding } = action.data;
+      const { controllerId, key, binding } = action.data;
 
       let initialBindings = state.controller.all;
 
@@ -95,7 +95,7 @@ export const inputReducer = (
           ...state.controller,
           all: mapIf(
             initialBindings,
-            bs => bs.id === bindingsId,
+            bs => bs.id === controllerId,
             bs => updateController(bs, key, binding),
           ),
         },

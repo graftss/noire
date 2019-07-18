@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
-import { selectedController, allController } from '../../../state/selectors';
+import { selectedController, allControllers } from '../../../state/selectors';
 import {
   listenNextInput,
   selectEditorOption,
@@ -25,7 +25,7 @@ interface PropsFromDispatch {
 interface ControllerEditorProps extends PropsFromState, PropsFromDispatch {}
 
 const mapStateToProps = (state: T.EditorState): PropsFromState => ({
-  controllers: allController(state.input),
+  controllers: allControllers(state.input),
   selectedController: selectedController(state.input),
 });
 

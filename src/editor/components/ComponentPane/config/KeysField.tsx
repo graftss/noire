@@ -23,8 +23,8 @@ const stringifyKey = (
   const controllerKey: Maybe<T.ControllerKey> = inputMap[componentKey.key];
   if (!controllerKey) return emptyStr;
 
-  const { bindingsId, key } = controllerKey;
-  const controller: T.Controller = controllersById[bindingsId];
+  const { controllerId, key } = controllerKey;
+  const controller: T.Controller = controllersById[controllerId];
   return `${stringifyComponentKey(componentKey)}: ${stringifyControllerKey(
     controller,
     key,

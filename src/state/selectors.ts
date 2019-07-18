@@ -8,7 +8,7 @@ export const componentById = (
 ): Maybe<T.SerializedComponent> =>
   state && find(c => c.id === id, state.components);
 
-export const allController = (state: T.InputState): T.Controller[] =>
+export const allControllers = (state: T.InputState): T.Controller[] =>
   state && state.controller.all;
 
 export const controllerById = (

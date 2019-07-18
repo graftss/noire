@@ -94,8 +94,8 @@ export class ComponentManager {
         ): Maybe<T.Input> => {
           if (!controllerKey) return;
 
-          const { bindingsId, key } = controllerKey;
-          const controllerInput = globalInput[bindingsId];
+          const { controllerId, key } = controllerKey;
+          const controllerInput = globalInput[controllerId];
           return controllerInput && controllerInput[key];
         };
 
