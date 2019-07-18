@@ -1,44 +1,60 @@
 import * as React from 'react';
 import * as T from '../../../../types';
 import { stringifyComponentKey } from '../../../../canvas/component';
-import { stringifyControllerKey } from '../../../../input/controller';
+import {
+  getKeyInputKind,
+  stringifyControllerKey,
+} from '../../../../input/controller';
 
 interface KeysFieldProps {
   component: T.SerializedComponent;
-  keys: T.ComponentKey[];
   controllersById: Dict<T.Controller>;
+  keys: T.ComponentKey[];
+  listenNextInput: (s: T.RemapState) => void;
 }
 
-const stringifyKey = (
-  componentKey: T.ComponentKey,
-  component: T.SerializedComponent,
+const controllerKeyStr = (
+  controllerKey: Maybe<T.ControllerKey>,
   controllersById: Dict<T.Controller>,
 ): string => {
-  const componentKeyStr = stringifyComponentKey(componentKey);
-  const emptyStr = `${componentKeyStr}: NONE`;
-
-  const { inputMap } = component.state;
-  if (!inputMap) return emptyStr;
-
-  const controllerKey: Maybe<T.ControllerKey> = inputMap[componentKey.key];
-  if (!controllerKey) return emptyStr;
+  if (!controllerKey) return 'NONE';
 
   const { controllerId, key } = controllerKey;
   const controller: T.Controller = controllersById[controllerId];
-  return `${stringifyComponentKey(componentKey)}: ${stringifyControllerKey(
-    controller,
-    key,
-  )}`;
+  return stringifyControllerKey(controller, key);
 };
+
+const getRemapState = (
+  component: T.SerializedComponent,
+  key: string,
+): T.RemapState => ({
+  componentId: component.id,
+  key,
+  kind: 'component',
+  inputKind: component.inputKinds[key],
+});
 
 export const KeysField: React.SFC<KeysFieldProps> = ({
   component,
   controllersById,
   keys,
-}) => (
-  <div>
-    {keys.map(key => (
-      <div key={key.key}>{stringifyKey(key, component, controllersById)}</div>
-    ))}
-  </div>
-);
+  listenNextInput,
+}) => {
+  return (
+    <div>
+      {keys.map(ck => (
+        <div key={ck.key}>
+          {stringifyComponentKey(ck)}
+          <button
+            onClick={() => listenNextInput(getRemapState(component, ck.key))}
+          >
+            {controllerKeyStr(
+              component.state.inputMap[ck.key],
+              controllersById,
+            )}
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+};

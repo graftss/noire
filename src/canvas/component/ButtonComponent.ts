@@ -26,6 +26,7 @@ export const defaultButtonState: ButtonState = {
   height: 40,
   fill: 'black',
   pressedFill: 'darkred',
+  inputMap: {},
 };
 
 export const buttonEditorConfig: T.ComponentEditorConfig = [

@@ -14,14 +14,14 @@ export const dPadInputKinds: T.InputKindProjection<DPadInput> = {
   r: 'button',
 };
 
-export interface DPadState extends T.BaseComponentState<DPadInput> {
+export type DPadState = T.BaseComponentState<DPadInput> & {
   x: number;
   y: number;
   buttonWidth: number;
   buttonHeight: number;
   fill: string;
   pressedFill: string;
-}
+};
 
 export const defaultDPadState: DPadState = {
   x: 0,
@@ -30,6 +30,7 @@ export const defaultDPadState: DPadState = {
   buttonHeight: 20,
   fill: 'black',
   pressedFill: 'darkred',
+  inputMap: {},
 };
 
 export const dPadEditorConfig: T.ComponentEditorConfig = [

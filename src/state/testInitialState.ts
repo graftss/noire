@@ -77,7 +77,9 @@ const leftStick: T.SerializedComponent = {
   id: ids[0],
   name: 'left stick',
   kind: 'stick',
-  state: {},
+  state: {
+    inputMap: {},
+  },
   inputKinds: stickInputKinds,
 };
 

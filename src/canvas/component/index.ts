@@ -4,11 +4,11 @@ import { buttonEditorConfig, ButtonComponentInput } from './ButtonComponent';
 import { dPadEditorConfig } from './DPadComponent';
 import { stickEditorConfig } from './StickComponent';
 
-interface Serialized<K, S, I extends Record<string, T.Input>> {
+interface Serialized<K, S, I extends Dict<T.Input>> {
   id: string;
   name: string;
   kind: K;
-  state: Partial<S>;
+  state: Partial<S> & T.BaseComponentState<I>;
   inputKinds: T.InputKindProjection<I>;
 }
 

@@ -5,16 +5,16 @@ import { hasKeyBoundTo } from '../../input/controller';
 
 export type RemapState =
   | {
-      kind: 'controller';
       controllerId: string;
-      key: string;
       inputKind: T.InputKind;
+      key: string;
+      kind: 'controller';
     }
   | {
-      kind: 'component';
       componentId: string;
       inputKind: T.InputKind;
       key: string;
+      kind: 'component';
     };
 
 export interface InputState {

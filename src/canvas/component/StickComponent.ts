@@ -15,7 +15,7 @@ export const stickInputKinds: T.InputKindProjection<StickInput> = {
   button: 'button',
 };
 
-export interface StickState extends T.BaseComponentState<StickInput> {
+export type StickState = T.BaseComponentState<StickInput> & {
   x: number;
   y: number;
   boundaryRadius: number;
@@ -23,7 +23,7 @@ export interface StickState extends T.BaseComponentState<StickInput> {
   rangeScaling: number;
   stickFill: string;
   pressedStickFill: string;
-}
+};
 
 export const defaultStickState: StickState = {
   x: 0,

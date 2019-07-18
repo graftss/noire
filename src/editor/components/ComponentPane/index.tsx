@@ -7,6 +7,7 @@ import {
   controllersById,
 } from '../../../state/selectors';
 import {
+  listenNextInput,
   updateComponentName,
   selectEditorOption,
 } from '../../../state/actions';
@@ -23,6 +24,7 @@ interface PropsFromState {
 interface PropsFromDispatch {
   selectComponent: (id: string) => void;
   updateComponentName: (id: string, name: string) => void;
+  listenNextInput: (s: T.RemapState) => void;
 }
 
 interface ComponentPaneProps extends PropsFromState, PropsFromDispatch {}
@@ -36,6 +38,7 @@ const mapStateToProps = (state): PropsFromState => ({
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(
     {
+      listenNextInput,
       selectComponent: id => selectEditorOption({ kind: 'component', id }),
       updateComponentName,
     },
@@ -45,6 +48,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
 const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
   components,
   controllersById,
+  listenNextInput,
   selectComponent,
   selected,
   updateComponentName,
@@ -57,6 +61,7 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
     />
     <ComponentEditor
       controllersById={controllersById}
+      listenNextInput={listenNextInput}
       selected={selected}
       updateComponentName={updateComponentName}
     />

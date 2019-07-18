@@ -75,7 +75,7 @@ export const stringifyControllerKey = (
   if (listening) return '(listening)';
   const map = getControllerMap(controller.controllerKind);
   if (!map || !key || !map[key]) return 'NONE';
-  return `${controller.name}, ${map[key].name}`;
+  return `${map[key].name} (${controller.name})`;
 };
 
 export const hasKeyBoundTo = <C extends BaseControllerClass>(

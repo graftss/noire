@@ -5,9 +5,13 @@ import { defaultInputByKind, rawifyInputDict } from '../../input/input';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Component = TypedComponent<any, any>;
 
+export type ComponentInputMap<I extends Dict<T.Input>> = Partial<
+  Record<keyof I, Maybe<T.ControllerKey>>
+>;
+
 export interface BaseComponentState<I extends Dict<T.Input>> {
   defaultInput?: Partial<I>;
-  inputMap?: Partial<Record<keyof I, Maybe<T.ControllerKey>>>;
+  inputMap: ComponentInputMap<I>;
 }
 
 export abstract class TypedComponent<

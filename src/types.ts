@@ -43,7 +43,11 @@ export {
   ComponentEditorConfig,
   GroupContainer,
 } from './canvas/component/';
-export { BaseComponentState, Component } from './canvas/component/Component';
+export {
+  BaseComponentState,
+  Component,
+  ComponentInputMap,
+} from './canvas/component/Component';
 export { StickState, StickInput } from './canvas/component/StickComponent';
 export { DPadState, DPadInput } from './canvas/component/DPadComponent';
 export {
