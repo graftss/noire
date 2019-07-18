@@ -193,6 +193,8 @@ const snapshotBindingDiff = <IK extends T.InputKind>(
           return result as T.BindingOfInputType<IK>;
         }
       }
+
+      break;
     }
 
     case 'button': {

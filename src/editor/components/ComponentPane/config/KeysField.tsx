@@ -1,10 +1,7 @@
 import * as React from 'react';
 import * as T from '../../../../types';
 import { stringifyComponentKey } from '../../../../canvas/component';
-import {
-  getKeyInputKind,
-  stringifyControllerKey,
-} from '../../../../input/controller';
+import { stringifyControllerKey } from '../../../../input/controller';
 
 interface KeysFieldProps {
   component: T.SerializedComponent;

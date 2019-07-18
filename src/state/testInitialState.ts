@@ -133,7 +133,7 @@ const button: T.SerializedComponent = {
 };
 
 const components: T.SerializedComponent[] = [
-  // leftStick,
+  leftStick,
   rightStick,
   dPad,
   button,

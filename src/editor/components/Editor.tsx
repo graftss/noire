@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { ControllerPane } from './ControllerPane';
+// import { ControllerPane } from './ControllerPane';
 import { ComponentPane } from './ComponentPane';
 
-interface EditorProps {}
+// interface EditorProps {}
 
-export const Editor: React.SFC<EditorProps> = ({}) => (
+export const Editor: React.SFC<{}> = ({}) => (
   <div>
     editor
     <ComponentPane />

@@ -29,13 +29,21 @@ export abstract class TypedComponent<
   }
 
   protected applyDefaultInput(input: Partial<I>): Required<I> {
-    return {
-      // TODO: type this accurately
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(mapObj(this.inputKinds, defaultInputByKind) as Required<I>),
-      ...this.state.defaultInput,
-      ...input,
-    };
+    const { defaultInput } = this.state;
+    const allInput = mapObj(this.inputKinds, defaultInputByKind) as Required<I>;
+    for (const key in allInput) {
+      let i: I[Extract<keyof I, string>];
+
+      if (input[key] !== undefined)
+        i = input[key] as I[Extract<keyof I, string>];
+      else if (defaultInput && defaultInput[key] !== undefined)
+        i = input[key] as I[Extract<keyof I, string>];
+      else i = allInput[key];
+
+      allInput[key] = i;
+    }
+
+    return allInput;
   }
 
   protected computeRawInput(
