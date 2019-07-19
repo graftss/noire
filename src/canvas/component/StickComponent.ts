@@ -40,6 +40,20 @@ export const defaultStickState: StickState = {
   inputMap: {},
 };
 
+export type SerializedStickComponent = T.Serialized<
+  'stick',
+  StickState,
+  StickInput
+>;
+
+export const newSerializedStick = (id: string): SerializedStickComponent => ({
+  id,
+  kind: 'stick',
+  name: 'New Stick Component',
+  state: defaultStickState,
+  inputKinds: stickInputKinds,
+});
+
 export const stickEditorConfig: T.ComponentEditorConfig = [
   { kind: 'fixed', data: { label: 'Stick' } },
   {

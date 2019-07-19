@@ -29,6 +29,20 @@ export const defaultButtonState: ButtonState = {
   inputMap: {},
 };
 
+export type SerializedButtonComponent = T.Serialized<
+  'button',
+  T.ButtonState,
+  T.ButtonComponentInput
+>;
+
+export const newSerializedButton = (id: string): SerializedButtonComponent => ({
+  id,
+  kind: 'button',
+  name: 'New Button Component',
+  state: defaultButtonState,
+  inputKinds: buttonInputKinds,
+});
+
 export const buttonEditorConfig: T.ComponentEditorConfig = [
   { kind: 'fixed', data: { label: 'Button' } },
   {

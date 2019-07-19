@@ -11,6 +11,7 @@ export type EditorAction =
   | { type: 'updateControllerName'; data: { id: string; name: string } }
   | { type: 'updateComponentKey'; data: T.ComponentKeyUpdate }
   | { type: 'updateComponentName'; data: { id: string; name: string } }
+  | { type: 'addComponent'; data: T.ComponentKind }
   | { type: 'listenNextInput'; data: T.RemapState }
   | { type: 'stopListening' };
 
@@ -47,6 +48,11 @@ export const updateComponentName = (
 ): EditorAction => ({
   type: 'updateComponentName',
   data: { id, name },
+});
+
+export const addComponent = (kind: T.ComponentKind): EditorAction => ({
+  type: 'addComponent',
+  data: kind,
 });
 
 export const listenNextInput = (remapState: T.RemapState): EditorAction => ({

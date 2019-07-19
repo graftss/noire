@@ -36,6 +36,7 @@ export {
 export { KeyboardSourceRef, KeyboardSource } from './input/source/keyboard';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export {
+  Serialized,
   SerializedComponent,
   ComponentKey,
   ComponentKind,
@@ -48,11 +49,20 @@ export {
   Component,
   ComponentInputMap,
 } from './canvas/component/Component';
-export { StickState, StickInput } from './canvas/component/StickComponent';
-export { DPadState, DPadInput } from './canvas/component/DPadComponent';
+export {
+  StickState,
+  StickInput,
+  SerializedStickComponent,
+} from './canvas/component/StickComponent';
+export {
+  DPadState,
+  DPadInput,
+  SerializedDPadComponent,
+} from './canvas/component/DPadComponent';
 export {
   ButtonState,
   ButtonComponentInput,
+  SerializedButtonComponent,
 } from './canvas/component/ButtonComponent';
 export { EditorApp } from './editor';
 export { EditorAction, EditorOption } from './state/actions';

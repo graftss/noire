@@ -33,6 +33,20 @@ export const defaultDPadState: DPadState = {
   inputMap: {},
 };
 
+export type SerializedDPadComponent = T.Serialized<
+  'dpad',
+  DPadState,
+  DPadInput
+>;
+
+export const newSerializedDPad = (id: string): SerializedDPadComponent => ({
+  id,
+  kind: 'dpad',
+  name: 'New DPad Component',
+  state: defaultDPadState,
+  inputKinds: dPadInputKinds,
+});
+
 export const dPadEditorConfig: T.ComponentEditorConfig = [
   { kind: 'fixed', data: { label: 'DPad' } },
   {
