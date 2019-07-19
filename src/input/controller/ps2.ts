@@ -1,6 +1,6 @@
 import * as T from '../../types';
 
-export const ps2Map = {
+export const ps2Map: Dict<T.ControllerKeyData> = {
   padU: { name: 'D-Pad Up', inputKind: 'button', key: 'padU' },
   padL: { name: 'D-Pad Left', inputKind: 'button', key: 'padL' },
   padD: { name: 'D-Pad Down', inputKind: 'button', key: 'padD' },
@@ -29,8 +29,6 @@ export const ps2Map = {
 
 export type PS2ControllerClass = T.BaseControllerClass & {
   kind: 'ps2';
-  map: typeof ps2Map;
-  sourceKind: 'gamepad';
 };
 
 export type PS2Controller = T.BaseController<PS2ControllerClass>;

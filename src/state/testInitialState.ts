@@ -65,7 +65,6 @@ const ps2Controller1: T.PS2Controller = {
   id: controllerId,
   name: 'test controller',
   controllerKind: 'ps2',
-  sourceKind: 'gamepad',
   bindings: b,
 };
 
@@ -73,7 +72,6 @@ const ps2Controller2: T.PS2Controller = {
   id: 'test 2',
   name: 'other test controller',
   controllerKind: 'ps2',
-  sourceKind: 'gamepad',
   bindings: {},
 };
 

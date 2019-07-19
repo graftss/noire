@@ -71,9 +71,7 @@ const DEFAULT_AXIS_DEADZONE = 0.005;
 const MIN_AXIS_MAGNITUDE = 0.5;
 const MIN_AXIS_DIFFERENCE = 0.1;
 
-const stringifyBinding = (b: Maybe<GamepadBinding>): string => {
-  if (!b) return 'NONE';
-
+const stringifyBinding = (b: GamepadBinding): string => {
   const sourceStr = `Player ${b.ref.index + 1}`;
   let bindingStr: string;
 

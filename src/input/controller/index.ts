@@ -1,6 +1,7 @@
 import * as T from '../../types';
 import { areBindingsEqual } from '../source';
 import { ps2Map } from './ps2';
+import { keyboardMap } from './keyboard';
 
 export interface ControllerKeyData {
   name: string;
@@ -15,14 +16,12 @@ export interface ControllerKeyData {
 export interface BaseControllerClass {
   kind: string;
   map: Dict<ControllerKeyData>;
-  sourceKind: T.SourceKind;
 }
 
 export interface BaseController<C extends BaseControllerClass> {
   id: string;
   name: string;
   controllerKind: ControllerKind & C['kind'];
-  sourceKind: T.SourceKind & C['sourceKind'];
   bindings: Partial<
     {
       [K in keyof C['map']]: T.Binding & {
@@ -32,10 +31,10 @@ export interface BaseController<C extends BaseControllerClass> {
   >;
 }
 
-export type ControllerClass = T.PS2ControllerClass;
+export type ControllerClass = T.PS2ControllerClass | T.KeyboardControllerClass;
 export type ControllerKind = ControllerClass['kind'];
 
-export type Controller = T.PS2Controller;
+export type Controller = T.PS2Controller | T.KeyboardController;
 
 export interface ControllerKey {
   controllerId: string;
@@ -46,9 +45,10 @@ export const getControllerMap = (
   kind: ControllerKind,
 ): Dict<ControllerKeyData> => {
   switch (kind) {
-    case 'ps2': {
-      return ps2Map as Dict<ControllerKeyData>;
-    }
+    case 'ps2':
+      return ps2Map;
+    case 'keyboard':
+      return keyboardMap;
   }
 };
 
@@ -68,10 +68,10 @@ export const stringifyControllerKey = (
   return `${map[key].name} (${controller.name})`;
 };
 
-export const hasKeyBoundTo = <C extends T.BaseControllerClass>(
-  { bindings }: T.BaseController<C>,
+export const hasKeyBoundTo = (
+  { bindings }: T.Controller,
   binding: T.Binding,
-): Maybe<keyof C['map']> => {
+): Maybe<string> => {
   for (const key in bindings) {
     if (bindings[key] && areBindingsEqual(binding, bindings[key])) {
       return key;

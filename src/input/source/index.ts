@@ -62,7 +62,7 @@ export interface InputSourceBindingAPI<
   B extends TypedBinding<K, R>
 > {
   areBindingsEqual: (b1: Maybe<B>, b2: Maybe<B>) => boolean;
-  stringifyBinding: (b: Maybe<B>) => string;
+  stringifyBinding: (b: B) => string;
 }
 
 export type SourceRef = T.GamepadSourceRef | T.KeyboardSourceRef;
@@ -111,15 +111,14 @@ export const areBindingsEqual = (
   return false;
 };
 
-export const stringifyBinding = (
-  sourceKind: SourceKind,
-  b: Maybe<Binding>,
-): string => {
-  switch (sourceKind) {
+export const stringifyBinding = (b: Maybe<Binding>): string => {
+  if (!b) return `NONE`;
+
+  switch (b.sourceKind) {
     case 'gamepad':
-      return gamepadBindingAPI.stringifyBinding(b as T.GamepadBinding);
+      return gamepadBindingAPI.stringifyBinding(b);
     case 'keyboard':
-      return keyboardBindingAPI.stringifyBinding(b as T.KeyboardBinding);
+      return keyboardBindingAPI.stringifyBinding(b);
   }
 };
 

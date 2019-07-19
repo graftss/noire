@@ -102,10 +102,10 @@ export class ControllerManager {
 
   private parseController = <C extends T.BaseControllerClass>(
     source: T.SourceContainer,
-    { sourceKind, bindings }: T.BaseController<C>,
+    { bindings }: T.BaseController<C>,
   ): Maybe<Dict<Maybe<T.Input>>> => {
     const { parseBinding, sourceExists } = this.globalInputSources;
-    return !sourceExists(source) || sourceKind !== source.kind
+    return !sourceExists(source)
       ? undefined
       : mapObj(
           bindings,
@@ -117,14 +117,16 @@ export class ControllerManager {
 
   getInput(): GlobalControllerInput {
     const result = {};
-    const controller = allControllers(this.store.getState().input);
+    const controllers = allControllers(this.store.getState().input);
 
     this.sourceRefs.gamepads.forEach(ref => {
-      controller.forEach(bindings => {
-        const source = this.globalInputSources.dereference(ref);
-        const keymap = this.parseController(source, bindings);
-        if (keymap) result[bindings.id] = keymap;
-      });
+      controllers.forEach(
+        <C extends T.BaseControllerClass>(controller: T.BaseController<C>) => {
+          const source = this.globalInputSources.dereference(ref);
+          const keymap = this.parseController(source, controller);
+          if (keymap) result[controller.id] = keymap;
+        },
+      );
     });
 
     return result;

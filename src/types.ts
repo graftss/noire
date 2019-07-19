@@ -10,6 +10,10 @@ export {
 } from './input/controller';
 export { PS2Controller, PS2ControllerClass } from './input/controller/ps2';
 export {
+  KeyboardController,
+  KeyboardControllerClass,
+} from './input/controller/keyboard';
+export {
   Binding,
   BindingOfInputType,
   GlobalSourceRefs,

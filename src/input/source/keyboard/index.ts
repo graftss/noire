@@ -57,9 +57,7 @@ export const getLocalKeyboard = (
   return keyboard;
 };
 
-const stringifyBinding = (b: Maybe<KeyboardBinding>): string => {
-  if (!b) return 'NONE';
-
+const stringifyBinding = (b: KeyboardBinding): string => {
   return keycode(b.keyCode);
 };
 
