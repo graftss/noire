@@ -1,5 +1,5 @@
 import * as T from '../types';
-import { globalSnapshotBindingDiff, snapshotGlobalInput } from './source';
+import { GlobalInputSources } from './source';
 
 interface ListeningState<IK extends T.InputKind> {
   inputKind: IK;
@@ -10,6 +10,8 @@ interface ListeningState<IK extends T.InputKind> {
 export class NextInputListener {
   private state?: ListeningState<T.InputKind>;
   private pollingBaselineInput: boolean = false;
+
+  constructor(private globalInputSources: GlobalInputSources) {}
 
   await<IK extends T.InputKind>(
     inputKind: IK,
@@ -30,16 +32,16 @@ export class NextInputListener {
 
   update(refs: T.GlobalSourceRefs): void {
     if (this.state === undefined) return;
+    const input = this.globalInputSources.snapshotGlobalInput(
+      refs,
+      this.state.inputKind,
+    );
 
     if (this.pollingBaselineInput) {
       this.pollingBaselineInput = false;
-      this.state.baselineInput = snapshotGlobalInput(
-        refs,
-        this.state.inputKind,
-      );
+      this.state.baselineInput = input;
     } else {
-      const input = snapshotGlobalInput(refs, this.state.inputKind);
-      const awaitedBinding = globalSnapshotBindingDiff(
+      const awaitedBinding = this.globalInputSources.globalSnapshotBindingDiff(
         refs,
         this.state.inputKind,
         input,

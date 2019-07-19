@@ -1,6 +1,5 @@
 import * as T from '../../types';
-import { areBindingsEqual, parseBinding, sourceExists } from '../source';
-import { mapObj } from '../../utils';
+import { areBindingsEqual } from '../source';
 import { ps2Map } from './ps2';
 
 export interface ControllerKeyData {
@@ -43,15 +42,6 @@ export interface ControllerKey {
   key: string;
 }
 
-export const parseController = <C extends BaseControllerClass>(
-  source: T.SourceContainer,
-  { sourceKind, bindings }: BaseController<C>,
-): Maybe<Dict<Maybe<T.Input>>> => {
-  return !sourceExists(source) || sourceKind !== source.kind
-    ? undefined
-    : mapObj(bindings, (b: Maybe<T.Binding>) => b && parseBinding(b, source));
-};
-
 export const getControllerMap = (
   kind: ControllerKind,
 ): Dict<ControllerKeyData> => {
@@ -78,8 +68,8 @@ export const stringifyControllerKey = (
   return `${map[key].name} (${controller.name})`;
 };
 
-export const hasKeyBoundTo = <C extends BaseControllerClass>(
-  { bindings }: BaseController<C>,
+export const hasKeyBoundTo = <C extends T.BaseControllerClass>(
+  { bindings }: T.BaseController<C>,
   binding: T.Binding,
 ): Maybe<keyof C['map']> => {
   for (const key in bindings) {

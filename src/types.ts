@@ -15,10 +15,12 @@ export {
   GlobalSourceRefs,
   GlobalInputSnapshot,
   InputSource,
+  InputSourceBindingAPI,
   SourceContainer,
   SourceKind,
   SourceRef,
   TypedInputSource,
+  TypedInputSourceFactory,
   TypedSourceRef,
   TypedSourceContainer,
   TypedBinding,
@@ -30,10 +32,11 @@ export {
   GamepadButtonBinding,
   GamepadInputSnapshot,
   GamepadSource,
-  GamepadSourceRef,
   GamepadSourceContainer,
+  GamepadSourceFactory,
+  GamepadSourceRef,
 } from './input/source/gamepad';
-export { KeyboardSourceRef, KeyboardSource } from './input/source/keyboard';
+export { KeyboardSourceRef } from './input/source/keyboard';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export {
   Serialized,

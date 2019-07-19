@@ -5,9 +5,10 @@ import {
   stopListening,
 } from '../state/actions';
 import { controllerWithBinding, allControllers } from '../state/selectors';
-import { parseController } from './controller';
+import { mapObj } from '../utils';
 import { NextInputListener } from './NextInputListener';
-import { dereference } from './source';
+import { GlobalInputSources } from './source';
+import { getGamepads } from './source/gamepad';
 
 // keyed first by controller id and second by controller key
 export type GlobalControllerInput = Dict<Dict<T.Input>>;
@@ -18,6 +19,7 @@ const gamepadSourceRefs: T.GamepadSourceRef[] = [0, 1, 2, 3].map(index => ({
 }));
 
 export class ControllerManager {
+  private globalInputSources: GlobalInputSources;
   private nextInputListener: NextInputListener;
   private sourceRefs: T.GlobalSourceRefs = {
     gamepads: gamepadSourceRefs,
@@ -25,7 +27,11 @@ export class ControllerManager {
   };
 
   constructor(private store: T.EditorStore) {
-    this.nextInputListener = new NextInputListener();
+    this.globalInputSources = new GlobalInputSources({
+      gamepad: getGamepads,
+    });
+
+    this.nextInputListener = new NextInputListener(this.globalInputSources);
     store.subscribe(() => this.storeSubscriber());
   }
 
@@ -90,14 +96,24 @@ export class ControllerManager {
     }
   };
 
+  private parseController = <C extends T.BaseControllerClass>(
+    source: T.SourceContainer,
+    { sourceKind, bindings }: T.BaseController<C>,
+  ): Maybe<Dict<Maybe<T.Input>>> => {
+    const { parseBinding, sourceExists } = this.globalInputSources;
+    return !sourceExists(source) || sourceKind !== source.kind
+      ? undefined
+      : mapObj(bindings, (b: Maybe<T.Binding>) => b && parseBinding(b, source));
+  };
+
   getInput(): GlobalControllerInput {
     const result = {};
     const controller = allControllers(this.store.getState().input);
 
     this.sourceRefs.gamepads.forEach(ref => {
       controller.forEach(bindings => {
-        const source = dereference(ref);
-        const keymap = parseController(source, bindings);
+        const source = this.globalInputSources.dereference(ref);
+        const keymap = this.parseController(source, bindings);
         if (keymap) result[bindings.id] = keymap;
       });
     });
