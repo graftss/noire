@@ -1,3 +1,4 @@
+import keycode from 'keycode';
 import * as T from '../types';
 import { stickInputKinds } from '../canvas/component/StickComponent';
 import { dPadInputKinds } from '../canvas/component/DPadComponent';
@@ -75,6 +76,23 @@ const ps2Controller2: T.PS2Controller = {
   bindings: {},
 };
 
+const aKey: T.KeyboardKeyBinding = {
+  kind: 'key',
+  sourceKind: 'keyboard',
+  ref: { kind: 'keyboard' },
+  inputKind: 'button',
+  keyCode: keycode('a'),
+};
+
+const keyboardController: T.KeyboardController = {
+  id: 'test keyboard',
+  name: 'test keyboard',
+  controllerKind: 'keyboard',
+  bindings: {
+    a: aKey,
+  },
+};
+
 const leftStick: T.SerializedComponent = {
   id: ids[0],
   name: 'left stick',
@@ -144,7 +162,7 @@ export const testInitialState: T.EditorState = {
   },
   input: {
     controller: {
-      all: [ps2Controller1, ps2Controller2],
+      all: [ps2Controller1, ps2Controller2, keyboardController],
     },
   },
 };

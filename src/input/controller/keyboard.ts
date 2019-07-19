@@ -7,7 +7,7 @@ const letters = lower + upper;
 export const keyboardMap: Dict<T.ControllerKeyData> = letters
   .split('')
   .map(l => ({ name: l, inputKind: 'button', key: l }))
-  .reduce((map, v: T.ControllerKeyData, k) => ({ ...map, [k]: v }), {});
+  .reduce((map, v: T.ControllerKeyData) => ({ ...map, [v.name]: v }), {});
 
 export type KeyboardControllerClass = T.BaseControllerClass & {
   kind: 'keyboard';

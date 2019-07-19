@@ -25,10 +25,10 @@ export const selectedController = (state: T.InputState): Maybe<T.Controller> =>
 export const controllerWithBinding = (
   state: T.InputState,
   binding: T.Binding,
-): Maybe<{ bindings: T.Controller; key: string }> => {
-  for (const bindings of state.controller.all) {
-    const key = hasKeyBoundTo(bindings, binding);
-    if (key) return { bindings, key };
+): Maybe<{ controller: T.Controller; key: string }> => {
+  for (const controller of state.controller.all) {
+    const key = hasKeyBoundTo(controller, binding);
+    if (key) return { controller, key };
   }
 };
 

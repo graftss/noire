@@ -53,16 +53,16 @@ export class ControllerManager {
     inputKey: string,
   ) => (binding: T.Binding): void => {
     const state = this.store.getState();
-    const maybeBindings = controllerWithBinding(state.input, binding);
+    const c = controllerWithBinding(state.input, binding);
 
-    if (maybeBindings) {
-      const { bindings, key } = maybeBindings;
+    if (c) {
+      const { controller, key } = c;
 
       this.store.dispatch(
         updateComponentKey({
           componentId,
           inputKey,
-          controllerId: bindings.id,
+          controllerId: controller.id,
           bindingsKey: key,
         }),
       );

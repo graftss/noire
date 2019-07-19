@@ -142,7 +142,7 @@ export const keyboardSourceFactory: KeyboardSourceFactory = (
               inputKind: 'button',
               sourceKind: 'keyboard',
               ref,
-              keyCode: (keyCode as unknown) as number,
+              keyCode: parseInt(keyCode),
             };
 
             return result as T.BindingOfInputType<IK>;

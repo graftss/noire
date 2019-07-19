@@ -87,6 +87,7 @@ export interface GlobalSourceRefs {
 
 export interface GlobalInputSnapshot<IK extends T.InputKind> {
   gamepads: Maybe<T.GamepadInputSnapshot[IK]>[];
+  keyboard: Maybe<T.KeyboardInputSnapshot[IK]>;
 }
 
 export interface GlobalSourceGetters {
@@ -240,6 +241,7 @@ export class GlobalInputSources {
     inputKind: IK,
   ): T.GlobalInputSnapshot<IK> => ({
     gamepads: refs.gamepads.map(ref => this.snapshotInput(ref, inputKind)),
+    keyboard: this.snapshotInput(refs.keyboard, inputKind),
   });
 
   globalSnapshotBindingDiff = <IK extends T.InputKind>(
@@ -249,14 +251,27 @@ export class GlobalInputSources {
     baseline: T.GlobalInputSnapshot<IK>,
   ): Maybe<T.BindingOfInputType<IK>> => {
     for (let index = 0; index < refs.gamepads.length; index++) {
-      const i1 = input.gamepads[index];
-      const i2 = baseline.gamepads[index];
-      if (i1 && i2) {
+      const g1 = input.gamepads[index];
+      const g2 = baseline.gamepads[index];
+      if (g1 && g2) {
         const awaitedBinding = this.snapshotBindingDiff(
           refs.gamepads[index],
           inputKind,
-          i1,
-          i2,
+          g1,
+          g2,
+        );
+
+        if (awaitedBinding) return awaitedBinding;
+      }
+    }
+
+    {
+      if (input.keyboard && baseline.keyboard) {
+        const awaitedBinding = this.snapshotBindingDiff(
+          refs.keyboard,
+          inputKind,
+          input.keyboard,
+          baseline.keyboard,
         );
 
         if (awaitedBinding) return awaitedBinding;
