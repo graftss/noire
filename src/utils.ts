@@ -1,7 +1,7 @@
 import { assocPath, map, mapObjIndexed, path } from 'ramda';
 import uuidv4 from 'uuid/v4';
 
-export { equals } from 'ramda';
+export { equals, range } from 'ramda';
 
 export const without = <T>(t: T, ts: T[]): T[] => {
   const idx = ts.indexOf(t);

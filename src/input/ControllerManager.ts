@@ -5,10 +5,11 @@ import {
   stopListening,
 } from '../state/actions';
 import { controllerWithBinding, allControllers } from '../state/selectors';
-import { mapObj } from '../utils';
+import { mapObj, range } from '../utils';
 import { NextInputListener } from './NextInputListener';
 import { GlobalInputSources } from './source';
 import { getGamepads } from './source/gamepad';
+import { getLocalKeyboard } from './source/keyboard';
 
 // keyed first by controller id and second by controller key
 export type GlobalControllerInput = Dict<Dict<T.Input>>;
@@ -17,6 +18,8 @@ const gamepadSourceRefs: T.GamepadSourceRef[] = [0, 1, 2, 3].map(index => ({
   kind: 'gamepad',
   index,
 }));
+
+const listenedKeyCodes = range(48, 57).concat(65, 90);
 
 export class ControllerManager {
   private globalInputSources: GlobalInputSources;
@@ -29,6 +32,7 @@ export class ControllerManager {
   constructor(private store: T.EditorStore) {
     this.globalInputSources = new GlobalInputSources({
       gamepad: getGamepads,
+      keyboard: () => getLocalKeyboard(document, listenedKeyCodes),
     });
 
     this.nextInputListener = new NextInputListener(this.globalInputSources);
@@ -103,7 +107,12 @@ export class ControllerManager {
     const { parseBinding, sourceExists } = this.globalInputSources;
     return !sourceExists(source) || sourceKind !== source.kind
       ? undefined
-      : mapObj(bindings, (b: Maybe<T.Binding>) => b && parseBinding(b, source));
+      : mapObj(
+          bindings,
+          // TODO: type this
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (b: Maybe<T.Binding>) => b && parseBinding(b as any, source as any),
+        );
   };
 
   getInput(): GlobalControllerInput {

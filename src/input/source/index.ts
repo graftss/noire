@@ -1,5 +1,7 @@
 import * as T from '../../types';
+import { Keyboard } from './keyboard/Keyboard';
 import { gamepadSourceFactory, gamepadBindingAPI } from './gamepad';
+import { keyboardSourceFactory, keyboardBindingAPI } from './keyboard';
 
 export interface TypedSourceRef<K extends string> {
   kind: K;
@@ -42,7 +44,7 @@ export interface TypedInputSource<
 }
 
 // GS is the type of the input source's means of
-// retrieving global input, i.e. global `Gamepad` objects in
+// retrieving global input, i.e. global `GamepadSource,` objects in
 // the browser or a `Keyboard` object handling `keydown`
 // and `keyup` events.
 export type TypedInputSourceFactory<
@@ -63,11 +65,15 @@ export interface InputSourceBindingAPI<
   stringifyBinding: (b: Maybe<B>) => string;
 }
 
-export type SourceRef = T.GamepadSourceRef;
-export type SourceContainer = T.GamepadSourceContainer;
-export type InputSource = T.GamepadSource;
-export type InputSourceFactory = T.GamepadSourceFactory;
-export type Binding = T.GamepadBinding;
+export type SourceRef = T.GamepadSourceRef | T.KeyboardSourceRef;
+export type SourceContainer =
+  | T.GamepadSourceContainer
+  | T.KeyboardSourceContainer;
+export type InputSource = T.GamepadSource | T.KeyboardSource;
+export type InputSourceFactory =
+  | T.GamepadSourceFactory
+  | T.KeyboardSourceFactory;
+export type Binding = T.GamepadBinding | T.KeyboardBinding;
 export type BindingOfInputType<K extends T.InputKind> = Binding & {
   inputKind: K;
 };
@@ -85,6 +91,7 @@ export interface GlobalInputSnapshot<IK extends T.InputKind> {
 
 export interface GlobalSourceGetters {
   gamepad: () => Maybe<Gamepad>[];
+  keyboard: () => Maybe<Keyboard>;
 }
 
 export const areBindingsEqual = (
@@ -97,6 +104,10 @@ export const areBindingsEqual = (
     return gamepadBindingAPI.areBindingsEqual(b1, b2);
   }
 
+  if (b1.sourceKind === 'keyboard' && b2.sourceKind === 'keyboard') {
+    return keyboardBindingAPI.areBindingsEqual(b1, b2);
+  }
+
   return false;
 };
 
@@ -106,46 +117,86 @@ export const stringifyBinding = (
 ): string => {
   switch (sourceKind) {
     case 'gamepad':
-      return gamepadBindingAPI.stringifyBinding(b);
+      return gamepadBindingAPI.stringifyBinding(b as T.GamepadBinding);
+    case 'keyboard':
+      return keyboardBindingAPI.stringifyBinding(b as T.KeyboardBinding);
   }
 };
 
 export class GlobalInputSources {
-  private sources: Record<SourceKind, InputSource>;
+  private sources: {
+    gamepad: T.GamepadSource;
+    keyboard: T.KeyboardSource;
+  };
 
   constructor(sourceGetters: GlobalSourceGetters) {
     this.sources = {
       gamepad: gamepadSourceFactory(sourceGetters.gamepad),
+      keyboard: keyboardSourceFactory(sourceGetters.keyboard),
     };
+
+    this.dereference = this.dereference.bind(this);
+    this.parseBinding = this.parseBinding.bind(this);
+    this.snapshotInput = this.snapshotInput.bind(this);
+    this.snapshotBindingDiff = this.snapshotBindingDiff.bind(this);
   }
 
   dereference(ref: T.GamepadSourceRef): T.GamepadSourceContainer;
+  dereference(ref: T.KeyboardSourceRef): T.KeyboardSourceContainer;
   dereference(ref: SourceRef): SourceContainer {
     switch (ref.kind) {
       case 'gamepad':
         return this.sources.gamepad.dereference(ref);
+      case 'keyboard':
+        return this.sources.keyboard.dereference(ref);
     }
   }
 
-  parseBinding = (b: Binding, s: SourceContainer): Maybe<T.Input> =>
-    this.sources[s.kind].parseBinding(b, s);
+  parseBinding(
+    b: T.GamepadBinding,
+    s: T.GamepadSourceContainer,
+  ): Maybe<T.Input>;
+  parseBinding(
+    b: T.KeyboardBinding,
+    s: T.KeyboardSourceContainer,
+  ): Maybe<T.Input>;
+  parseBinding(b: Binding, s: SourceContainer): Maybe<T.Input> {
+    if (b.sourceKind !== s.kind) return;
 
-  sourceExists = (s: T.SourceContainer): boolean =>
-    this.sources[s.kind].exists(s);
+    switch (s.kind) {
+      case 'gamepad':
+        return this.sources.gamepad.parseBinding(b as T.GamepadBinding, s);
+      case 'keyboard':
+        return this.sources.keyboard.parseBinding(b as T.KeyboardBinding, s);
+    }
+  }
+
+  sourceExists = (s: T.SourceContainer): boolean => {
+    switch (s.kind) {
+      case 'gamepad':
+        return this.sources.gamepad.exists(s);
+      case 'keyboard':
+        return this.sources.keyboard.exists(s);
+    }
+  };
 
   snapshotInput<K extends T.InputKind>(
     ref: T.GamepadSourceRef,
     inputKind: K,
   ): Maybe<T.GamepadInputSnapshot[K]>;
   snapshotInput<K extends T.InputKind>(
+    ref: T.KeyboardSourceRef,
+    inputKind: K,
+  ): Maybe<T.KeyboardInputSnapshot[K]>;
+  snapshotInput<K extends T.InputKind>(
     ref: SourceRef,
     inputKind: K,
   ): Maybe<object> {
     switch (ref.kind) {
       case 'gamepad':
-        return this.sources.gamepad.snapshotInput(ref, inputKind) as Maybe<
-          T.GamepadInputSnapshot[K]
-        >;
+        return this.sources.gamepad.snapshotInput(ref, inputKind);
+      case 'keyboard':
+        return this.sources.keyboard.snapshotInput(ref, inputKind);
     }
   }
 
@@ -154,6 +205,12 @@ export class GlobalInputSources {
     inputKind: IK,
     input: T.GamepadInputSnapshot[IK],
     baseline: T.GamepadInputSnapshot[IK],
+  ): Maybe<T.BindingOfInputType<IK>>;
+  snapshotBindingDiff<IK extends T.InputKind>(
+    ref: T.KeyboardSourceRef,
+    inputKind: IK,
+    input: T.KeyboardInputSnapshot[IK],
+    baseline: T.KeyboardInputSnapshot[IK],
   ): Maybe<T.BindingOfInputType<IK>>;
   snapshotBindingDiff<IK extends T.InputKind>(
     ref: SourceRef,
@@ -168,6 +225,13 @@ export class GlobalInputSources {
           inputKind,
           input as T.GamepadInputSnapshot[IK],
           baseline as T.GamepadInputSnapshot[IK],
+        );
+      case 'keyboard':
+        return this.sources.keyboard.snapshotBindingDiff(
+          ref,
+          inputKind,
+          input as T.KeyboardInputSnapshot[IK],
+          baseline as T.KeyboardInputSnapshot[IK],
         );
     }
   }

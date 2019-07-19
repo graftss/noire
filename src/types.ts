@@ -36,7 +36,16 @@ export {
   GamepadSourceFactory,
   GamepadSourceRef,
 } from './input/source/gamepad';
-export { KeyboardSourceRef } from './input/source/keyboard';
+export {
+  KeyboardSourceRef,
+  KeyboardBinding,
+  KeyboardInputSnapshot,
+  KeyboardSource,
+  KeyboardSourceContainer,
+  KeyboardSourceFactory,
+  KeyboardKeyBinding,
+  KeyboardState,
+} from './input/source/keyboard';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export {
   Serialized,
