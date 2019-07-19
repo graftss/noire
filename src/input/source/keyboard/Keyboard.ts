@@ -1,4 +1,5 @@
 import * as T from '../../../types';
+import { shallowCloneObj } from '../../../utils';
 
 const SHIFT = 16;
 const CTRL = 17;
@@ -7,15 +8,23 @@ const META = 91;
 
 export class Keyboard {
   private state: T.KeyboardState = {};
+  private listenedKeyCodeMap: Record<number, boolean> = {};
 
-  constructor(private listenedKeyCodes: number[]) {}
+  constructor(listenedKeyCodes: number[]) {
+    listenedKeyCodes.forEach(c => {
+      this.listenedKeyCodeMap[c] = true;
+      this.state[c] = false;
+    });
+  }
 
   private update(e: KeyboardEvent, down: boolean): void {
-    this.state[e.keyCode] = down;
-    this.state[SHIFT] = e.shiftKey;
-    this.state[CTRL] = e.ctrlKey;
-    this.state[ALT] = e.altKey;
-    this.state[META] = e.metaKey;
+    if (this.listenedKeyCodeMap[e.keyCode]) {
+      this.state[e.keyCode] = down;
+      this.state[SHIFT] = e.shiftKey;
+      this.state[CTRL] = e.ctrlKey;
+      this.state[ALT] = e.altKey;
+      this.state[META] = e.metaKey;
+    }
   }
 
   onKeyDown = (e: KeyboardEvent): void => {
@@ -35,8 +44,6 @@ export class Keyboard {
   };
 
   getButtonSnapshot = (): T.KeyboardInputSnapshot['button'] => {
-    const result = {};
-    this.listenedKeyCodes.forEach(c => (result[c] = this.state[c]));
-    return result;
+    return shallowCloneObj(this.state);
   };
 }

@@ -61,12 +61,8 @@ const stringifyBinding = (b: KeyboardBinding): string => {
   return keycode(b.keyCode);
 };
 
-const areBindingsEqual = (
-  b1: KeyboardBinding,
-  b2: KeyboardBinding,
-): boolean => {
-  return equals(b1, b2);
-};
+const areBindingsEqual = (b1: KeyboardBinding, b2: KeyboardBinding): boolean =>
+  equals(b1, b2);
 
 export const keyboardBindingAPI: T.InputSourceBindingAPI<
   KeyboardKind,
@@ -88,14 +84,9 @@ export const keyboardSourceFactory: KeyboardSourceFactory = (
     keyboard: _keyboard,
   });
 
-  function parseBinding(
-    b: KeyboardKeyBinding,
-    s: KeyboardSourceContainer,
-  ): Maybe<T.ButtonInput>;
-  function parseBinding(
-    b: KeyboardBinding,
-    s: KeyboardSourceContainer,
-  ): Maybe<T.Input> {
+  function parseBinding(b: KeyboardKeyBinding): Maybe<T.ButtonInput>;
+  function parseBinding(b: KeyboardBinding): Maybe<T.Input> {
+    const s = dereference(b.ref);
     if (!s.keyboard) return;
 
     switch (b.kind) {

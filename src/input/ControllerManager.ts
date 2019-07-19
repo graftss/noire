@@ -5,11 +5,11 @@ import {
   stopListening,
 } from '../state/actions';
 import { controllerWithBinding, allControllers } from '../state/selectors';
-import { mapObj, range } from '../utils';
 import { NextInputListener } from './NextInputListener';
 import { GlobalInputSources } from './source';
 import { getGamepads } from './source/gamepad';
 import { getLocalKeyboard } from './source/keyboard';
+import { defaultListenedKeyCodes } from './controller/keyboard';
 
 // keyed first by controller id and second by controller key
 export type GlobalControllerInput = Dict<Dict<T.Input>>;
@@ -18,8 +18,6 @@ const gamepadSourceRefs: T.GamepadSourceRef[] = [0, 1, 2, 3].map(index => ({
   kind: 'gamepad',
   index,
 }));
-
-const listenedKeyCodes = range(48, 57).concat(65, 90);
 
 export class ControllerManager {
   private globalInputSources: GlobalInputSources;
@@ -32,7 +30,7 @@ export class ControllerManager {
   constructor(private store: T.EditorStore) {
     this.globalInputSources = new GlobalInputSources({
       gamepad: getGamepads,
-      keyboard: () => getLocalKeyboard(document, listenedKeyCodes),
+      keyboard: () => getLocalKeyboard(document, defaultListenedKeyCodes),
     });
 
     this.nextInputListener = new NextInputListener(this.globalInputSources);
@@ -100,33 +98,26 @@ export class ControllerManager {
     }
   };
 
-  private parseController = <C extends T.BaseControllerClass>(
-    source: T.SourceContainer,
-    { bindings }: T.BaseController<C>,
-  ): Maybe<Dict<Maybe<T.Input>>> => {
-    const { parseBinding, sourceExists } = this.globalInputSources;
-    return !sourceExists(source)
-      ? undefined
-      : mapObj(
-          bindings,
-          // TODO: type this
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (b: Maybe<T.Binding>) => b && parseBinding(b as any, source as any),
-        );
-  };
-
   getInput(): GlobalControllerInput {
-    const result = {};
+    const result: GlobalControllerInput = {};
     const controllers = allControllers(this.store.getState().input);
 
-    this.sourceRefs.gamepads.forEach(ref => {
-      controllers.forEach(
-        <C extends T.BaseControllerClass>(controller: T.BaseController<C>) => {
-          const source = this.globalInputSources.dereference(ref);
-          const keymap = this.parseController(source, controller);
-          if (keymap) result[controller.id] = keymap;
-        },
-      );
+    controllers.forEach((controller: T.Controller) => {
+      const controllerInput: Dict<T.Input> = {};
+
+      for (const bindingKey in controller.bindings) {
+        const binding: Maybe<T.Binding> = controller.bindings[bindingKey];
+        if (!binding) continue;
+
+        const input: Maybe<T.Input> = this.globalInputSources.parseBinding(
+          binding,
+        );
+        if (!input) continue;
+
+        controllerInput[bindingKey] = input;
+      }
+
+      result[controller.id] = controllerInput;
     });
 
     return result;

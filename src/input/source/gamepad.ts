@@ -129,16 +129,10 @@ export const gamepadSourceFactory: GamepadSourceFactory = (
 
   function parseBinding(
     b: GamepadAxisValueBinding | GamepadButtonBinding,
-    s: GamepadSourceContainer,
   ): Maybe<T.ButtonInput>;
-  function parseBinding(
-    b: GamepadAxisBinding,
-    s: GamepadSourceContainer,
-  ): Maybe<T.AxisInput>;
-  function parseBinding(
-    b: GamepadBinding,
-    s: GamepadSourceContainer,
-  ): Maybe<T.Input> {
+  function parseBinding(b: GamepadAxisBinding): Maybe<T.AxisInput>;
+  function parseBinding(b: GamepadBinding): Maybe<T.Input> {
+    const s = dereference(b.ref);
     if (!s.gamepad) return;
 
     switch (b.kind) {

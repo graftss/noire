@@ -32,7 +32,7 @@ export interface TypedInputSource<
 > {
   kind: K;
   dereference: (ref: R) => S;
-  parseBinding: (b: B, s: S) => Maybe<T.Input>;
+  parseBinding: (b: B) => Maybe<T.Input>;
   exists: (s: S) => boolean;
   snapshotInput: <IK extends T.InputKind>(ref: R, kind: IK) => Maybe<I[IK]>;
   snapshotBindingDiff: <IK extends T.InputKind>(
@@ -44,9 +44,9 @@ export interface TypedInputSource<
 }
 
 // GS is the type of the input source's means of
-// retrieving global input, i.e. global `GamepadSource,` objects in
-// the browser or a `Keyboard` object handling `keydown`
-// and `keyup` events.
+// retrieving global input, i.e. global `Gamepad` objects in
+// the browser or anobject handling `keydown` and `keyup`
+// events.
 export type TypedInputSourceFactory<
   K extends string,
   R extends TypedSourceRef<K>,
@@ -152,22 +152,12 @@ export class GlobalInputSources {
     }
   }
 
-  parseBinding(
-    b: T.GamepadBinding,
-    s: T.GamepadSourceContainer,
-  ): Maybe<T.Input>;
-  parseBinding(
-    b: T.KeyboardBinding,
-    s: T.KeyboardSourceContainer,
-  ): Maybe<T.Input>;
-  parseBinding(b: Binding, s: SourceContainer): Maybe<T.Input> {
-    if (b.sourceKind !== s.kind) return;
-
-    switch (s.kind) {
+  parseBinding(b: Binding): Maybe<T.Input> {
+    switch (b.sourceKind) {
       case 'gamepad':
-        return this.sources.gamepad.parseBinding(b as T.GamepadBinding, s);
+        return this.sources.gamepad.parseBinding(b as T.GamepadBinding);
       case 'keyboard':
-        return this.sources.keyboard.parseBinding(b as T.KeyboardBinding, s);
+        return this.sources.keyboard.parseBinding(b as T.KeyboardBinding);
     }
   }
 
