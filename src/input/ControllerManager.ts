@@ -119,8 +119,6 @@ export class ControllerManager {
   }
 
   update(): void {
-    if (this.nextInputListener.isActive()) {
-      this.nextInputListener.update();
-    }
+    this.nextInputListener.update();
   }
 }

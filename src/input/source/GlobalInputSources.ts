@@ -16,6 +16,16 @@ export type GlobalInputSnapshot<IK extends T.InputKind> = Maybe<
   T.InputSnapshot[IK]
 >[];
 
+export type GetGlobalInputSnapshot = <IK extends T.InputKind>(
+  kind: IK,
+) => GlobalInputSnapshot<IK>;
+
+export type GetGlobalSnapshotDiff = <IK extends T.InputKind>(
+  kind: IK,
+  input: GlobalInputSnapshot<IK>,
+  baseline: GlobalInputSnapshot<IK>,
+) => Maybe<T.BindingOfInputKind<IK>>;
+
 export class GlobalInputSources {
   private sources: Record<T.SourceKind, T.InputSource> & {
     gamepad: T.GamepadSource;
@@ -71,12 +81,12 @@ export class GlobalInputSources {
       baseline,
     );
 
-  snapshotInput = <IK extends T.InputKind>(
+  snapshotInput: GetGlobalInputSnapshot = <IK extends T.InputKind>(
     inputKind: IK,
   ): GlobalInputSnapshot<IK> =>
     this.getGlobalSourceRefs().map(r => this.snapshotSourceInput(r, inputKind));
 
-  snapshotDiff = <IK extends T.InputKind>(
+  snapshotDiff: GetGlobalSnapshotDiff = <IK extends T.InputKind>(
     inputKind: IK,
     input: GlobalInputSnapshot<IK>,
     baseline: GlobalInputSnapshot<IK>,

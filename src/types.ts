@@ -28,7 +28,11 @@ export {
   TypedSourceContainer,
   TypedBinding,
 } from './input/source/types';
-export { GlobalInputSnapshot } from './input/source/GlobalInputSources';
+export {
+  GlobalInputSnapshot,
+  GetGlobalInputSnapshot,
+  GetGlobalSnapshotDiff,
+} from './input/source/GlobalInputSources';
 export {
   GamepadAxisBinding,
   GamepadAxisValueBinding,

@@ -225,23 +225,6 @@ export const gamepadSourceFactory: GamepadSourceFactory = (
         const a1 = input as GamepadInputSnapshot['button'];
         const a2 = baseline as GamepadInputSnapshot['button'];
 
-        for (let axisIndex = 0; axisIndex < a1.axisValues.length; axisIndex++) {
-          const axis1 = a1.axisValues[axisIndex];
-
-          if (axis1 !== a2.axisValues[axisIndex]) {
-            const result: GamepadAxisValueBinding = {
-              kind: 'axisValue',
-              inputKind: 'button',
-              sourceKind: 'gamepad',
-              ref,
-              axis: axisIndex,
-              value: axis1,
-            };
-
-            return result as T.BindingOfInputKind<IK>;
-          }
-        }
-
         for (
           let buttonIndex = 0;
           buttonIndex < a1.buttons.length;
@@ -254,6 +237,26 @@ export const gamepadSourceFactory: GamepadSourceFactory = (
               sourceKind: 'gamepad',
               ref,
               index: buttonIndex,
+            };
+
+            return result as T.BindingOfInputKind<IK>;
+          }
+        }
+
+        for (let axisIndex = 0; axisIndex < a1.axisValues.length; axisIndex++) {
+          const axis1 = a1.axisValues[axisIndex];
+
+          if (
+            axis1 !== a2.axisValues[axisIndex] &&
+            Math.abs(axis1) > DEFAULT_AXIS_DEADZONE
+          ) {
+            const result: GamepadAxisValueBinding = {
+              kind: 'axisValue',
+              inputKind: 'button',
+              sourceKind: 'gamepad',
+              ref,
+              axis: axisIndex,
+              value: axis1,
             };
 
             return result as T.BindingOfInputKind<IK>;
