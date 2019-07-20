@@ -6,6 +6,7 @@ import { ComponentConfig } from './ComponentConfig';
 interface ComponentEditorProps {
   controllersById: Dict<T.Controller>;
   listenNextInput: (s: T.RemapState) => void;
+  remapState: Maybe<T.RemapState>;
   selected: Maybe<T.SerializedComponent>;
   updateComponentName: (id: string, name: string) => void;
 }
@@ -13,6 +14,7 @@ interface ComponentEditorProps {
 export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
   controllersById,
   listenNextInput,
+  remapState,
   selected,
   updateComponentName,
 }) =>
@@ -26,6 +28,7 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
         component={selected}
         controllersById={controllersById}
         listenNextInput={listenNextInput}
+        remapState={remapState}
       />
     </div>
   ) : null;

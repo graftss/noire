@@ -147,5 +147,6 @@ export const testInitialState: T.EditorState = {
     controller: {
       all: [ps2Controller1, ps2Controller2, defaultKeyboardController],
     },
+    remap: undefined,
   },
 };

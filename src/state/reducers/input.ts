@@ -19,7 +19,7 @@ export type RemapState =
 
 export interface InputState {
   selectedGamepadIndex?: number;
-  remap?: RemapState;
+  remap: Maybe<RemapState>;
   controller: {
     all: T.Controller[];
     selectedId?: string;
