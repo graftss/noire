@@ -1,5 +1,5 @@
 import * as T from '../../types';
-import { cloneArray } from '../../utils';
+import { cloneArray, toPrecision } from '../../utils';
 
 type GamepadKind = 'gamepad';
 
@@ -70,6 +70,7 @@ const DEFAULT_AXIS_VALUE_MARGIN_OF_ERROR = 0.001;
 const DEFAULT_AXIS_DEADZONE = 0.005;
 const MIN_AXIS_MAGNITUDE = 0.5;
 const MIN_AXIS_DIFFERENCE = 0.1;
+const AXIS_VALUE_PRECISION = 3;
 
 const stringifyBinding = (b: GamepadBinding): string => {
   const sourceStr = `Player ${b.ref.index + 1}`;
@@ -83,7 +84,10 @@ const stringifyBinding = (b: GamepadBinding): string => {
       bindingStr = `Button ${b.index}`;
       break;
     case 'axisValue':
-      bindingStr = `Axis ${b.axis} @ ${b.value}`;
+      bindingStr = `Axis ${b.axis} @ ${toPrecision(
+        b.value,
+        AXIS_VALUE_PRECISION,
+      )}`;
       break;
     default:
       bindingStr = '(??)';

@@ -97,3 +97,6 @@ export const unMaybeList = <T>(mts: Maybe<T>[]): T[] => {
   for (const mt of mts) mt && result.push(mt);
   return result;
 };
+
+export const toPrecision = (x: number, digits: number): number =>
+  Number(x.toFixed(digits));
