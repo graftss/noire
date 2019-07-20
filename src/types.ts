@@ -16,10 +16,9 @@ export {
 export {
   Binding,
   BindingOfInputType,
-  GlobalSourceRefs,
-  GlobalInputSnapshot,
   InputSource,
   InputSourceBindingAPI,
+  InputSnapshot,
   SourceContainer,
   SourceKind,
   SourceRef,
@@ -28,7 +27,8 @@ export {
   TypedSourceRef,
   TypedSourceContainer,
   TypedBinding,
-} from './input/source';
+} from './input/source/types';
+export { GlobalInputSnapshot } from './input/source/GlobalInputSources';
 export {
   GamepadAxisBinding,
   GamepadAxisValueBinding,

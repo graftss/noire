@@ -121,6 +121,9 @@ export const gamepadBindingAPI: T.InputSourceBindingAPI<
 export const gamepadSourceFactory: GamepadSourceFactory = (
   getGamepads: () => Maybe<Gamepad>[],
 ) => {
+  const getSourceRefs = (): GamepadSourceRef[] =>
+    [0, 1, 2, 3].map(index => ({ kind: 'gamepad', index }));
+
   const dereference = (ref: GamepadSourceRef): GamepadSourceContainer => ({
     kind: 'gamepad',
     ref,
@@ -262,6 +265,7 @@ export const gamepadSourceFactory: GamepadSourceFactory = (
 
   return {
     kind: 'gamepad',
+    getSourceRefs,
     dereference,
     exists,
     parseBinding,

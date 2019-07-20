@@ -1,5 +1,5 @@
 import * as T from '../../types';
-import { areBindingsEqual } from '../source';
+import { areBindingsEqual } from '../source/bindings';
 import { ps2Map } from './ps2';
 import { keyboardMap } from './keyboard';
 

@@ -78,6 +78,8 @@ export const keyboardSourceFactory: KeyboardSourceFactory = (
 ) => {
   const _keyboard: Maybe<Keyboard> = getKeyboard();
 
+  const getSourceRefs = (): KeyboardSourceRef[] => [{ kind: 'keyboard' }];
+
   const dereference = (ref: KeyboardSourceRef): KeyboardSourceContainer => ({
     kind: 'keyboard',
     ref,
@@ -145,6 +147,7 @@ export const keyboardSourceFactory: KeyboardSourceFactory = (
 
   return {
     kind: 'keyboard',
+    getSourceRefs,
     dereference,
     parseBinding,
     exists,

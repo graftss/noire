@@ -6,7 +6,7 @@ import {
 } from '../state/actions';
 import { controllerWithBinding, allControllers } from '../state/selectors';
 import { NextInputListener } from './NextInputListener';
-import { GlobalInputSources } from './source';
+import { GlobalInputSources } from './source/GlobalInputSources';
 import { getGamepads } from './source/gamepad';
 import { getLocalKeyboard } from './source/keyboard';
 import { defaultListenedKeyCodes } from './controller/keyboard';
@@ -14,18 +14,9 @@ import { defaultListenedKeyCodes } from './controller/keyboard';
 // keyed first by controller id and second by controller key
 export type GlobalControllerInput = Dict<Dict<T.Input>>;
 
-const gamepadSourceRefs: T.GamepadSourceRef[] = [0, 1, 2, 3].map(index => ({
-  kind: 'gamepad',
-  index,
-}));
-
 export class ControllerManager {
   private globalInputSources: GlobalInputSources;
   private nextInputListener: NextInputListener;
-  private sourceRefs: T.GlobalSourceRefs = {
-    gamepads: gamepadSourceRefs,
-    keyboard: { kind: 'keyboard' },
-  };
 
   constructor(private store: T.EditorStore) {
     this.globalInputSources = new GlobalInputSources({
@@ -33,7 +24,11 @@ export class ControllerManager {
       keyboard: () => getLocalKeyboard(document, defaultListenedKeyCodes),
     });
 
-    this.nextInputListener = new NextInputListener(this.globalInputSources);
+    this.nextInputListener = new NextInputListener(
+      this.globalInputSources.snapshotInput,
+      this.globalInputSources.snapshotDiff,
+    );
+
     store.subscribe(() => this.storeSubscriber());
   }
 
@@ -125,7 +120,7 @@ export class ControllerManager {
 
   update(): void {
     if (this.nextInputListener.isActive()) {
-      this.nextInputListener.update(this.sourceRefs);
+      this.nextInputListener.update();
     }
   }
 }

@@ -1,17 +1,29 @@
 import * as T from '../types';
-import { GlobalInputSources } from './source';
 
 interface ListeningState<IK extends T.InputKind> {
   inputKind: IK;
   callback: CB1<T.BindingOfInputType<IK>>;
-  baselineInput?: T.GlobalInputSnapshot<IK>;
+  baselineInput?: Maybe<T.InputSnapshot[IK]>[];
 }
+
+type SnapshotInput = <IK extends T.InputKind>(
+  kind: IK,
+) => T.GlobalInputSnapshot<IK>;
+
+type SnapshotDiff = <IK extends T.InputKind>(
+  kind: IK,
+  input: T.GlobalInputSnapshot<IK>,
+  baseline: T.GlobalInputSnapshot<IK>,
+) => Maybe<T.BindingOfInputType<IK>>;
 
 export class NextInputListener {
   private state?: ListeningState<T.InputKind>;
   private pollingBaselineInput: boolean = false;
 
-  constructor(private globalInputSources: GlobalInputSources) {}
+  constructor(
+    private snapshotInput: SnapshotInput,
+    private snapshotDiff: SnapshotDiff,
+  ) {}
 
   await<IK extends T.InputKind>(
     inputKind: IK,
@@ -30,23 +42,16 @@ export class NextInputListener {
     this.state = undefined;
   }
 
-  update(refs: T.GlobalSourceRefs): void {
+  update(): void {
     if (this.state === undefined) return;
-    const input = this.globalInputSources.snapshotGlobalInput(
-      refs,
-      this.state.inputKind,
-    );
+    const input = this.snapshotInput(this.state.inputKind);
 
     if (this.pollingBaselineInput) {
       this.pollingBaselineInput = false;
       this.state.baselineInput = input;
     } else {
-      const awaitedBinding = this.globalInputSources.globalSnapshotBindingDiff(
-        refs,
-        this.state.inputKind,
-        input,
-        this.state.baselineInput as T.GlobalInputSnapshot<T.InputKind>,
-      );
+      const awaitedBinding = this.snapshotDiff(this.state.inputKind, input, this
+        .state.baselineInput as typeof input);
 
       if (awaitedBinding) {
         this.state.callback(awaitedBinding);

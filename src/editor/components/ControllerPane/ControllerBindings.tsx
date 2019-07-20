@@ -5,7 +5,7 @@ import {
   stringifyControllerKey,
   getKeyInputKind,
 } from '../../../input/controller';
-import { stringifyBinding } from '../../../input/source';
+import { stringifyBinding } from '../../../input/source/bindings';
 import { getControllerMap } from '../../../input/controller';
 
 interface ControllerBindingsProps {
