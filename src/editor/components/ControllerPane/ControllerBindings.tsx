@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { keys } from 'ramda';
 import * as T from '../../../types';
 import {
   stringifyControllerKey,
   getKeyInputKind,
 } from '../../../input/controller';
 import { stringifyBinding } from '../../../input/source/bindings';
-import { getControllerMap } from '../../../input/controller';
+import { getControllerKeyOrder } from '../../../input/controller';
 
 interface ControllerBindingsProps {
   controller: T.Controller;
@@ -21,7 +20,7 @@ const getRemapState = (
   kind: 'controller',
   controllerId: controller.id,
   key,
-  inputKind: getKeyInputKind(controller.controllerKind, key),
+  inputKind: getKeyInputKind(controller.kind, key),
 });
 
 const isListening = (
@@ -43,7 +42,7 @@ export const ControllerBindings: React.SFC<ControllerBindingsProps> = ({
   remapState,
 }) => (
   <div>
-    {keys(getControllerMap(controller.controllerKind)).map(key => (
+    {getControllerKeyOrder(controller.kind).map(key => (
       <div key={key}>
         <span>{stringifyControllerKey(controller, key)} </span>
         <button onClick={() => listenNextInput(getRemapState(controller, key))}>

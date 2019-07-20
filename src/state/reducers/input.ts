@@ -80,11 +80,14 @@ export const inputReducer = (
 
       // remove other duplicate bindings if a new binding is being set
       if (binding) {
-        initialBindings = initialBindings.map(b => {
+        initialBindings = initialBindings.map((b: T.Controller) => {
           const maybeKey = hasKeyBoundTo(b, binding);
+
           return {
             ...b,
-            bindings: maybeKey ? withoutKey(b.bindings, maybeKey) : b.bindings,
+            bindings: maybeKey
+              ? withoutKey(b.bindings, maybeKey as keyof typeof b.bindings)
+              : b.bindings,
           };
         });
       }

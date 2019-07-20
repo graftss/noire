@@ -1,7 +1,7 @@
 import * as T from '../../types';
 import { areBindingsEqual } from '../source/bindings';
-import { ps2Map } from './ps2';
-import { keyboardMap } from './keyboard';
+import { ps2Config } from './ps2';
+import { keyboardConfig } from './keyboard';
 
 export interface ControllerKeyData {
   name: string;
@@ -13,15 +13,23 @@ export interface ControllerKeyData {
   key: string;
 }
 
-export interface BaseControllerClass {
-  kind: string;
-  map: Dict<ControllerKeyData>;
+export interface ControllerClassConfig<CK extends string> {
+  keyOrder: readonly CK[];
+  map: Readonly<Record<CK, ControllerKeyData>>;
 }
 
-export interface BaseController<C extends BaseControllerClass> {
+export interface BaseControllerClass<CK extends string> {
+  kind: string;
+  map: Record<CK, ControllerKeyData>;
+}
+
+export interface BaseController<
+  CK extends string,
+  C extends BaseControllerClass<CK>
+> {
   id: string;
   name: string;
-  controllerKind: ControllerKind & C['kind'];
+  kind: ControllerKind & C['kind'];
   bindings: Partial<
     {
       [K in keyof C['map']]: T.Binding & {
@@ -41,16 +49,18 @@ export interface ControllerKey {
   key: string;
 }
 
+const configs = {
+  ps2: ps2Config,
+  keyboard: keyboardConfig,
+};
+
+export const getControllerKeyOrder = (
+  kind: ControllerKind,
+): readonly string[] => configs[kind].keyOrder;
+
 export const getControllerMap = (
   kind: ControllerKind,
-): Dict<ControllerKeyData> => {
-  switch (kind) {
-    case 'ps2':
-      return ps2Map;
-    case 'keyboard':
-      return keyboardMap;
-  }
-};
+): Readonly<Dict<ControllerKeyData>> => configs[kind].map;
 
 export const getKeyInputKind = (
   kind: ControllerKind,
@@ -62,7 +72,7 @@ export const stringifyControllerKey = (
   key: string,
   showControllerName: boolean = false,
 ): string => {
-  const map = getControllerMap(controller.controllerKind);
+  const map = getControllerMap(controller.kind);
   if (!map || !key || !map[key]) return 'NONE';
   const nameStr = showControllerName ? ` (${controller.name})` : '';
   return `${map[key].name}${nameStr}`;

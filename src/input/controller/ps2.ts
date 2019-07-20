@@ -1,6 +1,35 @@
 import * as T from '../../types';
 
-export const ps2Map: Dict<T.ControllerKeyData> = {
+const keyOrder = [
+  'padU',
+  'padL',
+  'padD',
+  'padR',
+  'select',
+  'start',
+  'square',
+  'triangle',
+  'circle',
+  'x',
+  'l1',
+  'l2',
+  'l3',
+  'r1',
+  'r2',
+  'r3',
+  'lsXP',
+  'lsXN',
+  'lsYP',
+  'lsYN',
+  'rsXP',
+  'rsXN',
+  'rsYP',
+  'rsYN',
+] as const;
+
+type PS2Key = typeof keyOrder[number];
+
+const map: Record<PS2Key, T.ControllerKeyData> = {
   padU: { name: 'D-Pad Up', inputKind: 'button', key: 'padU' },
   padL: { name: 'D-Pad Left', inputKind: 'button', key: 'padL' },
   padD: { name: 'D-Pad Down', inputKind: 'button', key: 'padD' },
@@ -25,10 +54,16 @@ export const ps2Map: Dict<T.ControllerKeyData> = {
   rsXN: { name: 'RS Left', inputKind: 'axis', key: 'rsXN' },
   rsYP: { name: 'RS Down', inputKind: 'axis', key: 'rsYP' },
   rsYN: { name: 'RS Up', inputKind: 'axis', key: 'rsYN' },
-};
+} as const;
 
-export type PS2ControllerClass = T.BaseControllerClass & {
+export interface PS2ControllerClass extends T.BaseControllerClass<PS2Key> {
   kind: 'ps2';
-};
+  map: typeof map;
+}
 
-export type PS2Controller = T.BaseController<PS2ControllerClass>;
+export type PS2Controller = T.BaseController<PS2Key, PS2ControllerClass>;
+
+export const ps2Config: T.ControllerClassConfig<PS2Key> = {
+  keyOrder,
+  map,
+};

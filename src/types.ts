@@ -1,11 +1,12 @@
 export { GlobalControllerInput } from './input/ControllerManager';
 export {
-  ControllerKeyData,
-  ControllerKey,
   BaseController,
-  Controller,
   BaseControllerClass,
+  Controller,
   ControllerClass,
+  ControllerClassConfig,
+  ControllerKey,
+  ControllerKeyData,
   ControllerKind,
 } from './input/controller';
 export { PS2Controller, PS2ControllerClass } from './input/controller/ps2';

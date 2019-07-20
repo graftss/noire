@@ -1,20 +1,62 @@
 import keycode from 'keycode';
 import * as T from '../../types';
 
-export type KeyboardControllerClass = T.BaseControllerClass & {
-  kind: 'keyboard';
-};
+const keyOrder = [
+  'a',
+  'b',
+  'c',
+  'd',
+  'e',
+  'f',
+  'g',
+  'h',
+  'i',
+  'j',
+  'k',
+  'l',
+  'm',
+  'n',
+  'o',
+  'p',
+  'q',
+  'r',
+  's',
+  't',
+  'u',
+  'v',
+  'w',
+  'x',
+  'y',
+  'z',
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9',
+  '0',
+  ',',
+  '.',
+  ';',
+  "'",
+  '[',
+  ']',
+  '-',
+  '=',
+  '\\',
+] as const;
 
-export type KeyboardController = T.BaseController<KeyboardControllerClass>;
+type KeyboardKey = typeof keyOrder[number];
 
-const lower = "qwertyuiopasdfghjklzxcvbnm1234567890,.;'[]/";
-const letterList: string[] = lower.split('');
-
-export const keyboardMap: Dict<T.ControllerKeyData> = letterList
-  .map(l => ({ name: l, inputKind: 'button', key: l }))
-  .reduce((result, v: T.ControllerKeyData) => ({ ...result, [v.name]: v }), {});
-
-export const defaultListenedKeyCodes: number[] = letterList.map(keycode);
+const map: Record<KeyboardKey, T.ControllerKeyData> = keyOrder
+  .map((l): T.ControllerKeyData => ({ name: l, inputKind: 'button', key: l }))
+  .reduce(
+    (result, v: T.ControllerKeyData) => ({ ...result, [v.name]: v }),
+    {},
+  ) as Record<KeyboardKey, T.ControllerKeyData>;
 
 const letterToBinding = (l: string): T.KeyboardKeyBinding => ({
   kind: 'key',
@@ -24,13 +66,29 @@ const letterToBinding = (l: string): T.KeyboardKeyBinding => ({
   keyCode: keycode(l),
 });
 
-const defaultKeyBindingDict: Dict<T.KeyboardKeyBinding> = letterList
+const defaultKeyBindingDict: Dict<T.KeyboardKeyBinding> = keyOrder
   .map(letterToBinding)
   .reduce((result, b) => ({ ...result, [keycode(b.keyCode)]: b }), {});
 
 export const defaultKeyboardController: T.KeyboardController = {
   id: 'test keyboard',
   name: 'test keyboard',
-  controllerKind: 'keyboard',
+  kind: 'keyboard',
   bindings: defaultKeyBindingDict,
+};
+
+export type KeyboardControllerClass = T.BaseControllerClass<KeyboardKey> & {
+  kind: 'keyboard';
+};
+
+export type KeyboardController = T.BaseController<
+  KeyboardKey,
+  KeyboardControllerClass
+>;
+
+export const defaultListenedKeyCodes: number[] = keyOrder.map(keycode);
+
+export const keyboardConfig: T.ControllerClassConfig<KeyboardKey> = {
+  keyOrder,
+  map,
 };
