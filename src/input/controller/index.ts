@@ -60,12 +60,12 @@ export const getKeyInputKind = (
 export const stringifyControllerKey = (
   controller: Controller,
   key: string,
-  listening?: boolean,
+  showControllerName: boolean = false,
 ): string => {
-  if (listening) return '(listening)';
   const map = getControllerMap(controller.controllerKind);
   if (!map || !key || !map[key]) return 'NONE';
-  return `${map[key].name} (${controller.name})`;
+  const nameStr = showControllerName ? ` (${controller.name})` : '';
+  return `${map[key].name}${nameStr}`;
 };
 
 export const hasKeyBoundTo = (

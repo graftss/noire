@@ -13,6 +13,7 @@ import { ControllerEditor } from './ControllerEditor';
 
 interface PropsFromState {
   controllers: T.Controller[];
+  remapState: Maybe<T.RemapState>;
   selectedController: Maybe<T.Controller>;
 }
 
@@ -26,6 +27,7 @@ interface ControllerEditorProps extends PropsFromState, PropsFromDispatch {}
 
 const mapStateToProps = (state: T.EditorState): PropsFromState => ({
   controllers: allControllers(state.input),
+  remapState: state.input.remap,
   selectedController: selectedController(state.input),
 });
 
@@ -39,14 +41,15 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
     dispatch,
   );
 
-const editorOption = (o): T.EditorOption => ({
+const toEditorOption = (id: Maybe<string>): T.EditorOption => ({
   kind: 'controller',
-  id: o ? o.value : undefined,
+  id,
 });
 
 const BaseControllerPane: React.SFC<ControllerEditorProps> = ({
   controllers,
   listenNextInput,
+  remapState,
   selectedController,
   selectEditorOption,
   updateControllerName,
@@ -55,11 +58,12 @@ const BaseControllerPane: React.SFC<ControllerEditorProps> = ({
     <ControllerSelect
       all={controllers}
       selected={selectedController}
-      selectController={o => selectEditorOption(editorOption(o))}
+      selectController={id => selectEditorOption(toEditorOption(id))}
     />
     <ControllerEditor
       controller={selectedController}
       listenNextInput={listenNextInput}
+      remapState={remapState}
       updateControllerName={updateControllerName}
     />
   </div>

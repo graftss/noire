@@ -11,6 +11,7 @@ import { getControllerMap } from '../../../input/controller';
 interface ControllerBindingsProps {
   controller: T.Controller;
   listenNextInput: (s: T.RemapState) => void;
+  remapState: Maybe<T.RemapState>;
 }
 
 const getRemapState = (
@@ -23,16 +24,33 @@ const getRemapState = (
   inputKind: getKeyInputKind(controller.controllerKind, key),
 });
 
+const isListening = (
+  remapState: Maybe<T.RemapState>,
+  controllerId: string,
+  controllerKey: string,
+): boolean =>
+  remapState !== undefined &&
+  remapState.kind === 'controller' &&
+  remapState.controllerId === controllerId &&
+  remapState.key === controllerKey;
+
+const bindingStr = (binding: Maybe<T.Binding>, listening: boolean): string =>
+  listening ? '(listening...)' : stringifyBinding(binding);
+
 export const ControllerBindings: React.SFC<ControllerBindingsProps> = ({
   controller,
   listenNextInput,
+  remapState,
 }) => (
   <div>
     {keys(getControllerMap(controller.controllerKind)).map(key => (
       <div key={key}>
         <span>{stringifyControllerKey(controller, key)} </span>
         <button onClick={() => listenNextInput(getRemapState(controller, key))}>
-          {stringifyBinding(controller.bindings[key])}
+          {bindingStr(
+            controller.bindings[key],
+            isListening(remapState, controller.id, key),
+          )}
         </button>
       </div>
     ))}
