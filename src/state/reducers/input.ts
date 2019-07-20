@@ -1,24 +1,24 @@
 import * as T from '../../types';
-import { mapIf, mapPath, withoutKey } from '../../utils';
+import { mapIf, mapPath } from '../../utils';
 import { testInitialState } from '../testInitialState';
-import { hasKeyBoundTo } from '../../input/controller';
 
 export type RemapState =
   | {
       controllerId: string;
+      fullUpdate?: boolean;
       inputKind: T.InputKind;
       key: string;
       kind: 'controller';
     }
   | {
       componentId: string;
+      fullUpdate?: boolean;
       inputKind: T.InputKind;
       key: string;
       kind: 'component';
     };
 
 export interface InputState {
-  selectedGamepadIndex?: number;
   remap: Maybe<RemapState>;
   controller: {
     all: T.Controller[];
@@ -35,17 +35,20 @@ export interface ControllerBindingsUpdate {
   binding: Maybe<T.Binding>;
 }
 
+const setControllerBinding = (key: string, binding: Maybe<T.Binding>) => (
+  c: T.Controller,
+): T.Controller => mapPath(['bindings', key], () => binding, c);
+
 const updateController = (
-  bindings: T.Controller,
-  key: string,
-  binding: Maybe<T.Binding>,
-): T.Controller => ({
-  ...bindings,
-  bindings: {
-    ...bindings.bindings,
-    [key]: binding,
-  },
-});
+  state: InputState,
+  id: string,
+  f: (c: T.Controller) => T.Controller,
+): InputState =>
+  mapPath(
+    ['controller', 'all'],
+    (cs: T.Controller[]) => mapIf(cs, c => c.id === id, f),
+    state,
+  );
 
 export const inputReducer = (
   state: InputState = defaultInputState,
@@ -53,16 +56,11 @@ export const inputReducer = (
 ): InputState => {
   switch (action.type) {
     case 'selectEditorOption': {
-      return {
-        ...state,
-        selectedGamepadIndex:
-          action.data.kind === 'gamepad' ? action.data.index : undefined,
-        controller: {
-          ...state.controller,
-          selectedId:
-            action.data.kind === 'controller' ? action.data.id : undefined,
-        },
-      };
+      return mapPath(
+        ['controller', 'selectedId'],
+        () => (action.data.kind === 'controller' ? action.data.id : undefined),
+        state,
+      );
     }
 
     case 'listenNextInput': {
@@ -73,54 +71,21 @@ export const inputReducer = (
       return { ...state, remap: undefined };
     }
 
-    case 'updateControllerBindings': {
+    case 'updateControllerBinding': {
       const { controllerId, key, binding } = action.data;
 
-      let initialBindings = state.controller.all;
-
-      // remove other duplicate bindings if a new binding is being set
-      if (binding) {
-        initialBindings = initialBindings.map((b: T.Controller) => {
-          const maybeKey = hasKeyBoundTo(b, binding);
-
-          return {
-            ...b,
-            bindings: maybeKey
-              ? withoutKey(b.bindings, maybeKey as keyof typeof b.bindings)
-              : b.bindings,
-          };
-        });
-      }
-
-      return {
-        ...state,
-        controller: {
-          ...state.controller,
-          all: mapIf(
-            initialBindings,
-            bs => bs.id === controllerId,
-            bs => updateController(bs, key, binding),
-          ),
-        },
-      };
+      return updateController(
+        state,
+        controllerId,
+        setControllerBinding(key, binding),
+      );
     }
 
     case 'updateControllerName': {
-      const { id, name } = action.data;
+      const input = action.data.name;
+      const name = input.length === 0 ? 'Unnamed controller' : input;
 
-      return mapPath(
-        ['controller', 'all'],
-        cs =>
-          mapIf(
-            cs as T.Controller[],
-            c => c.id === id,
-            c => ({
-              ...c,
-              name: name.length === 0 ? 'Unnamed controller' : name,
-            }),
-          ),
-        state,
-      );
+      return updateController(state, action.data.id, c => ({ ...c, name }));
     }
   }
 
