@@ -192,7 +192,7 @@ export const gamepadSourceFactory: GamepadSourceFactory = (
     kind: IK,
     input: GamepadInputSnapshot[IK],
     baseline: GamepadInputSnapshot[IK],
-  ): Maybe<T.BindingOfInputType<IK>> => {
+  ): Maybe<T.BindingOfInputKind<IK>> => {
     switch (kind) {
       case 'axis': {
         const a1 = input as GamepadInputSnapshot['axis'];
@@ -214,7 +214,7 @@ export const gamepadSourceFactory: GamepadSourceFactory = (
               inverted: a1[index] < 0,
             };
 
-            return result as T.BindingOfInputType<IK>;
+            return result as T.BindingOfInputKind<IK>;
           }
         }
 
@@ -238,7 +238,7 @@ export const gamepadSourceFactory: GamepadSourceFactory = (
               value: axis1,
             };
 
-            return result as T.BindingOfInputType<IK>;
+            return result as T.BindingOfInputKind<IK>;
           }
         }
 
@@ -256,7 +256,7 @@ export const gamepadSourceFactory: GamepadSourceFactory = (
               index: buttonIndex,
             };
 
-            return result as T.BindingOfInputType<IK>;
+            return result as T.BindingOfInputKind<IK>;
           }
         }
       }

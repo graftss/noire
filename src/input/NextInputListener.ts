@@ -2,7 +2,7 @@ import * as T from '../types';
 
 interface ListeningState<IK extends T.InputKind> {
   inputKind: IK;
-  callback: CB1<T.BindingOfInputType<IK>>;
+  callback: CB1<T.BindingOfInputKind<IK>>;
   baselineInput?: Maybe<T.InputSnapshot[IK]>[];
 }
 
@@ -14,7 +14,7 @@ type SnapshotDiff = <IK extends T.InputKind>(
   kind: IK,
   input: T.GlobalInputSnapshot<IK>,
   baseline: T.GlobalInputSnapshot<IK>,
-) => Maybe<T.BindingOfInputType<IK>>;
+) => Maybe<T.BindingOfInputKind<IK>>;
 
 export class NextInputListener {
   private state?: ListeningState<T.InputKind>;
@@ -27,7 +27,7 @@ export class NextInputListener {
 
   await<IK extends T.InputKind>(
     inputKind: IK,
-    callback: CB1<T.BindingOfInputType<IK>>,
+    callback: CB1<T.BindingOfInputKind<IK>>,
   ): void {
     this.state = { inputKind, callback };
     this.pollingBaselineInput = true;

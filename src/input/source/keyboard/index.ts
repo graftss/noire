@@ -122,7 +122,7 @@ export const keyboardSourceFactory: KeyboardSourceFactory = (
     kind: IK,
     input: KeyboardInputSnapshot[IK],
     baseline: KeyboardInputSnapshot[IK],
-  ): Maybe<T.BindingOfInputType<IK>> => {
+  ): Maybe<T.BindingOfInputKind<IK>> => {
     switch (kind) {
       case 'button': {
         const b1 = input as KeyboardInputSnapshot['button'];
@@ -138,7 +138,7 @@ export const keyboardSourceFactory: KeyboardSourceFactory = (
               keyCode: parseInt(keyCode),
             };
 
-            return result as T.BindingOfInputType<IK>;
+            return result as T.BindingOfInputKind<IK>;
           }
         }
       }

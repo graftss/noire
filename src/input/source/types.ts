@@ -38,7 +38,7 @@ export interface TypedInputSource<
     kind: IK,
     i1: I[IK],
     i2: I[IK],
-  ) => Maybe<T.BindingOfInputType<IK>>;
+  ) => Maybe<T.BindingOfInputKind<IK>>;
 }
 
 // GS is the type of the input source's means of
@@ -77,7 +77,7 @@ export type InputSourceFactory =
 
 export type Binding = T.GamepadBinding | T.KeyboardBinding;
 
-export type BindingOfInputType<K extends T.InputKind> = Binding & {
+export type BindingOfInputKind<K extends T.InputKind> = Binding & {
   inputKind: K;
 };
 

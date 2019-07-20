@@ -15,7 +15,7 @@ export {
 } from './input/controller/keyboard';
 export {
   Binding,
-  BindingOfInputType,
+  BindingOfInputKind,
   InputSource,
   InputSourceBindingAPI,
   InputSnapshot,

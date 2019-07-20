@@ -63,7 +63,7 @@ export class GlobalInputSources {
     ref: T.SourceRef,
     input: T.InputSnapshot[IK],
     baseline: T.InputSnapshot[IK],
-  ): Maybe<T.BindingOfInputType<IK>> =>
+  ): Maybe<T.BindingOfInputKind<IK>> =>
     (this.getSource(ref.kind).snapshotBindingDiff as any)(
       ref,
       inputKind,
@@ -80,7 +80,7 @@ export class GlobalInputSources {
     inputKind: IK,
     input: GlobalInputSnapshot<IK>,
     baseline: GlobalInputSnapshot<IK>,
-  ): Maybe<T.BindingOfInputType<IK>> => {
+  ): Maybe<T.BindingOfInputKind<IK>> => {
     const refs = this.getGlobalSourceRefs();
 
     for (let index = 0; index < refs.length; index++) {
