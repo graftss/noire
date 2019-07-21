@@ -1,5 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
+import { BooleanImageTexture } from '../texture/ImageTexture';
 import { TypedComponent } from './Component';
 
 export interface ButtonComponentInput extends Dict<T.Input> {
@@ -17,6 +18,7 @@ export type ButtonState = T.BaseComponentState<ButtonComponentInput> & {
   height: number;
   fill: string;
   pressedFill: string;
+  texture?: T.Texture<boolean>;
 };
 
 export const defaultButtonState: ButtonState = {
@@ -62,24 +64,29 @@ export class ButtonComponent
   constructor(id: string, state?: Partial<ButtonState>) {
     super(id, { ...defaultButtonState, ...state }, buttonInputKinds);
 
-    const { width, height, fill, x, y } = this.state;
+    const { width, height, x, y } = this.state;
 
     this.group = new Konva.Group({ x, y });
     this.rect = new Konva.Rect({
       height,
       width,
-      fill,
       x: 0,
       y: 0,
     });
 
     this.group.add(this.rect);
+
+    const img = new Image(300, 300);
+    img.src = 'dist/noire.png';
+    img.onload = () => {
+      this.state.texture = new BooleanImageTexture(img);
+    };
   }
 
   update(input: Partial<ButtonComponentInput>): void {
     const { button } = this.computeRawInput(input);
-    const { fill, pressedFill } = this.state;
-
-    this.rect.fill(button ? pressedFill : fill);
+    if (this.state.texture) {
+      this.state.texture.apply(button, this.rect);
+    }
   }
 }

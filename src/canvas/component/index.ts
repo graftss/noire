@@ -1,11 +1,24 @@
 import Konva from 'konva';
 import * as T from '../../types';
 import { uuid } from '../../utils';
-import { buttonEditorConfig, newSerializedButton } from './ButtonComponent';
-import { dPadEditorConfig, newSerializedDPad } from './DPadComponent';
-import { stickEditorConfig, newSerializedStick } from './StickComponent';
+import {
+  ButtonComponent,
+  buttonEditorConfig,
+  newSerializedButton,
+} from './ButtonComponent';
+import {
+  DPadComponent,
+  dPadEditorConfig,
+  newSerializedDPad,
+} from './DPadComponent';
+import {
+  StickComponent,
+  stickEditorConfig,
+  newSerializedStick,
+} from './StickComponent';
+import { Component } from './Component';
 
-export interface Serialized<K, S, I extends Dict<T.Input>> {
+export interface BaseSerializedComponent<K, S, I extends Dict<T.Input>> {
   id: string;
   name: string;
   kind: K;
@@ -81,3 +94,14 @@ export function newSerializedComponent(
       return newSerializedStick(id);
   }
 }
+
+export const deserializeComponent = (s: T.SerializedComponent): Component => {
+  switch (s.kind) {
+    case 'button':
+      return new ButtonComponent(s.id, s.state);
+    case 'stick':
+      return new StickComponent(s.id, s.state);
+    case 'dpad':
+      return new DPadComponent(s.id, s.state);
+  }
+};

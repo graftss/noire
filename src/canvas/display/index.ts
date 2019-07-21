@@ -7,12 +7,14 @@ import { ComponentManager } from './ComponentManager';
 import { ComponentTransformerPlugin } from './plugin/ComponentTransformerPlugin';
 import { DisplayEventBus } from './DisplayEventBus';
 import { DisplayPlugin } from './plugin/DisplayPlugin';
+import { ImageManager } from './ImageManager';
 
 export class Display {
   private eventBus: DisplayEventBus;
   private cm: ComponentManager;
   private lastState?: T.DisplayState;
   private plugins: DisplayPlugin[];
+  private imageManager: ImageManager;
 
   constructor(
     private stage: Konva.Stage,
@@ -23,8 +25,13 @@ export class Display {
     this.layer = layer;
     this.eventBus = new DisplayEventBus();
     this.plugins = [new ComponentTransformerPlugin(this.eventBus)];
-
-    this.cm = new ComponentManager(stage, layer, this.eventBus);
+    this.imageManager = new ImageManager();
+    this.cm = new ComponentManager(
+      stage,
+      layer,
+      this.eventBus,
+      this.imageManager,
+    );
 
     // run the subscriber once to sync with initial state
     this.storeSubscriber();

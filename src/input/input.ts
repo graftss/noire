@@ -32,6 +32,8 @@ export type RawInputProjection<I extends Dict<Input>> = Record<
     [K in keyof I]: I[K]['input'];
   };
 
+export type AllRaw<I extends Dict<Input>> = RawInputProjection<Required<I>>;
+
 export const rawifyInputDict = <I extends Dict<Input>>(
   inputDict: I,
 ): RawInputProjection<I> => {

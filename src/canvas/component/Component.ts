@@ -46,9 +46,7 @@ export abstract class TypedComponent<
     return allInput;
   }
 
-  protected computeRawInput(
-    input: Partial<I>,
-  ): T.RawInputProjection<Required<I>> {
+  protected computeRawInput(input: Partial<I>): T.AllRaw<I> {
     return rawifyInputDict(this.applyDefaultInput(input));
   }
 

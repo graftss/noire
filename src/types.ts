@@ -57,7 +57,7 @@ export {
 } from './input/source/keyboard';
 export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export {
-  Serialized,
+  BaseSerializedComponent as Serialized,
   SerializedComponent,
   ComponentKey,
   ComponentKind,
@@ -96,6 +96,7 @@ export {
 } from './state/reducers/input';
 export { EditorStore } from './state/createStore';
 export {
+  AllRaw,
   AxisInput,
   RawAxisInput,
   ButtonInput,
@@ -106,3 +107,4 @@ export {
   RawInput,
   RawInputProjection,
 } from './input/input';
+export { Texture } from './canvas/texture';

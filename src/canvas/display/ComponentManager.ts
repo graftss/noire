@@ -1,24 +1,23 @@
 import Konva from 'konva';
 import { map } from 'ramda';
 import * as T from '../../types';
-import { deserializeComponent } from '../component/deserializeComponent';
+import { deserializeComponent } from '../component/';
 import { Component, TypedComponent } from '../component/Component';
 import { cast, find, keyBy } from '../../utils';
 import { DisplayEventBus } from './DisplayEventBus';
+import { ImageManager } from './ImageManager';
 
 const CLICK_EVENT = `click.ComponentManager`;
 
 export class ComponentManager {
   private components: Component[] = [];
-  private selectedId?: string;
 
   constructor(
     private stage: Konva.Stage,
     private layer: Konva.Layer,
     private eventBus: DisplayEventBus,
-  ) {
-    this.layer = layer;
-  }
+    private imageManager: ImageManager,
+  ) {}
 
   reset(components: Component[] = []): void {
     components.forEach(this.add);
