@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { BooleanImageTexture } from '../texture/ImageTexture';
+import { BooleanFillTexture } from '../texture/BooleanFillTexture';
+import { Rectangle } from '../shape/Rectangle';
 import { TypedComponent } from './Component';
 
 export interface ButtonComponentInput extends Dict<T.Input> {
@@ -61,32 +62,27 @@ export class ButtonComponent
   group: Konva.Group;
   private rect: Konva.Rect;
 
+  private shapes: { brick: Rectangle };
+  private textures: { brick: BooleanFillTexture };
+
   constructor(id: string, state?: Partial<ButtonState>) {
     super(id, { ...defaultButtonState, ...state }, buttonInputKinds);
-
     const { width, height, x, y } = this.state;
-
     this.group = new Konva.Group({ x, y });
-    this.rect = new Konva.Rect({
-      height,
-      width,
-      x: 0,
-      y: 0,
-    });
 
-    this.group.add(this.rect);
+    this.shapes = { brick: new Rectangle({ x: 0, y: 0, width, height }) };
+    this.textures = { brick: new BooleanFillTexture('red', 'white') };
 
-    const img = new Image(300, 300);
-    img.src = 'dist/noire.png';
-    img.onload = () => {
-      this.state.texture = new BooleanImageTexture(img);
-    };
+    this.shapes.brick.addToGroup(this.group);
   }
 
   update(input: Partial<ButtonComponentInput>): void {
     const { button } = this.computeRawInput(input);
-    if (this.state.texture) {
-      this.state.texture.apply(button, this.rect);
+
+    for (const key in this.textures) {
+      if (this.textures[key] && this.shapes[key]) {
+        this.textures[key].apply(button, this.shapes[key]);
+      }
     }
   }
 }

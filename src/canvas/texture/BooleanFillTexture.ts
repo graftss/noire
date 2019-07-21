@@ -1,10 +1,10 @@
-import Konva from 'konva';
+import { Shape } from '../shape/Shape';
 import { Texture } from '.';
 
 export class BooleanFillTexture implements Texture<boolean> {
   constructor(private onColor: string, private offColor: string) {}
 
-  apply(on: boolean, shape: Konva.Shape): void {
-    shape.fill(on ? this.onColor : this.offColor);
+  apply(on: boolean, shape: Shape): void {
+    shape.fillColor(on ? this.onColor : this.offColor);
   }
 }
