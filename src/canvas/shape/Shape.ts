@@ -5,7 +5,7 @@ export interface ShapeState {
   y: number;
 }
 
-export class Shape {
+export abstract class Shape {
   constructor(protected shape: Konva.Shape, protected state: ShapeState) {}
 
   addToGroup(group: Konva.Group): Shape {
@@ -32,4 +32,6 @@ export class Shape {
     this.shape.fillPatternOffset(offset);
     return this;
   }
+
+  abstract serialize(): object;
 }

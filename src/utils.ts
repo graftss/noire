@@ -100,3 +100,7 @@ export const unMaybeList = <T>(mts: Maybe<T>[]): T[] => {
 
 export const toPrecision = (x: number, digits: number): number =>
   Number(x.toFixed(digits));
+
+export const vec2 = {
+  add: (v: Vec2, w: Vec2): Vec2 => ({ x: v.x + w.x, y: v.y + w.y }),
+};

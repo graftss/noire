@@ -108,3 +108,6 @@ export {
   RawInputProjection,
 } from './input/input';
 export { Texture } from './canvas/texture';
+export { RectangleState } from './canvas/shape/Rectangle';
+export { ShapeState } from './canvas/shape/Shape';
+export { SerializedShape } from './canvas/shape';

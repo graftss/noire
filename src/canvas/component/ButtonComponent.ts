@@ -1,7 +1,8 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { BooleanFillTexture } from '../texture/BooleanFillTexture';
+import { FillTexture } from '../texture/FillTexture';
 import { Rectangle } from '../shape/Rectangle';
+import { Texture } from '../texture';
 import { TypedComponent } from './Component';
 
 export interface ButtonComponentInput extends Dict<T.Input> {
@@ -19,7 +20,6 @@ export type ButtonState = T.BaseComponentState<ButtonComponentInput> & {
   height: number;
   fill: string;
   pressedFill: string;
-  texture?: T.Texture<boolean>;
 };
 
 export const defaultButtonState: ButtonState = {
@@ -59,30 +59,26 @@ export const buttonEditorConfig: T.ComponentEditorConfig = [
 export class ButtonComponent
   extends TypedComponent<ButtonComponentInput, ButtonState>
   implements T.GroupContainer {
-  group: Konva.Group;
-  private rect: Konva.Rect;
+  private shape: Rectangle;
+  private onTexture: Texture;
+  private offTexture: Texture;
 
-  private shapes: { brick: Rectangle };
-  private textures: { brick: BooleanFillTexture };
+  group: Konva.Group;
 
   constructor(id: string, state?: Partial<ButtonState>) {
     super(id, { ...defaultButtonState, ...state }, buttonInputKinds);
     const { width, height, x, y } = this.state;
     this.group = new Konva.Group({ x, y });
 
-    this.shapes = { brick: new Rectangle({ x: 0, y: 0, width, height }) };
-    this.textures = { brick: new BooleanFillTexture('red', 'white') };
-
-    this.shapes.brick.addToGroup(this.group);
+    this.shape = new Rectangle({ x: 0, y: 0, width, height });
+    this.onTexture = new FillTexture('red');
+    this.offTexture = new FillTexture('grey');
+    this.shape.addToGroup(this.group);
   }
 
   update(input: Partial<ButtonComponentInput>): void {
     const { button } = this.computeRawInput(input);
-
-    for (const key in this.textures) {
-      if (this.textures[key] && this.shapes[key]) {
-        this.textures[key].apply(button, this.shapes[key]);
-      }
-    }
+    const texture = button ? this.onTexture : this.offTexture;
+    texture.apply(this.shape);
   }
 }
