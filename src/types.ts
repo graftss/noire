@@ -69,6 +69,7 @@ export {
   BaseComponentState,
   Component,
   ComponentInputMap,
+  ComponentGraphics,
 } from './canvas/component/Component';
 export {
   StickState,
@@ -81,7 +82,7 @@ export {
   SerializedDPadComponent,
 } from './canvas/component/DPadComponent';
 export {
-  ButtonState,
+  ButtonComponentState,
   ButtonComponentInput,
   SerializedButtonComponent,
 } from './canvas/component/ButtonComponent';

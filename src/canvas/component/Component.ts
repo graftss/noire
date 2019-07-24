@@ -1,9 +1,11 @@
+import Konva from 'konva';
 import * as T from '../../types';
 import { mapObj } from '../../utils';
 import { defaultInputByKind, rawifyInputDict } from '../../input/input';
+import { Texture } from '../texture';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Component = TypedComponent<any, any>;
+export type Component = TypedComponent<any, any, any>;
 
 export type ComponentInputMap<I extends Dict<T.Input>> = Partial<
   Record<keyof I, Maybe<T.ControllerKey>>
@@ -14,18 +16,27 @@ export interface BaseComponentState<I extends Dict<T.Input>> {
   inputMap: ComponentInputMap<I>;
 }
 
+export interface ComponentGraphics {
+  shapes: Dict<Konva.Shape>;
+  textures: Dict<Texture>;
+}
+
 export abstract class TypedComponent<
+  G extends ComponentGraphics,
   I extends Dict<T.Input>,
   S extends BaseComponentState<I>
 > {
   id: string;
-  state: S;
+  graphics: G;
   inputKinds: { [K in keyof I]: I[K]['kind'] };
+  state: S;
+  group: Konva.Group;
 
-  constructor(id, state, inputKinds) {
+  constructor(id, graphics, inputKinds, state) {
     this.id = id;
-    this.state = state;
+    this.graphics = graphics;
     this.inputKinds = inputKinds;
+    this.state = state;
   }
 
   protected applyDefaultInput(input: Partial<I>): Required<I> {

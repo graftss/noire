@@ -22,8 +22,9 @@ export interface BaseSerializedComponent<K, S, I extends Dict<T.Input>> {
   id: string;
   name: string;
   kind: K;
-  state: Partial<S> & T.BaseComponentState<I>;
+  graphics: object;
   inputKinds: T.InputKindProjection<I>;
+  state: Partial<S> & T.BaseComponentState<I>;
 }
 
 export type SerializedComponent =
@@ -95,13 +96,18 @@ export function newSerializedComponent(
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const deserializeGraphics = (graphics: object): any => graphics;
+
 export const deserializeComponent = (s: T.SerializedComponent): Component => {
+  const graphics = deserializeGraphics(s.graphics);
+
   switch (s.kind) {
     case 'button':
-      return new ButtonComponent(s.id, s.state);
+      return new ButtonComponent(s.id, graphics, s.state);
     case 'stick':
-      return new StickComponent(s.id, s.state);
+      return new StickComponent(s.id, graphics, s.state);
     case 'dpad':
-      return new DPadComponent(s.id, s.state);
+      return new DPadComponent(s.id, graphics, s.state);
   }
 };

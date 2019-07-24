@@ -3,6 +3,16 @@ import * as T from '../../types';
 import { sign } from '../../utils';
 import { TypedComponent } from './Component';
 
+export interface StickGraphics extends T.ComponentGraphics {
+  shapes: {};
+  textures: {};
+}
+
+export const defaultStickGraphics: StickGraphics = {
+  shapes: {},
+  textures: {},
+};
+
 export interface StickInput extends Dict<T.Input> {
   xp: T.AxisInput;
   xn: T.AxisInput;
@@ -50,8 +60,9 @@ export const newSerializedStick = (id: string): SerializedStickComponent => ({
   id,
   kind: 'stick',
   name: 'New Stick Component',
-  state: defaultStickState,
+  graphics: {},
   inputKinds: stickInputKinds,
+  state: defaultStickState,
 });
 
 export const stickEditorConfig: T.ComponentEditorConfig = [
@@ -73,14 +84,19 @@ export const stickEditorConfig: T.ComponentEditorConfig = [
 const depthFactor = (t: number): number =>
   t > 0.2 ? 1 - 0.08 * Math.abs(t) : 1 - 0.02 * Math.abs(t);
 
-export class StickComponent extends TypedComponent<StickInput, StickState>
+export class StickComponent
+  extends TypedComponent<StickGraphics, StickInput, StickState>
   implements T.GroupContainer {
   group: Konva.Group;
   private center: Konva.Circle;
   private stick: Konva.Ellipse;
 
-  constructor(id: string, state?: Partial<StickState>) {
-    super(id, { ...defaultStickState, ...state }, stickInputKinds);
+  constructor(
+    id: string,
+    graphics: StickGraphics,
+    state?: Partial<StickState>,
+  ) {
+    super(id, graphics, stickInputKinds, { ...defaultStickState, ...state });
 
     const { boundaryRadius, stickRadius, stickFill, x, y } = this.state;
 

@@ -2,7 +2,7 @@ import Konva from 'konva';
 import { map } from 'ramda';
 import * as T from '../../types';
 import { deserializeComponent } from '../component/';
-import { Component, TypedComponent } from '../component/Component';
+import { Component } from '../component/Component';
 import { cast, find, keyBy } from '../../utils';
 import { DisplayEventBus } from './DisplayEventBus';
 import { ImageManager } from './ImageManager';
@@ -84,28 +84,24 @@ export class ComponentManager {
   };
 
   update(globalInput: T.GlobalControllerInput, dt: number): void {
-    this.components.forEach(
-      <I extends Dict<T.Input>, S extends T.BaseComponentState<I>>(
-        component: TypedComponent<I, S>,
-      ) => {
-        const getControllerKeyInput = (
-          controllerKey: Maybe<T.ControllerKey>,
-        ): Maybe<T.Input> => {
-          if (!controllerKey) return;
+    this.components.forEach((component: Component) => {
+      const getControllerKeyInput = (
+        controllerKey: Maybe<T.ControllerKey>,
+      ): Maybe<T.Input> => {
+        if (!controllerKey) return;
 
-          const { controllerId, key } = controllerKey;
-          const controllerInput = globalInput[controllerId];
-          return controllerInput && controllerInput[key];
-        };
+        const { controllerId, key } = controllerKey;
+        const controllerInput = globalInput[controllerId];
+        return controllerInput && controllerInput[key];
+      };
 
-        const componentInput: Dict<Maybe<T.Input>> = map(
-          getControllerKeyInput,
-          component.state.inputMap || {},
-        );
+      const componentInput: Dict<Maybe<T.Input>> = map(
+        getControllerKeyInput,
+        component.state.inputMap || {},
+      );
 
-        component.update(componentInput as I, dt);
-      },
-    );
+      component.update(componentInput, dt);
+    });
   }
 
   findById(id: string): Maybe<Component> {

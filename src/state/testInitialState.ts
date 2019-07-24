@@ -80,6 +80,7 @@ const leftStick: T.SerializedComponent = {
   id: ids[0],
   name: 'left stick',
   kind: 'stick',
+  graphics: {},
   state: {
     inputMap: {},
   },
@@ -90,6 +91,7 @@ const rightStick: T.SerializedComponent = {
   id: ids[1],
   name: 'right stick',
   kind: 'stick',
+  graphics: {},
   state: {
     x: 300,
     y: 200,
@@ -102,6 +104,7 @@ const dPad: T.SerializedComponent = {
   id: ids[2],
   name: 'directional pad',
   kind: 'dpad',
+  graphics: {},
   state: {
     x: 150,
     y: 150,
@@ -118,6 +121,7 @@ const button: T.SerializedComponent = {
   id: ids[3],
   name: 'my first button',
   kind: 'button',
+  graphics: {},
   state: {
     x: 50,
     y: 50,

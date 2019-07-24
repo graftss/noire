@@ -2,6 +2,16 @@ import Konva from 'konva';
 import * as T from '../../types';
 import { TypedComponent } from './Component';
 
+export interface DPadGraphics extends T.ComponentGraphics {
+  shapes: {};
+  textures: {};
+}
+
+export const defaultDPadGraphics: DPadGraphics = {
+  shapes: {},
+  textures: {},
+};
+
 type Dir = 'u' | 'l' | 'd' | 'r';
 const dirs: Dir[] = ['u', 'l', 'd', 'r'];
 
@@ -43,8 +53,9 @@ export const newSerializedDPad = (id: string): SerializedDPadComponent => ({
   id,
   kind: 'dpad',
   name: 'New DPad Component',
-  state: defaultDPadState,
+  graphics: {},
   inputKinds: dPadInputKinds,
+  state: defaultDPadState,
 });
 
 export const dPadEditorConfig: T.ComponentEditorConfig = [
@@ -62,13 +73,14 @@ export const dPadEditorConfig: T.ComponentEditorConfig = [
   },
 ];
 
-export class DPadComponent extends TypedComponent<DPadInput, DPadState>
+export class DPadComponent
+  extends TypedComponent<DPadGraphics, DPadInput, DPadState>
   implements T.GroupContainer {
   group: Konva.Group;
   private rects: Record<Dir, Konva.Rect>;
 
-  constructor(id: string, state?: Partial<DPadState>) {
-    super(id, { ...defaultDPadState, ...state }, dPadInputKinds);
+  constructor(id: string, graphics: DPadGraphics, state?: Partial<DPadState>) {
+    super(id, graphics, dPadInputKinds, { ...defaultDPadState, ...state });
 
     const { buttonWidth, buttonHeight, fill, x, y } = this.state;
 
