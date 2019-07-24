@@ -63,7 +63,6 @@ export {
   ComponentKind,
   ComponentEditorField,
   ComponentEditorConfig,
-  GroupContainer,
 } from './canvas/component/';
 export {
   BaseComponentState,
@@ -109,3 +108,4 @@ export {
   RawInputProjection,
 } from './input/input';
 export { Texture } from './canvas/texture';
+export { NoireConfig } from '.';

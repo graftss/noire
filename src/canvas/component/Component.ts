@@ -5,7 +5,7 @@ import { defaultInputByKind, rawifyInputDict } from '../../input/input';
 import { Texture } from '../texture';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Component = TypedComponent<any, any, any>;
+export type Component = TypedComponent<ComponentGraphics, any, any>;
 
 export type ComponentInputMap<I extends Dict<T.Input>> = Partial<
   Record<keyof I, Maybe<T.ControllerKey>>
@@ -30,7 +30,6 @@ export abstract class TypedComponent<
   graphics: G;
   inputKinds: { [K in keyof I]: I[K]['kind'] };
   state: S;
-  group: Konva.Group;
 
   constructor(id, graphics, inputKinds, state) {
     this.id = id;

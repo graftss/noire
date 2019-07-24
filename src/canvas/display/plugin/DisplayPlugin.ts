@@ -1,5 +1,6 @@
+import * as T from '../../../types';
 import { DisplayEventBus } from '../DisplayEventBus';
 
-export abstract class DisplayPlugin {
-  constructor(protected eventBus: DisplayEventBus) {}
+export class DisplayPlugin {
+  constructor(protected config: T.NoireConfig, protected eb: DisplayEventBus) {}
 }

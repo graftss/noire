@@ -1,10 +1,9 @@
-import Konva from 'konva';
 import * as T from '../../types';
 import { Component } from '../component/Component';
 import { selectEditorOption } from '../../state/actions';
 import { selectedComponentProp } from '../../state/selectors';
 import { ComponentManager } from './ComponentManager';
-import { ComponentTransformerPlugin } from './plugin/ComponentTransformerPlugin';
+import { KonvaComponentPlugin } from './plugin/KonvaComponentPlugin';
 import { DisplayEventBus } from './DisplayEventBus';
 import { DisplayPlugin } from './plugin/DisplayPlugin';
 import { ImageManager } from './ImageManager';
@@ -16,35 +15,15 @@ export class Display {
   private plugins: DisplayPlugin[];
   private imageManager: ImageManager;
 
-  constructor(
-    private stage: Konva.Stage,
-    private layer: Konva.Layer,
-    private store: T.EditorStore,
-  ) {
-    this.stage = stage;
-    this.layer = layer;
+  constructor(private config: T.NoireConfig, private store: T.EditorStore) {
     this.eventBus = new DisplayEventBus();
-    this.plugins = [new ComponentTransformerPlugin(this.eventBus)];
+    this.plugins = [new KonvaComponentPlugin(config, this.eventBus)];
     this.imageManager = new ImageManager();
-    this.cm = new ComponentManager(
-      stage,
-      layer,
-      this.eventBus,
-      this.imageManager,
-    );
+    this.cm = new ComponentManager(this.eventBus, this.imageManager);
 
     // run the subscriber once to sync with initial state
     this.storeSubscriber();
     store.subscribe(this.storeSubscriber);
-
-    stage.on('click', ({ target, currentTarget }) => {
-      if (target === currentTarget) {
-        this.eventBus.emit({
-          kind: 'stageClick',
-          data: [stage],
-        });
-      }
-    });
 
     this.eventBus.on({
       kind: 'componentSelect',
@@ -103,7 +82,7 @@ export class Display {
   }
 
   draw(): void {
-    this.layer.draw();
+    this.eventBus.emit({ kind: 'requestDraw' });
   }
 
   update(input: T.GlobalControllerInput, dt: number): void {

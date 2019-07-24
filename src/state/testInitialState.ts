@@ -1,4 +1,6 @@
+import Konva from 'konva';
 import * as T from '../types';
+import { FillTexture } from '../canvas/texture/FillTexture';
 import { stickInputKinds } from '../canvas/component/StickComponent';
 import { dPadInputKinds } from '../canvas/component/DPadComponent';
 import { defaultKeyboardController } from '../input/controller/keyboard';
@@ -121,14 +123,16 @@ const button: T.SerializedComponent = {
   id: ids[3],
   name: 'my first button',
   kind: 'button',
-  graphics: {},
+  graphics: {
+    shapes: {
+      button: new Konva.Rect({ x: 50, y: 50, width: 30, height: 30 }),
+    },
+    textures: {
+      on: new FillTexture('red'),
+      off: new FillTexture('white'),
+    },
+  },
   state: {
-    x: 50,
-    y: 50,
-    width: 30,
-    height: 40,
-    fill: 'black',
-    pressedFill: 'red',
     inputMap: {
       button: { controllerId, key: 'square' },
     },

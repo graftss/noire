@@ -1,9 +1,8 @@
-import Konva from 'konva';
 import { map } from 'ramda';
 import * as T from '../../types';
 import { deserializeComponent } from '../component/';
 import { Component } from '../component/Component';
-import { cast, find, keyBy } from '../../utils';
+import { find, keyBy } from '../../utils';
 import { DisplayEventBus } from './DisplayEventBus';
 import { ImageManager } from './ImageManager';
 
@@ -13,25 +12,12 @@ export class ComponentManager {
   private components: Component[] = [];
 
   constructor(
-    private stage: Konva.Stage,
-    private layer: Konva.Layer,
     private eventBus: DisplayEventBus,
     private imageManager: ImageManager,
   ) {}
 
   reset(components: Component[] = []): void {
     components.forEach(this.add);
-
-    this.components.forEach(component => {
-      const gc: Maybe<Component & T.GroupContainer> = cast(
-        c => c && c.group,
-        component,
-      );
-      if (gc) {
-        gc.group.destroy();
-      }
-    });
-
     this.components = components;
   }
 
@@ -61,26 +47,6 @@ export class ComponentManager {
       kind: 'componentAdd',
       data: [component],
     });
-
-    const gc: Maybe<Component & T.GroupContainer> = cast(
-      c => c && c.group,
-      component,
-    );
-    if (gc) {
-      this.layer.add(gc.group);
-
-      gc.group.on(CLICK_EVENT, () => {
-        this.eventBus.emit({
-          kind: 'componentSelect',
-          data: [gc],
-        });
-
-        this.eventBus.emit({
-          kind: 'groupComponentSelect',
-          data: [gc],
-        });
-      });
-    }
   };
 
   update(globalInput: T.GlobalControllerInput, dt: number): void {

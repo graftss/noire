@@ -84,9 +84,11 @@ export const stickEditorConfig: T.ComponentEditorConfig = [
 const depthFactor = (t: number): number =>
   t > 0.2 ? 1 - 0.08 * Math.abs(t) : 1 - 0.02 * Math.abs(t);
 
-export class StickComponent
-  extends TypedComponent<StickGraphics, StickInput, StickState>
-  implements T.GroupContainer {
+export class StickComponent extends TypedComponent<
+  StickGraphics,
+  StickInput,
+  StickState
+> {
   group: Konva.Group;
   private center: Konva.Circle;
   private stick: Konva.Ellipse;

@@ -1,4 +1,3 @@
-import Konva from 'konva';
 import * as T from './types';
 import { ControllerManager } from './input/ControllerManager';
 import { Display } from './canvas/display';
@@ -17,8 +16,6 @@ export interface NoireConfig {
 }
 
 export class Noire {
-  private stage: Konva.Stage;
-  private layer: Konva.Layer;
   private tLast: number = 0;
   private editorApp: T.EditorApp;
   private display: Display;
@@ -40,21 +37,7 @@ export class Noire {
   };
 
   init(): void {
-    const {
-      canvasTarget,
-      editorTarget,
-      width = 800,
-      height = 600,
-    } = this.config;
-
-    this.stage = new Konva.Stage({
-      width,
-      height,
-      container: canvasTarget,
-    });
-
-    this.layer = new Konva.Layer();
-    this.stage.add(this.layer);
+    const { editorTarget } = this.config;
 
     this.editorApp = createEditorApp(editorTarget);
     const store = this.editorApp.store;
@@ -62,7 +45,7 @@ export class Noire {
 
     this.controllerManager = new ControllerManager(store);
 
-    this.display = new Display(this.stage, this.layer, store);
+    this.display = new Display(this.config, store);
 
     this.updateLoop(this.tLast);
   }

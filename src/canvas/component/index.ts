@@ -1,4 +1,3 @@
-import Konva from 'konva';
 import * as T from '../../types';
 import { uuid } from '../../utils';
 import {
@@ -61,10 +60,6 @@ export const componentEditorConfigs: Record<
   stick: stickEditorConfig,
   dpad: dPadEditorConfig,
 };
-
-export interface GroupContainer {
-  group: Konva.Group;
-}
 
 export const stringifyComponentKey = ({
   label,

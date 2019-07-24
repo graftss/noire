@@ -28,24 +28,9 @@ export const buttonInputKinds: T.InputKindProjection<ButtonComponentInput> = {
   button: 'button',
 };
 
-export type ButtonComponentState = T.BaseComponentState<
-  ButtonComponentInput
-> & {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  fill: string;
-  pressedFill: string;
-};
+export type ButtonComponentState = T.BaseComponentState<ButtonComponentInput>;
 
 export const defaultButtonComponentState: ButtonComponentState = {
-  x: 0,
-  y: 0,
-  width: 30,
-  height: 40,
-  fill: 'black',
-  pressedFill: 'darkred',
   inputMap: {},
 };
 
@@ -68,17 +53,11 @@ export const buttonEditorConfig: T.ComponentEditorConfig = [
   },
 ];
 
-export class ButtonComponent
-  extends TypedComponent<
-    ButtonComponentGraphics,
-    ButtonComponentInput,
-    ButtonComponentState
-  >
-  implements T.GroupContainer {
-  private shape: Konva.Shape;
-  private onTexture: Texture;
-  private offTexture: Texture;
-
+export class ButtonComponent extends TypedComponent<
+  ButtonComponentGraphics,
+  ButtonComponentInput,
+  ButtonComponentState
+> {
   constructor(
     id: string,
     graphics: ButtonComponentGraphics,
@@ -88,18 +67,13 @@ export class ButtonComponent
       ...defaultButtonComponentState,
       ...state,
     });
-    const { width, height, x, y } = this.state;
-    this.group = new Konva.Group({ x, y });
-
-    this.shape = new Konva.Rect({ x: 0, y: 0, width, height });
-    this.onTexture = new FillTexture('red');
-    this.offTexture = new FillTexture('grey');
-    this.group.add(this.shape);
   }
 
   update(input: Partial<ButtonComponentInput>): void {
+    const { textures, shapes } = this.graphics;
     const { button } = this.computeRawInput(input);
-    const texture = button ? this.onTexture : this.offTexture;
-    texture.apply(this.shape);
+    const texture = button ? textures.on : textures.off;
+
+    texture.apply(shapes.button);
   }
 }

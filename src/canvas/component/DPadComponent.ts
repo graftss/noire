@@ -73,9 +73,11 @@ export const dPadEditorConfig: T.ComponentEditorConfig = [
   },
 ];
 
-export class DPadComponent
-  extends TypedComponent<DPadGraphics, DPadInput, DPadState>
-  implements T.GroupContainer {
+export class DPadComponent extends TypedComponent<
+  DPadGraphics,
+  DPadInput,
+  DPadState
+> {
   group: Konva.Group;
   private rects: Record<Dir, Konva.Rect>;
 
