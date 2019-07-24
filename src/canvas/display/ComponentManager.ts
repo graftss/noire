@@ -4,17 +4,13 @@ import { deserializeComponent } from '../component/';
 import { Component } from '../component/Component';
 import { find, keyBy } from '../../utils';
 import { DisplayEventBus } from './DisplayEventBus';
-import { ImageManager } from './ImageManager';
 
 const CLICK_EVENT = `click.ComponentManager`;
 
 export class ComponentManager {
   private components: Component[] = [];
 
-  constructor(
-    private eventBus: DisplayEventBus,
-    private imageManager: ImageManager,
-  ) {}
+  constructor(private eventBus: DisplayEventBus) {}
 
   reset(components: Component[] = []): void {
     components.forEach(this.add);

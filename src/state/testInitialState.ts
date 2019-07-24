@@ -1,6 +1,5 @@
 import Konva from 'konva';
 import * as T from '../types';
-import { FillTexture } from '../canvas/texture/FillTexture';
 import { stickInputKinds } from '../canvas/component/StickComponent';
 import { dPadInputKinds } from '../canvas/component/DPadComponent';
 import { defaultKeyboardController } from '../input/controller/keyboard';
@@ -10,6 +9,8 @@ const ids = 'qwertyuiopasdfghjklzxcvbnm,';
 const ref: T.GamepadSourceRef = { kind: 'gamepad', index: 1 };
 const sourceKind = 'gamepad';
 const controllerId = 'test';
+
+const serializeNode = (node: Konva.Node): object => JSON.parse(node.toJSON());
 
 const toAxisValue = (axis, value): T.GamepadAxisValueBinding => ({
   ref,
@@ -82,7 +83,7 @@ const leftStick: T.SerializedComponent = {
   id: ids[0],
   name: 'left stick',
   kind: 'stick',
-  graphics: {},
+  graphics: { shapes: {}, textures: {} },
   state: {
     inputMap: {},
   },
@@ -93,7 +94,7 @@ const rightStick: T.SerializedComponent = {
   id: ids[1],
   name: 'right stick',
   kind: 'stick',
-  graphics: {},
+  graphics: { shapes: {}, textures: {} },
   state: {
     x: 300,
     y: 200,
@@ -106,7 +107,7 @@ const dPad: T.SerializedComponent = {
   id: ids[2],
   name: 'directional pad',
   kind: 'dpad',
-  graphics: {},
+  graphics: { shapes: {}, textures: {} },
   state: {
     x: 150,
     y: 150,
@@ -125,11 +126,16 @@ const button: T.SerializedComponent = {
   kind: 'button',
   graphics: {
     shapes: {
-      button: new Konva.Rect({ x: 50, y: 50, width: 30, height: 30 }),
+      button: serializeNode(
+        new Konva.Rect({ x: 50, y: 50, width: 30, height: 30 }),
+      ),
     },
     textures: {
-      on: new FillTexture('red'),
-      off: new FillTexture('white'),
+      on: { kind: 'fill', state: { fill: 'green' } },
+      off: {
+        kind: 'image',
+        state: { src: 'dist/noire.png', offset: { x: 200, y: 100 } },
+      },
     },
   },
   state: {
@@ -141,9 +147,9 @@ const button: T.SerializedComponent = {
 };
 
 const components: T.SerializedComponent[] = [
-  leftStick,
-  rightStick,
-  dPad,
+  // leftStick,
+  // rightStick,
+  // dPad,
   button,
 ];
 

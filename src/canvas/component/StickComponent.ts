@@ -8,11 +8,6 @@ export interface StickGraphics extends T.ComponentGraphics {
   textures: {};
 }
 
-export const defaultStickGraphics: StickGraphics = {
-  shapes: {},
-  textures: {},
-};
-
 export interface StickInput extends Dict<T.Input> {
   xp: T.AxisInput;
   xn: T.AxisInput;
@@ -60,7 +55,7 @@ export const newSerializedStick = (id: string): SerializedStickComponent => ({
   id,
   kind: 'stick',
   name: 'New Stick Component',
-  graphics: {},
+  graphics: { shapes: {}, textures: {} },
   inputKinds: stickInputKinds,
   state: defaultStickState,
 });

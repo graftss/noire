@@ -1,14 +1,21 @@
 import Konva from 'konva';
-import { Texture } from '.';
+import * as T from '../../types';
 
-export class FillTexture implements Texture {
-  constructor(private color: string) {}
+export interface FillTextureState {
+  fill: string;
+}
 
-  setColor(color: string): void {
-    this.color = color;
+export class FillTexture extends T.TypedTexture<'fill', FillTextureState> {
+  constructor(state: FillTextureState) {
+    super('fill', state);
   }
 
-  apply(shape: Konva.Shape): void {
-    shape.fill(this.color);
+  updateState(updates: Partial<FillTextureState>): void {
+    this.state = { ...this.state, ...updates };
   }
+
+  apply = (shape: Konva.Shape): void => {
+    shape.fillPriority('color');
+    shape.fill(this.state.fill);
+  };
 }

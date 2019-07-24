@@ -1,9 +1,12 @@
+import Konva from 'konva';
 import * as T from '../../types';
 import { uuid } from '../../utils';
+import { deserializeTexture } from '../texture/';
 import {
   ButtonComponent,
   buttonEditorConfig,
   newSerializedButton,
+  ButtonComponentGraphics,
 } from './ButtonComponent';
 import {
   DPadComponent,
@@ -21,7 +24,7 @@ export interface BaseSerializedComponent<K, S, I extends Dict<T.Input>> {
   id: string;
   name: string;
   kind: K;
-  graphics: object;
+  graphics: SerializedComponentGraphics;
   inputKinds: T.InputKindProjection<I>;
   state: Partial<S> & T.BaseComponentState<I>;
 }
@@ -91,15 +94,50 @@ export function newSerializedComponent(
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const deserializeGraphics = (graphics: object): any => graphics;
+export interface SerializedComponentGraphics {
+  shapes: Record<string, object>;
+  textures: Record<string, T.SerializedTexture>;
+}
+
+export const serializeGraphics = (
+  graphics: T.ComponentGraphics,
+): SerializedComponentGraphics => {
+  const result: SerializedComponentGraphics = { shapes: {}, textures: {} };
+  const { shapes, textures } = graphics;
+
+  for (const k in shapes) result.shapes[k] = JSON.parse(shapes[k].toJSON());
+  for (const k in textures) result.textures[k] = textures[k].serialize();
+
+  return result;
+};
+
+export const deserializeGraphics = (
+  serialized: SerializedComponentGraphics,
+): T.ComponentGraphics => {
+  const result: T.ComponentGraphics = { shapes: {}, textures: {} };
+  const { shapes, textures } = serialized;
+
+  for (const k in shapes) {
+    result.shapes[k] = Konva.Node.create(shapes[k], undefined) as Konva.Shape;
+  }
+
+  for (const k in textures) {
+    result.textures[k] = deserializeTexture(textures[k]);
+  }
+
+  return result;
+};
 
 export const deserializeComponent = (s: T.SerializedComponent): Component => {
   const graphics = deserializeGraphics(s.graphics);
 
   switch (s.kind) {
     case 'button':
-      return new ButtonComponent(s.id, graphics, s.state);
+      return new ButtonComponent(
+        s.id,
+        graphics as ButtonComponentGraphics,
+        s.state,
+      );
     case 'stick':
       return new StickComponent(s.id, graphics, s.state);
     case 'dpad':

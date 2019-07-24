@@ -7,11 +7,6 @@ export interface DPadGraphics extends T.ComponentGraphics {
   textures: {};
 }
 
-export const defaultDPadGraphics: DPadGraphics = {
-  shapes: {},
-  textures: {},
-};
-
 type Dir = 'u' | 'l' | 'd' | 'r';
 const dirs: Dir[] = ['u', 'l', 'd', 'r'];
 
@@ -53,7 +48,7 @@ export const newSerializedDPad = (id: string): SerializedDPadComponent => ({
   id,
   kind: 'dpad',
   name: 'New DPad Component',
-  graphics: {},
+  graphics: { shapes: {}, textures: {} },
   inputKinds: dPadInputKinds,
   state: defaultDPadState,
 });

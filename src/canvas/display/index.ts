@@ -6,20 +6,17 @@ import { ComponentManager } from './ComponentManager';
 import { KonvaComponentPlugin } from './plugin/KonvaComponentPlugin';
 import { DisplayEventBus } from './DisplayEventBus';
 import { DisplayPlugin } from './plugin/DisplayPlugin';
-import { ImageManager } from './ImageManager';
 
 export class Display {
   private eventBus: DisplayEventBus;
   private cm: ComponentManager;
   private lastState?: T.DisplayState;
   private plugins: DisplayPlugin[];
-  private imageManager: ImageManager;
 
   constructor(private config: T.NoireConfig, private store: T.EditorStore) {
     this.eventBus = new DisplayEventBus();
     this.plugins = [new KonvaComponentPlugin(config, this.eventBus)];
-    this.imageManager = new ImageManager();
-    this.cm = new ComponentManager(this.eventBus, this.imageManager);
+    this.cm = new ComponentManager(this.eventBus);
 
     // run the subscriber once to sync with initial state
     this.storeSubscriber();

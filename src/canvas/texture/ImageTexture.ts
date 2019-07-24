@@ -1,20 +1,45 @@
 import Konva from 'konva';
+import * as T from '../../types';
 import { vec2 } from '../../utils';
-import { Texture } from '.';
 
-export class ImageTexture implements Texture {
-  constructor(private image: HTMLImageElement, private offset: Vec2) {}
+export interface ImageTextureState {
+  src: string;
+  offset: Vec2;
+}
+
+type ImageLoadState = 'requested' | 'loaded';
+
+export class ImageTexture extends T.TypedTexture<'image', ImageTextureState> {
+  private image: HTMLImageElement;
+  private loadState: ImageLoadState;
+
+  constructor(state: ImageTextureState) {
+    super('image', state);
+
+    this.image = new Image();
+    this.image.src = state.src;
+    this.loadState = 'requested';
+
+    this.image.onload = () => (this.loadState = 'loaded');
+  }
 
   moveBy = (v: Vec2): void => {
-    this.offset = vec2.add(this.offset, v);
+    this.state.offset = vec2.add(this.state.offset, v);
   };
 
   moveTo = (v: Vec2): void => {
-    this.offset = v;
+    this.state.offset = v;
   };
 
-  apply(shape: Konva.Shape): void {
-    shape.fillPatternImage(this.image);
-    shape.fillPatternOffset(this.offset);
-  }
+  apply = (shape: Konva.Shape): void => {
+    shape.fillPriority('pattern');
+
+    switch (this.loadState) {
+      case 'loaded': {
+        shape.fillPatternImage(this.image);
+        shape.fillPatternOffset(this.state.offset);
+        break;
+      }
+    }
+  };
 }

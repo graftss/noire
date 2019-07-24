@@ -107,5 +107,8 @@ export {
   RawInput,
   RawInputProjection,
 } from './input/input';
-export { Texture } from './canvas/texture';
+export { Texture, SerializedTexture } from './canvas/texture';
+export { TypedSerializedTexture, TypedTexture } from './canvas/texture/Texture';
 export { NoireConfig } from '.';
+export { FillTextureState } from './canvas/texture/FillTexture';
+export { ImageTextureState } from './canvas/texture/ImageTexture';

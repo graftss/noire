@@ -9,11 +9,6 @@ export interface ButtonComponentGraphics extends T.ComponentGraphics {
   textures: { on: Texture; off: Texture };
 }
 
-export const defaultButtonGraphics: ButtonComponentGraphics = {
-  shapes: { button: new Konva.Rect({ width: 30, height: 30 }) },
-  textures: { on: new FillTexture('red'), off: new FillTexture('white') },
-};
-
 export type SerializedButtonComponent = T.Serialized<
   'button',
   ButtonComponentState,
@@ -38,7 +33,7 @@ export const newSerializedButton = (id: string): SerializedButtonComponent => ({
   id,
   kind: 'button',
   name: 'New Button Component',
-  graphics: {},
+  graphics: { shapes: {}, textures: {} },
   inputKinds: buttonInputKinds,
   state: defaultButtonComponentState,
 });
