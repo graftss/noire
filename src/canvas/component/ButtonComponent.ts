@@ -1,7 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
 import { FillTexture } from '../texture/FillTexture';
-import { Rectangle } from '../shape/Rectangle';
 import { Texture } from '../texture';
 import { TypedComponent } from './Component';
 
@@ -59,7 +58,7 @@ export const buttonEditorConfig: T.ComponentEditorConfig = [
 export class ButtonComponent
   extends TypedComponent<ButtonComponentInput, ButtonState>
   implements T.GroupContainer {
-  private shape: Rectangle;
+  private shape: Konva.Shape;
   private onTexture: Texture;
   private offTexture: Texture;
 
@@ -70,10 +69,10 @@ export class ButtonComponent
     const { width, height, x, y } = this.state;
     this.group = new Konva.Group({ x, y });
 
-    this.shape = new Rectangle({ x: 0, y: 0, width, height });
+    this.shape = new Konva.Rect({ x: 0, y: 0, width, height });
     this.onTexture = new FillTexture('red');
     this.offTexture = new FillTexture('grey');
-    this.shape.addToGroup(this.group);
+    this.group.add(this.shape);
   }
 
   update(input: Partial<ButtonComponentInput>): void {

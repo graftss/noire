@@ -1,4 +1,4 @@
-import { Shape } from '../shape/Shape';
+import Konva from 'konva';
 import { Texture } from '.';
 
 export class FillTexture implements Texture {
@@ -8,7 +8,7 @@ export class FillTexture implements Texture {
     this.color = color;
   }
 
-  apply(shape: Shape): void {
-    shape.fillColor(this.color);
+  apply(shape: Konva.Shape): void {
+    shape.fill(this.color);
   }
 }

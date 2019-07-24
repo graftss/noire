@@ -1,4 +1,4 @@
-import { Shape } from '../shape/Shape';
+import Konva from 'konva';
 import { vec2 } from '../../utils';
 import { Texture } from '.';
 
@@ -13,8 +13,8 @@ export class ImageTexture implements Texture {
     this.offset = v;
   };
 
-  apply(shape: Shape): void {
-    shape.fillImage(this.image);
-    shape.offsetImage(this.offset);
+  apply(shape: Konva.Shape): void {
+    shape.fillPatternImage(this.image);
+    shape.fillPatternOffset(this.offset);
   }
 }

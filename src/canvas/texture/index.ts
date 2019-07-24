@@ -1,5 +1,5 @@
-import { Shape } from '../shape/Shape';
+import Konva from 'konva';
 
 export interface Texture {
-  apply: (shape: Shape) => void;
+  apply: (shape: Konva.Shape) => void;
 }
