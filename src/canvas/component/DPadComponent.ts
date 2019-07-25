@@ -4,7 +4,19 @@ import { TypedComponent } from './Component';
 
 type Dir = 'u' | 'l' | 'd' | 'r';
 
-export interface DPadGraphics extends T.ComponentGraphics {
+type DPadShapes = Dir;
+type DPadTextures =
+  | 'uOn'
+  | 'uOff'
+  | 'lOn'
+  | 'lOff'
+  | 'dOn'
+  | 'dOff'
+  | 'rOn'
+  | 'rOff';
+
+export interface DPadGraphics
+  extends T.ComponentGraphics<DPadShapes, DPadTextures> {
   shapes: { u: Konva.Shape; l: Konva.Shape; d: Konva.Shape; r: Konva.Shape };
   textures: {
     uOn: T.Texture;
@@ -35,18 +47,11 @@ export const defaultDPadState: DPadState = {
 
 export type SerializedDPadComponent = T.Serialized<
   'dpad',
+  DPadShapes,
+  DPadTextures,
   DPadState,
   DPadInput
 >;
-
-export const newSerializedDPad = (id: string): SerializedDPadComponent => ({
-  id,
-  kind: 'dpad',
-  name: 'New DPad Component',
-  graphics: { shapes: {}, textures: {} },
-  inputKinds: dPadInputKinds,
-  state: defaultDPadState,
-});
 
 export const dPadEditorConfig: T.ComponentEditorConfig = [
   { kind: 'fixed', data: { label: 'DPad' } },
@@ -110,6 +115,8 @@ export const simpleDPadTextures = (
 });
 
 export class DPadComponent extends TypedComponent<
+  DPadShapes,
+  DPadTextures,
   DPadGraphics,
   DPadInput,
   DPadState

@@ -7,7 +7,6 @@ import {
   controllersById,
 } from '../../../state/selectors';
 import {
-  addComponent,
   listenNextInput,
   updateComponentName,
   selectEditorOption,
@@ -15,7 +14,6 @@ import {
 import * as T from '../../../types';
 import { ComponentEditor } from './ComponentEditor';
 import { ComponentSelect } from './ComponentSelect';
-import { AddComponent } from './AddComponent';
 
 interface PropsFromState {
   components: T.SerializedComponent[];
@@ -25,7 +23,6 @@ interface PropsFromState {
 }
 
 interface PropsFromDispatch {
-  addComponent: (k: T.ComponentKind) => void;
   selectComponent: (id: string) => void;
   updateComponentName: (id: string, name: string) => void;
   listenNextInput: (s: T.RemapState) => void;
@@ -43,7 +40,6 @@ const mapStateToProps = (state): PropsFromState => ({
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(
     {
-      addComponent,
       listenNextInput,
       selectComponent: id => selectEditorOption({ kind: 'component', id }),
       updateComponentName,
@@ -52,7 +48,6 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   );
 
 const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
-  addComponent,
   components,
   controllersById,
   listenNextInput,
@@ -62,11 +57,6 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
   updateComponentName,
 }) => (
   <div>
-    <AddComponent
-      addComponent={addComponent}
-      componentKinds={['button', 'dpad', 'stick']}
-    />
-
     <ComponentSelect
       all={components}
       selected={selected}

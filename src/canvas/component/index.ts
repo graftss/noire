@@ -1,32 +1,35 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { uuid } from '../../utils';
 import { deserializeTexture } from '../texture/';
 import {
   ButtonComponent,
   buttonEditorConfig,
-  newSerializedButton,
   ButtonComponentGraphics,
 } from './ButtonComponent';
-import {
-  DPadComponent,
-  DPadGraphics,
-  dPadEditorConfig,
-  newSerializedDPad,
-} from './DPadComponent';
+import { DPadComponent, DPadGraphics, dPadEditorConfig } from './DPadComponent';
 import {
   StickComponent,
   stickEditorConfig,
   StickGraphics,
-  newSerializedStick,
 } from './StickComponent';
 import { Component } from './Component';
 
-export interface BaseSerializedComponent<K, S, I extends Dict<T.Input>> {
+// K: identifying kind of component
+// SS: shape keys
+// TS: texture keys
+// S: component state
+// I: component input
+export interface BaseSerializedComponent<
+  K,
+  SS extends string,
+  TS extends string,
+  S,
+  I extends Dict<T.Input>
+> {
   id: string;
   name: string;
   kind: K;
-  graphics: SerializedComponentGraphics;
+  graphics: SerializedComponentGraphics<SS, TS>;
   inputKinds: T.InputKindProjection<I>;
   state: Partial<S> & T.BaseComponentState<I>;
 }
@@ -71,40 +74,19 @@ export const stringifyComponentKey = ({
   inputKind,
 }: ComponentKey): string => `${label} (${inputKind})`;
 
-export function newSerializedComponent(
-  kind: 'button',
-): T.SerializedButtonComponent;
-export function newSerializedComponent(kind: 'dpad'): T.SerializedDPadComponent;
-export function newSerializedComponent(
-  kind: 'stick',
-): T.SerializedStickComponent;
-export function newSerializedComponent(
-  kind: T.ComponentKind,
-): T.SerializedComponent;
-export function newSerializedComponent(
-  kind: T.ComponentKind,
-): T.SerializedComponent {
-  const id = uuid();
-
-  switch (kind) {
-    case 'button':
-      return newSerializedButton(id);
-    case 'dpad':
-      return newSerializedDPad(id);
-    case 'stick':
-      return newSerializedStick(id);
-  }
+export interface SerializedComponentGraphics<
+  SS extends string,
+  TS extends string
+> {
+  shapes: Record<SS, object>;
+  textures: Record<TS, T.SerializedTexture>;
 }
 
-export interface SerializedComponentGraphics {
-  shapes: Record<string, object>;
-  textures: Record<string, T.SerializedTexture>;
-}
-
-export const serializeGraphics = (
-  graphics: T.ComponentGraphics,
-): SerializedComponentGraphics => {
-  const result: SerializedComponentGraphics = { shapes: {}, textures: {} };
+export const serializeGraphics = <SS extends string, TS extends string>(
+  graphics: T.ComponentGraphics<SS, TS>,
+): SerializedComponentGraphics<SS, TS> => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result: any = { shapes: {}, textures: {} };
   const { shapes, textures } = graphics;
 
   for (const k in shapes) {
@@ -120,10 +102,11 @@ export const serializeGraphics = (
   return result;
 };
 
-export const deserializeGraphics = (
-  serialized: SerializedComponentGraphics,
-): T.ComponentGraphics => {
-  const result: T.ComponentGraphics = { shapes: {}, textures: {} };
+export const deserializeGraphics = <SS extends string, TS extends string>(
+  serialized: SerializedComponentGraphics<SS, TS>,
+): T.ComponentGraphics<SS, TS> => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result: any = { shapes: {}, textures: {} };
   const { shapes, textures } = serialized;
 
   for (const k in shapes) {
@@ -138,18 +121,24 @@ export const deserializeGraphics = (
 };
 
 export const deserializeComponent = (s: T.SerializedComponent): Component => {
-  const graphics = deserializeGraphics(s.graphics);
-
   switch (s.kind) {
     case 'button':
       return new ButtonComponent(
         s.id,
-        graphics as ButtonComponentGraphics,
+        deserializeGraphics(s.graphics) as ButtonComponentGraphics,
         s.state,
       );
     case 'stick':
-      return new StickComponent(s.id, graphics as StickGraphics, s.state);
+      return new StickComponent(
+        s.id,
+        deserializeGraphics(s.graphics) as StickGraphics,
+        s.state,
+      );
     case 'dpad':
-      return new DPadComponent(s.id, graphics as DPadGraphics, s.state);
+      return new DPadComponent(
+        s.id,
+        deserializeGraphics(s.graphics) as DPadGraphics,
+        s.state,
+      );
   }
 };

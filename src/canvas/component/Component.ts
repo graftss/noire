@@ -5,7 +5,7 @@ import { defaultInputByKind, rawifyInputDict } from '../../input/input';
 import { Texture } from '../texture';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Component = TypedComponent<ComponentGraphics, any, any>;
+export type Component = TypedComponent<any, any, any, any, any>;
 
 export type ComponentInputMap<I extends Dict<T.Input>> = Partial<
   Record<keyof I, Maybe<T.ControllerKey>>
@@ -16,13 +16,15 @@ export interface BaseComponentState<I extends Dict<T.Input>> {
   inputMap: ComponentInputMap<I>;
 }
 
-export interface ComponentGraphics {
-  shapes: Dict<Maybe<Konva.Shape>>;
-  textures: Dict<Maybe<Texture>>;
+export interface ComponentGraphics<SS extends string, TS extends string> {
+  shapes: Record<SS, Maybe<Konva.Shape>>;
+  textures: Record<TS, Maybe<Texture>>;
 }
 
 export abstract class TypedComponent<
-  G extends ComponentGraphics,
+  SS extends string,
+  TS extends string,
+  G extends ComponentGraphics<SS, TS>,
   I extends Dict<T.Input>,
   S extends BaseComponentState<I>
 > {

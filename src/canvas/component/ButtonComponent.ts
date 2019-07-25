@@ -3,13 +3,19 @@ import * as T from '../../types';
 import { Texture } from '../texture';
 import { TypedComponent } from './Component';
 
-export interface ButtonComponentGraphics extends T.ComponentGraphics {
+type ButtonShapes = 'on' | 'off';
+type ButtonTextures = 'on' | 'off';
+
+export interface ButtonComponentGraphics
+  extends T.ComponentGraphics<ButtonShapes, ButtonTextures> {
   shapes: { on: Konva.Shape; off: Konva.Shape };
   textures: { on: Texture; off: Texture };
 }
 
 export type SerializedButtonComponent = T.Serialized<
   'button',
+  ButtonShapes,
+  ButtonTextures,
   ButtonComponentState,
   ButtonComponentInput
 >;
@@ -28,15 +34,6 @@ export const defaultButtonComponentState: ButtonComponentState = {
   inputMap: {},
 };
 
-export const newSerializedButton = (id: string): SerializedButtonComponent => ({
-  id,
-  kind: 'button',
-  name: 'New Button Component',
-  graphics: { shapes: {}, textures: {} },
-  inputKinds: buttonInputKinds,
-  state: defaultButtonComponentState,
-});
-
 export const buttonEditorConfig: T.ComponentEditorConfig = [
   { kind: 'fixed', data: { label: 'Button' } },
   {
@@ -48,6 +45,8 @@ export const buttonEditorConfig: T.ComponentEditorConfig = [
 ];
 
 export class ButtonComponent extends TypedComponent<
+  ButtonShapes,
+  ButtonTextures,
   ButtonComponentGraphics,
   ButtonComponentInput,
   ButtonComponentState

@@ -2,7 +2,6 @@ import * as T from '../../types';
 import { testInitialState } from '../testInitialState';
 import { mapPath } from '../../utils';
 import { mapComponentWithId } from '../selectors';
-import { newSerializedComponent } from '../../canvas/component';
 
 export interface DisplayState {
   components: T.SerializedComponent[];
@@ -62,13 +61,6 @@ export const displayReducer = (
       const newName = name.length === 0 ? 'Unnamed component' : name;
 
       return mapComponentWithId(state, id, c => ({ ...c, name: newName }));
-    }
-
-    case 'addComponent': {
-      return {
-        ...state,
-        components: [...state.components, newSerializedComponent(action.data)],
-      };
     }
   }
 

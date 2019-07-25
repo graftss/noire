@@ -2,7 +2,11 @@ import Konva from 'konva';
 import * as T from '../../types';
 import { TypedComponent } from './Component';
 
-export interface StickGraphics extends T.ComponentGraphics {
+type StickShapes = 'center' | 'stick';
+type StickTextures = 'center' | 'stick' | 'stickDown';
+
+export interface StickGraphics
+  extends T.ComponentGraphics<StickShapes, StickTextures> {
   shapes: {
     center: Maybe<Konva.Shape>;
     stick: Konva.Shape;
@@ -47,18 +51,11 @@ export const defaultStickState: StickState = {
 
 export type SerializedStickComponent = T.Serialized<
   'stick',
+  StickShapes,
+  StickTextures,
   StickState,
   StickInput
 >;
-
-export const newSerializedStick = (id: string): SerializedStickComponent => ({
-  id,
-  kind: 'stick',
-  name: 'New Stick Component',
-  graphics: { shapes: {}, textures: {} },
-  inputKinds: stickInputKinds,
-  state: defaultStickState,
-});
 
 export const stickEditorConfig: T.ComponentEditorConfig = [
   { kind: 'fixed', data: { label: 'Stick' } },
@@ -80,6 +77,8 @@ const depthFactor = (t: number): number =>
   t > 0.2 ? 1 - 0.08 * Math.abs(t) : 1 - 0.02 * Math.abs(t);
 
 export class StickComponent extends TypedComponent<
+  StickShapes,
+  StickTextures,
   StickGraphics,
   StickInput,
   StickState
