@@ -1,7 +1,11 @@
 import Konva from 'konva';
 import * as T from '../types';
 import { stickInputKinds } from '../canvas/component/StickComponent';
-import { dPadInputKinds } from '../canvas/component/DPadComponent';
+import {
+  dPadInputKinds,
+  simpleDPadRects,
+  simpleDPadTextures,
+} from '../canvas/component/DPadComponent';
 import { defaultKeyboardController } from '../input/controller/keyboard';
 
 const ids = 'qwertyuiopasdfghjklzxcvbnm,';
@@ -136,13 +140,16 @@ const dPad: T.SerializedComponent = {
   id: ids[2],
   name: 'directional pad',
   kind: 'dpad',
-  graphics: { shapes: {}, textures: {} },
+  graphics: {
+    shapes: simpleDPadRects(200, 50, 30, 30),
+    textures: simpleDPadTextures(
+      { kind: 'fill', state: { fill: 'black' } },
+      { kind: 'fill', state: { fill: 'red', stroke: 'black', strokeWidth: 1 } },
+    ),
+  },
   state: {
-    x: 150,
-    y: 150,
-    pressedFill: 'blue',
     inputMap: {
-      d: { controllerId, key: 'triangle' },
+      d: { controllerId, key: 'padD' },
       u: { controllerId, key: 'padU' },
     },
   },
@@ -184,7 +191,7 @@ const button: T.SerializedComponent = {
 const components: T.SerializedComponent[] = [
   leftStick,
   // rightStick,
-  // dPad,
+  dPad,
   button,
 ];
 

@@ -2,13 +2,21 @@ import Konva from 'konva';
 import * as T from '../../types';
 import { TypedComponent } from './Component';
 
-export interface DPadGraphics extends T.ComponentGraphics {
-  shapes: {};
-  textures: {};
-}
-
 type Dir = 'u' | 'l' | 'd' | 'r';
-const dirs: Dir[] = ['u', 'l', 'd', 'r'];
+
+export interface DPadGraphics extends T.ComponentGraphics {
+  shapes: { u: Konva.Shape; l: Konva.Shape; d: Konva.Shape; r: Konva.Shape };
+  textures: {
+    uOn: T.Texture;
+    uOff: T.Texture;
+    lOn: T.Texture;
+    lOff: T.Texture;
+    dOn: T.Texture;
+    dOff: T.Texture;
+    rOn: T.Texture;
+    rOff: T.Texture;
+  };
+}
 
 export type DPadInput = Record<Dir, T.ButtonInput>;
 
@@ -19,22 +27,9 @@ export const dPadInputKinds: T.InputKindProjection<DPadInput> = {
   r: 'button',
 };
 
-export type DPadState = T.BaseComponentState<DPadInput> & {
-  x: number;
-  y: number;
-  buttonWidth: number;
-  buttonHeight: number;
-  fill: string;
-  pressedFill: string;
-};
+export type DPadState = T.BaseComponentState<DPadInput> & {};
 
 export const defaultDPadState: DPadState = {
-  x: 0,
-  y: 0,
-  buttonWidth: 20,
-  buttonHeight: 20,
-  fill: 'black',
-  pressedFill: 'darkred',
   inputMap: {},
 };
 
@@ -68,60 +63,68 @@ export const dPadEditorConfig: T.ComponentEditorConfig = [
   },
 ];
 
+export const simpleDPadRects = (
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+): DPadGraphics['shapes'] => ({
+  u: new Konva.Rect({
+    x,
+    y: y - height,
+    width,
+    height,
+  }),
+  l: new Konva.Rect({
+    x: x - width,
+    y,
+    width,
+    height,
+  }),
+  d: new Konva.Rect({
+    x,
+    y: y + height,
+    width,
+    height,
+  }),
+  r: new Konva.Rect({
+    x: x + width,
+    y,
+    width,
+    height,
+  }),
+});
+
+export const simpleDPadTextures = (
+  off: T.SerializedTexture,
+  on: T.SerializedTexture,
+): Dict<T.SerializedTexture> => ({
+  uOn: on,
+  uOff: off,
+  lOn: on,
+  lOff: off,
+  dOn: on,
+  dOff: off,
+  rOn: on,
+  rOff: off,
+});
+
 export class DPadComponent extends TypedComponent<
   DPadGraphics,
   DPadInput,
   DPadState
 > {
-  group: Konva.Group;
-  private rects: Record<Dir, Konva.Rect>;
-
   constructor(id: string, graphics: DPadGraphics, state?: Partial<DPadState>) {
     super(id, graphics, dPadInputKinds, { ...defaultDPadState, ...state });
-
-    const { buttonWidth, buttonHeight, fill, x, y } = this.state;
-
-    this.group = new Konva.Group({ x, y });
-    this.rects = {
-      u: new Konva.Rect({
-        x: 0,
-        y: -buttonHeight,
-        width: buttonWidth,
-        height: buttonHeight,
-        fill,
-      }),
-      l: new Konva.Rect({
-        x: -buttonWidth,
-        y: 0,
-        width: buttonWidth,
-        height: buttonHeight,
-        fill,
-      }),
-      d: new Konva.Rect({
-        x: 0,
-        y: buttonHeight,
-        width: buttonWidth,
-        height: buttonHeight,
-        fill,
-      }),
-      r: new Konva.Rect({
-        x: buttonWidth,
-        y: 0,
-        width: buttonWidth,
-        height: buttonHeight,
-        fill,
-      }),
-    };
-
-    dirs.forEach(dir => this.group.add(this.rects[dir]));
   }
 
   update(input: DPadInput): void {
-    const rawInput = this.computeRawInput(input);
-    const { pressedFill, fill } = this.state;
+    const { u, l, d, r } = this.computeRawInput(input);
+    const { shapes, textures } = this.graphics;
 
-    dirs.forEach(dir =>
-      this.rects[dir].fill(rawInput[dir] ? pressedFill : fill),
-    );
+    (u ? textures.uOn : textures.uOff).apply(shapes.u);
+    (l ? textures.lOn : textures.lOff).apply(shapes.l);
+    (d ? textures.dOn : textures.dOff).apply(shapes.d);
+    (r ? textures.rOn : textures.rOff).apply(shapes.r);
   }
 }

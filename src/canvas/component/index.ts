@@ -10,6 +10,7 @@ import {
 } from './ButtonComponent';
 import {
   DPadComponent,
+  DPadGraphics,
   dPadEditorConfig,
   newSerializedDPad,
 } from './DPadComponent';
@@ -149,6 +150,6 @@ export const deserializeComponent = (s: T.SerializedComponent): Component => {
     case 'stick':
       return new StickComponent(s.id, graphics as StickGraphics, s.state);
     case 'dpad':
-      return new DPadComponent(s.id, graphics, s.state);
+      return new DPadComponent(s.id, graphics as DPadGraphics, s.state);
   }
 };
