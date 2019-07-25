@@ -83,6 +83,53 @@ const ps2Controller2: T.PS2Controller = {
   bindings: {},
 };
 
+const distortedImage: T.SerializedComponent = {
+  id: ids[6],
+  name: 'distortion test',
+  kind: 'stickDistortion',
+  graphics: {
+    shapes: {
+      background: serializeNode(
+        new Konva.Rect({ x: 0, y: 0, width: 675, height: 1000 }),
+      ),
+    },
+    textures: {
+      background: {
+        kind: 'image',
+        state: { src: 'dist/noire.png', offset: { x: 0, y: 0 } },
+      },
+    },
+  },
+  state: {
+    left: {
+      xc: 270,
+      yc: 780,
+      r: 60,
+      R: 80,
+      debug: true,
+    },
+    right: {
+      xc: 460,
+      yc: 760,
+      r: 70,
+      R: 90,
+      debug: true,
+    },
+    inputMap: {
+      lxp: { controllerId, key: 'lsXP' },
+      lxn: { controllerId, key: 'lsXN' },
+      lyn: { controllerId, key: 'lsYN' },
+      lyp: { controllerId, key: 'lsYP' },
+      lButton: { controllerId, key: 'l3' },
+      rxp: { controllerId, key: 'rsXP' },
+      rxn: { controllerId, key: 'rsXN' },
+      ryn: { controllerId, key: 'rsYN' },
+      ryp: { controllerId, key: 'rsYP' },
+      rButton: { controllerId, key: 'r3' },
+    },
+  },
+};
+
 const leftStick: T.SerializedComponent = {
   id: ids[0],
   name: 'left stick',
@@ -120,7 +167,6 @@ const leftStick: T.SerializedComponent = {
     },
     useDepthScaling: true,
   },
-  inputKinds: stickInputKinds,
 };
 
 const rightStick: T.SerializedComponent = {
@@ -160,7 +206,6 @@ const rightStick: T.SerializedComponent = {
     },
     useDepthScaling: true,
   },
-  inputKinds: stickInputKinds,
 };
 
 const dPad: T.SerializedComponent = {
@@ -180,7 +225,6 @@ const dPad: T.SerializedComponent = {
       u: { controllerId, key: 'padU' },
     },
   },
-  inputKinds: dPadInputKinds,
 };
 
 const button: T.SerializedComponent = {
@@ -215,7 +259,6 @@ const button: T.SerializedComponent = {
       button: { controllerId, key: 'square' },
     },
   },
-  inputKinds: { button: 'button' },
 };
 
 const staticImage: T.SerializedComponent = {
@@ -236,11 +279,11 @@ const staticImage: T.SerializedComponent = {
     },
   },
   state: { inputMap: {} },
-  inputKinds: {},
 };
 
 const components: T.SerializedComponent[] = [
-  staticImage,
+  distortedImage,
+  // staticImage,
   // leftStick,
   // rightStick,
   // dPad,

@@ -1,6 +1,9 @@
 import * as React from 'react';
 import * as T from '../../../../types';
-import { stringifyComponentKey } from '../../../../canvas/component';
+import {
+  stringifyComponentKey,
+  componentInputKinds,
+} from '../../../../canvas/component';
 import { stringifyControllerKey } from '../../../../input/controller';
 
 interface KeysFieldProps {
@@ -41,7 +44,7 @@ const getRemapState = (
   componentId: component.id,
   key,
   kind: 'component',
-  inputKind: component.inputKinds[key],
+  inputKind: componentInputKinds[component.kind][key],
 });
 
 export const KeysField: React.SFC<KeysFieldProps> = ({

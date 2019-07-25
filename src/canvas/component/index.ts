@@ -4,19 +4,33 @@ import { deserializeTexture } from '../texture/';
 import {
   ButtonComponent,
   buttonEditorConfig,
+  buttonInputKinds,
   ButtonComponentGraphics,
 } from './ButtonComponent';
-import { DPadComponent, DPadGraphics, dPadEditorConfig } from './DPadComponent';
+import {
+  DPadComponent,
+  DPadGraphics,
+  dPadEditorConfig,
+  dPadInputKinds,
+} from './DPadComponent';
 import {
   StaticComponent,
   StaticGraphics,
   staticEditorConfig,
+  staticInputKinds,
 } from './StaticComponent';
 import {
   StickComponent,
   stickEditorConfig,
   StickGraphics,
+  stickInputKinds,
 } from './StickComponent';
+import {
+  StickDistortionComponent,
+  stickDistortionEditorConfig,
+  StickDistortionGraphics,
+  stickDistortionInputKinds,
+} from './StickDistortionComponent';
 import { Component } from './Component';
 
 // K: identifying kind of component
@@ -35,7 +49,6 @@ export interface BaseSerializedComponent<
   name: string;
   kind: K;
   graphics: SerializedComponentGraphics<SS, TS>;
-  inputKinds: T.InputKindProjection<I>;
   state: Partial<S> & T.BaseComponentState<I>;
 }
 
@@ -43,7 +56,8 @@ export type SerializedComponent =
   | T.SerializedButtonComponent
   | T.SerializedStickComponent
   | T.SerializedDPadComponent
-  | T.SerializedStaticComponent;
+  | T.SerializedStaticComponent
+  | T.SerializedStickDistortionComponent;
 
 export type ComponentKind = SerializedComponent['kind'];
 
@@ -74,6 +88,15 @@ export const componentEditorConfigs: Record<
   stick: stickEditorConfig,
   dpad: dPadEditorConfig,
   static: staticEditorConfig,
+  stickDistortion: stickDistortionEditorConfig,
+};
+
+export const componentInputKinds: Record<ComponentKind, Dict<T.InputKind>> = {
+  button: buttonInputKinds,
+  stick: stickInputKinds,
+  dpad: dPadInputKinds,
+  static: staticInputKinds,
+  stickDistortion: stickDistortionInputKinds,
 };
 
 export const stringifyComponentKey = ({
@@ -151,6 +174,12 @@ export const deserializeComponent = (s: T.SerializedComponent): Component => {
       return new StaticComponent(
         s.id,
         deserializeGraphics(s.graphics) as StaticGraphics,
+        s.state,
+      );
+    case 'stickDistortion':
+      return new StickDistortionComponent(
+        s.id,
+        deserializeGraphics(s.graphics) as StickDistortionGraphics,
         s.state,
       );
   }

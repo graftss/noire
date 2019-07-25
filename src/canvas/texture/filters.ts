@@ -25,15 +25,19 @@ export interface DistortFilterState {
   // the displacement of the inner distortion area from (xc, yc)
   xd: number;
   yd: number;
+
+  // if true, draws borders around outer and inner distortion areas
+  debug?: boolean;
 }
 
-export const DistortFilter = () => ({
+export const DistortFilter = ({
   xc,
   yc,
   R,
   r,
   xd,
   yd,
+  debug,
 }: DistortFilterState) => (imageData): void => {
   const { data, height, width } = imageData;
 
@@ -50,19 +54,23 @@ export const DistortFilter = () => ({
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      const x0 = x - xc;
-      const y0 = y - yc;
+      const x0 = round(x - xc);
+      const y0 = round(y - yc);
       const d0 = round(dist(0, 0, x0, y0));
       const dl = round(dist(xd, yd, x0, y0));
       const p = (y * width + x) << 2;
 
       if (d0 > R || dl < r) {
         continue;
-      } else if (d0 === R) {
+      } else if (debug && d0 === R) {
         srcData.data[p] = 255;
+        srcData.data[p + 1] = 0;
+        srcData.data[p + 2] = 0;
         continue;
-      } else if (dl === r) {
-        srcData.data[p + 1] = 255;
+      } else if (debug && dl === r) {
+        srcData.data[p] = 255;
+        srcData.data[p + 1] = 0;
+        srcData.data[p + 1] = 0;
         continue;
       }
 
