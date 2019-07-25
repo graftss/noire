@@ -22,21 +22,26 @@ const ease = (a, ta, b, tb, t): number => {
 let xdd = 0;
 let ydd = 0;
 
-const solve = (x, y, a, R): number => {
-  const B = 2 * x * cos(a) + 2 * y * sin(a);
-  const C = x * x + y * y - R * R;
-  return (-B + sqrt(B * B - 4 * C)) / 2;
+export type DistortFilterState = {
+  // the coordinates of the center of the distortion area
+  xc: number;
+  yc: number;
+
+  // the radius of the full distortion area
+  R: number;
+
+  // the radius of the inner distortion area
+  r: number;
+
+  // the displacement of the inner distortion area from (xc, yc)
+  xd: number;
+  yd: number;
 };
 
-export const DistortFilter = () =>
-  // inArea: (x: number, y: number) => boolean,
-  // areaDims: (x: number, y: number) => Vec2,
-  // scale: number,
-  (imageData): void => {
+export const DistortFilter = () => (
+  { xc, yc, R, r, xd, yd }: DistortFilterState
+) => (imageData): void => {
     const { data, height, width } = imageData;
-
-    if (data[30] === 0) return;
-    (window as any).stopUpdating = true;
 
     const buffer = createCanvas();
     buffer.width = width;
@@ -47,16 +52,8 @@ export const DistortFilter = () =>
 
     copyImageData(imageData, srcData);
 
-    let h = 0;
-
-    const xc = 200;
-    const yc = 200;
-    const scale = 1;
-
-    const R = 100;
-    const r = round(R / 3);
-    const xd = 45;
-    const yd = 30;
+    const R2 = R * R;
+    const r2 = r * r;
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -64,9 +61,9 @@ export const DistortFilter = () =>
         const y0 = y - yc;
         const d0 = round(dist(0, 0, x0, y0));
         const dl = round(dist(xd, yd, x0, y0));
-        const p = (h + x) << 2;
+        const p = (y * width + x) << 2;
 
-        if (d0 > R) {
+        if (d0 > R || dl < r) {
           continue;
         } else if (d0 === R) {
           srcData.data[p] = 255;
@@ -74,22 +71,19 @@ export const DistortFilter = () =>
         } else if (dl === r) {
           srcData.data[p + 1] = 255;
           continue;
-        } else if (
-          (x0 > xd + r || x0 < xd - r) &&
-          (y0 > yd + r || y0 < yd - r)
-        ) {
-          srcData.data[p + 0] = 0;
-          srcData.data[p + 1] = 0;
-          srcData.data[p + 2] = 255;
-          continue;
         }
 
+        // const pull = Math.min((R - d0) * (dl - r) / R / r, 2);
+        const pull = (R - d0) * (dl - r) / R2;
+        // console.log({ pull, d0, dl, R, r });
+        const x1 = round(pull * (x0 - xd) + x);
+        const y1 = round(pull * (y0 - yd) + y);
+
+        const p1 = (y1 * width + x1) << 2;
         for (let i = 0; i < 4; i++) {
-          srcData.data[p + i] = 0;
+          srcData.data[p + i] = data[p1 + i];
         }
       }
-
-      h += width;
     }
 
     copyImageData(srcData, imageData);

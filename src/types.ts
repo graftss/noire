@@ -117,3 +117,4 @@ export { TypedSerializedTexture, TypedTexture } from './canvas/texture/Texture';
 export { NoireConfig } from '.';
 export { FillTextureState } from './canvas/texture/FillTexture';
 export { ImageTextureState } from './canvas/texture/ImageTexture';
+export { DistortFilterState } from './canvas/texture/filters';

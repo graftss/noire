@@ -36,7 +36,6 @@ export class ImageTexture extends T.TypedTexture<'image', ImageTextureState> {
     shape.fillPriority('pattern');
 
     shape.cache(0);
-    shape.filters([DistortFilter()]);
 
     switch (this.loadState) {
       case 'loaded': {

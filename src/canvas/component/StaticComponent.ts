@@ -52,9 +52,7 @@ export class StaticComponent extends TypedComponent<
   }
 
   update(): void {
-    if (!(window as any).stopUpdating) {
-      const { textures, shapes } = this.graphics;
-      textures.texture.apply(shapes.shape);
-    }
+    const { textures, shapes } = this.graphics;
+    textures.texture.apply(shapes.shape);
   }
 }
