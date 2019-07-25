@@ -83,25 +83,54 @@ const leftStick: T.SerializedComponent = {
   id: ids[0],
   name: 'left stick',
   kind: 'stick',
-  graphics: { shapes: {}, textures: {} },
+  graphics: {
+    shapes: {
+      center: serializeNode(new Konva.Circle({ radius: 20 })),
+      stick: serializeNode(new Konva.Circle({ radius: 35 })),
+    },
+    textures: {
+      center: {
+        kind: 'fill',
+        state: { fill: 'white', stroke: 'black', strokeWidth: 2 },
+      },
+      stick: {
+        kind: 'fill',
+        state: { fill: 'black', stroke: '#454545', strokeWidth: 1 },
+      },
+      stickDown: {
+        kind: 'image',
+        state: { src: 'dist/noire.png', offset: { x: 200, y: 100 } },
+      },
+    },
+  },
   state: {
-    inputMap: {},
+    leashScale: 0.5,
+    boundaryRadius: 30,
+    center: { x: 100, y: 100 },
+    inputMap: {
+      xp: { controllerId, key: 'lsXP' },
+      xn: { controllerId, key: 'lsXN' },
+      yn: { controllerId, key: 'lsYN' },
+      yp: { controllerId, key: 'lsYP' },
+      button: { controllerId, key: 'l3' },
+    },
+    useDepthScaling: true,
   },
   inputKinds: stickInputKinds,
 };
 
-const rightStick: T.SerializedComponent = {
-  id: ids[1],
-  name: 'right stick',
-  kind: 'stick',
-  graphics: { shapes: {}, textures: {} },
-  state: {
-    x: 300,
-    y: 200,
-    inputMap: {},
-  },
-  inputKinds: stickInputKinds,
-};
+// const rightStick: T.SerializedComponent = {
+//   id: ids[1],
+//   name: 'right stick',
+//   kind: 'stick',
+//   graphics: { shapes: {}, textures: {} },
+//   state: {
+//     x: 300,
+//     y: 200,
+//     inputMap: {},
+//   },
+//   inputKinds: stickInputKinds,
+// };
 
 const dPad: T.SerializedComponent = {
   id: ids[2],
@@ -126,12 +155,18 @@ const button: T.SerializedComponent = {
   kind: 'button',
   graphics: {
     shapes: {
-      button: serializeNode(
+      on: serializeNode(
         new Konva.Rect({ x: 50, y: 50, width: 30, height: 30 }),
+      ),
+      off: serializeNode(
+        new Konva.Rect({ x: 150, y: 50, width: 30, height: 30 }),
       ),
     },
     textures: {
-      on: { kind: 'fill', state: { fill: 'green' } },
+      on: {
+        kind: 'fill',
+        state: { fill: 'green', strokeWidth: 1, stroke: 'black' },
+      },
       off: {
         kind: 'image',
         state: { src: 'dist/noire.png', offset: { x: 200, y: 100 } },
@@ -147,7 +182,7 @@ const button: T.SerializedComponent = {
 };
 
 const components: T.SerializedComponent[] = [
-  // leftStick,
+  leftStick,
   // rightStick,
   // dPad,
   button,

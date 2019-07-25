@@ -16,6 +16,7 @@ import {
 import {
   StickComponent,
   stickEditorConfig,
+  StickGraphics,
   newSerializedStick,
 } from './StickComponent';
 import { Component } from './Component';
@@ -105,8 +106,15 @@ export const serializeGraphics = (
   const result: SerializedComponentGraphics = { shapes: {}, textures: {} };
   const { shapes, textures } = graphics;
 
-  for (const k in shapes) result.shapes[k] = JSON.parse(shapes[k].toJSON());
-  for (const k in textures) result.textures[k] = textures[k].serialize();
+  for (const k in shapes) {
+    const shape = shapes[k];
+    if (shape) result.shapes[k] = JSON.parse(shape.toJSON());
+  }
+
+  for (const k in textures) {
+    const texture = textures[k];
+    if (texture) result.textures[k] = texture.serialize();
+  }
 
   return result;
 };
@@ -139,7 +147,7 @@ export const deserializeComponent = (s: T.SerializedComponent): Component => {
         s.state,
       );
     case 'stick':
-      return new StickComponent(s.id, graphics, s.state);
+      return new StickComponent(s.id, graphics as StickGraphics, s.state);
     case 'dpad':
       return new DPadComponent(s.id, graphics, s.state);
   }

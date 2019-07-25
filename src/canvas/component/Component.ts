@@ -17,8 +17,8 @@ export interface BaseComponentState<I extends Dict<T.Input>> {
 }
 
 export interface ComponentGraphics {
-  shapes: Dict<Konva.Shape>;
-  textures: Dict<Texture>;
+  shapes: Dict<Maybe<Konva.Shape>>;
+  textures: Dict<Maybe<Texture>>;
 }
 
 export abstract class TypedComponent<
@@ -59,6 +59,11 @@ export abstract class TypedComponent<
   protected computeRawInput(input: Partial<I>): T.AllRaw<I> {
     return rawifyInputDict(this.applyDefaultInput(input));
   }
+
+  // `init` is called after the component is added to the
+  // `KonvaComponentPlugin`, and has been added to its
+  // parent stage.
+  init(): void {}
 
   abstract update(input: I, dt: number): void;
 }

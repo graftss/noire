@@ -1,9 +1,11 @@
 import Konva from 'konva';
 import * as T from '../../types';
 
-export interface FillTextureState {
+export type FillTextureState = Partial<{
   fill: string;
-}
+  stroke: string;
+  strokeWidth: number;
+}>;
 
 export class FillTexture extends T.TypedTexture<'fill', FillTextureState> {
   constructor(state: FillTextureState) {
@@ -16,6 +18,8 @@ export class FillTexture extends T.TypedTexture<'fill', FillTextureState> {
 
   apply = (shape: Konva.Shape): void => {
     shape.fillPriority('color');
-    shape.fill(this.state.fill);
+    if (this.state.fill) shape.fill(this.state.fill);
+    if (this.state.stroke) shape.stroke(this.state.stroke);
+    if (this.state.strokeWidth) shape.strokeWidth(this.state.strokeWidth);
   };
 }

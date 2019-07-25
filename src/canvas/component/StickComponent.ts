@@ -1,11 +1,17 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { sign } from '../../utils';
 import { TypedComponent } from './Component';
 
 export interface StickGraphics extends T.ComponentGraphics {
-  shapes: {};
-  textures: {};
+  shapes: {
+    center: Maybe<Konva.Shape>;
+    stick: Konva.Shape;
+  };
+  textures: {
+    center: T.Texture;
+    stick: T.Texture;
+    stickDown: Maybe<T.Texture>;
+  };
 }
 
 export interface StickInput extends Dict<T.Input> {
@@ -25,23 +31,17 @@ export const stickInputKinds: T.InputKindProjection<StickInput> = {
 };
 
 export type StickState = T.BaseComponentState<StickInput> & {
-  x: number;
-  y: number;
   boundaryRadius: number;
-  stickRadius: number;
-  rangeScaling: number;
-  stickFill: string;
-  pressedStickFill: string;
+  leashScale: number;
+  center: Vec2;
+  useDepthScaling: boolean;
 };
 
 export const defaultStickState: StickState = {
-  x: 0,
-  y: 0,
   boundaryRadius: 26,
-  stickRadius: 40,
-  rangeScaling: 0.5,
-  stickFill: 'black',
-  pressedStickFill: 'darkred',
+  leashScale: 0.5,
+  center: { x: 0, y: 0 },
+  useDepthScaling: false,
   inputMap: {},
 };
 
@@ -84,41 +84,55 @@ export class StickComponent extends TypedComponent<
   StickInput,
   StickState
 > {
-  group: Konva.Group;
-  private center: Konva.Circle;
-  private stick: Konva.Ellipse;
-
   constructor(
     id: string,
     graphics: StickGraphics,
     state?: Partial<StickState>,
   ) {
     super(id, graphics, stickInputKinds, { ...defaultStickState, ...state });
+  }
 
-    const { boundaryRadius, stickRadius, stickFill, x, y } = this.state;
+  init(): void {
+    const { center } = this.graphics.shapes;
 
-    this.group = new Konva.Group({ x, y });
-    this.center = new Konva.Circle({
-      radius: boundaryRadius * 0.43,
-      stroke: 'black',
-      strokeWidth: 2,
+    if (center) {
+      center.moveToBottom();
+    }
+  }
+
+  private updateStick(x: number, y: number, down: boolean): void {
+    const shape = this.graphics.shapes.stick;
+    const { center, boundaryRadius, leashScale, useDepthScaling } = this.state;
+
+    shape.position({
+      x: center.x + boundaryRadius * x * leashScale,
+      y: center.y + boundaryRadius * y * leashScale,
     });
 
-    this.stick = new Konva.Ellipse({
-      radiusX: stickRadius,
-      radiusY: stickRadius,
-      stroke: '#454545',
-      strokeWidth: 1,
-      shadowColor: 'black',
-      shadowOpacity: 0.3,
-      shadowBlur: 5,
-      fill: stickFill,
-    });
+    if (useDepthScaling) {
+      shape.scale({
+        x: depthFactor(Math.abs(x)),
+        y: depthFactor(Math.abs(y)),
+      });
+    }
 
-    this.stick.shadowEnabled(false);
+    const texture =
+      down && this.graphics.textures.stickDown
+        ? this.graphics.textures.stickDown
+        : this.graphics.textures.stick;
 
-    this.group.add(this.center);
-    this.group.add(this.stick);
+    texture.apply(shape);
+  }
+
+  updateCenter(): void {
+    const shape = this.graphics.shapes.center;
+    const texture = this.graphics.textures.center;
+    const { center } = this.state;
+
+    if (shape) {
+      shape.position(center);
+      texture.apply(shape);
+    }
   }
 
   update(input: StickInput): void {
@@ -126,29 +140,7 @@ export class StickComponent extends TypedComponent<
     const x = xn > 0 ? -xn : xp > 0 ? xp : 0;
     const y = yn > 0 ? -yn : yp > 0 ? yp : 0;
 
-    const {
-      boundaryRadius,
-      stickRadius,
-      rangeScaling,
-      stickFill,
-      pressedStickFill,
-    } = this.state;
-
-    this.stick.position({
-      x: boundaryRadius * x * rangeScaling,
-      y: boundaryRadius * y * rangeScaling,
-    });
-
-    this.stick.radius({
-      x: stickRadius * depthFactor(x),
-      y: stickRadius * depthFactor(y),
-    });
-
-    this.stick.fill(button ? pressedStickFill : stickFill);
-
-    this.stick.shadowOffset({
-      x: sign(x) * depthFactor(x) * -1,
-      y: sign(y) * depthFactor(y) * -1,
-    });
+    this.updateStick(x, y, button);
+    this.updateCenter();
   }
 }

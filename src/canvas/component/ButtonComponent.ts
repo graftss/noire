@@ -1,11 +1,10 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { FillTexture } from '../texture/FillTexture';
 import { Texture } from '../texture';
 import { TypedComponent } from './Component';
 
 export interface ButtonComponentGraphics extends T.ComponentGraphics {
-  shapes: { button: Konva.Shape };
+  shapes: { on: Konva.Shape; off: Konva.Shape };
   textures: { on: Texture; off: Texture };
 }
 
@@ -67,8 +66,19 @@ export class ButtonComponent extends TypedComponent<
   update(input: Partial<ButtonComponentInput>): void {
     const { textures, shapes } = this.graphics;
     const { button } = this.computeRawInput(input);
-    const texture = button ? textures.on : textures.off;
 
-    texture.apply(shapes.button);
+    if (button) {
+      const texture = textures.on;
+      const shape = shapes.on;
+      shapes.off.hide();
+      shapes.on.show();
+      texture.apply(shape);
+    } else {
+      const texture = textures.off;
+      const shape = shapes.off;
+      shapes.on.hide();
+      shapes.off.show();
+      texture.apply(shape);
+    }
   }
 }

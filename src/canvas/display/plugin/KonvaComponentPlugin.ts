@@ -33,10 +33,16 @@ export class KonvaComponentPlugin extends DisplayPlugin {
       kind: 'componentAdd',
       cb: (component: T.Component) => {
         const { shapes } = component.graphics;
+        const group = new Konva.Group();
 
         for (const key in component.graphics.shapes) {
-          this.layer.add(shapes[key]);
+          const shape = shapes[key];
+          if (shape) {
+            group.add(shape);
+          }
         }
+
+        this.layer.add(group);
       },
     });
 

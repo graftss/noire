@@ -5,8 +5,6 @@ import { Component } from '../component/Component';
 import { find, keyBy } from '../../utils';
 import { DisplayEventBus } from './DisplayEventBus';
 
-const CLICK_EVENT = `click.ComponentManager`;
-
 export class ComponentManager {
   private components: Component[] = [];
 
@@ -38,7 +36,6 @@ export class ComponentManager {
 
   add = (component: Component) => {
     this.components.push(component);
-
     this.eventBus.emit({
       kind: 'componentAdd',
       data: [component],
