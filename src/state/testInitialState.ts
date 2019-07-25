@@ -90,7 +90,7 @@ const leftStick: T.SerializedComponent = {
   graphics: {
     shapes: {
       center: serializeNode(new Konva.Circle({ radius: 20 })),
-      stick: serializeNode(new Konva.Circle({ radius: 35 })),
+      stick: serializeNode(new Konva.Circle({ radius: 80 })),
     },
     textures: {
       center: {
@@ -98,8 +98,8 @@ const leftStick: T.SerializedComponent = {
         state: { fill: 'white', stroke: 'black', strokeWidth: 2 },
       },
       stick: {
-        kind: 'fill',
-        state: { fill: 'black', stroke: '#454545', strokeWidth: 1 },
+        kind: 'image',
+        state: { src: 'dist/noire.png', offset: { x: 250, y: 700 } },
       },
       stickDown: {
         kind: 'image',
@@ -110,7 +110,7 @@ const leftStick: T.SerializedComponent = {
   state: {
     leashScale: 0.5,
     boundaryRadius: 30,
-    center: { x: 100, y: 100 },
+    center: { x: 250, y: 700 },
     inputMap: {
       xp: { controllerId, key: 'lsXP' },
       xn: { controllerId, key: 'lsXN' },
@@ -123,18 +123,45 @@ const leftStick: T.SerializedComponent = {
   inputKinds: stickInputKinds,
 };
 
-// const rightStick: T.SerializedComponent = {
-//   id: ids[1],
-//   name: 'right stick',
-//   kind: 'stick',
-//   graphics: { shapes: {}, textures: {} },
-//   state: {
-//     x: 300,
-//     y: 200,
-//     inputMap: {},
-//   },
-//   inputKinds: stickInputKinds,
-// };
+const rightStick: T.SerializedComponent = {
+  id: ids[0],
+  name: 'right stick',
+  kind: 'stick',
+  graphics: {
+    shapes: {
+      center: serializeNode(new Konva.Circle({ radius: 20 })),
+      stick: serializeNode(new Konva.Circle({ radius: 80 })),
+    },
+    textures: {
+      center: {
+        kind: 'fill',
+        state: { fill: 'white', stroke: 'black', strokeWidth: 2 },
+      },
+      stickDown: {
+        kind: 'fill',
+        state: { fill: 'black' },
+      },
+      stick: {
+        kind: 'image',
+        state: { src: 'dist/noire.png', offset: { x: 420, y: 710 } },
+      },
+    },
+  },
+  state: {
+    leashScale: 0.5,
+    boundaryRadius: 30,
+    center: { x: 420, y: 710 },
+    inputMap: {
+      xp: { controllerId, key: 'rsXP' },
+      xn: { controllerId, key: 'rsXN' },
+      yn: { controllerId, key: 'rsYN' },
+      yp: { controllerId, key: 'rsYP' },
+      button: { controllerId, key: 'r3' },
+    },
+    useDepthScaling: true,
+  },
+  inputKinds: stickInputKinds,
+};
 
 const dPad: T.SerializedComponent = {
   id: ids[2],
@@ -176,7 +203,10 @@ const button: T.SerializedComponent = {
       },
       off: {
         kind: 'image',
-        state: { src: 'dist/noire.png', offset: { x: 200, y: 100 } },
+        state: {
+          src: 'dist/noire.png',
+          offset: { x: 200, y: 100 },
+        },
       },
     },
   },
@@ -188,11 +218,33 @@ const button: T.SerializedComponent = {
   inputKinds: { button: 'button' },
 };
 
+const staticImage: T.SerializedComponent = {
+  id: ids[4],
+  name: 'static',
+  kind: 'static',
+  graphics: {
+    shapes: {
+      shape: serializeNode(
+        new Konva.Rect({ x: 0, y: 0, width: 675, height: 1000 }),
+      ),
+    },
+    textures: {
+      texture: {
+        kind: 'image',
+        state: { src: 'dist/noire.png', offset: { x: 0, y: 0 } },
+      },
+    },
+  },
+  state: { inputMap: {} },
+  inputKinds: {},
+};
+
 const components: T.SerializedComponent[] = [
+  staticImage,
   leftStick,
-  // rightStick,
-  dPad,
-  button,
+  rightStick,
+  // dPad,
+  // button,
 ];
 
 export const testInitialState: T.EditorState = {

@@ -8,6 +8,11 @@ import {
 } from './ButtonComponent';
 import { DPadComponent, DPadGraphics, dPadEditorConfig } from './DPadComponent';
 import {
+  StaticComponent,
+  StaticGraphics,
+  staticEditorConfig,
+} from './StaticComponent';
+import {
   StickComponent,
   stickEditorConfig,
   StickGraphics,
@@ -37,7 +42,8 @@ export interface BaseSerializedComponent<
 export type SerializedComponent =
   | T.SerializedButtonComponent
   | T.SerializedStickComponent
-  | T.SerializedDPadComponent;
+  | T.SerializedDPadComponent
+  | T.SerializedStaticComponent;
 
 export type ComponentKind = SerializedComponent['kind'];
 
@@ -67,6 +73,7 @@ export const componentEditorConfigs: Record<
   button: buttonEditorConfig,
   stick: stickEditorConfig,
   dpad: dPadEditorConfig,
+  static: staticEditorConfig,
 };
 
 export const stringifyComponentKey = ({
@@ -138,6 +145,12 @@ export const deserializeComponent = (s: T.SerializedComponent): Component => {
       return new DPadComponent(
         s.id,
         deserializeGraphics(s.graphics) as DPadGraphics,
+        s.state,
+      );
+    case 'static':
+      return new StaticComponent(
+        s.id,
+        deserializeGraphics(s.graphics) as StaticGraphics,
         s.state,
       );
   }

@@ -76,6 +76,11 @@ export {
   SerializedStickComponent,
 } from './canvas/component/StickComponent';
 export {
+  SerializedStaticComponent,
+  StaticInput,
+  StaticState,
+} from './canvas/component/StaticComponent';
+export {
   DPadState,
   DPadInput,
   SerializedDPadComponent,
