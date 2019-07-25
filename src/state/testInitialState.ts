@@ -241,8 +241,8 @@ const staticImage: T.SerializedComponent = {
 
 const components: T.SerializedComponent[] = [
   staticImage,
-  leftStick,
-  rightStick,
+  // leftStick,
+  // rightStick,
   // dPad,
   // button,
 ];

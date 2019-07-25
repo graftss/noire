@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import * as T from '../../types';
 import { vec2 } from '../../utils';
+import { DistortFilter } from './filters';
 
 export interface ImageTextureState {
   src: string;
@@ -33,6 +34,9 @@ export class ImageTexture extends T.TypedTexture<'image', ImageTextureState> {
 
   apply = (shape: Konva.Shape): void => {
     shape.fillPriority('pattern');
+
+    shape.cache(0);
+    shape.filters([DistortFilter()]);
 
     switch (this.loadState) {
       case 'loaded': {
