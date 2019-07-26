@@ -38,7 +38,7 @@ export const DistortFilter = ({
   xd,
   yd,
   debug,
-}: DistortFilterState) => (imageData): void => {
+}: DistortFilterState) => (imageData: ImageData): void => {
   const { data, height, width } = imageData;
 
   const buffer = createCanvas();
@@ -50,35 +50,45 @@ export const DistortFilter = ({
 
   copyImageData(imageData, srcData);
 
-  const R2 = R * R;
-
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      const x0 = round(x - xc);
-      const y0 = round(y - yc);
+      const x0 = x - xc;
+      const y0 = y - yc;
       const d0 = round(dist(0, 0, x0, y0));
       const dl = round(dist(xd, yd, x0, y0));
       const p = (y * width + x) << 2;
 
-      if (d0 > R || dl < r) {
+      if (d0 > R) {
         continue;
-      } else if (debug && d0 === R) {
+      } else if (debug && Math.abs(d0 - R) === 0) {
         srcData.data[p] = 255;
         srcData.data[p + 1] = 0;
         srcData.data[p + 2] = 0;
         continue;
       } else if (debug && dl === r) {
-        srcData.data[p] = 255;
-        srcData.data[p + 1] = 0;
+        srcData.data[p] = 0;
+        srcData.data[p + 1] = 255;
         srcData.data[p + 1] = 0;
         continue;
       }
 
-      // const pull = Math.min((R - d0) * (dl - r) / R / r, 2);
-      const pull = ((R - d0) * (dl - r)) / R2;
-      // console.log({ pull, d0, dl, R, r });
-      const x1 = round(pull * (x0 - xd) + x);
-      const y1 = round(pull * (y0 - yd) + y);
+      let x1, y1;
+      if (dl < r) {
+        x1 = x - xd;
+        y1 = y - yd;
+      } else {
+        const innerX0 = xd + ((x0 - xd) * r) / dl;
+        const innerY0 = yd + ((y0 - yd) * r) / dl;
+        const baseD0 = round(dist(0, 0, innerX0, innerY0));
+        // const pull = (baseD0 - R) / (scaledD0 - R);
+        const pull = (d0 - R) / (baseD0 - R);
+
+        // if (Math.abs(d0 - R) <= 1) console.log({ d0, baseD0, pull });
+        // if (Math.abs(dl - r) <= 1) console.log({ d0, baseD0, pull });
+
+        x1 = x - round(xd * pull);
+        y1 = y - round(yd * pull);
+      }
 
       const p1 = (y1 * width + x1) << 2;
       for (let i = 0; i < 4; i++) {

@@ -53,6 +53,7 @@ export type StickDistortionState = T.BaseComponentState<
 > & {
   left: StickDistortionStickState;
   right: StickDistortionStickState;
+  innerLeash: number;
 };
 
 export const stickDistortionEditorConfig: T.ComponentEditorConfig = [
@@ -87,13 +88,14 @@ export class StickDistortionComponent extends TypedComponent<
     stickX: number,
     stickY: number,
   ): (data: ImageData) => void {
+    const inputScale = (R - r) * this.state.innerLeash;
     const fState = {
       xc,
       yc,
       R,
       r,
-      xd: r + stickX * (R - r),
-      yd: r + stickY * (R - r),
+      xd: Math.round(stickX * inputScale),
+      yd: Math.round(stickY * inputScale),
       debug,
     };
 
@@ -112,7 +114,7 @@ export class StickDistortionComponent extends TypedComponent<
 
     shapes.background.filters([
       this.createFilter(left, lx, ly),
-      // this.createFilter(right, rx, ry),
+      this.createFilter(right, rx, ry),
     ]);
 
     textures.background.apply(shapes.background);
