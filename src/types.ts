@@ -67,7 +67,6 @@ export {
 export {
   BaseComponentState,
   Component,
-  ComponentInputMap,
   ComponentGraphics,
 } from './canvas/component/Component';
 export {
@@ -122,4 +121,8 @@ export { TypedSerializedTexture, TypedTexture } from './canvas/texture/Texture';
 export { NoireConfig } from '.';
 export { FillTextureState } from './canvas/texture/FillTexture';
 export { ImageTextureState } from './canvas/texture/ImageTexture';
-export { DistortFilterState } from './canvas/texture/filters';
+export {
+  DistortFilterState,
+  StickDistortFilterState,
+} from './canvas/filter/distort';
+export { Filter } from './canvas/filter';

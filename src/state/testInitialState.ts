@@ -1,6 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable */
 
 import Konva from 'konva';
+import { clone } from 'ramda';
 import * as T from '../types';
 import { stickInputKinds } from '../canvas/component/StickComponent';
 import {
@@ -107,8 +108,9 @@ const vert: T.SerializedComponent = {
       xc: 150,
       yc: 300,
       r: 39,
-      R: 50,
+      R: 53,
       debug: true,
+      leash: 0.7,
     },
     right: {
       xc: 240,
@@ -116,8 +118,8 @@ const vert: T.SerializedComponent = {
       r: 39,
       R: 52,
       debug: true,
+      leash: 0.7,
     },
-    innerLeash: 2 / 3,
     inputMap: {
       lxp: { controllerId, key: 'lsXP' },
       lxn: { controllerId, key: 'lsXN' },
@@ -133,6 +135,12 @@ const vert: T.SerializedComponent = {
   },
 };
 
+// const vertProd: T.SerializedComponent = clone(vert);
+// (vertProd.state.left as T.StickDistortionStickState).debug = false;
+// (vertProd.state.right as T.StickDistortionStickState).debug = false;
+// const bg = vertProd.graphics.shapes.background as any;
+// bg.x = 450;
+
 const vertProd: T.SerializedComponent = {
   id: ids[7],
   name: 'vert',
@@ -143,40 +151,17 @@ const vertProd: T.SerializedComponent = {
         new Konva.Rect({ x: 450, y: 0, width: 437, height: 606 }),
       ),
     },
-    textures: {
-      background: {
-        kind: 'image',
-        state: { src: 'dist/vert.png', offset: { x: 0, y: 0 } },
-      },
-    },
+    textures: vert.graphics.textures,
   },
   state: {
+    ...vert.state,
     left: {
-      xc: 150,
-      yc: 300,
-      r: 39,
-      R: 50,
+      ...(vert.state.left as any),
       debug: false,
     },
     right: {
-      xc: 240,
-      yc: 290,
-      r: 39,
-      R: 52,
+      ...(vert.state.right as any),
       debug: false,
-    },
-    innerLeash: 2 / 3,
-    inputMap: {
-      lxp: { controllerId, key: 'lsXP' },
-      lxn: { controllerId, key: 'lsXN' },
-      lyn: { controllerId, key: 'lsYN' },
-      lyp: { controllerId, key: 'lsYP' },
-      lButton: { controllerId, key: 'l3' },
-      rxp: { controllerId, key: 'rsXP' },
-      rxn: { controllerId, key: 'rsXN' },
-      ryn: { controllerId, key: 'rsYN' },
-      ryp: { controllerId, key: 'rsYP' },
-      rButton: { controllerId, key: 'r3' },
     },
   },
 };
@@ -205,6 +190,7 @@ const noire: T.SerializedComponent = {
       r: 35,
       R: 47,
       debug: true,
+      leash: 0.7,
     },
     right: {
       xc: 210,
@@ -212,6 +198,7 @@ const noire: T.SerializedComponent = {
       r: 39,
       R: 51,
       debug: true,
+      leash: 0.7,
     },
     inputMap: {
       lxp: { controllerId, key: 'lsXP' },

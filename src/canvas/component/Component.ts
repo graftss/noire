@@ -7,13 +7,9 @@ import { Texture } from '../texture';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Component = TypedComponent<any, any, any, any, any>;
 
-export type ComponentInputMap<I extends Dict<T.Input>> = Partial<
-  Record<keyof I, Maybe<T.ControllerKey>>
->;
-
 export interface BaseComponentState<I extends Dict<T.Input>> {
   defaultInput?: Partial<I>;
-  inputMap: ComponentInputMap<I>;
+  inputMap: Partial<Record<keyof I, Maybe<T.ControllerKey>>>;
 }
 
 export interface ComponentGraphics<SS extends string, TS extends string> {
