@@ -1,5 +1,7 @@
+import * as T from '../../types';
+import { normalizeAxis } from '../../utils';
 import { copyImageData, createImageData, dist } from './utils';
-import { Filter } from '.';
+import { Filter, InputFilter } from '.';
 
 const { round } = Math;
 
@@ -20,19 +22,6 @@ export interface DistortFilterState {
 
   // if true, draws borders around outer and inner distortion areas
   debug?: boolean;
-}
-
-export interface StickDistortFilterState {
-  xc: number;
-  yc: number;
-  R: number;
-  r: number;
-  debug?: boolean;
-
-  // controls how close the inner region can get to the
-  // outer region. 0 means no movement, 1 means the inner region can
-  // move until it's tangent to the outer region
-  leash: number;
 }
 
 export const distort: Filter<DistortFilterState> = ({
@@ -111,16 +100,35 @@ export const distort: Filter<DistortFilterState> = ({
   copyImageData(resultData, outputData);
 };
 
-export const stickDistort: Filter<{
-  state: StickDistortFilterState;
-  stickInput: Vec2;
-}> = ({ state: { xc, yc, R, r, leash, debug }, stickInput: { x, y } }) =>
+export interface StickDistortConfig {
+  xc: number;
+  yc: number;
+  R: number;
+  r: number;
+  debug?: boolean;
+
+  // a number between 0 and 1 that determines how close the inner region
+  // can get to the outer region.
+  leash: number;
+}
+
+export interface StickDistortRawInput extends Dict<T.RawInput> {
+  xp: number;
+  xn: number;
+  yp: number;
+  yn: number;
+}
+
+export const stickDistort: InputFilter<
+  StickDistortRawInput,
+  StickDistortConfig
+> = ({ input: { xp, xn, yp, yn }, config: { xc, yc, debug, R, r, leash } }) =>
   distort({
     xc,
     yc,
     debug,
     R,
     r,
-    xd: Math.round(leash * (R - r) * x),
-    yd: Math.round(leash * (R - r) * y),
+    xd: Math.round(leash * (R - r) * normalizeAxis(xp, xn)),
+    yd: Math.round(leash * (R - r) * normalizeAxis(yp, yn)),
   });

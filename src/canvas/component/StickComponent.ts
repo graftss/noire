@@ -1,5 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
+import { normalizeAxis } from '../../utils';
 import { TypedComponent } from './Component';
 
 type StickShapes = 'center' | 'stick';
@@ -136,8 +137,8 @@ export class StickComponent extends TypedComponent<
 
   update(input: StickInput): void {
     const { xn, xp, yn, yp, button } = this.computeRawInput(input);
-    const x = xn > 0 ? -xn : xp > 0 ? xp : 0;
-    const y = yn > 0 ? -yn : yp > 0 ? yp : 0;
+    const x = normalizeAxis(xp, xn);
+    const y = normalizeAxis(yp, yn);
 
     this.updateStick(x, y, button);
     this.updateCenter();

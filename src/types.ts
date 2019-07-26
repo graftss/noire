@@ -123,6 +123,7 @@ export { FillTextureState } from './canvas/texture/FillTexture';
 export { ImageTextureState } from './canvas/texture/ImageTexture';
 export {
   DistortFilterState,
-  StickDistortFilterState,
+  StickDistortConfig,
+  StickDistortRawInput,
 } from './canvas/filter/distort';
-export { Filter } from './canvas/filter';
+export { Filter, InputFilter } from './canvas/filter';

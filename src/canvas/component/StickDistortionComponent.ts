@@ -43,8 +43,8 @@ export const stickDistortionInputKinds: T.InputKindProjection<
 export type StickDistortionState = T.BaseComponentState<
   StickDistortionInput
 > & {
-  left: T.StickDistortFilterState;
-  right: T.StickDistortFilterState;
+  left: T.StickDistortConfig;
+  right: T.StickDistortConfig;
 };
 
 export const stickDistortionEditorConfig: T.ComponentEditorConfig = [
@@ -79,19 +79,12 @@ export class StickDistortionComponent extends TypedComponent<
     const { textures, shapes } = this.graphics;
     const { left, right } = this.state;
 
-    const leftInput = {
-      x: r.lxn > 0 ? -r.lxn : r.lxp > 0 ? r.lxp : 0,
-      y: r.lyn > 0 ? -r.lyn : r.lyp > 0 ? r.lyp : 0,
-    };
-
-    const rightInput = {
-      x: r.rxn > 0 ? -r.rxn : r.rxp > 0 ? r.rxp : 0,
-      y: r.ryn > 0 ? -r.ryn : r.ryp > 0 ? r.ryp : 0,
-    };
+    const leftInput = { xn: r.lxn, xp: r.lxp, yn: r.lyn, yp: r.lyp };
+    const rightInput = { xn: r.rxn, xp: r.rxp, yn: r.ryn, yp: r.ryp };
 
     shapes.background.filters([
-      stickDistort({ state: left, stickInput: leftInput }),
-      stickDistort({ state: right, stickInput: rightInput }),
+      stickDistort({ config: left, input: leftInput }),
+      stickDistort({ config: right, input: rightInput }),
     ]);
     textures.background.apply(shapes.background);
   }

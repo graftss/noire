@@ -104,3 +104,6 @@ export const toPrecision = (x: number, digits: number): number =>
 export const vec2 = {
   add: (v: Vec2, w: Vec2): Vec2 => ({ x: v.x + w.x, y: v.y + w.y }),
 };
+
+export const normalizeAxis = (pos: number, neg: number): number =>
+  pos > 0 ? pos : neg > 0 ? -neg : 0;

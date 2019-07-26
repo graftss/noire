@@ -213,6 +213,9 @@ const noire: T.SerializedComponent = {
       rButton: { controllerId, key: 'r3' },
     },
   },
+  // filters: [
+  //   { x: { controllerId, key: }}
+  // ],
 };
 
 const leftStick: T.SerializedComponent = {
