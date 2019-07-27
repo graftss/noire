@@ -111,6 +111,7 @@ const vert: T.SerializedComponent = {
       R: 53,
       debug: true,
       leash: 0.7,
+      kind: 'stickDistort',
     },
     right: {
       xc: 240,
@@ -119,6 +120,7 @@ const vert: T.SerializedComponent = {
       R: 52,
       debug: true,
       leash: 0.7,
+      kind: 'stickDistort',
     },
     inputMap: {
       lxp: { controllerId, key: 'lsXP' },
@@ -133,6 +135,22 @@ const vert: T.SerializedComponent = {
       rButton: { controllerId, key: 'r3' },
     },
   },
+  filters: {
+    background: [
+      {
+        filter: {
+          kind: 'stickDistort',
+          config: { kind: 'stickDistort', xc: 150, yc: 300, r: 39, R: 53, debug: true, leash: 0.7, },
+        },
+        inputMap: {
+          xn: { controllerId, key: 'lsXN' },
+          xp: { controllerId, key: 'lsXP' },
+          yn: { controllerId, key: 'lsYN' },
+          yp: { controllerId, key: 'lsYP' },
+        },
+      },
+    ],
+  },
 };
 
 // const vertProd: T.SerializedComponent = clone(vert);
@@ -142,7 +160,7 @@ const vert: T.SerializedComponent = {
 // bg.x = 450;
 
 const vertProd: T.SerializedComponent = {
-  id: ids[7],
+  id: ids[8],
   name: 'vert',
   kind: 'stickDistortion',
   graphics: {
@@ -191,6 +209,7 @@ const noire: T.SerializedComponent = {
       R: 47,
       debug: true,
       leash: 0.7,
+      kind: 'stickDistort',
     },
     right: {
       xc: 210,
@@ -199,6 +218,7 @@ const noire: T.SerializedComponent = {
       R: 51,
       debug: true,
       leash: 0.7,
+      kind: 'stickDistort',
     },
     inputMap: {
       lxp: { controllerId, key: 'lsXP' },
@@ -371,7 +391,7 @@ const staticImage: T.SerializedComponent = {
 
 const components: T.SerializedComponent[] = [
   vert,
-  vertProd,
+  // vertProd,
   // staticImage,
   // leftStick,
   // rightStick,

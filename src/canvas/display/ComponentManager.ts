@@ -2,7 +2,7 @@ import { map } from 'ramda';
 import * as T from '../../types';
 import { deserializeComponent } from '../component/';
 import { Component } from '../component/Component';
-import { find, keyBy } from '../../utils';
+import { find, keyBy, mapObj } from '../../utils';
 import { DisplayEventBus } from './DisplayEventBus';
 
 export class ComponentManager {
@@ -54,11 +54,22 @@ export class ComponentManager {
         return controllerInput && controllerInput[key];
       };
 
+      const getFilterInput = (
+        filter: T.ComponentFilter<T.InputFilterKind>,
+      ): Dict<Maybe<T.Input>> => mapObj(filter.inputMap, getControllerKeyInput);
+
       const componentInput: Dict<Maybe<T.Input>> = map(
         getControllerKeyInput,
         component.state.inputMap || {},
       );
 
+      const filterInput =
+        component.filters &&
+        mapObj(component.filters, shapeFilters =>
+          shapeFilters.map(getFilterInput),
+        );
+
+      component.applyFilterInput(filterInput);
       component.update(componentInput, dt);
     });
   }

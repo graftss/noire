@@ -70,8 +70,9 @@ export class StickDistortionComponent extends TypedComponent<
     id: string,
     graphics: StickDistortionGraphics,
     state: Partial<StickDistortionState>,
+    filters: T.ComponentFilterDict<StickDistortionShapes>,
   ) {
-    super(id, graphics, stickDistortionInputKinds, state);
+    super(id, graphics, stickDistortionInputKinds, state as any, filters);
   }
 
   update(input: StickDistortionInput): void {
@@ -82,10 +83,10 @@ export class StickDistortionComponent extends TypedComponent<
     const leftInput = { xn: r.lxn, xp: r.lxp, yn: r.lyn, yp: r.lyp };
     const rightInput = { xn: r.rxn, xp: r.rxp, yn: r.ryn, yp: r.ryp };
 
-    shapes.background.filters([
-      stickDistort({ config: left, input: leftInput }),
-      stickDistort({ config: right, input: rightInput }),
-    ]);
+    // shapes.background.filters([
+    //   stickDistort(left)(leftInput),
+    //   stickDistort(right)(rightInput),
+    // ]);
     textures.background.apply(shapes.background);
   }
 }

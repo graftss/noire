@@ -68,6 +68,8 @@ export {
   BaseComponentState,
   Component,
   ComponentGraphics,
+  ComponentFilter,
+  ComponentFilterDict,
 } from './canvas/component/Component';
 export {
   StickState,
@@ -125,5 +127,13 @@ export {
   DistortFilterState,
   StickDistortConfig,
   StickDistortRawInput,
+  StickDistortData,
 } from './canvas/filter/distort';
-export { Filter, InputFilter } from './canvas/filter';
+export {
+  Filter,
+  TypedInputFilter,
+  InputFilter,
+  InputFilterKind,
+  InputFilterData,
+  SerializedInputFilter,
+} from './canvas/filter';

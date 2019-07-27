@@ -1,34 +1,31 @@
 import Konva from 'konva';
 import * as T from '../../types';
 import { deserializeTexture } from '../texture/';
+import { deserializeInputFilter } from '../filter';
+import { mapObj } from '../../utils';
 import {
   ButtonComponent,
   buttonEditorConfig,
   buttonInputKinds,
-  ButtonComponentGraphics,
 } from './ButtonComponent';
 import {
   DPadComponent,
-  DPadGraphics,
   dPadEditorConfig,
   dPadInputKinds,
 } from './DPadComponent';
 import {
   StaticComponent,
-  StaticGraphics,
   staticEditorConfig,
   staticInputKinds,
 } from './StaticComponent';
 import {
   StickComponent,
   stickEditorConfig,
-  StickGraphics,
   stickInputKinds,
 } from './StickComponent';
 import {
   StickDistortionComponent,
   stickDistortionEditorConfig,
-  StickDistortionGraphics,
   stickDistortionInputKinds,
 } from './StickDistortionComponent';
 import { Component } from './Component';
@@ -50,6 +47,7 @@ export interface BaseSerializedComponent<
   kind: K;
   graphics: SerializedComponentGraphics<SS, TS>;
   state: Partial<S> & T.BaseComponentState<I>;
+  filters?: Record<SS, SerializedComponentFilter<T.InputFilterKind>[]>;
 }
 
 export type SerializedComponent =
@@ -150,37 +148,52 @@ export const deserializeGraphics = <SS extends string, TS extends string>(
   return result;
 };
 
+export interface SerializedComponentFilter<K extends T.InputFilterKind> {
+  filter: T.SerializedInputFilter<K>;
+  inputMap: Dict<T.ControllerKey>;
+}
+
+const deserializeComponentFilter = ({
+  filter,
+  inputMap,
+}: SerializedComponentFilter<T.InputFilterKind>): T.ComponentFilter<
+  T.InputFilterKind
+> => ({
+  filter: deserializeInputFilter(filter),
+  inputMap,
+  config: filter.config,
+});
+
+const deserializeComponentFilterDict = (
+  filters: Dict<SerializedComponentFilter<T.InputFilterKind>[]>,
+): T.ComponentFilterDict<string> =>
+  mapObj(filters, shapeFilters => shapeFilters.map(deserializeComponentFilter));
+
 export const deserializeComponent = (s: T.SerializedComponent): Component => {
+  let ComponentConstructor: any;
+
   switch (s.kind) {
     case 'button':
-      return new ButtonComponent(
-        s.id,
-        deserializeGraphics(s.graphics) as ButtonComponentGraphics,
-        s.state,
-      );
+      ComponentConstructor = ButtonComponent;
+      break;
     case 'stick':
-      return new StickComponent(
-        s.id,
-        deserializeGraphics(s.graphics) as StickGraphics,
-        s.state,
-      );
+      ComponentConstructor = StickComponent;
+      break;
     case 'dpad':
-      return new DPadComponent(
-        s.id,
-        deserializeGraphics(s.graphics) as DPadGraphics,
-        s.state,
-      );
+      ComponentConstructor = DPadComponent;
+      break;
     case 'static':
-      return new StaticComponent(
-        s.id,
-        deserializeGraphics(s.graphics) as StaticGraphics,
-        s.state,
-      );
+      ComponentConstructor = StaticComponent;
+      break;
     case 'stickDistortion':
-      return new StickDistortionComponent(
-        s.id,
-        deserializeGraphics(s.graphics) as StickDistortionGraphics,
-        s.state,
-      );
+      ComponentConstructor = StickDistortionComponent;
+      break;
   }
+
+  return new ComponentConstructor(
+    s.id,
+    deserializeGraphics(s.graphics as any),
+    s.state,
+    s.filters && deserializeComponentFilterDict(s.filters),
+  );
 };

@@ -29,6 +29,7 @@ module.exports = {
     '@typescript-eslint/explicit-member-accessibility': ['error', {
       accessibility: 'no-public',
     }],
+    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-object-literal-type-assertion': 'off',
     '@typescript-eslint/no-parameter-properties': 'off',
     '@typescript-eslint/no-unused-vars': ['error', {

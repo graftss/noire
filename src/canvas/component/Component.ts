@@ -12,10 +12,25 @@ export interface BaseComponentState<I extends Dict<T.Input>> {
   inputMap: Partial<Record<keyof I, Maybe<T.ControllerKey>>>;
 }
 
+type InputKinds<I extends Dict<T.Input>> = {
+  [K in keyof I]: I[K]['kind'];
+};
+
 export interface ComponentGraphics<SS extends string, TS extends string> {
   shapes: Record<SS, Maybe<Konva.Shape>>;
   textures: Record<TS, Maybe<Texture>>;
 }
+
+export interface ComponentFilter<K extends T.InputFilterKind> {
+  filter: T.InputFilter<K>;
+  config: T.InputFilterData[K]['config'];
+  inputMap: Dict<T.ControllerKey>;
+}
+
+export type ComponentFilterDict<SS extends string> = Record<
+  SS,
+  ComponentFilter<T.InputFilterKind>[]
+>;
 
 export abstract class TypedComponent<
   SS extends string,
@@ -26,14 +41,22 @@ export abstract class TypedComponent<
 > {
   id: string;
   graphics: G;
-  inputKinds: { [K in keyof I]: I[K]['kind'] };
+  inputKinds: InputKinds<I>;
   state: S;
+  filters: Maybe<ComponentFilterDict<SS>>;
 
-  constructor(id, graphics, inputKinds, state) {
+  constructor(
+    id: string,
+    graphics: G,
+    inputKinds: InputKinds<I>,
+    state: S,
+    filters?: ComponentFilterDict<SS>,
+  ) {
     this.id = id;
     this.graphics = graphics;
     this.inputKinds = inputKinds;
     this.state = state;
+    this.filters = filters;
   }
 
   protected applyDefaultInput(input: Partial<I>): Required<I> {
@@ -56,6 +79,24 @@ export abstract class TypedComponent<
 
   protected computeRawInput(input: Partial<I>): T.AllRaw<I> {
     return rawifyInputDict(this.applyDefaultInput(input));
+  }
+
+  applyFilterInput(
+    filterInput: Maybe<Record<string, Dict<Maybe<T.Input>>[]>>,
+  ): void {
+    if (!this.filters || !filterInput) return;
+
+    for (const key in this.graphics.shapes) {
+      if (this.filters[key]) {
+        const shape = this.graphics.shapes[key] as Konva.Shape;
+        const shapeFilterInput = filterInput[key].map(rawifyInputDict);
+        shape.filters(
+          this.filters[key].map(({ filter, config }, index: number) =>
+            filter(config)(shapeFilterInput[index] as any),
+          ),
+        );
+      }
+    }
   }
 
   // `init` is called after the component is added to the

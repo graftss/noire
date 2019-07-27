@@ -1,7 +1,6 @@
 import * as T from '../../types';
 import { normalizeAxis } from '../../utils';
 import { copyImageData, createImageData, dist } from './utils';
-import { Filter, InputFilter } from '.';
 
 const { round } = Math;
 
@@ -24,7 +23,7 @@ export interface DistortFilterState {
   debug?: boolean;
 }
 
-export const distort: Filter<DistortFilterState> = ({
+export const distort: T.Filter<DistortFilterState> = ({
   xc,
   yc,
   R,
@@ -101,6 +100,8 @@ export const distort: Filter<DistortFilterState> = ({
 };
 
 export interface StickDistortConfig {
+  kind: 'stickDistort';
+
   xc: number;
   yc: number;
   R: number;
@@ -119,10 +120,15 @@ export interface StickDistortRawInput extends Dict<T.RawInput> {
   yn: number;
 }
 
-export const stickDistort: InputFilter<
-  StickDistortRawInput,
-  StickDistortConfig
-> = ({ input: { xp, xn, yp, yn }, config: { xc, yc, debug, R, r, leash } }) =>
+export interface StickDistortData {
+  config: StickDistortConfig;
+  input: StickDistortRawInput;
+}
+
+export const stickDistort: T.TypedInputFilter<
+  StickDistortConfig,
+  StickDistortRawInput
+> = ({ xc, yc, debug, R, r, leash }) => ({ xp, xn, yp, yn }) =>
   distort({
     xc,
     yc,
