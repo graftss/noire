@@ -123,6 +123,9 @@ export {
   StickDistortConfig,
   StickDistortRawInput,
   StickDistortData,
+  DPadDistortConfig,
+  DPadDistortRawInput,
+  DPadDistortData,
 } from './canvas/filter/distort';
 export {
   ZoomFilterState,

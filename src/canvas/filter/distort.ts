@@ -136,3 +136,26 @@ export const stickDistort: T.TypedInputFilter<
     xd: Math.round(leash * (R - r) * normalizeAxis(xp, xn)),
     yd: Math.round(leash * (R - r) * normalizeAxis(yp, yn)),
   });
+
+export type DPadDistortConfig = StickDistortConfig;
+
+export type DPadDistortRawInput = T.RawInputProjection<T.DPadInput>;
+
+export interface DPadDistortData {
+  config: DPadDistortConfig;
+  input: DPadDistortRawInput;
+}
+
+export const dPadDistort: T.TypedInputFilter<
+  DPadDistortConfig,
+  DPadDistortRawInput
+> = ({ xc, yc, debug, R, r: _r, leash }) => ({ u, l, d, r }) =>
+  distort({
+    xc,
+    yc,
+    debug,
+    R,
+    r: _r,
+    xd: Math.round(leash * (R - _r) * ((l ? -1 : 0) + (r ? 1 : 0))),
+    yd: Math.round(leash * (R - _r) * ((u ? -1 : 0) + (d ? 1 : 0))),
+  });

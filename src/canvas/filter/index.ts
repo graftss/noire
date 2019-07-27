@@ -1,14 +1,16 @@
 import * as T from '../../types';
-import { stickDistort } from './distort';
+import { stickDistort, dPadDistort } from './distort';
 import { buttonZoom } from './zoom';
 
 export interface InputFilterData {
   buttonZoom: T.ButtonZoomData;
+  dPadDistort: T.DPadDistortData;
   stickDistort: T.StickDistortData;
 }
 
 const inputFilters: { [K in InputFilterKind]: InputFilter<K> } = {
   buttonZoom,
+  dPadDistort,
   stickDistort,
 };
 

@@ -124,9 +124,28 @@ const vert: T.SerializedComponent = {
           yp: { controllerId, key: 'lsYP' },
         },
       },
+      // {
+      //   filter: {
+      //     kind: 'stickDistort',
+      //     config: {
+      //       xc: 250,
+      //       yc: 300,
+      //       r: 39,
+      //       R: 53,
+      //       leash: 0.7,
+      //       debug: true,
+      //     },
+      //   },
+      //   inputMap: {
+      //     xn: { controllerId, key: 'rsXN' },
+      //     xp: { controllerId, key: 'rsXP' },
+      //     yn: { controllerId, key: 'rsYN' },
+      //     yp: { controllerId, key: 'rsYP' },
+      //   },
+      // },
       {
         filter: {
-          kind: 'stickDistort',
+          kind: 'dPadDistort',
           config: {
             xc: 250,
             yc: 300,
@@ -137,10 +156,10 @@ const vert: T.SerializedComponent = {
           },
         },
         inputMap: {
-          xn: { controllerId, key: 'rsXN' },
-          xp: { controllerId, key: 'rsXP' },
-          yn: { controllerId, key: 'rsYN' },
-          yp: { controllerId, key: 'rsYP' },
+          l: { controllerId, key: 'padL' },
+          r: { controllerId, key: 'padR' },
+          u: { controllerId, key: 'padU' },
+          d: { controllerId, key: 'padD' },
         },
       },
     ],
