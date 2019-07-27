@@ -24,7 +24,10 @@ export class ComponentManager {
 
       if (!existing) {
         this.add(deserializeComponent(component));
-      } else if (component.state.inputMap !== existing.state.inputMap) {
+      } else if (
+        component.state &&
+        component.state.inputMap !== existing.state.inputMap
+      ) {
         existing.state.inputMap = component.state.inputMap;
       }
     });

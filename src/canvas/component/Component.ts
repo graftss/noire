@@ -9,7 +9,7 @@ export type Component = TypedComponent<any, any, any, any, any>;
 
 export interface BaseComponentState<I extends Dict<T.Input>> {
   defaultInput?: Partial<I>;
-  inputMap: Partial<Record<keyof I, Maybe<T.ControllerKey>>>;
+  inputMap?: Partial<Record<keyof I, Maybe<T.ControllerKey>>>;
 }
 
 type InputKinds<I extends Dict<T.Input>> = {

@@ -3,6 +3,7 @@ import * as T from '../../../../types';
 import {
   stringifyComponentKey,
   componentInputKinds,
+  mappedControllerKey,
 } from '../../../../canvas/component';
 import { stringifyControllerKey } from '../../../../input/controller';
 
@@ -56,14 +57,14 @@ export const KeysField: React.SFC<KeysFieldProps> = ({
 }) => {
   return (
     <div>
-      {keys.map(ck => (
+      {keys.map((ck: T.ComponentKey) => (
         <div key={ck.key}>
           {stringifyComponentKey(ck)}
           <button
             onClick={() => listenNextInput(getRemapState(component, ck.key))}
           >
             {controllerKeyStr(
-              component.state.inputMap[ck.key],
+              mappedControllerKey(component, ck),
               controllersById,
               isListening(remapState, component.id, ck.key),
             )}

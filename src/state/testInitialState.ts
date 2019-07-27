@@ -103,9 +103,6 @@ const vert: T.SerializedComponent = {
       },
     },
   },
-  state: {
-    inputMap: {},
-  },
   filters: {
     shape: [
       {
@@ -125,6 +122,25 @@ const vert: T.SerializedComponent = {
           xp: { controllerId, key: 'lsXP' },
           yn: { controllerId, key: 'lsYN' },
           yp: { controllerId, key: 'lsYP' },
+        },
+      },
+      {
+        filter: {
+          kind: 'stickDistort',
+          config: {
+            xc: 250,
+            yc: 300,
+            r: 39,
+            R: 53,
+            leash: 0.7,
+            debug: true,
+          },
+        },
+        inputMap: {
+          xn: { controllerId, key: 'rsXN' },
+          xp: { controllerId, key: 'rsXP' },
+          yn: { controllerId, key: 'rsYN' },
+          yp: { controllerId, key: 'rsYP' },
         },
       },
     ],

@@ -41,7 +41,7 @@ export interface BaseSerializedComponent<
   name: string;
   kind: K;
   graphics: SerializedComponentGraphics<SS, TS>;
-  state: Partial<S> & T.BaseComponentState<I>;
+  state?: Partial<S> & T.BaseComponentState<I>;
   filters?: Record<SS, SerializedComponentFilter<T.InputFilterKind>[]>;
 }
 
@@ -58,6 +58,14 @@ export interface ComponentKey {
   label: string;
   inputKind: T.InputKind;
 }
+
+export const mappedControllerKey = (
+  component: SerializedComponent,
+  componentKey: ComponentKey,
+): Maybe<T.ControllerKey> =>
+  component.state &&
+  component.state.inputMap &&
+  component.state.inputMap[componentKey.key];
 
 export type ComponentEditorField =
   | { kind: 'fixed'; data: { label: string } }
