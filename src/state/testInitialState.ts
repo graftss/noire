@@ -259,6 +259,8 @@ const dPad: T.SerializedComponent = {
     inputMap: {
       d: { controllerId, key: 'padD' },
       u: { controllerId, key: 'padU' },
+      l: { controllerId, key: 'padL' },
+      r: { controllerId, key: 'padR' },
     },
   },
 };
@@ -318,13 +320,13 @@ const staticImage: T.SerializedComponent = {
 };
 
 const components: T.SerializedComponent[] = [
-  vert,
+  // vert,
   // vertProd,
   // staticImage,
-  // leftStick,
-  // rightStick,
-  // dPad,
-  // button,
+  leftStick,
+  rightStick,
+  dPad,
+  button,
 ];
 
 export const testInitialState: T.EditorState = {

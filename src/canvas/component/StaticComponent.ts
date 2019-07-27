@@ -1,15 +1,10 @@
-import Konva from 'konva';
 import * as T from '../../types';
 import { TypedComponent } from './Component';
 
 type StaticShapes = 'shape';
 type StaticTextures = 'texture';
 
-export interface StaticGraphics
-  extends T.ComponentGraphics<StaticShapes, StaticTextures> {
-  shapes: { shape: Konva.Shape };
-  textures: { texture: T.Texture };
-}
+export type StaticGraphics = T.ComponentGraphics<StaticShapes, StaticTextures>;
 
 export type StaticInput = Record<string, T.Input> & {};
 
@@ -59,7 +54,10 @@ export class StaticComponent extends TypedComponent<
   }
 
   update(): void {
-    const { textures, shapes } = this.graphics;
-    textures.texture.apply(shapes.shape);
+    const {
+      textures: { texture },
+      shapes: { shape },
+    } = this.graphics;
+    if (texture && shape) texture.apply(shape);
   }
 }

@@ -1,4 +1,3 @@
-import Konva from 'konva';
 import * as T from '../../types';
 import { normalizeAxis } from '../../utils';
 import { TypedComponent } from './Component';
@@ -6,18 +5,7 @@ import { TypedComponent } from './Component';
 type StickShapes = 'center' | 'stick';
 type StickTextures = 'center' | 'stick' | 'stickDown';
 
-export interface StickGraphics
-  extends T.ComponentGraphics<StickShapes, StickTextures> {
-  shapes: {
-    center: Maybe<Konva.Shape>;
-    stick: Konva.Shape;
-  };
-  textures: {
-    center: T.Texture;
-    stick: T.Texture;
-    stickDown: Maybe<T.Texture>;
-  };
-}
+export type StickGraphics = T.ComponentGraphics<StickShapes, StickTextures>;
 
 export interface StickInput extends Dict<T.Input> {
   xp: T.AxisInput;
@@ -109,6 +97,8 @@ export class StickComponent extends TypedComponent<
 
   private updateStick(x: number, y: number, down: boolean): void {
     const shape = this.graphics.shapes.stick;
+    if (!shape) return;
+
     const { center, boundaryRadius, leashScale, useDepthScaling } = this.state;
 
     shape.position({
@@ -128,7 +118,7 @@ export class StickComponent extends TypedComponent<
         ? this.graphics.textures.stickDown
         : this.graphics.textures.stick;
 
-    texture.apply(shape);
+    if (texture) texture.apply(shape);
   }
 
   updateCenter(): void {
@@ -136,7 +126,7 @@ export class StickComponent extends TypedComponent<
     const texture = this.graphics.textures.center;
     const { center } = this.state;
 
-    if (shape) {
+    if (shape && texture) {
       shape.position(center);
       texture.apply(shape);
     }

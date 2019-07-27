@@ -1,16 +1,13 @@
-import Konva from 'konva';
 import * as T from '../../types';
-import { Texture } from '../texture';
 import { TypedComponent } from './Component';
 
 type ButtonShapes = 'on' | 'off';
 type ButtonTextures = 'on' | 'off';
 
-export interface ButtonComponentGraphics
-  extends T.ComponentGraphics<ButtonShapes, ButtonTextures> {
-  shapes: { on: Konva.Shape; off: Konva.Shape };
-  textures: { on: Texture; off: Texture };
-}
+export type ButtonComponentGraphics = T.ComponentGraphics<
+  ButtonShapes,
+  ButtonTextures
+>;
 
 export type SerializedButtonComponent = T.Serialized<
   'button',
@@ -73,18 +70,14 @@ export class ButtonComponent extends TypedComponent<
     const { textures, shapes } = this.graphics;
     const { button } = this.computeRawInput(input);
 
-    if (button) {
-      const texture = textures.on;
-      const shape = shapes.on;
-      shapes.off.hide();
+    if (button && shapes.on && textures.on) {
+      if (shapes.off) shapes.off.hide();
       shapes.on.show();
-      texture.apply(shape);
-    } else {
-      const texture = textures.off;
-      const shape = shapes.off;
-      shapes.on.hide();
+      textures.on.apply(shapes.on);
+    } else if (shapes.off && textures.off) {
+      if (shapes.on) shapes.on.hide();
       shapes.off.show();
-      texture.apply(shape);
+      textures.off.apply(shapes.off);
     }
   }
 }

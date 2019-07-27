@@ -2,7 +2,6 @@ import Konva from 'konva';
 import * as T from '../../types';
 import { mapObj } from '../../utils';
 import { defaultInputByKind, rawifyInputDict } from '../../input/input';
-import { Texture } from '../texture';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Component = TypedComponent<any, any, any, any, any>;
@@ -18,7 +17,7 @@ type InputKinds<I extends Dict<T.Input>> = {
 
 export interface ComponentGraphics<SS extends string, TS extends string> {
   shapes: Record<SS, Maybe<Konva.Shape>>;
-  textures: Record<TS, Maybe<Texture>>;
+  textures: Record<TS, Maybe<T.Texture>>;
 }
 
 export interface ComponentFilter<K extends T.InputFilterKind> {

@@ -15,20 +15,7 @@ type DPadTextures =
   | 'rOn'
   | 'rOff';
 
-export interface DPadGraphics
-  extends T.ComponentGraphics<DPadShapes, DPadTextures> {
-  shapes: { u: Konva.Shape; l: Konva.Shape; d: Konva.Shape; r: Konva.Shape };
-  textures: {
-    uOn: T.Texture;
-    uOff: T.Texture;
-    lOn: T.Texture;
-    lOff: T.Texture;
-    dOn: T.Texture;
-    dOff: T.Texture;
-    rOn: T.Texture;
-    rOff: T.Texture;
-  };
-}
+export type DPadGraphics = T.ComponentGraphics<DPadShapes, DPadTextures>;
 
 export type DPadInput = Record<Dir, T.ButtonInput>;
 
@@ -73,7 +60,7 @@ export const simpleDPadRects = (
   y: number,
   width: number,
   height: number,
-): DPadGraphics['shapes'] => ({
+): Record<DPadShapes, Konva.Rect> => ({
   u: new Konva.Rect({
     x,
     y: y - height,
@@ -136,13 +123,23 @@ export class DPadComponent extends TypedComponent<
     );
   }
 
+  private updateDirection(
+    input: boolean,
+    shape: Maybe<Konva.Shape>,
+    on: Maybe<T.Texture>,
+    off: Maybe<T.Texture>,
+  ): void {
+    if (input && shape && on) on.apply(shape);
+    else if (!input && shape && off) off.apply(shape);
+  }
+
   update(input: DPadInput): void {
     const { u, l, d, r } = this.computeRawInput(input);
     const { shapes, textures } = this.graphics;
 
-    (u ? textures.uOn : textures.uOff).apply(shapes.u);
-    (l ? textures.lOn : textures.lOff).apply(shapes.l);
-    (d ? textures.dOn : textures.dOff).apply(shapes.d);
-    (r ? textures.rOn : textures.rOff).apply(shapes.r);
+    this.updateDirection(u, shapes.u, textures.uOn, textures.uOff);
+    this.updateDirection(l, shapes.l, textures.lOn, textures.lOff);
+    this.updateDirection(d, shapes.d, textures.dOn, textures.dOff);
+    this.updateDirection(r, shapes.r, textures.rOn, textures.rOff);
   }
 }
