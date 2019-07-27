@@ -89,54 +89,25 @@ const ps2Controller2: T.PS2Controller = {
 const vert: T.SerializedComponent = {
   id: ids[7],
   name: 'vert',
-  kind: 'stickDistortion',
+  kind: 'static',
   graphics: {
     shapes: {
-      background: serializeNode(
+      shape: serializeNode(
         new Konva.Rect({ x: 0, y: 0, width: 437, height: 606 }),
       ),
     },
     textures: {
-      background: {
+      texture: {
         kind: 'image',
         state: { src: 'dist/vert.png', offset: { x: 0, y: 0 } },
       },
     },
   },
   state: {
-    left: {
-      xc: 150,
-      yc: 300,
-      r: 39,
-      R: 53,
-      debug: true,
-      leash: 0.7,
-      kind: 'stickDistort',
-    },
-    right: {
-      xc: 240,
-      yc: 290,
-      r: 39,
-      R: 52,
-      debug: true,
-      leash: 0.7,
-      kind: 'stickDistort',
-    },
-    inputMap: {
-      lxp: { controllerId, key: 'lsXP' },
-      lxn: { controllerId, key: 'lsXN' },
-      lyn: { controllerId, key: 'lsYN' },
-      lyp: { controllerId, key: 'lsYP' },
-      lButton: { controllerId, key: 'l3' },
-      rxp: { controllerId, key: 'rsXP' },
-      rxn: { controllerId, key: 'rsXN' },
-      ryn: { controllerId, key: 'rsYN' },
-      ryp: { controllerId, key: 'rsYP' },
-      rButton: { controllerId, key: 'r3' },
-    },
+    inputMap: {},
   },
   filters: {
-    background: [
+    shape: [
       {
         filter: {
           kind: 'stickDistort',
@@ -151,91 +122,6 @@ const vert: T.SerializedComponent = {
       },
     ],
   },
-};
-
-// const vertProd: T.SerializedComponent = clone(vert);
-// (vertProd.state.left as T.StickDistortionStickState).debug = false;
-// (vertProd.state.right as T.StickDistortionStickState).debug = false;
-// const bg = vertProd.graphics.shapes.background as any;
-// bg.x = 450;
-
-const vertProd: T.SerializedComponent = {
-  id: ids[8],
-  name: 'vert',
-  kind: 'stickDistortion',
-  graphics: {
-    shapes: {
-      background: serializeNode(
-        new Konva.Rect({ x: 450, y: 0, width: 437, height: 606 }),
-      ),
-    },
-    textures: vert.graphics.textures,
-  },
-  state: {
-    ...vert.state,
-    left: {
-      ...(vert.state.left as any),
-      debug: false,
-    },
-    right: {
-      ...(vert.state.right as any),
-      debug: false,
-    },
-  },
-};
-
-const noire: T.SerializedComponent = {
-  id: ids[6],
-  name: 'distortion test',
-  kind: 'stickDistortion',
-  graphics: {
-    shapes: {
-      background: serializeNode(
-        new Konva.Rect({ x: 500, y: 0, width: 338, height: 500 }),
-      ),
-    },
-    textures: {
-      background: {
-        kind: 'image',
-        state: { src: 'dist/noire.png', offset: { x: 0, y: 0 } },
-      },
-    },
-  },
-  state: {
-    left: {
-      xc: 120,
-      yc: 350,
-      r: 35,
-      R: 47,
-      debug: true,
-      leash: 0.7,
-      kind: 'stickDistort',
-    },
-    right: {
-      xc: 210,
-      yc: 350,
-      r: 39,
-      R: 51,
-      debug: true,
-      leash: 0.7,
-      kind: 'stickDistort',
-    },
-    inputMap: {
-      lxp: { controllerId, key: 'lsXP' },
-      lxn: { controllerId, key: 'lsXN' },
-      lyn: { controllerId, key: 'lsYN' },
-      lyp: { controllerId, key: 'lsYP' },
-      lButton: { controllerId, key: 'l3' },
-      rxp: { controllerId, key: 'rsXP' },
-      rxn: { controllerId, key: 'rsXN' },
-      ryn: { controllerId, key: 'rsYN' },
-      ryp: { controllerId, key: 'rsYP' },
-      rButton: { controllerId, key: 'r3' },
-    },
-  },
-  // filters: [
-  //   { x: { controllerId, key: }}
-  // ],
 };
 
 const leftStick: T.SerializedComponent = {

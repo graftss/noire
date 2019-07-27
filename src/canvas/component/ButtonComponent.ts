@@ -54,12 +54,19 @@ export class ButtonComponent extends TypedComponent<
   constructor(
     id: string,
     graphics: ButtonComponentGraphics,
-    state?: Partial<ButtonComponentState>,
+    state: Partial<ButtonComponentState>,
+    filters: T.ComponentFilterDict<ButtonShapes>,
   ) {
-    super(id, graphics, buttonInputKinds, {
-      ...defaultButtonComponentState,
-      ...state,
-    });
+    super(
+      id,
+      graphics,
+      buttonInputKinds,
+      {
+        ...defaultButtonComponentState,
+        ...state,
+      },
+      filters,
+    );
   }
 
   update(input: Partial<ButtonComponentInput>): void {

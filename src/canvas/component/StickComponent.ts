@@ -87,9 +87,16 @@ export class StickComponent extends TypedComponent<
   constructor(
     id: string,
     graphics: StickGraphics,
-    state?: Partial<StickState>,
+    state: Partial<StickState>,
+    filters: T.ComponentFilterDict<StickShapes>,
   ) {
-    super(id, graphics, stickInputKinds, { ...defaultStickState, ...state });
+    super(
+      id,
+      graphics,
+      stickInputKinds,
+      { ...defaultStickState, ...state },
+      filters,
+    );
   }
 
   init(): void {

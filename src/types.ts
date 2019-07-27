@@ -91,11 +91,6 @@ export {
   ButtonComponentInput,
   SerializedButtonComponent,
 } from './canvas/component/ButtonComponent';
-export {
-  StickDistortionState,
-  StickDistortionInput,
-  SerializedStickDistortionComponent,
-} from './canvas/component/StickDistortionComponent';
 export { EditorApp } from './editor';
 export { EditorAction, EditorOption } from './state/actions';
 export { DisplayState, ComponentKeyUpdate } from './state/reducers/display';

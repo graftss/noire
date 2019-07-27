@@ -43,12 +43,19 @@ export class StaticComponent extends TypedComponent<
   constructor(
     id: string,
     graphics: StaticGraphics,
-    state?: Partial<StaticState>,
+    state: Partial<StaticState>,
+    filters: T.ComponentFilterDict<StaticShapes>,
   ) {
-    super(id, graphics, staticInputKinds, {
-      ...defaultStaticState,
-      ...state,
-    });
+    super(
+      id,
+      graphics,
+      staticInputKinds,
+      {
+        ...defaultStaticState,
+        ...state,
+      },
+      filters,
+    );
   }
 
   update(): void {

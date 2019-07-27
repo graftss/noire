@@ -23,11 +23,6 @@ import {
   stickEditorConfig,
   stickInputKinds,
 } from './StickComponent';
-import {
-  StickDistortionComponent,
-  stickDistortionEditorConfig,
-  stickDistortionInputKinds,
-} from './StickDistortionComponent';
 import { Component } from './Component';
 
 // K: identifying kind of component
@@ -54,8 +49,7 @@ export type SerializedComponent =
   | T.SerializedButtonComponent
   | T.SerializedStickComponent
   | T.SerializedDPadComponent
-  | T.SerializedStaticComponent
-  | T.SerializedStickDistortionComponent;
+  | T.SerializedStaticComponent;
 
 export type ComponentKind = SerializedComponent['kind'];
 
@@ -86,7 +80,6 @@ export const componentEditorConfigs: Record<
   stick: stickEditorConfig,
   dpad: dPadEditorConfig,
   static: staticEditorConfig,
-  stickDistortion: stickDistortionEditorConfig,
 };
 
 export const componentInputKinds: Record<ComponentKind, Dict<T.InputKind>> = {
@@ -94,7 +87,6 @@ export const componentInputKinds: Record<ComponentKind, Dict<T.InputKind>> = {
   stick: stickInputKinds,
   dpad: dPadInputKinds,
   static: staticInputKinds,
-  stickDistortion: stickDistortionInputKinds,
 };
 
 export const stringifyComponentKey = ({
@@ -184,9 +176,6 @@ export const deserializeComponent = (s: T.SerializedComponent): Component => {
       break;
     case 'static':
       ComponentConstructor = StaticComponent;
-      break;
-    case 'stickDistortion':
-      ComponentConstructor = StickDistortionComponent;
       break;
   }
 

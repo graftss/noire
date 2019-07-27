@@ -121,8 +121,19 @@ export class DPadComponent extends TypedComponent<
   DPadInput,
   DPadState
 > {
-  constructor(id: string, graphics: DPadGraphics, state?: Partial<DPadState>) {
-    super(id, graphics, dPadInputKinds, { ...defaultDPadState, ...state });
+  constructor(
+    id: string,
+    graphics: DPadGraphics,
+    state: Partial<DPadState>,
+    filters,
+  ) {
+    super(
+      id,
+      graphics,
+      dPadInputKinds,
+      { ...defaultDPadState, ...state },
+      filters,
+    );
   }
 
   update(input: DPadInput): void {
