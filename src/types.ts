@@ -125,6 +125,12 @@ export {
   StickDistortData,
 } from './canvas/filter/distort';
 export {
+  ZoomFilterState,
+  ButtonZoomConfig,
+  ButtonZoomRawInput,
+  ButtonZoomData,
+} from './canvas/filter/zoom';
+export {
   Filter,
   TypedInputFilter,
   InputFilter,

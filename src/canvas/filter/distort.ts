@@ -55,7 +55,7 @@ export const distort: T.Filter<DistortFilterState> = ({
       } else if (debug && dl === r) {
         resultData.data[p] = 0;
         resultData.data[p + 1] = 255;
-        resultData.data[p + 1] = 0;
+        resultData.data[p + 2] = 0;
         continue;
       }
 

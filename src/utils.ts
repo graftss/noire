@@ -107,3 +107,5 @@ export const vec2 = {
 
 export const normalizeAxis = (pos: number, neg: number): number =>
   pos > 0 ? pos : neg > 0 ? -neg : 0;
+
+export const noop = (): void => {};
