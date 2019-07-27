@@ -100,8 +100,6 @@ export const distort: T.Filter<DistortFilterState> = ({
 };
 
 export interface StickDistortConfig {
-  kind: 'stickDistort';
-
   xc: number;
   yc: number;
   R: number;

@@ -111,7 +111,14 @@ const vert: T.SerializedComponent = {
       {
         filter: {
           kind: 'stickDistort',
-          config: { kind: 'stickDistort', xc: 150, yc: 300, r: 39, R: 53, debug: true, leash: 0.7, },
+          config: {
+            xc: 150,
+            yc: 300,
+            r: 39,
+            R: 53,
+            leash: 0.7,
+            debug: true,
+          },
         },
         inputMap: {
           xn: { controllerId, key: 'lsXN' },

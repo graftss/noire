@@ -3,10 +3,9 @@ import { stickDistort } from './distort';
 
 export type Filter<S> = (state: S) => (i: ImageData) => void;
 
-export type TypedInputFilter<
-  C extends { kind: InputFilterKind },
-  I extends Dict<T.RawInput>
-> = (config: C) => Filter<I>;
+export type TypedInputFilter<C, I extends Dict<T.RawInput>> = (
+  config: C,
+) => Filter<I>;
 
 export interface InputFilterData {
   stickDistort: T.StickDistortData;

@@ -184,5 +184,6 @@ export const deserializeComponent = (s: T.SerializedComponent): Component => {
     deserializeGraphics(s.graphics as any),
     s.state,
     s.filters && deserializeComponentFilterDict(s.filters),
+    s.filters && deserializeComponentFilterDict(s.filters),
   );
 };
