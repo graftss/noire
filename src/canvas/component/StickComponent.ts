@@ -2,8 +2,8 @@ import * as T from '../../types';
 import { normalizeAxis } from '../../utils';
 import { TypedComponent } from './Component';
 
-type StickShapes = 'center' | 'stick';
-type StickTextures = 'center' | 'stick' | 'stickDown';
+type StickShapes = 'boundary' | 'stick' | 'center';
+type StickTextures = 'boundary' | 'stick' | 'stickDown' | 'center';
 
 export type StickGraphics = T.ComponentGraphics<StickShapes, StickTextures>;
 
@@ -25,14 +25,12 @@ export const stickInputKinds: T.InputKindProjection<StickInput> = {
 
 export type StickState = T.BaseComponentState<StickInput> & {
   boundaryRadius: number;
-  leashScale: number;
   center: Vec2;
   useDepthScaling: boolean;
 };
 
 export const defaultStickState: StickState = {
   boundaryRadius: 26,
-  leashScale: 0.5,
   center: { x: 0, y: 0 },
   useDepthScaling: false,
   inputMap: {},
@@ -88,10 +86,37 @@ export class StickComponent extends TypedComponent<
   }
 
   init(): void {
-    const { center } = this.graphics.shapes;
+    const { boundary } = this.graphics.shapes;
+    if (boundary) boundary.moveToBottom();
+  }
 
-    if (center) {
-      center.moveToBottom();
+  private centerPosition(x: number, y: number): Vec2 {
+    const { center, boundaryRadius } = this.state;
+
+    return {
+      x: center.x + x * boundaryRadius,
+      y: center.y + y * boundaryRadius,
+    };
+  }
+
+  private updateBoundary(): void {
+    const shape = this.graphics.shapes.boundary;
+    const texture = this.graphics.textures.boundary;
+    const { center } = this.state;
+
+    if (shape && texture) {
+      shape.position(center);
+      texture.apply(shape);
+    }
+  }
+
+  private updateCenter(x: number, y: number): void {
+    const shape = this.graphics.shapes.center;
+    const texture = this.graphics.textures.center;
+
+    if (shape && texture) {
+      shape.position(this.centerPosition(x, y));
+      texture.apply(shape);
     }
   }
 
@@ -99,14 +124,9 @@ export class StickComponent extends TypedComponent<
     const shape = this.graphics.shapes.stick;
     if (!shape) return;
 
-    const { center, boundaryRadius, leashScale, useDepthScaling } = this.state;
+    shape.position(this.centerPosition(x, y));
 
-    shape.position({
-      x: center.x + boundaryRadius * x * leashScale,
-      y: center.y + boundaryRadius * y * leashScale,
-    });
-
-    if (useDepthScaling) {
+    if (this.state.useDepthScaling) {
       shape.scale({
         x: depthFactor(Math.abs(x)),
         y: depthFactor(Math.abs(y)),
@@ -121,23 +141,13 @@ export class StickComponent extends TypedComponent<
     if (texture) texture.apply(shape);
   }
 
-  updateCenter(): void {
-    const shape = this.graphics.shapes.center;
-    const texture = this.graphics.textures.center;
-    const { center } = this.state;
-
-    if (shape && texture) {
-      shape.position(center);
-      texture.apply(shape);
-    }
-  }
-
   update(input: StickInput): void {
     const { xn, xp, yn, yp, button } = this.computeRawInput(input);
     const x = normalizeAxis(xp, xn);
     const y = normalizeAxis(yp, yn);
 
+    this.updateBoundary();
+    this.updateCenter(x, y);
     this.updateStick(x, y, button);
-    this.updateCenter();
   }
 }

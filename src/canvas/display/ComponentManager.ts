@@ -46,6 +46,8 @@ export class ComponentManager {
   };
 
   update(globalInput: T.GlobalControllerInput, dt: number): void {
+    if ((window as any).stopUpdating) return;
+
     this.components.forEach((component: Component) => {
       const getControllerKeyInput = (
         controllerKey: Maybe<T.ControllerKey>,

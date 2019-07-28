@@ -42,6 +42,8 @@ export class KonvaComponentPlugin extends DisplayPlugin {
           }
         }
 
+        component.init();
+
         this.layer.add(group);
       },
     });

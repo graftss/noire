@@ -72,21 +72,25 @@ export {
   ComponentFilterDict,
 } from './canvas/component/Component';
 export {
+  StickGraphics,
   StickState,
   StickInput,
   SerializedStickComponent,
 } from './canvas/component/StickComponent';
 export {
+  StaticGraphics,
   SerializedStaticComponent,
   StaticInput,
   StaticState,
 } from './canvas/component/StaticComponent';
 export {
+  DPadGraphics,
   DPadState,
   DPadInput,
   SerializedDPadComponent,
 } from './canvas/component/DPadComponent';
 export {
+  ButtonComponentGraphics,
   ButtonComponentState,
   ButtonComponentInput,
   SerializedButtonComponent,

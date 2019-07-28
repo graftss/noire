@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import Konva from 'konva';
 import { clone } from 'ramda';
@@ -112,7 +112,7 @@ const vert: T.SerializedComponent = {
             xc: 150,
             yc: 300,
             r: 39,
-            R: 53,
+            R: 55,
             leash: 0.7,
             debug: true,
           },
@@ -124,125 +124,123 @@ const vert: T.SerializedComponent = {
           yp: { controllerId, key: 'lsYP' },
         },
       },
-      // {
-      //   filter: {
-      //     kind: 'stickDistort',
-      //     config: {
-      //       xc: 250,
-      //       yc: 300,
-      //       r: 39,
-      //       R: 53,
-      //       leash: 0.7,
-      //       debug: true,
-      //     },
-      //   },
-      //   inputMap: {
-      //     xn: { controllerId, key: 'rsXN' },
-      //     xp: { controllerId, key: 'rsXP' },
-      //     yn: { controllerId, key: 'rsYN' },
-      //     yp: { controllerId, key: 'rsYP' },
-      //   },
-      // },
       {
         filter: {
-          kind: 'dPadDistort',
+          kind: 'stickDistort',
           config: {
-            xc: 250,
-            yc: 300,
+            xc: 240,
+            yc: 298,
             r: 39,
-            R: 53,
+            R: 55,
             leash: 0.7,
             debug: true,
           },
         },
         inputMap: {
-          l: { controllerId, key: 'padL' },
-          r: { controllerId, key: 'padR' },
-          u: { controllerId, key: 'padU' },
-          d: { controllerId, key: 'padD' },
+          xn: { controllerId, key: 'rsXN' },
+          xp: { controllerId, key: 'rsXP' },
+          yn: { controllerId, key: 'rsYN' },
+          yp: { controllerId, key: 'rsYP' },
         },
       },
     ],
   },
 };
 
-const leftStick: T.SerializedComponent = {
-  id: ids[0],
-  name: 'left stick',
-  kind: 'stick',
-  graphics: {
-    shapes: {
-      center: serializeNode(new Konva.Circle({ radius: 20 })),
-      stick: serializeNode(new Konva.Circle({ radius: 80 })),
-    },
-    textures: {
-      center: {
-        kind: 'fill',
-        state: { fill: 'white', stroke: 'black', strokeWidth: 2 },
-      },
-      stick: {
-        kind: 'image',
-        state: { src: 'dist/noire.png', offset: { x: 250, y: 700 } },
-      },
-      stickDown: {
-        kind: 'image',
-        state: { src: 'dist/noire.png', offset: { x: 200, y: 100 } },
-      },
-    },
+const vertProd = clone(vert);
+vertProd.graphics.shapes.shape = new Konva.Rect({
+  x: 500,
+  y: 0,
+  width: 437,
+  height: 606,
+});
+(vertProd.filters as any).shape[0].filter.config.debug = false;
+(vertProd.filters as any).shape[1].filter.config.debug = false;
+
+const stickGraphics: any = {
+  shapes: {
+    boundary: serializeNode(new Konva.Circle({ radius: 20 })),
+    stick: serializeNode(new Konva.Circle({ radius: 3 })),
+    // center: serializeNode(new Konva.Circle({ radius: 3 })),
   },
-  state: {
-    leashScale: 0.5,
-    boundaryRadius: 30,
-    center: { x: 250, y: 700 },
-    inputMap: {
-      xp: { controllerId, key: 'lsXP' },
-      xn: { controllerId, key: 'lsXN' },
-      yn: { controllerId, key: 'lsYN' },
-      yp: { controllerId, key: 'lsYP' },
-      button: { controllerId, key: 'l3' },
+  textures: {
+    boundary: {
+      kind: 'fill',
+      state: { fill: 'white', stroke: 'black', strokeWidth: 3 },
     },
-    useDepthScaling: true,
+    // stick: {
+    //   kind: 'fill',
+    //   state: {
+    //     fill: 'rgba(0,0,0,0)',
+    //     stroke: 'rgba(0,0,0,0.2)',
+    //     strokeWidth: 1,
+    //   },
+    // },
+    stickDown: {
+      kind: 'fill',
+      state: {
+        fill: 'green',
+      },
+    },
+    stick: {
+      kind: 'fill',
+      state: { fill: 'red' },
+    },
   },
 };
 
-const rightStick: T.SerializedComponent = {
-  id: ids[0],
-  name: 'right stick',
-  kind: 'stick',
-  graphics: {
-    shapes: {
-      center: serializeNode(new Konva.Circle({ radius: 20 })),
-      stick: serializeNode(new Konva.Circle({ radius: 80 })),
-    },
-    textures: {
-      center: {
-        kind: 'fill',
-        state: { fill: 'white', stroke: 'black', strokeWidth: 2 },
+const dualSticks = (
+  graphics,
+  center: Vec2,
+  stickDistance: number,
+  boundaryRadius: number,
+): [T.SerializedComponent, T.SerializedComponent] => {
+  return [
+    {
+      id: ids[0],
+      name: 'left stick',
+      kind: 'stick',
+      graphics,
+      state: {
+        boundaryRadius,
+        center: { x: center.x - stickDistance / 2, y: center.y },
+        inputMap: {
+          xp: { controllerId, key: 'lsXP' },
+          xn: { controllerId, key: 'lsXN' },
+          yn: { controllerId, key: 'lsYN' },
+          yp: { controllerId, key: 'lsYP' },
+          button: { controllerId, key: 'l3' },
+        },
+        useDepthScaling: true,
       },
-      stickDown: {
-        kind: 'fill',
-        state: { fill: 'black' },
-      },
-      stick: {
-        kind: 'image',
-        state: { src: 'dist/noire.png', offset: { x: 420, y: 710 } },
+    },
+    {
+      id: ids[1],
+      name: 'right stick',
+      kind: 'stick',
+      graphics,
+      state: {
+        boundaryRadius,
+        center: { x: center.x + stickDistance / 2, y: center.y },
+        inputMap: {
+          xp: { controllerId, key: 'rsXP' },
+          xn: { controllerId, key: 'rsXN' },
+          yn: { controllerId, key: 'rsYN' },
+          yp: { controllerId, key: 'rsYP' },
+          button: { controllerId, key: 'r3' },
+        },
+        useDepthScaling: true,
       },
     },
-  },
-  state: {
-    leashScale: 0.5,
-    boundaryRadius: 30,
-    center: { x: 420, y: 710 },
-    inputMap: {
-      xp: { controllerId, key: 'rsXP' },
-      xn: { controllerId, key: 'rsXN' },
-      yn: { controllerId, key: 'rsYN' },
-      yp: { controllerId, key: 'rsYP' },
-      button: { controllerId, key: 'r3' },
-    },
-    useDepthScaling: true,
-  },
+  ];
 };
+
+const [leftStick, rightStick] = dualSticks(
+  stickGraphics,
+  { x: 180, y: 100 },
+  100,
+  15,
+);
 
 const dPad: T.SerializedComponent = {
   id: ids[2],
@@ -320,13 +318,13 @@ const staticImage: T.SerializedComponent = {
 };
 
 const components: T.SerializedComponent[] = [
-  // vert,
-  // vertProd,
+  vert,
+  vertProd,
   // staticImage,
-  leftStick,
-  rightStick,
-  dPad,
-  button,
+  // leftStick,
+  // rightStick,
+  // dPad,
+  // button,
 ];
 
 export const testInitialState: T.EditorState = {
