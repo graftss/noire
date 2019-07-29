@@ -20,6 +20,18 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     this.layer = new Konva.Layer();
     this.stage.add(this.layer);
 
+    const border = new Konva.Rect({
+      x: 0,
+      y: 0,
+      width,
+      height,
+      fill: 'rgba(0,0,0,0)',
+      stroke: 'black',
+      strokeWidth: 2,
+    });
+
+    this.layer.add(border);
+
     this.stage.on('click', ({ target, currentTarget }) => {
       if (target === currentTarget) {
         this.eb.emit({

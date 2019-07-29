@@ -93,7 +93,7 @@ const vert: T.SerializedComponent = {
   graphics: {
     shapes: {
       shape: serializeNode(
-        new Konva.Rect({ x: 0, y: 0, width: 437, height: 606 }),
+        new Konva.Rect({ x: 500, y: 0, width: 437, height: 606 }),
       ),
     },
     textures: {
@@ -149,7 +149,7 @@ const vert: T.SerializedComponent = {
 
 const vertProd = clone(vert);
 vertProd.graphics.shapes.shape = new Konva.Rect({
-  x: 500,
+  x: 0,
   y: 0,
   width: 437,
   height: 606,
@@ -318,7 +318,6 @@ const staticImage: T.SerializedComponent = {
 };
 
 const components: T.SerializedComponent[] = [
-  vert,
   vertProd,
   // staticImage,
   // leftStick,

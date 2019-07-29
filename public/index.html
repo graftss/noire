@@ -2,10 +2,31 @@
 <html>
 <head>
   <title> </title>
+  <style>
+    .container {
+      display: flex;
+      flex-direction: row;
+    }
+
+    #canvas {
+      display: inline-block;
+      float: left;
+    }
+
+    #editor {
+      display: inline-block;
+      vertical-align: top;
+      overflow: hidden;
+      margin: 0 auto;
+      flex-grow: 100;
+    }
+  </style>
 </head>
 <body>
-  <div id="canvas"></div>
-  <div id="editor"></div>
+  <div class="container">
+    <div class="canvas" id="canvas"></div>
+    <div id="editor"></div>
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.8.6/umd/react.development.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.8.6/umd/react-dom.development.js"></script>
