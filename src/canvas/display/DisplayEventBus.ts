@@ -4,6 +4,7 @@ import { Component } from '../component/Component';
 import { without } from '../../utils';
 
 export type Handler =
+  | { kind: 'listenNextInput'; cb: CB1<T.RemapState> }
   | { kind: 'stageClick'; cb: CB1<Konva.Stage> }
   | { kind: 'componentSelect'; cb: CB1<Maybe<string>> }
   | { kind: 'componentAdd'; cb: CB1<Component> }
@@ -11,6 +12,7 @@ export type Handler =
   | { kind: 'requestDraw'; cb: CB0 };
 
 export type DisplayEvent =
+  | { kind: 'listenNextInput'; data: [T.RemapState] }
   | { kind: 'stageClick'; data: [Konva.Stage] }
   | { kind: 'componentSelect'; data: [Maybe<string>] }
   | { kind: 'componentAdd'; data: [Component] }
@@ -19,6 +21,7 @@ export type DisplayEvent =
 
 export class DisplayEventBus {
   private handlers: Record<Handler['kind'], Function[]> = {
+    listenNextInput: [],
     stageClick: [],
     componentSelect: [],
     componentAdd: [],

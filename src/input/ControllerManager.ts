@@ -5,6 +5,7 @@ import {
   stopListening,
 } from '../state/actions';
 import { controllerWithBinding, allControllers } from '../state/selectors';
+import { DisplayEventBus } from '../canvas/display/DisplayEventBus';
 import { NextInputListener } from './NextInputListener';
 import { GlobalInputSources } from './source/GlobalInputSources';
 import { getGamepads } from './source/gamepad';
@@ -18,7 +19,7 @@ export class ControllerManager {
   private globalInputSources: GlobalInputSources;
   private nextInputListener: NextInputListener;
 
-  constructor(private store: T.EditorStore) {
+  constructor(private store: T.EditorStore, private eventBus: DisplayEventBus) {
     this.globalInputSources = new GlobalInputSources({
       gamepad: getGamepads,
       keyboard: () => getLocalKeyboard(document, defaultListenedKeyCodes),
@@ -29,7 +30,7 @@ export class ControllerManager {
       this.globalInputSources.snapshotDiff,
     );
 
-    store.subscribe(() => this.storeSubscriber());
+    eventBus.on({ kind: 'listenNextInput', cb: this.onListenNextInput });
   }
 
   private onAwaitedControllerBinding = (controllerId: string, key: string) => (
@@ -66,28 +67,19 @@ export class ControllerManager {
     this.store.dispatch(stopListening());
   };
 
-  private storeSubscriber = (): void => {
-    const { remap } = this.store.getState().input;
-    if (!remap) return;
-
+  private onListenNextInput = (remap: T.RemapState): void => {
     switch (remap.kind) {
       case 'controller': {
-        const handler = this.onAwaitedControllerBinding(
-          remap.controllerId,
-          remap.key,
-        );
-
-        this.nextInputListener.await(remap.inputKind, handler);
+        const { controllerId, inputKind, key } = remap;
+        const handler = this.onAwaitedControllerBinding(controllerId, key);
+        this.nextInputListener.await(inputKind, handler);
         break;
       }
 
       case 'component': {
-        const handler = this.onAwaitedComponentBinding(
-          remap.componentId,
-          remap.key,
-        );
-
-        this.nextInputListener.await(remap.inputKind, handler);
+        const { componentId, inputKind, key } = remap;
+        const handler = this.onAwaitedComponentBinding(componentId, key);
+        this.nextInputListener.await(inputKind, handler);
         break;
       }
     }

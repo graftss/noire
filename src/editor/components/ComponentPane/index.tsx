@@ -71,7 +71,10 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
     />
     <ComponentEditor
       controllersById={controllersById}
-      listenNextInput={listenNextInput}
+      listenNextInput={(remap: T.RemapState) => {
+        listenNextInput(remap);
+        emitDisplayEvents([{ kind: 'listenNextInput', data: [remap] }]);
+      }}
       remapState={remapState}
       selected={selected}
       updateComponentName={updateComponentName}

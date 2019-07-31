@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
 import { selectedController, allControllers } from '../../../state/selectors';
 import {
+  emitDisplayEvents,
   listenNextInput,
   selectEditorOption,
   updateControllerName,
@@ -18,6 +19,7 @@ interface PropsFromState {
 }
 
 interface PropsFromDispatch {
+  emitDisplayEvents: (e: T.DisplayEvent[]) => void;
   selectEditorOption: (o: T.EditorOption) => void;
   listenNextInput: (o: T.RemapState) => void;
   updateControllerName: (id: string, name: string) => void;
@@ -34,6 +36,7 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(
     {
+      emitDisplayEvents,
       listenNextInput,
       selectEditorOption,
       updateControllerName,
@@ -48,6 +51,7 @@ const toEditorOption = (id: Maybe<string>): T.EditorOption => ({
 
 const BaseControllerPane: React.SFC<ControllerEditorProps> = ({
   controllers,
+  emitDisplayEvents,
   listenNextInput,
   remapState,
   selectedController,
@@ -62,7 +66,10 @@ const BaseControllerPane: React.SFC<ControllerEditorProps> = ({
     />
     <ControllerEditor
       controller={selectedController}
-      listenNextInput={listenNextInput}
+      listenNextInput={(remap: T.RemapState) => {
+        listenNextInput(remap);
+        emitDisplayEvents([{ kind: 'listenNextInput', data: [remap] }]);
+      }}
       remapState={remapState}
       updateControllerName={updateControllerName}
     />

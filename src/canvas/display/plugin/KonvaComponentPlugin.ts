@@ -80,17 +80,24 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   };
 
   private onComponentAdd = (component: T.Component): void => {
+    // we need to add each shape to its group before calling `init`
+    // on the component, which assumes that each shape in the
+    // component has a parent.
+    // in general, the order of the calls made here is very brittle
+    // and should be changed carefully.
+
     const group = new Konva.Group();
     this.groupsById[component.id] = group;
-    this.layer.add(group);
 
-    component.init();
     component.shapeList().forEach(shape => {
       group.add(shape);
       shape.on('click', () =>
         this.eventBus.emit({ kind: 'componentSelect', data: [component.id] }),
       );
     });
+
+    this.layer.add(group);
+    component.init();
   };
 
   private deselectComponent = (): void => {

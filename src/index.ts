@@ -38,15 +38,13 @@ export class Noire {
   };
 
   init(): void {
-    const { editorTarget } = this.config;
     const eventBus = new DisplayEventBus();
 
-    this.editorApp = createEditorApp(editorTarget, eventBus);
-    const store = this.editorApp.store;
+    this.editorApp = createEditorApp(this.config.editorTarget, eventBus);
     this.editorApp.render();
+    const { store } = this.editorApp;
 
-    this.controllerManager = new ControllerManager(store);
-
+    this.controllerManager = new ControllerManager(store, eventBus);
     this.display = new Display(this.config, store, eventBus);
 
     this.updateLoop(0);
