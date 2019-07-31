@@ -3,9 +3,12 @@ import * as T from '../../types';
 import { Component } from '../component/Component';
 import { without } from '../../utils';
 
+type ComponentState = T.TypedComponentState<Dict<T.Input>>;
+
 export type Handler =
   | { kind: 'listenNextInput'; cb: CB1<T.RemapState> }
   | { kind: 'stageClick'; cb: CB1<Konva.Stage> }
+  | { kind: 'componentUpdateState'; cb: CB2<string, ComponentState> }
   | { kind: 'componentSelect'; cb: CB1<Maybe<string>> }
   | { kind: 'componentAdd'; cb: CB1<Component> }
   | { kind: 'bindingAdd'; cb: CB2<Component, T.Binding> }
@@ -14,6 +17,7 @@ export type Handler =
 export type DisplayEvent =
   | { kind: 'listenNextInput'; data: [T.RemapState] }
   | { kind: 'stageClick'; data: [Konva.Stage] }
+  | { kind: 'componentUpdateState'; data: [string, ComponentState] }
   | { kind: 'componentSelect'; data: [Maybe<string>] }
   | { kind: 'componentAdd'; data: [Component] }
   | { kind: 'bindingAdd'; data: [Component, T.Binding] }
@@ -23,6 +27,7 @@ export class DisplayEventBus {
   private handlers: Record<Handler['kind'], Function[]> = {
     listenNextInput: [],
     stageClick: [],
+    componentUpdateState: [],
     componentSelect: [],
     componentAdd: [],
     bindingAdd: [],

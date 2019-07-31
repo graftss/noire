@@ -65,7 +65,8 @@ export {
   ComponentEditorConfig,
 } from './canvas/component/';
 export {
-  BaseComponentState,
+  ComponentState,
+  TypedComponentState,
   Component,
   ComponentGraphics,
   ComponentFilter,

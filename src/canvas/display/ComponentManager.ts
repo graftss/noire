@@ -7,7 +7,15 @@ import { DisplayEventBus } from './DisplayEventBus';
 export class ComponentManager {
   private components: Component[] = [];
 
-  constructor(private eventBus: DisplayEventBus) {}
+  constructor(private eventBus: DisplayEventBus) {
+    eventBus.on({
+      kind: 'componentUpdateState',
+      cb: (id: string, state: T.ComponentState) => {
+        const component = this.findById(id);
+        if (component) component.setState(state);
+      },
+    });
+  }
 
   sync(components: Component[] = []): void {
     components.forEach(this.add);
@@ -25,21 +33,21 @@ export class ComponentManager {
   update(globalInput: T.GlobalControllerInput, dt: number): void {
     if ((window as any).stopUpdating) return;
 
+    const getControllerKeyInput = (
+      controllerKey: Maybe<T.ControllerKey>,
+    ): Maybe<T.Input> => {
+      if (!controllerKey) return;
+
+      const { controllerId, key } = controllerKey;
+      const controllerInput = globalInput[controllerId];
+      return controllerInput && controllerInput[key];
+    };
+
+    const getFilterInput = (
+      filter: T.ComponentFilter<T.InputFilterKind>,
+    ): Dict<Maybe<T.Input>> => mapObj(filter.inputMap, getControllerKeyInput);
+
     this.components.forEach((component: Component) => {
-      const getControllerKeyInput = (
-        controllerKey: Maybe<T.ControllerKey>,
-      ): Maybe<T.Input> => {
-        if (!controllerKey) return;
-
-        const { controllerId, key } = controllerKey;
-        const controllerInput = globalInput[controllerId];
-        return controllerInput && controllerInput[key];
-      };
-
-      const getFilterInput = (
-        filter: T.ComponentFilter<T.InputFilterKind>,
-      ): Dict<Maybe<T.Input>> => mapObj(filter.inputMap, getControllerKeyInput);
-
       const componentInput: Dict<Maybe<T.Input>> = map(
         getControllerKeyInput,
         component.state.inputMap || {},

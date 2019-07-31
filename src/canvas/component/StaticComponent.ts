@@ -18,7 +18,7 @@ export type SerializedStaticComponent = T.Serialized<
 
 export const staticInputKinds: T.InputKindProjection<StaticInput> = {};
 
-export type StaticState = T.BaseComponentState<StaticInput>;
+export type StaticState = T.TypedComponentState<StaticInput>;
 
 export const defaultStaticState: StaticState = {
   inputMap: {},

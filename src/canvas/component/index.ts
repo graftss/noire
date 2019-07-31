@@ -2,7 +2,7 @@ import Konva from 'konva';
 import * as T from '../../types';
 import { deserializeTexture } from '../texture/';
 import { deserializeInputFilter } from '../filter';
-import { mapObj } from '../../utils';
+import { assoc, mapObj } from '../../utils';
 import {
   ButtonComponent,
   buttonEditorConfig,
@@ -41,7 +41,7 @@ export interface BaseSerializedComponent<
   name: string;
   kind: K;
   graphics: SerializedComponentGraphics<SS, TS>;
-  state?: Partial<S> & T.BaseComponentState<I>;
+  state?: Partial<S> & T.TypedComponentState<I>;
   filters?: Record<SS, SerializedComponentFilter<T.InputFilterKind>[]>;
 }
 
@@ -194,4 +194,21 @@ export const deserializeComponent = (s: T.SerializedComponent): Component => {
     s.filters && deserializeComponentFilterDict(s.filters),
     s.filters && deserializeComponentFilterDict(s.filters),
   );
+};
+
+export const updateComponentKey = (
+  state: T.ComponentState,
+  update: T.ComponentKeyUpdate,
+): typeof state => {
+  const { controllerId, bindingsKey, inputKey } = update;
+
+  const controllerKey: Maybe<T.ControllerKey> =
+    controllerId !== undefined && bindingsKey !== undefined
+      ? { controllerId, key: bindingsKey }
+      : undefined;
+
+  return {
+    ...state,
+    inputMap: assoc(state.inputMap || {}, inputKey, controllerKey),
+  };
 };

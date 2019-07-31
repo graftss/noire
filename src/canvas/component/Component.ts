@@ -3,16 +3,17 @@ import * as T from '../../types';
 import { mapObj, unMaybeList, values } from '../../utils';
 import { defaultInputByKind, rawifyInputDict } from '../../input/input';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ComponentState = TypedComponentState<Dict<T.Input>>;
+
 export type Component = TypedComponent<
   string,
   string,
   ComponentGraphics<string, string>,
   Dict<T.Input>,
-  BaseComponentState<Dict<T.Input>>
+  ComponentState
 >;
 
-export interface BaseComponentState<I extends Dict<T.Input>> {
+export interface TypedComponentState<I extends Dict<T.Input>> {
   defaultInput?: Partial<I>;
   inputMap?: Partial<Record<keyof I, Maybe<T.ControllerKey>>>;
 }
@@ -42,7 +43,7 @@ export abstract class TypedComponent<
   TS extends string,
   G extends ComponentGraphics<SS, TS>,
   I extends Dict<T.Input>,
-  S extends BaseComponentState<I>
+  S extends TypedComponentState<I>
 > {
   id: string;
   graphics: G;
@@ -110,6 +111,10 @@ export abstract class TypedComponent<
   // `KonvaComponentPlugin`, and has been added to its
   // parent stage.
   init(): void {}
+
+  setState(state: S): void {
+    this.state = state;
+  }
 
   abstract update(input: Partial<I>, dt: number): void;
 }

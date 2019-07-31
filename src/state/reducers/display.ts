@@ -1,6 +1,6 @@
 import * as T from '../../types';
 import { testInitialState } from '../testInitialState';
-import { mapPath } from '../../utils';
+import { assoc, mapPath } from '../../utils';
 import { mapComponentWithId } from '../selectors';
 
 export interface DisplayState {
@@ -14,16 +14,6 @@ export interface ComponentKeyUpdate {
   controllerId?: string;
   bindingsKey?: string;
 }
-
-// TODO: generalize this into a utils function `assoc`
-const assocInputMap = <I>(
-  inputMap: Record<keyof I, T.ControllerKey>,
-  bindingKey: keyof I,
-  controllerKey: Maybe<T.ControllerKey>,
-): Record<keyof I, T.ControllerKey> => ({
-  ...inputMap,
-  [bindingKey]: controllerKey,
-});
 
 export const displayReducer = (
   state: DisplayState = testInitialState.display,
@@ -49,7 +39,7 @@ export const displayReducer = (
         mapPath(
           ['state', 'inputMap'],
           (m: Record<string, T.ControllerKey>) =>
-            assocInputMap(m, inputKey, controllerKey),
+            assoc(m, inputKey, controllerKey),
           c,
         );
 
@@ -61,6 +51,14 @@ export const displayReducer = (
       const newName = name.length === 0 ? 'Unnamed component' : name;
 
       return mapComponentWithId(state, id, c => ({ ...c, name: newName }));
+    }
+
+    case 'updateComponentState': {
+      const { data } = action;
+      return mapComponentWithId(state, data.id, c => ({
+        ...c,
+        state: data.state,
+      }));
     }
   }
 

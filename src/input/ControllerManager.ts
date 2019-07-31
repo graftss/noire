@@ -1,11 +1,16 @@
 import * as T from '../types';
 import {
-  updateComponentKey,
+  updateComponentState,
   updateControllerBinding,
   stopListening,
 } from '../state/actions';
-import { controllerWithBinding, allControllers } from '../state/selectors';
+import {
+  controllerWithBinding,
+  allControllers,
+  componentById,
+} from '../state/selectors';
 import { DisplayEventBus } from '../canvas/display/DisplayEventBus';
+import { updateComponentKey } from '../canvas/component';
 import { NextInputListener } from './NextInputListener';
 import { GlobalInputSources } from './source/GlobalInputSources';
 import { getGamepads } from './source/gamepad';
@@ -48,20 +53,27 @@ export class ControllerManager {
   ) => (binding: T.Binding): void => {
     const state = this.store.getState();
     const c = controllerWithBinding(state.input, binding);
+    const component = componentById(state.display, componentId);
 
-    if (c) {
+    if (c && component) {
       const { controller, key } = c;
+      const update: T.ComponentKeyUpdate = {
+        componentId,
+        inputKey,
+        controllerId: controller.id,
+        bindingsKey: key,
+      };
 
-      this.store.dispatch(
-        updateComponentKey({
-          componentId,
-          inputKey,
-          controllerId: controller.id,
-          bindingsKey: key,
-        }),
+      const newState = updateComponentKey(
+        component.state as T.ComponentState,
+        update,
       );
+      this.store.dispatch(updateComponentState(componentId, newState));
+      this.eventBus.emit({
+        kind: 'componentUpdateState',
+        data: [componentId, newState],
+      });
     } else {
-      this.store.dispatch(updateComponentKey({ componentId, inputKey }));
     }
 
     this.store.dispatch(stopListening());

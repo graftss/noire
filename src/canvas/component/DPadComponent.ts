@@ -26,7 +26,7 @@ export const dPadInputKinds: T.InputKindProjection<DPadInput> = {
   r: 'button',
 };
 
-export type DPadState = T.BaseComponentState<DPadInput> & {};
+export type DPadState = T.TypedComponentState<DPadInput> & {};
 
 export const defaultDPadState: DPadState = {
   inputMap: {},

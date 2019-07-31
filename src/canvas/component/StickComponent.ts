@@ -23,7 +23,7 @@ export const stickInputKinds: T.InputKindProjection<StickInput> = {
   button: 'button',
 };
 
-export type StickState = T.BaseComponentState<StickInput> & {
+export type StickState = T.TypedComponentState<StickInput> & {
   boundaryRadius: number;
   center: Vec2;
   useDepthScaling: boolean;

@@ -109,3 +109,12 @@ export const normalizeAxis = (pos: number, neg: number): number =>
   pos > 0 ? pos : neg > 0 ? -neg : 0;
 
 export const noop = (): void => {};
+
+export const assoc = <K extends string, V>(
+  obj: Record<K, V>,
+  key: K,
+  value: V,
+): Record<K, V> => ({
+  ...obj,
+  [key]: value,
+});
