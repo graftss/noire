@@ -111,6 +111,13 @@ export interface StickDistortConfig {
   leash: number;
 }
 
+export const stickDistortInputKinds: Dict<T.InputKind> = {
+  xp: 'axis',
+  xn: 'axis',
+  yp: 'axis',
+  yn: 'axis',
+};
+
 export interface StickDistortRawInput extends Dict<T.RawInput> {
   xp: number;
   xn: number;
@@ -138,6 +145,13 @@ export const stickDistort: T.TypedInputFilter<
   });
 
 export type DPadDistortConfig = StickDistortConfig;
+
+export const dPadDistortInputKinds: Dict<T.InputKind> = {
+  u: 'button',
+  l: 'button',
+  d: 'button',
+  r: 'button',
+};
 
 export type DPadDistortRawInput = T.RawInputProjection<T.DPadInput>;
 

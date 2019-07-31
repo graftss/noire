@@ -1,5 +1,10 @@
 import * as T from '../../types';
-import { stickDistort, dPadDistort } from './distort';
+import {
+  stickDistort,
+  dPadDistort,
+  stickDistortInputKinds,
+  dPadDistortInputKinds,
+} from './distort';
 import { buttonZoom } from './zoom';
 
 export interface InputFilterData {
@@ -35,3 +40,16 @@ export interface SerializedInputFilter<K extends InputFilterKind> {
 export const deserializeInputFilter = <K extends InputFilterKind>(
   filter: SerializedInputFilter<K>,
 ): InputFilter<K> => inputFilters[filter.kind];
+
+export const filterInputKinds = <K extends InputFilterKind>(
+  filter: SerializedInputFilter<K>,
+): Dict<T.InputKind> => {
+  switch (filter.kind) {
+    case 'stickDistort':
+      return stickDistortInputKinds;
+    case 'dPadDistort':
+      return dPadDistortInputKinds;
+  }
+
+  return {};
+};

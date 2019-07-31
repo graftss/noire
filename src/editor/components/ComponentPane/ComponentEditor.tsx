@@ -34,7 +34,13 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
         remapState={remapState}
       />
       {selected.filters ? (
-        <ComponentFilters filterDict={selected.filters} />
+        <ComponentFilters
+          component={selected}
+          controllersById={controllersById}
+          filterDict={selected.filters}
+          listenNextInput={listenNextInput}
+          remapState={remapState}
+        />
       ) : null}
     </div>
   ) : null;

@@ -16,6 +16,13 @@ export type RemapState =
       inputKind: T.InputKind;
       key: string;
       kind: 'component';
+    }
+  | {
+      componentId: string;
+      inputKind: T.InputKind;
+      shape: string;
+      filterIndex: number;
+      kind: 'filter';
     };
 
 export interface InputState {

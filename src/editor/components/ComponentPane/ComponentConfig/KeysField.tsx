@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as T from '../../../../types';
 import {
-  stringifyComponentKey,
   componentInputKinds,
+  stringifyComponentKey,
   mappedControllerKey,
 } from '../../../../canvas/component';
 import { stringifyControllerKey } from '../../../../input/controller';
@@ -25,6 +25,16 @@ const isListening = (
   remapState.componentId === componentId &&
   remapState.key === componentKey;
 
+const getRemapState = (
+  component: T.SerializedComponent,
+  key: string,
+): T.RemapState => ({
+  componentId: component.id,
+  key,
+  kind: 'component',
+  inputKind: componentInputKinds[component.kind][key],
+});
+
 const controllerKeyStr = (
   controllerKey: Maybe<T.ControllerKey>,
   controllersById: Dict<T.Controller>,
@@ -38,16 +48,6 @@ const controllerKeyStr = (
   return stringifyControllerKey(controller, key);
 };
 
-const getRemapState = (
-  component: T.SerializedComponent,
-  key: string,
-): T.RemapState => ({
-  componentId: component.id,
-  key,
-  kind: 'component',
-  inputKind: componentInputKinds[component.kind][key],
-});
-
 export const KeysField: React.SFC<KeysFieldProps> = ({
   component,
   controllersById,
@@ -59,16 +59,18 @@ export const KeysField: React.SFC<KeysFieldProps> = ({
     <div>
       {keys.map((ck: T.ComponentKey) => (
         <div key={ck.key}>
-          {stringifyComponentKey(ck)}
-          <button
-            onClick={() => listenNextInput(getRemapState(component, ck.key))}
-          >
-            {controllerKeyStr(
-              mappedControllerKey(component, ck),
-              controllersById,
-              isListening(remapState, component.id, ck.key),
-            )}
-          </button>
+          <div>
+            {stringifyComponentKey(ck)}
+            <button
+              onClick={() => listenNextInput(getRemapState(component, ck.key))}
+            >
+              {controllerKeyStr(
+                mappedControllerKey(component, ck),
+                controllersById,
+                isListening(remapState, component.id, ck.key),
+              )}
+            </button>
+          </div>
         </div>
       ))}
     </div>
