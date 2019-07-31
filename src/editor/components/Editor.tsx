@@ -1,13 +1,10 @@
 import * as React from 'react';
-import { ControllerPane } from './ControllerPane';
-// import { ComponentPane } from './ComponentPane';
+import { EditorTabs } from './EditorTabs';
+import { EditorRouter } from './EditorRouter';
 
-// interface EditorProps {}
-
-export const Editor: React.SFC<{}> = ({}) => (
+export const Editor: React.SFC<{}> = () => (
   <div>
-    editor
-    {/* <ComponentPane /> */}
-    <ControllerPane />
+    <EditorTabs />
+    <EditorRouter />
   </div>
 );

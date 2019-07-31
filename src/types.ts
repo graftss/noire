@@ -145,3 +145,4 @@ export {
   InputFilterData,
   SerializedInputFilter,
 } from './canvas/filter';
+export { TabKind, TabState } from './state/reducers/tab';

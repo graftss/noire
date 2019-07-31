@@ -57,3 +57,5 @@ export const mapComponentWithId = (
   ...state,
   components: mapIf(state.components, c => c.id === id, f),
 });
+
+export const currentTabKind = (state: T.TabState): T.TabKind => state.kind;

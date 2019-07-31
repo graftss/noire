@@ -336,4 +336,5 @@ export const testInitialState: T.EditorState = {
     },
     remap: undefined,
   },
+  tab: { kind: 'controllers' },
 };

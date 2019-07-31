@@ -12,7 +12,8 @@ export type EditorAction =
   | { type: 'updateComponentKey'; data: T.ComponentKeyUpdate }
   | { type: 'updateComponentName'; data: { id: string; name: string } }
   | { type: 'listenNextInput'; data: T.RemapState }
-  | { type: 'stopListening' };
+  | { type: 'stopListening' }
+  | { type: 'setTab'; data: T.TabKind };
 
 export const selectEditorOption = (data: EditorOption): EditorAction => ({
   type: 'selectEditorOption',
@@ -60,4 +61,9 @@ export const listenNextInput = (remapState: T.RemapState): EditorAction => ({
 
 export const stopListening = (): EditorAction => ({
   type: 'stopListening',
+});
+
+export const setTab = (kind: T.TabKind): EditorAction => ({
+  type: 'setTab',
+  data: kind,
 });
