@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as T from '../../../types';
 import { ComponentName } from './ComponentName';
 import { ComponentConfig } from './ComponentConfig';
+import { ComponentFilters } from './ComponentFilters';
 
 interface ComponentEditorProps {
   controllersById: Dict<T.Controller>;
@@ -32,5 +33,8 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
         listenNextInput={listenNextInput}
         remapState={remapState}
       />
+      {selected.filters ? (
+        <ComponentFilters filterDict={selected.filters} />
+      ) : null}
     </div>
   ) : null;

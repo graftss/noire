@@ -59,6 +59,8 @@ export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
 export {
   BaseSerializedComponent as Serialized,
   SerializedComponent,
+  SerializedComponentFilter,
+  SerializedComponentFilterDict,
   ComponentKey,
   ComponentKind,
   ComponentEditorField,

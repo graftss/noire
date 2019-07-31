@@ -152,6 +152,10 @@ export interface SerializedComponentFilter<K extends T.InputFilterKind> {
   inputMap: Dict<T.ControllerKey>;
 }
 
+export type SerializedComponentFilterDict = Dict<
+  SerializedComponentFilter<T.InputFilterKind>[]
+>;
+
 const deserializeComponentFilter = ({
   filter,
   inputMap,
