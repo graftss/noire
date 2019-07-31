@@ -4,7 +4,13 @@ import { mapObj } from '../../utils';
 import { defaultInputByKind, rawifyInputDict } from '../../input/input';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Component = TypedComponent<any, any, any, any, any>;
+export type Component = TypedComponent<
+  string,
+  string,
+  ComponentGraphics<string, string>,
+  Dict<T.Input>,
+  BaseComponentState<Dict<T.Input>>
+>;
 
 export interface BaseComponentState<I extends Dict<T.Input>> {
   defaultInput?: Partial<I>;
@@ -103,5 +109,5 @@ export abstract class TypedComponent<
   // parent stage.
   init(): void {}
 
-  abstract update(input: I, dt: number): void;
+  abstract update(input: Partial<I>, dt: number): void;
 }
