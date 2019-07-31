@@ -10,8 +10,6 @@ export type EditorAction =
   | { type: 'startFullControllerUpdate' }
   | { type: 'updateControllerBinding'; data: T.ControllerBindingsUpdate }
   | { type: 'updateControllerName'; data: { id: string; name: string } }
-  | { type: 'updateComponentKey'; data: T.ComponentKeyUpdate }
-  | { type: 'updateComponentName'; data: { id: string; name: string } }
   | {
       type: 'updateComponentState';
       data: { id: string; state: T.ComponentState };
@@ -46,21 +44,6 @@ export const updateControllerName = (
   name: string,
 ): EditorAction => ({
   type: 'updateControllerName',
-  data: { id, name },
-});
-
-export const updateComponentKey = (
-  update: T.ComponentKeyUpdate,
-): EditorAction => ({
-  type: 'updateComponentKey',
-  data: update,
-});
-
-export const updateComponentName = (
-  id: string,
-  name: string,
-): EditorAction => ({
-  type: 'updateComponentName',
   data: { id, name },
 });
 

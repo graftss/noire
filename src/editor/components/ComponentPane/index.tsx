@@ -11,7 +11,7 @@ import {
   emitDisplayEvents,
   listenNextInput,
   selectEditorOption,
-  updateComponentName,
+  updateComponentState,
 } from '../../../state/actions';
 import { ComponentEditor } from './ComponentEditor';
 import { ComponentSelect } from './ComponentSelect';
@@ -26,7 +26,7 @@ interface PropsFromState {
 interface PropsFromDispatch {
   emitDisplayEvents: (events: T.DisplayEvent[]) => void;
   selectComponent: (id: string) => void;
-  updateComponentName: (id: string, name: string) => void;
+  updateComponentState: (id: string, state: T.ComponentState) => void;
   listenNextInput: (s: T.RemapState) => void;
 }
 
@@ -45,7 +45,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
       emitDisplayEvents,
       listenNextInput,
       selectComponent: id => selectEditorOption({ kind: 'component', id }),
-      updateComponentName,
+      updateComponentState,
     },
     dispatch,
   );
@@ -58,7 +58,7 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
   remapState,
   selectComponent,
   selected,
-  updateComponentName,
+  updateComponentState,
 }) => (
   <div>
     <ComponentSelect
@@ -77,7 +77,7 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
       }}
       remapState={remapState}
       selected={selected}
-      updateComponentName={updateComponentName}
+      updateComponentState={updateComponentState}
     />
   </div>
 );

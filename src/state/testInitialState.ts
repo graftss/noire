@@ -88,8 +88,8 @@ const ps2Controller2: T.PS2Controller = {
 
 const vert: T.SerializedComponent = {
   id: ids[7],
-  name: 'vert',
   kind: 'static',
+  state: { name: 'vert' },
   graphics: {
     shapes: {
       shape: serializeNode(
@@ -198,10 +198,10 @@ const dualSticks = (
   return [
     {
       id: ids[0],
-      name: 'left stick',
       kind: 'stick',
       graphics,
       state: {
+        name: 'left stick',
         boundaryRadius,
         center: { x: center.x - stickDistance / 2, y: center.y },
         inputMap: {
@@ -216,10 +216,10 @@ const dualSticks = (
     },
     {
       id: ids[1],
-      name: 'right stick',
       kind: 'stick',
       graphics,
       state: {
+        name: 'right stick',
         boundaryRadius,
         center: { x: center.x + stickDistance / 2, y: center.y },
         inputMap: {
@@ -244,7 +244,6 @@ const [leftStick, rightStick] = dualSticks(
 
 const dPad: T.SerializedComponent = {
   id: ids[2],
-  name: 'directional pad',
   kind: 'dpad',
   graphics: {
     shapes: simpleDPadRects(200, 50, 30, 30),
@@ -254,6 +253,7 @@ const dPad: T.SerializedComponent = {
     ),
   },
   state: {
+    name: 'directional pad',
     inputMap: {
       d: { controllerId, key: 'padD' },
       u: { controllerId, key: 'padU' },
@@ -265,7 +265,6 @@ const dPad: T.SerializedComponent = {
 
 const button: T.SerializedComponent = {
   id: ids[3],
-  name: 'my first button',
   kind: 'button',
   graphics: {
     shapes: {
@@ -291,6 +290,7 @@ const button: T.SerializedComponent = {
     },
   },
   state: {
+    name: 'my first button',
     inputMap: {
       button: { controllerId, key: 'square' },
     },
@@ -299,7 +299,6 @@ const button: T.SerializedComponent = {
 
 const staticImage: T.SerializedComponent = {
   id: ids[4],
-  name: 'static',
   kind: 'static',
   graphics: {
     shapes: {
@@ -314,7 +313,7 @@ const staticImage: T.SerializedComponent = {
       },
     },
   },
-  state: { inputMap: {} },
+  state: { inputMap: {}, name: 'noire' },
 };
 
 const components: T.SerializedComponent[] = [

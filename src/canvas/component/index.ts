@@ -38,10 +38,9 @@ export interface BaseSerializedComponent<
   I extends Dict<T.Input>
 > {
   id: string;
-  name: string;
   kind: K;
   graphics: SerializedComponentGraphics<SS, TS>;
-  state?: Partial<S> & T.TypedComponentState<I>;
+  state: Partial<S> & T.TypedComponentState<I>;
   filters?: Record<SS, SerializedComponentFilter<T.InputFilterKind>[]>;
 }
 

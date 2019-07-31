@@ -30,6 +30,7 @@ export type StickState = T.TypedComponentState<StickInput> & {
 };
 
 export const defaultStickState: StickState = {
+  name: 'Stick Component',
   boundaryRadius: 26,
   center: { x: 0, y: 0 },
   useDepthScaling: false,

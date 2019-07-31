@@ -28,6 +28,7 @@ export const buttonInputKinds: T.InputKindProjection<ButtonComponentInput> = {
 export type ButtonComponentState = T.TypedComponentState<ButtonComponentInput>;
 
 export const defaultButtonComponentState: ButtonComponentState = {
+  name: 'Button Component',
   inputMap: {},
 };
 

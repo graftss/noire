@@ -16,6 +16,7 @@ export type Component = TypedComponent<
 export interface TypedComponentState<I extends Dict<T.Input>> {
   defaultInput?: Partial<I>;
   inputMap?: Partial<Record<keyof I, Maybe<T.ControllerKey>>>;
+  name: string;
 }
 
 type InputKinds<I extends Dict<T.Input>> = {

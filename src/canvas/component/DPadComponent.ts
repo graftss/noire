@@ -29,6 +29,7 @@ export const dPadInputKinds: T.InputKindProjection<DPadInput> = {
 export type DPadState = T.TypedComponentState<DPadInput> & {};
 
 export const defaultDPadState: DPadState = {
+  name: 'DPad Component',
   inputMap: {},
 };
 

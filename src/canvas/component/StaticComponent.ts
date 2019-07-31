@@ -21,6 +21,7 @@ export const staticInputKinds: T.InputKindProjection<StaticInput> = {};
 export type StaticState = T.TypedComponentState<StaticInput>;
 
 export const defaultStaticState: StaticState = {
+  name: 'Static Component',
   inputMap: {},
 };
 

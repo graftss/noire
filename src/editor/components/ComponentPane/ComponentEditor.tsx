@@ -8,7 +8,7 @@ interface ComponentEditorProps {
   listenNextInput: (s: T.RemapState) => void;
   remapState: Maybe<T.RemapState>;
   selected: Maybe<T.SerializedComponent>;
-  updateComponentName: (id: string, name: string) => void;
+  updateComponentState: (id: string, state: T.ComponentState) => void;
 }
 
 export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
@@ -16,13 +16,15 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
   listenNextInput,
   remapState,
   selected,
-  updateComponentName,
+  updateComponentState,
 }) =>
   selected ? (
     <div>
       <ComponentName
-        initialName={selected.name}
-        save={name => updateComponentName(selected.id, name)}
+        initialName={selected.state && selected.state.name}
+        save={name =>
+          updateComponentState(selected.id, { ...selected.state, name })
+        }
       />
       <ComponentConfig
         component={selected}
