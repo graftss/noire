@@ -1,6 +1,7 @@
 import * as T from './types';
 import { ControllerManager } from './input/ControllerManager';
 import { Display } from './canvas/display';
+import { DisplayEventBus } from './canvas/display/DisplayEventBus';
 import { createEditorApp } from './editor';
 
 // TODO: figure out how to not need this to recompile types.ts when the
@@ -38,16 +39,17 @@ export class Noire {
 
   init(): void {
     const { editorTarget } = this.config;
+    const eventBus = new DisplayEventBus();
 
-    this.editorApp = createEditorApp(editorTarget);
+    this.editorApp = createEditorApp(editorTarget, eventBus);
     const store = this.editorApp.store;
     this.editorApp.render();
 
     this.controllerManager = new ControllerManager(store);
 
-    this.display = new Display(this.config, store);
+    this.display = new Display(this.config, store, eventBus);
 
-    this.updateLoop(this.tLast);
+    this.updateLoop(0);
   }
 }
 

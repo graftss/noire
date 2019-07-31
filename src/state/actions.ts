@@ -5,6 +5,7 @@ export type EditorOption =
   | { kind: 'controller'; id: Maybe<string> };
 
 export type EditorAction =
+  | { type: 'emitDisplayEvents'; data: T.DisplayEvent[] }
   | { type: 'selectEditorOption'; data: EditorOption }
   | { type: 'startFullControllerUpdate' }
   | { type: 'updateControllerBinding'; data: T.ControllerBindingsUpdate }
@@ -14,6 +15,11 @@ export type EditorAction =
   | { type: 'listenNextInput'; data: T.RemapState }
   | { type: 'stopListening' }
   | { type: 'setTab'; data: T.TabKind };
+
+export const emitDisplayEvents = (events: T.DisplayEvent[]): EditorAction => ({
+  type: 'emitDisplayEvents',
+  data: events,
+});
 
 export const selectEditorOption = (data: EditorOption): EditorAction => ({
   type: 'selectEditorOption',

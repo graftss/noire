@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore } from '../state/createStore';
 import * as T from '../types';
+import { DisplayEventBus } from '../canvas/display/DisplayEventBus';
 import { Editor } from './components/Editor';
 
 export interface EditorApp {
@@ -15,8 +16,11 @@ export interface EditorApp {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const _Editor: any = Editor;
 
-export const createEditorApp = (target: HTMLElement): EditorApp => {
-  const store: T.EditorStore = createStore();
+export const createEditorApp = (
+  target: HTMLElement,
+  eventBus: DisplayEventBus,
+): EditorApp => {
+  const store: T.EditorStore = createStore(eventBus);
 
   const render = (): void =>
     ReactDOM.render(

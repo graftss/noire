@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { mapObj } from '../../utils';
+import { mapObj, unMaybeList, values } from '../../utils';
 import { defaultInputByKind, rawifyInputDict } from '../../input/input';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -103,6 +103,8 @@ export abstract class TypedComponent<
       }
     }
   }
+
+  shapeList = (): Konva.Shape[] => unMaybeList(values(this.graphics.shapes));
 
   // `init` is called after the component is added to the
   // `KonvaComponentPlugin`, and has been added to its

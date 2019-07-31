@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import * as T from '../../../types';
 import {
-  selectedComponent,
   allComponents,
   controllersById,
+  selectedComponent,
 } from '../../../state/selectors';
 import {
+  emitDisplayEvents,
   listenNextInput,
-  updateComponentName,
   selectEditorOption,
+  updateComponentName,
 } from '../../../state/actions';
-import * as T from '../../../types';
 import { ComponentEditor } from './ComponentEditor';
 import { ComponentSelect } from './ComponentSelect';
 
@@ -23,6 +24,7 @@ interface PropsFromState {
 }
 
 interface PropsFromDispatch {
+  emitDisplayEvents: (events: T.DisplayEvent[]) => void;
   selectComponent: (id: string) => void;
   updateComponentName: (id: string, name: string) => void;
   listenNextInput: (s: T.RemapState) => void;
@@ -40,6 +42,7 @@ const mapStateToProps = (state): PropsFromState => ({
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(
     {
+      emitDisplayEvents,
       listenNextInput,
       selectComponent: id => selectEditorOption({ kind: 'component', id }),
       updateComponentName,
@@ -50,6 +53,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
 const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
   components,
   controllersById,
+  emitDisplayEvents,
   listenNextInput,
   remapState,
   selectComponent,
@@ -60,7 +64,10 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
     <ComponentSelect
       all={components}
       selected={selected}
-      selectComponent={selectComponent}
+      selectComponent={(id: string) => {
+        selectComponent(id);
+        emitDisplayEvents([{ kind: 'editorSelectComponent', data: [id] }]);
+      }}
     />
     <ComponentEditor
       controllersById={controllersById}

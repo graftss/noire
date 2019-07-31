@@ -8,19 +8,31 @@ import { DisplayEventBus } from './DisplayEventBus';
 import { DisplayPlugin } from './plugin/DisplayPlugin';
 
 export class Display {
-  private eventBus: DisplayEventBus;
   private cm: ComponentManager;
   private lastState?: T.DisplayState;
   private plugins: DisplayPlugin[];
 
-  constructor(private config: T.NoireConfig, private store: T.EditorStore) {
-    this.eventBus = new DisplayEventBus();
+  constructor(
+    private config: T.NoireConfig,
+    private store: T.EditorStore,
+    private eventBus: DisplayEventBus,
+  ) {
     this.plugins = [new KonvaComponentPlugin(config, this.eventBus)];
     this.cm = new ComponentManager(this.eventBus);
 
-    // run the subscriber once to sync with initial state
+    // // run the subscriber once to sync with initial state
     this.storeSubscriber();
-    store.subscribe(this.storeSubscriber);
+    // store.subscribe(this.storeSubscriber);
+
+    this.eventBus.on({
+      kind: 'editorSelectComponent',
+      cb: (id: Maybe<string>) => {
+        this.eventBus.emit({
+          kind: 'componentSelect',
+          data: [id !== undefined ? this.cm.findById(id) : id],
+        });
+      },
+    });
 
     this.eventBus.on({
       kind: 'componentSelect',

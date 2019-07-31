@@ -1,16 +1,15 @@
 import Konva from 'konva';
 import * as T from '../../../types';
 import { DisplayEventBus } from '../DisplayEventBus';
-import { unMaybeList, values } from '../../../utils';
 import { DisplayPlugin } from './DisplayPlugin';
 
 interface SelectedComponentState {
   componentId: string;
-  transformers: Konva.Transformer[];
+  transformer: Konva.Transformer;
 }
 
 const attachTransformer = (
-  shape: Konva.Shape,
+  shape: Konva.Group,
   layer: Konva.Layer,
 ): Konva.Transformer => {
   const transformer = new Konva.Transformer({
@@ -31,6 +30,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   private layer: Konva.Layer;
   private border: Konva.Rect;
   private selected: Maybe<SelectedComponentState>;
+  private groupsById: Dict<Konva.Group> = {};
 
   constructor(config: T.NoireConfig, eb: DisplayEventBus) {
     super(config, eb);
@@ -60,6 +60,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     this.stage.on('click', this.onStageClick);
     this.eb.on({ kind: 'componentAdd', cb: this.onComponentAdd });
     this.eb.on({ kind: 'requestDraw', cb: () => this.layer.draw() });
+    this.eb.on({ kind: 'componentSelect', cb: this.onComponentSelect });
   }
 
   private onStageClick = ({ target }: { target: Konva.Node }) => {
@@ -75,11 +76,13 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
   private onComponentAdd = (component: T.Component): void => {
     const group = new Konva.Group();
-    const shapes = unMaybeList(values(component.graphics.shapes));
+    this.groupsById[component.id] = group;
 
-    shapes.forEach(shape => {
+    component.shapeList().forEach(shape => {
       group.add(shape);
-      shape.on('click', () => this.onShapeClick(component, shapes));
+      shape.on('click', () =>
+        this.eb.emit({ kind: 'componentSelect', data: [component] }),
+      );
     });
 
     this.layer.add(group);
@@ -88,25 +91,24 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
   private deselectComponent = (): void => {
     if (!this.selected) return;
-    this.selected.transformers.forEach(t => t.destroy());
+    this.selected.transformer.destroy();
     this.selected = undefined;
   };
 
-  private onShapeClick = (
-    component: T.Component,
-    shapes: Konva.Shape[],
-  ): void => {
-    const componentId = component.id;
+  private onComponentSelect = (component: Maybe<T.Component>): void => {
+    if (!component) return;
+    const { id } = component;
 
-    if (this.selected && componentId !== this.selected.componentId) {
+    if (this.selected && id !== this.selected.componentId) {
       this.deselectComponent();
     }
 
     if (!this.selected) {
-      const transformers = shapes.map(s => attachTransformer(s, this.layer));
-      this.selected = { componentId, transformers };
+      const group: Maybe<Konva.Group> = this.groupsById[id];
+      this.selected = group && {
+        componentId: id,
+        transformer: attachTransformer(group, this.layer),
+      };
     }
-
-    this.eb.emit({ kind: 'componentSelect', data: [component] });
   };
 }
