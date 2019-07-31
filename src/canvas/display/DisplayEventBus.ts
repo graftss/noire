@@ -5,16 +5,14 @@ import { without } from '../../utils';
 
 export type Handler =
   | { kind: 'stageClick'; cb: CB1<Konva.Stage> }
-  | { kind: 'editorSelectComponent'; cb: CB1<Maybe<string>> }
-  | { kind: 'componentSelect'; cb: CB1<Maybe<Component>> }
+  | { kind: 'componentSelect'; cb: CB1<Maybe<string>> }
   | { kind: 'componentAdd'; cb: CB1<Component> }
   | { kind: 'bindingAdd'; cb: CB2<Component, T.Binding> }
   | { kind: 'requestDraw'; cb: CB0 };
 
 export type DisplayEvent =
   | { kind: 'stageClick'; data: [Konva.Stage] }
-  | { kind: 'editorSelectComponent'; data: [Maybe<string>] }
-  | { kind: 'componentSelect'; data: [Maybe<Component>] }
+  | { kind: 'componentSelect'; data: [Maybe<string>] }
   | { kind: 'componentAdd'; data: [Component] }
   | { kind: 'bindingAdd'; data: [Component, T.Binding] }
   | { kind: 'requestDraw'; data?: undefined };
@@ -22,7 +20,6 @@ export type DisplayEvent =
 export class DisplayEventBus {
   private handlers: Record<Handler['kind'], Function[]> = {
     stageClick: [],
-    editorSelectComponent: [],
     componentSelect: [],
     componentAdd: [],
     bindingAdd: [],

@@ -1,8 +1,7 @@
 import { map } from 'ramda';
 import * as T from '../../types';
-import { deserializeComponent } from '../component/';
 import { Component } from '../component/Component';
-import { find, keyBy, mapObj } from '../../utils';
+import { find, mapObj } from '../../utils';
 import { DisplayEventBus } from './DisplayEventBus';
 
 export class ComponentManager {
@@ -10,31 +9,9 @@ export class ComponentManager {
 
   constructor(private eventBus: DisplayEventBus) {}
 
-  reset(components: Component[] = []): void {
+  sync(components: Component[] = []): void {
     components.forEach(this.add);
     this.components = components;
-  }
-
-  sync(components: T.SerializedComponent[]): void {
-    const currentById = keyBy(this.components, c => c.id);
-    // const newById = keyBy(components, c => c.getBindingId());
-
-    components.forEach(component => {
-      const existing = currentById[component.id];
-
-      if (!existing) {
-        this.add(deserializeComponent(component));
-      } else if (
-        component.state &&
-        component.state.inputMap !== existing.state.inputMap
-      ) {
-        existing.state.inputMap = component.state.inputMap;
-      }
-    });
-
-    // this.components.forEach(component => {
-    //   if (!newById[component.getBindingId()]) this.remove(component);
-    // });
   }
 
   add = (component: Component) => {

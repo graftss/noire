@@ -66,7 +66,7 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
       selected={selected}
       selectComponent={(id: string) => {
         selectComponent(id);
-        emitDisplayEvents([{ kind: 'editorSelectComponent', data: [id] }]);
+        emitDisplayEvents([{ kind: 'componentSelect', data: [id] }]);
       }}
     />
     <ComponentEditor

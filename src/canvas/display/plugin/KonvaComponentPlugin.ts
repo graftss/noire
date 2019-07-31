@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import * as T from '../../../types';
 import { DisplayEventBus } from '../DisplayEventBus';
+import { ComponentManager } from '../ComponentManager';
 import { DisplayPlugin } from './DisplayPlugin';
 
 interface SelectedComponentState {
@@ -32,8 +33,12 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   private selected: Maybe<SelectedComponentState>;
   private groupsById: Dict<Konva.Group> = {};
 
-  constructor(config: T.NoireConfig, eb: DisplayEventBus) {
-    super(config, eb);
+  constructor(
+    config: T.NoireConfig,
+    eventBus: DisplayEventBus,
+    cm: ComponentManager,
+  ) {
+    super(config, eventBus, cm);
     const { canvasTarget, width, height } = config;
 
     this.stage = new Konva.Stage({
@@ -58,16 +63,16 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     this.layer.add(this.border);
 
     this.stage.on('click', this.onStageClick);
-    this.eb.on({ kind: 'componentAdd', cb: this.onComponentAdd });
-    this.eb.on({ kind: 'requestDraw', cb: () => this.layer.draw() });
-    this.eb.on({ kind: 'componentSelect', cb: this.onComponentSelect });
+    this.eventBus.on({ kind: 'componentAdd', cb: this.onComponentAdd });
+    this.eventBus.on({ kind: 'requestDraw', cb: () => this.layer.draw() });
+    this.eventBus.on({ kind: 'componentSelect', cb: this.onComponentSelect });
   }
 
   private onStageClick = ({ target }: { target: Konva.Node }) => {
     if (target === this.border) {
       this.deselectComponent();
 
-      this.eb.emit({
+      this.eventBus.emit({
         kind: 'stageClick',
         data: [this.stage],
       });
@@ -77,16 +82,15 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   private onComponentAdd = (component: T.Component): void => {
     const group = new Konva.Group();
     this.groupsById[component.id] = group;
+    this.layer.add(group);
 
+    component.init();
     component.shapeList().forEach(shape => {
       group.add(shape);
       shape.on('click', () =>
-        this.eb.emit({ kind: 'componentSelect', data: [component] }),
+        this.eventBus.emit({ kind: 'componentSelect', data: [component.id] }),
       );
     });
-
-    this.layer.add(group);
-    component.init();
   };
 
   private deselectComponent = (): void => {
@@ -95,9 +99,8 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     this.selected = undefined;
   };
 
-  private onComponentSelect = (component: Maybe<T.Component>): void => {
-    if (!component) return;
-    const { id } = component;
+  private onComponentSelect = (id: Maybe<string>): void => {
+    if (!id) return;
 
     if (this.selected && id !== this.selected.componentId) {
       this.deselectComponent();

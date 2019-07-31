@@ -1,7 +1,6 @@
 import * as T from '../../types';
-import { Component } from '../component/Component';
+import { deserializeComponent } from '../component';
 import { selectEditorOption } from '../../state/actions';
-import { selectedComponentProp } from '../../state/selectors';
 import { ComponentManager } from './ComponentManager';
 import { KonvaComponentPlugin } from './plugin/KonvaComponentPlugin';
 import { DisplayEventBus } from './DisplayEventBus';
@@ -9,7 +8,6 @@ import { DisplayPlugin } from './plugin/DisplayPlugin';
 
 export class Display {
   private cm: ComponentManager;
-  private lastState?: T.DisplayState;
   private plugins: DisplayPlugin[];
 
   constructor(
@@ -17,77 +15,29 @@ export class Display {
     private store: T.EditorStore,
     private eventBus: DisplayEventBus,
   ) {
-    this.plugins = [new KonvaComponentPlugin(config, this.eventBus)];
+    const { getState, dispatch } = store;
+
     this.cm = new ComponentManager(this.eventBus);
+    this.plugins = [new KonvaComponentPlugin(config, this.eventBus, this.cm)];
 
-    // // run the subscriber once to sync with initial state
-    this.storeSubscriber();
-    // store.subscribe(this.storeSubscriber);
-
-    this.eventBus.on({
-      kind: 'editorSelectComponent',
-      cb: (id: Maybe<string>) => {
-        this.eventBus.emit({
-          kind: 'componentSelect',
-          data: [id !== undefined ? this.cm.findById(id) : id],
-        });
-      },
-    });
+    // sync display with the store's initial state
+    this.syncWithState(getState());
 
     this.eventBus.on({
       kind: 'componentSelect',
-      cb: (component: Maybe<Component>) => {
-        const id = component && component.id;
-
-        if (id !== selectedComponentProp(this.lastState, 'id')) {
-          store.dispatch(
-            selectEditorOption({
-              kind: 'component',
-              id,
-            }),
-          );
-        }
-      },
+      cb: (id: Maybe<string>) =>
+        dispatch(selectEditorOption({ kind: 'component', id })),
     });
 
     this.eventBus.on({
       kind: 'stageClick',
-      cb: () => {
-        store.dispatch(
-          selectEditorOption({
-            kind: 'component',
-            id: undefined,
-          }),
-        );
-      },
+      cb: () =>
+        dispatch(selectEditorOption({ kind: 'component', id: undefined })),
     });
   }
 
-  private storeSubscriber = (): void => {
-    const newState = this.store.getState().display;
-    if (this.lastState !== newState) {
-      const lastState = this.lastState;
-      this.lastState = newState;
-      this.syncWithState(newState, lastState);
-    }
-  };
-
-  private syncWithState(
-    state: T.DisplayState,
-    lastState: Maybe<T.DisplayState>,
-  ): void {
-    const { components } = state;
-    const lastSelectedId = selectedComponentProp(lastState, 'id');
-    const selectedId = selectedComponentProp(state, 'id');
-
-    if (lastSelectedId !== selectedId) {
-      this.eventBus.emit({
-        kind: 'componentSelect',
-        data: [selectedId ? this.cm.findById(selectedId) : undefined],
-      });
-    }
-
-    this.cm.sync(components);
+  private syncWithState(state: T.EditorState): void {
+    this.cm.sync(state.display.components.map(deserializeComponent));
   }
 
   draw(): void {
