@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as T from '../../../types';
 import {
-  stringifyControllerKey,
+  stringifyKeyInController,
   getKeyInputKind,
 } from '../../../input/controller';
 import { stringifyBinding } from '../../../input/source/bindings';
@@ -44,7 +44,7 @@ export const ControllerBindings: React.SFC<ControllerBindingsProps> = ({
   <div>
     {getControllerKeyOrder(controller.kind).map(key => (
       <div key={key}>
-        <span>{stringifyControllerKey(controller, key)} </span>
+        <span>{stringifyKeyInController(controller, key)} </span>
         <button onClick={() => listenNextInput(getRemapState(controller, key))}>
           {bindingStr(
             controller.bindings[key],

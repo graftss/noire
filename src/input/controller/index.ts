@@ -67,7 +67,7 @@ export const getKeyInputKind = (
   key: string,
 ): T.InputKind => getControllerMap(kind)[key].inputKind;
 
-export const stringifyControllerKey = (
+export const stringifyKeyInController = (
   controller: Maybe<Controller>,
   key: Maybe<string>,
   showControllerName: boolean = false,
@@ -81,6 +81,21 @@ export const stringifyControllerKey = (
   const nameStr = showControllerName ? ` (${controller.name})` : '';
   return `${map[key].name}${nameStr}`;
 };
+
+export const stringifyControllerKey = (
+  controllerKey: Maybe<ControllerKey>,
+  controllersById: Dict<Controller>,
+  showControllerName: boolean = false,
+  listening: boolean = false,
+): string =>
+  stringifyKeyInController(
+    controllerKey !== undefined
+      ? controllersById[controllerKey.controllerId]
+      : undefined,
+    controllerKey !== undefined ? controllerKey.key : undefined,
+    showControllerName,
+    listening,
+  );
 
 export const hasKeyBoundTo = (
   { bindings }: T.Controller,

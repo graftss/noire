@@ -22,6 +22,7 @@ export type RemapState =
       inputKind: T.InputKind;
       shape: string;
       filterIndex: number;
+      filterKey: string;
       kind: 'filter';
     };
 

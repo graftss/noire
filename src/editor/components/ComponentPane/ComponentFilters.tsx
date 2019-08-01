@@ -12,31 +12,19 @@ interface ComponentFiltersProps {
   remapState: Maybe<T.RemapState>;
 }
 
-const controllerKeyStr = (
-  controllerKey: Maybe<T.ControllerKey>,
-  controllersById: Dict<T.Controller>,
-  listening: boolean,
-): string => {
-  if (listening) return '(listening...)';
-  if (!controllerKey) return 'NONE';
-
-  const { controllerId, key } = controllerKey;
-  const controller: T.Controller = controllersById[controllerId];
-  return stringifyControllerKey(controller, key);
-};
-
-const getRemapState = (
-  component: T.SerializedComponent,
-  inputKind: T.InputKind,
+const isListening = (
+  remapState: Maybe<T.RemapState>,
+  componentId: string,
   shape: string,
   filterIndex: number,
-): T.RemapState => ({
-  kind: 'filter',
-  componentId: component.id,
-  shape,
-  filterIndex,
-  inputKind,
-});
+  filterKey: string,
+): boolean =>
+  remapState !== undefined &&
+  remapState.kind === 'filter' &&
+  remapState.componentId === componentId &&
+  remapState.shape === shape &&
+  remapState.filterIndex === filterIndex &&
+  remapState.filterKey === filterKey;
 
 export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
   component,
@@ -50,26 +38,38 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
       <div key={shape}>
         <div>
           {`${shape}:`}
-          {filters.map(({ filter, inputMap }, i) => (
-            <div key={i}>
+          {filters.map(({ filter, inputMap }, filterIndex) => (
+            <div key={filterIndex}>
               <div>{filter.kind}</div>
               <div>{JSON.stringify(filter.config)}</div>
               <div>
                 {toPairs(filterInputKinds(filter)).map(
-                  ([key, inputKind], index) => (
-                    <div key={key}>
-                      {key}:
+                  ([filterKey, inputKind]) => (
+                    <div key={filterKey}>
+                      {filterKey}:
                       <button
                         onClick={() =>
-                          listenNextInput(
-                            getRemapState(component, inputKind, shape, index),
-                          )
+                          listenNextInput({
+                            kind: 'filter',
+                            componentId: component.id,
+                            inputKind,
+                            shape,
+                            filterIndex,
+                            filterKey,
+                          })
                         }
                       >
-                        {controllerKeyStr(
-                          inputMap[key],
+                        {stringifyControllerKey(
+                          inputMap[filterKey],
                           controllersById,
                           false,
+                          isListening(
+                            remapState,
+                            component.id,
+                            shape,
+                            filterIndex,
+                            filterKey,
+                          ),
                         )}
                       </button>
                     </div>

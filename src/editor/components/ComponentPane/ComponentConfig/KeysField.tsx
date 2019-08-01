@@ -45,13 +45,6 @@ export const KeysField: React.SFC<KeysFieldProps> = ({
   return (
     <div>
       {keys.map((ck: T.ComponentKey) => {
-        const controllerKey = mappedControllerKey(component, ck);
-        const controller: Maybe<T.Controller> =
-          controllerKey !== undefined
-            ? controllersById[controllerKey.controllerId]
-            : undefined;
-        const key = controllerKey !== undefined ? controllerKey.key : undefined;
-
         return (
           <div key={ck.key}>
             <div>
@@ -62,8 +55,9 @@ export const KeysField: React.SFC<KeysFieldProps> = ({
                 }
               >
                 {stringifyControllerKey(
-                  controller,
-                  key,
+                  mappedControllerKey(component, ck),
+                  controllersById,
+                  false,
                   isListening(remapState, component.id, ck.key),
                 )}
               </button>
