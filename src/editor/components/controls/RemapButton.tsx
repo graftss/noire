@@ -5,6 +5,7 @@ import * as T from '../../../types';
 import { controllersById, isListening } from '../../../state/selectors';
 import { emitDisplayEvents, listenNextInput } from '../../../state/actions';
 import { stringifyControllerKey } from '../../../input/controller';
+import { stringifyBinding } from '../../../input/source/bindings';
 
 interface PropsFromState {
   controllersById: Dict<T.Controller>;
@@ -51,16 +52,17 @@ const stringifyValue = (
   value: RemapButtonValue,
   { isListening, controllersById }: PropsFromState,
 ): string => {
+  if (isListening) return '(listening...)';
+
   switch (value.kind) {
     case 'controllerKey':
       return stringifyControllerKey(
         value.controllerKey,
         controllersById,
         false,
-        isListening,
       );
     case 'binding':
-      return '';
+      return stringifyBinding(value.binding);
   }
 };
 

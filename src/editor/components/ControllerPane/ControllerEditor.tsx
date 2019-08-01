@@ -5,15 +5,11 @@ import { ControllerName } from './ControllerName';
 
 interface ControllerEditorProps {
   controller: Maybe<T.Controller>;
-  listenNextInput: (o: T.RemapState) => void;
-  remapState: Maybe<T.RemapState>;
   updateControllerName: (id: string, name: string) => void;
 }
 
 export const ControllerEditor: React.SFC<ControllerEditorProps> = ({
   controller,
-  listenNextInput,
-  remapState,
   updateControllerName,
 }) =>
   controller ? (
@@ -22,10 +18,6 @@ export const ControllerEditor: React.SFC<ControllerEditorProps> = ({
         initialName={controller.name}
         save={name => updateControllerName(controller.id, name)}
       />
-      <ControllerBindings
-        controller={controller}
-        listenNextInput={listenNextInput}
-        remapState={remapState}
-      />
+      <ControllerBindings controller={controller} />
     </div>
   ) : null;

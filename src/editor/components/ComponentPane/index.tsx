@@ -5,7 +5,6 @@ import * as T from '../../../types';
 import { allComponents, selectedComponent } from '../../../state/selectors';
 import {
   emitDisplayEvents,
-  listenNextInput,
   selectEditorOption,
   updateComponentState,
 } from '../../../state/actions';
@@ -32,7 +31,6 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(
     {
       emitDisplayEvents,
-      listenNextInput,
       selectComponent: id => selectEditorOption({ kind: 'component', id }),
       updateComponentState,
     },

@@ -4,13 +4,11 @@ import {
   stringifyKeyInController,
   getKeyInputKind,
 } from '../../../input/controller';
-import { stringifyBinding } from '../../../input/source/bindings';
 import { getControllerKeyOrder } from '../../../input/controller';
+import { RemapButton } from '../controls/RemapButton';
 
 interface ControllerBindingsProps {
   controller: T.Controller;
-  listenNextInput: (s: T.RemapState) => void;
-  remapState: Maybe<T.RemapState>;
 }
 
 const getRemapState = (
@@ -23,34 +21,20 @@ const getRemapState = (
   inputKind: getKeyInputKind(controller.kind, key),
 });
 
-const isListening = (
-  remapState: Maybe<T.RemapState>,
-  controllerId: string,
-  controllerKey: string,
-): boolean =>
-  remapState !== undefined &&
-  remapState.kind === 'controller' &&
-  remapState.controllerId === controllerId &&
-  remapState.key === controllerKey;
-
-const bindingStr = (binding: Maybe<T.Binding>, listening: boolean): string =>
-  listening ? '(listening...)' : stringifyBinding(binding);
-
 export const ControllerBindings: React.SFC<ControllerBindingsProps> = ({
   controller,
-  listenNextInput,
-  remapState,
 }) => (
   <div>
     {getControllerKeyOrder(controller.kind).map(key => (
       <div key={key}>
         <span>{stringifyKeyInController(controller, key)} </span>
-        <button onClick={() => listenNextInput(getRemapState(controller, key))}>
-          {bindingStr(
-            controller.bindings[key],
-            isListening(remapState, controller.id, key),
-          )}
-        </button>
+        <RemapButton
+          remapTo={getRemapState(controller, key)}
+          value={{
+            kind: 'binding',
+            binding: controller.bindings[key],
+          }}
+        />
       </div>
     ))}
   </div>

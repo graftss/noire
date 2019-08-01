@@ -71,9 +71,7 @@ export const stringifyKeyInController = (
   controller: Maybe<Controller>,
   key: Maybe<string>,
   showControllerName: boolean = false,
-  listening: boolean = false,
 ): string => {
-  if (listening) return '(listening...)';
   if (!controller || !key || !controller.bindings[key]) return 'NONE';
 
   const map = getControllerMap(controller.kind);
@@ -86,7 +84,6 @@ export const stringifyControllerKey = (
   controllerKey: Maybe<ControllerKey>,
   controllersById: Dict<Controller>,
   showControllerName: boolean = false,
-  listening: boolean = false,
 ): string =>
   stringifyKeyInController(
     controllerKey !== undefined
@@ -94,7 +91,6 @@ export const stringifyControllerKey = (
       : undefined,
     controllerKey !== undefined ? controllerKey.key : undefined,
     showControllerName,
-    listening,
   );
 
 export const hasKeyBoundTo = (
