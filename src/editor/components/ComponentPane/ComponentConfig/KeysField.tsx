@@ -35,19 +35,6 @@ const getRemapState = (
   inputKind: componentInputKinds[component.kind][key],
 });
 
-const controllerKeyStr = (
-  controllerKey: Maybe<T.ControllerKey>,
-  controllersById: Dict<T.Controller>,
-  listening: boolean,
-): string => {
-  if (listening) return '(listening...)';
-  if (!controllerKey) return 'NONE';
-
-  const { controllerId, key } = controllerKey;
-  const controller: T.Controller = controllersById[controllerId];
-  return stringifyControllerKey(controller, key);
-};
-
 export const KeysField: React.SFC<KeysFieldProps> = ({
   component,
   controllersById,
@@ -57,22 +44,33 @@ export const KeysField: React.SFC<KeysFieldProps> = ({
 }) => {
   return (
     <div>
-      {keys.map((ck: T.ComponentKey) => (
-        <div key={ck.key}>
-          <div>
-            {stringifyComponentKey(ck)}
-            <button
-              onClick={() => listenNextInput(getRemapState(component, ck.key))}
-            >
-              {controllerKeyStr(
-                mappedControllerKey(component, ck),
-                controllersById,
-                isListening(remapState, component.id, ck.key),
-              )}
-            </button>
+      {keys.map((ck: T.ComponentKey) => {
+        const controllerKey = mappedControllerKey(component, ck);
+        const controller: Maybe<T.Controller> =
+          controllerKey !== undefined
+            ? controllersById[controllerKey.controllerId]
+            : undefined;
+        const key = controllerKey !== undefined ? controllerKey.key : undefined;
+
+        return (
+          <div key={ck.key}>
+            <div>
+              {stringifyComponentKey(ck)}
+              <button
+                onClick={() =>
+                  listenNextInput(getRemapState(component, ck.key))
+                }
+              >
+                {stringifyControllerKey(
+                  controller,
+                  key,
+                  isListening(remapState, component.id, ck.key),
+                )}
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
