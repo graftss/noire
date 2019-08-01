@@ -1,8 +1,11 @@
 import * as T from '../../types';
 import { TypedComponent } from './Component';
 
-type StaticShapes = 'shape';
-type StaticTextures = 'texture';
+const staticShapes = ['shape'] as const;
+type StaticShapes = typeof staticShapes[number];
+
+const staticTextures = ['texture'] as const;
+type StaticTextures = typeof staticTextures[number];
 
 export type StaticGraphics = T.ComponentGraphics<StaticShapes, StaticTextures>;
 
@@ -18,6 +21,8 @@ export type SerializedStaticComponent = T.Serialized<
 
 export const staticInputKinds: T.InputKindProjection<StaticInput> = {};
 
+const staticKeys: T.ComponentKey[] = [];
+
 export type StaticState = T.TypedComponentState<StaticInput>;
 
 export const defaultStaticState: StaticState = {
@@ -25,9 +30,12 @@ export const defaultStaticState: StaticState = {
   inputMap: {},
 };
 
-export const staticEditorConfig: T.ComponentEditorConfig = [
-  { kind: 'fixed', data: { label: 'Static Image' } },
-];
+export const staticEditorConfig: T.ComponentEditorConfig = {
+  title: 'Static',
+  keys: staticKeys,
+  shapes: staticShapes,
+  textures: staticTextures,
+};
 
 export class StaticComponent extends TypedComponent<
   StaticShapes,

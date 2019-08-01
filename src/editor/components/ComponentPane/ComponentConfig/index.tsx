@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as T from '../../../../types';
-import { componentEditorConfigs } from '../../../../canvas/component';
-import { FixedField } from './FixedField';
-import { KeysField } from './KeysField';
+import { getEditorConfig } from '../../../../canvas/component/editor';
+import { ConfigTitle } from './ConfigTitle';
+import { ConfigKeys } from './ConfigKeys';
 
 interface ComponentConfigProps {
   component: T.SerializedComponent;
@@ -11,22 +11,12 @@ interface ComponentConfigProps {
 export const ComponentConfig: React.SFC<ComponentConfigProps> = ({
   component,
 }) => {
-  const renderField = (field: T.ComponentEditorField): Maybe<JSX.Element> => {
-    switch (field.kind) {
-      case 'fixed':
-        return <FixedField label={field.data.label} />;
-
-      case 'keys': {
-        return <KeysField component={component} keys={field.data.keys} />;
-      }
-    }
-  };
+  const config = getEditorConfig(component.kind);
 
   return (
     <div>
-      {componentEditorConfigs[component.kind].map((field, i) => (
-        <div key={i}>{renderField(field)}</div>
-      ))}
+      <ConfigTitle label={config.title} />
+      <ConfigKeys component={component} keys={config.keys} />
     </div>
   );
 };

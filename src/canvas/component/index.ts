@@ -3,26 +3,10 @@ import * as T from '../../types';
 import { deserializeTexture } from '../texture/';
 import { deserializeInputFilter, getFilterInputKind } from '../filter';
 import { assoc, mapObj, mapPath } from '../../utils';
-import {
-  ButtonComponent,
-  buttonEditorConfig,
-  buttonInputKinds,
-} from './ButtonComponent';
-import {
-  DPadComponent,
-  dPadEditorConfig,
-  dPadInputKinds,
-} from './DPadComponent';
-import {
-  StaticComponent,
-  staticEditorConfig,
-  staticInputKinds,
-} from './StaticComponent';
-import {
-  StickComponent,
-  stickEditorConfig,
-  stickInputKinds,
-} from './StickComponent';
+import { ButtonComponent, buttonInputKinds } from './ButtonComponent';
+import { DPadComponent, dPadInputKinds } from './DPadComponent';
+import { StaticComponent, staticInputKinds } from './StaticComponent';
+import { StickComponent, stickInputKinds } from './StickComponent';
 import { Component } from './Component';
 
 // K: identifying kind of component
@@ -65,29 +49,6 @@ export const mappedControllerKey = (
   component.state &&
   component.state.inputMap &&
   component.state.inputMap[componentKey.key];
-
-export type ComponentEditorField =
-  | { kind: 'fixed'; data: { label: string } }
-  | {
-      kind: 'slider';
-      data: { key: string; label: string; max: number; min: number };
-    }
-  | {
-      kind: 'keys';
-      data: { keys: ComponentKey[] };
-    };
-
-export type ComponentEditorConfig = ComponentEditorField[];
-
-export const componentEditorConfigs: Record<
-  ComponentKind,
-  ComponentEditorConfig
-> = {
-  button: buttonEditorConfig,
-  stick: stickEditorConfig,
-  dpad: dPadEditorConfig,
-  static: staticEditorConfig,
-};
 
 const componentInputKinds: Record<ComponentKind, Dict<T.InputKind>> = {
   button: buttonInputKinds,

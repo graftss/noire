@@ -2,8 +2,11 @@ import * as T from '../../types';
 import { normalizeAxis } from '../../utils';
 import { TypedComponent } from './Component';
 
-type StickShapes = 'boundary' | 'stick' | 'center';
-type StickTextures = 'boundary' | 'stick' | 'stickDown' | 'center';
+const stickShapes = ['boundary', 'stick', 'center'] as const;
+type StickShapes = typeof stickShapes[number];
+
+const stickTextures = ['boundary', 'stick', 'stickDown', 'center'] as const;
+type StickTextures = typeof stickTextures[number];
 
 export type StickGraphics = T.ComponentGraphics<StickShapes, StickTextures>;
 
@@ -21,7 +24,15 @@ export const stickInputKinds: T.InputKindProjection<StickInput> = {
   yp: 'axis',
   yn: 'axis',
   button: 'button',
-};
+} as const;
+
+const stickKeys: T.ComponentKey[] = [
+  { key: 'xp', label: 'Right', inputKind: 'axis' },
+  { key: 'xn', label: 'Left', inputKind: 'axis' },
+  { key: 'yp', label: 'Down', inputKind: 'axis' },
+  { key: 'yn', label: 'Up', inputKind: 'axis' },
+  { key: 'button', label: 'Trigger', inputKind: 'button' },
+];
 
 export type StickState = T.TypedComponentState<StickInput> & {
   boundaryRadius: number;
@@ -45,21 +56,12 @@ export type SerializedStickComponent = T.Serialized<
   StickInput
 >;
 
-export const stickEditorConfig: T.ComponentEditorConfig = [
-  { kind: 'fixed', data: { label: 'Stick' } },
-  {
-    kind: 'keys',
-    data: {
-      keys: [
-        { key: 'xp', label: 'Right', inputKind: 'axis' },
-        { key: 'xn', label: 'Left', inputKind: 'axis' },
-        { key: 'yp', label: 'Down', inputKind: 'axis' },
-        { key: 'yn', label: 'Up', inputKind: 'axis' },
-        { key: 'button', label: 'Button', inputKind: 'button' },
-      ],
-    },
-  },
-];
+export const stickEditorConfig: T.ComponentEditorConfig = {
+  title: 'Stick',
+  keys: stickKeys,
+  shapes: stickShapes,
+  textures: stickTextures,
+};
 
 const depthFactor = (t: number): number =>
   t > 0.2 ? 1 - 0.08 * Math.abs(t) : 1 - 0.02 * Math.abs(t);

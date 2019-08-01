@@ -1,8 +1,11 @@
 import * as T from '../../types';
 import { TypedComponent } from './Component';
 
-type ButtonShapes = 'on' | 'off';
-type ButtonTextures = 'on' | 'off';
+const buttonShapes = ['on', 'off'] as const;
+type ButtonShapes = typeof buttonShapes[number];
+
+const buttonTextures = ['on', 'off'] as const;
+type ButtonTextures = typeof buttonTextures[number];
 
 export type ButtonComponentGraphics = T.ComponentGraphics<
   ButtonShapes,
@@ -25,6 +28,10 @@ export const buttonInputKinds: T.InputKindProjection<ButtonComponentInput> = {
   button: 'button',
 };
 
+const buttonKeys: T.ComponentKey[] = [
+  { key: 'button', label: 'Button', inputKind: 'button' },
+];
+
 export type ButtonComponentState = T.TypedComponentState<ButtonComponentInput>;
 
 export const defaultButtonComponentState: ButtonComponentState = {
@@ -32,15 +39,12 @@ export const defaultButtonComponentState: ButtonComponentState = {
   inputMap: {},
 };
 
-export const buttonEditorConfig: T.ComponentEditorConfig = [
-  { kind: 'fixed', data: { label: 'Button' } },
-  {
-    kind: 'keys',
-    data: {
-      keys: [{ key: 'button', label: 'Button', inputKind: 'button' }],
-    },
-  },
-];
+export const buttonEditorConfig: T.ComponentEditorConfig = {
+  title: 'Button',
+  keys: buttonKeys,
+  shapes: buttonShapes,
+  textures: buttonTextures,
+};
 
 export class ButtonComponent extends TypedComponent<
   ButtonShapes,

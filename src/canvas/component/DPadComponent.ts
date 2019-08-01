@@ -2,18 +2,23 @@ import Konva from 'konva';
 import * as T from '../../types';
 import { TypedComponent } from './Component';
 
-type Dir = 'u' | 'l' | 'd' | 'r';
+const dirs = ['u', 'l', 'd', 'r'] as const;
+type Dir = typeof dirs[number];
 
+const dPadShapes = dirs;
 type DPadShapes = Dir;
-type DPadTextures =
-  | 'uOn'
-  | 'uOff'
-  | 'lOn'
-  | 'lOff'
-  | 'dOn'
-  | 'dOff'
-  | 'rOn'
-  | 'rOff';
+
+const dPadTextures = [
+  'uOn',
+  'uOff',
+  'lOn',
+  'lOff',
+  'dOn',
+  'dOff',
+  'rOn',
+  'rOff',
+] as const;
+type DPadTextures = typeof dPadTextures[number];
 
 export type DPadGraphics = T.ComponentGraphics<DPadShapes, DPadTextures>;
 
@@ -24,7 +29,14 @@ export const dPadInputKinds: T.InputKindProjection<DPadInput> = {
   l: 'button',
   d: 'button',
   r: 'button',
-};
+} as const;
+
+const dPadKeys: T.ComponentKey[] = [
+  { key: 'u', label: 'Up', inputKind: 'button' },
+  { key: 'l', label: 'Left', inputKind: 'button' },
+  { key: 'd', label: 'Down', inputKind: 'button' },
+  { key: 'r', label: 'Right', inputKind: 'button' },
+];
 
 export type DPadState = T.TypedComponentState<DPadInput> & {};
 
@@ -41,20 +53,12 @@ export type SerializedDPadComponent = T.Serialized<
   DPadInput
 >;
 
-export const dPadEditorConfig: T.ComponentEditorConfig = [
-  { kind: 'fixed', data: { label: 'DPad' } },
-  {
-    kind: 'keys',
-    data: {
-      keys: [
-        { key: 'u', label: 'Up', inputKind: 'button' },
-        { key: 'l', label: 'Left', inputKind: 'button' },
-        { key: 'd', label: 'Down', inputKind: 'button' },
-        { key: 'r', label: 'Right', inputKind: 'button' },
-      ],
-    },
-  },
-];
+export const dPadEditorConfig: T.ComponentEditorConfig = {
+  title: 'D-Pad',
+  keys: dPadKeys,
+  shapes: dPadShapes,
+  textures: dPadTextures,
+};
 
 export const simpleDPadRects = (
   x: number,

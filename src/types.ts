@@ -63,9 +63,11 @@ export {
   SerializedComponentFilterDict,
   ComponentKey,
   ComponentKind,
-  ComponentEditorField,
-  ComponentEditorConfig,
 } from './canvas/component/';
+export {
+  ComponentEditorConfig,
+  ComponentEditorFieldKind,
+} from './canvas/component/editor';
 export {
   ComponentState,
   TypedComponentState,
