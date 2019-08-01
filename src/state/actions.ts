@@ -14,6 +14,10 @@ export type EditorAction =
       type: 'updateComponentState';
       data: { id: string; state: T.ComponentState };
     }
+  | {
+      type: 'updateComponentFilters';
+      data: { id: string; filters: T.SerializedComponentFilterDict };
+    }
   | { type: 'listenNextInput'; data: T.RemapState }
   | { type: 'stopListening' }
   | { type: 'setTab'; data: T.TabKind };
@@ -53,6 +57,14 @@ export const updateComponentState = (
 ): EditorAction => ({
   type: 'updateComponentState',
   data: { id, state },
+});
+
+export const updateComponentFilters = (
+  id: string,
+  filters: T.SerializedComponentFilterDict,
+): EditorAction => ({
+  type: 'updateComponentFilters',
+  data: { id, filters },
 });
 
 export const listenNextInput = (remapState: T.RemapState): EditorAction => ({

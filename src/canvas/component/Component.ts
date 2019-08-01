@@ -34,10 +34,12 @@ export interface ComponentFilter<K extends T.InputFilterKind> {
   inputMap: Dict<T.ControllerKey>;
 }
 
-export type ComponentFilterDict<SS extends string> = Record<
+export type TypedComponentFilterDict<SS extends string> = Record<
   SS,
   ComponentFilter<T.InputFilterKind>[]
 >;
+
+export type ComponentFilterDict = Dict<ComponentFilter<T.InputFilterKind>[]>;
 
 export abstract class TypedComponent<
   SS extends string,
@@ -50,14 +52,14 @@ export abstract class TypedComponent<
   graphics: G;
   inputKinds: InputKinds<I>;
   state: S;
-  filters: Maybe<ComponentFilterDict<SS>>;
+  filters: Maybe<TypedComponentFilterDict<SS>>;
 
   constructor(
     id: string,
     graphics: G,
     inputKinds: InputKinds<I>,
     state: S,
-    filters?: ComponentFilterDict<SS>,
+    filters?: TypedComponentFilterDict<SS>,
   ) {
     this.id = id;
     this.graphics = graphics;
@@ -115,6 +117,10 @@ export abstract class TypedComponent<
 
   setState(state: S): void {
     this.state = state;
+  }
+
+  setFilters(filters: TypedComponentFilterDict<SS>): void {
+    this.filters = filters;
   }
 
   abstract update(input: Partial<I>, dt: number): void;

@@ -15,6 +15,14 @@ export class ComponentManager {
         if (component) component.setState(state);
       },
     });
+
+    eventBus.on({
+      kind: 'componentUpdateFilterKey',
+      cb: (id: string, filters: T.ComponentFilterDict) => {
+        const component = this.findById(id);
+        if (component) component.setFilters(filters);
+      },
+    });
   }
 
   sync(components: Component[] = []): void {

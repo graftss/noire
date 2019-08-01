@@ -2,7 +2,7 @@ import Konva from 'konva';
 import * as T from '../../types';
 import { deserializeTexture } from '../texture/';
 import { deserializeInputFilter, getFilterInputKind } from '../filter';
-import { assoc, mapObj } from '../../utils';
+import { assoc, mapObj, mapPath } from '../../utils';
 import {
   ButtonComponent,
   buttonEditorConfig,
@@ -106,6 +106,23 @@ export const stringifyComponentKey = ({
   inputKind,
 }: ComponentKey): string => `${label} (${inputKind})`;
 
+export const updateComponentKey = (
+  state: T.ComponentState,
+  update: T.ComponentKeyUpdate,
+): typeof state => {
+  const { controllerId, bindingsKey, inputKey } = update;
+
+  const controllerKey: Maybe<T.ControllerKey> =
+    controllerId !== undefined && bindingsKey !== undefined
+      ? { controllerId, key: bindingsKey }
+      : undefined;
+
+  return {
+    ...state,
+    inputMap: assoc(state.inputMap || {}, inputKey, controllerKey),
+  };
+};
+
 export interface SerializedComponentGraphics<
   SS extends string,
   TS extends string
@@ -185,10 +202,28 @@ const deserializeComponentFilter = ({
   config: filter.config,
 });
 
-const deserializeComponentFilterDict = (
-  filters: Dict<SerializedComponentFilter<T.InputFilterKind>[]>,
-): T.ComponentFilterDict<string> =>
+export const deserializeComponentFilterDict = (
+  filters: SerializedComponentFilterDict,
+): T.ComponentFilterDict =>
   mapObj(filters, shapeFilters => shapeFilters.map(deserializeComponentFilter));
+
+export const updateComponentFilterKey = (
+  filterDict: SerializedComponentFilterDict,
+  update: T.ComponentFilterKeyUpdate,
+): SerializedComponentFilterDict => {
+  const { controllerId, bindingsKey, shape, filterIndex, filterKey } = update;
+
+  const controllerKey: Maybe<T.ControllerKey> =
+    controllerId !== undefined && bindingsKey !== undefined
+      ? { controllerId, key: bindingsKey }
+      : undefined;
+
+  return mapPath(
+    [shape, filterIndex, 'inputMap', filterKey],
+    () => controllerKey,
+    filterDict,
+  );
+};
 
 export const deserializeComponent = (s: T.SerializedComponent): Component => {
   let ComponentConstructor: any;
@@ -215,21 +250,4 @@ export const deserializeComponent = (s: T.SerializedComponent): Component => {
     s.filters && deserializeComponentFilterDict(s.filters),
     s.filters && deserializeComponentFilterDict(s.filters),
   );
-};
-
-export const updateComponentKey = (
-  state: T.ComponentState,
-  update: T.ComponentKeyUpdate,
-): typeof state => {
-  const { controllerId, bindingsKey, inputKey } = update;
-
-  const controllerKey: Maybe<T.ControllerKey> =
-    controllerId !== undefined && bindingsKey !== undefined
-      ? { controllerId, key: bindingsKey }
-      : undefined;
-
-  return {
-    ...state,
-    inputMap: assoc(state.inputMap || {}, inputKey, controllerKey),
-  };
 };

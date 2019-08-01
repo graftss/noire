@@ -14,6 +14,15 @@ export interface ComponentKeyUpdate {
   bindingsKey?: string;
 }
 
+export interface ComponentFilterKeyUpdate {
+  componentId: string;
+  shape: string;
+  filterIndex: number;
+  filterKey: string;
+  controllerId?: string;
+  bindingsKey?: string;
+}
+
 export const displayReducer = (
   state: DisplayState = testInitialState.display,
   action: T.EditorAction,
@@ -34,6 +43,15 @@ export const displayReducer = (
       return mapComponentWithId(state, data.id, c => ({
         ...c,
         state: data.state,
+      }));
+    }
+
+    case 'updateComponentFilters': {
+      const { id, filters } = action.data;
+
+      return mapComponentWithId(state, id, c => ({
+        ...c,
+        filters,
       }));
     }
   }

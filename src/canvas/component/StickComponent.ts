@@ -75,7 +75,7 @@ export class StickComponent extends TypedComponent<
     id: string,
     graphics: StickGraphics,
     state: Partial<StickState>,
-    filters: T.ComponentFilterDict<StickShapes>,
+    filters: T.TypedComponentFilterDict<StickShapes>,
   ) {
     super(
       id,

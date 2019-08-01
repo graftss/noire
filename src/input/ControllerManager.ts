@@ -1,6 +1,7 @@
 import * as T from '../types';
 import {
   updateComponentState,
+  updateComponentFilters,
   updateControllerBinding,
   stopListening,
 } from '../state/actions';
@@ -10,7 +11,11 @@ import {
   componentById,
 } from '../state/selectors';
 import { DisplayEventBus } from '../canvas/display/DisplayEventBus';
-import { updateComponentKey } from '../canvas/component';
+import {
+  deserializeComponentFilterDict,
+  updateComponentKey,
+  updateComponentFilterKey,
+} from '../canvas/component';
 import { NextInputListener } from './NextInputListener';
 import { GlobalInputSources } from './source/GlobalInputSources';
 import { getGamepads } from './source/gamepad';
@@ -74,6 +79,47 @@ export class ControllerManager {
         data: [componentId, newState],
       });
     } else {
+      // TODO: handle input that's not already mapped to a controller,
+      // probably by dispatching an event to the store to let them
+      // know that their input is unmapped
+    }
+
+    this.store.dispatch(stopListening());
+  };
+
+  private onAwaitedFilterBinding = (
+    componentId: string,
+    shape: string,
+    filterIndex: number,
+    filterKey: string,
+  ) => (binding: T.Binding): void => {
+    const state = this.store.getState();
+    const c = controllerWithBinding(state.input, binding);
+    const component = componentById(state.display, componentId);
+
+    if (c && component) {
+      const { controller, key } = c;
+      const update = {
+        componentId,
+        shape,
+        filterIndex,
+        filterKey,
+        controllerId: controller.id,
+        bindingsKey: key,
+      };
+
+      if (component.filters) {
+        const newFilters = updateComponentFilterKey(component.filters, update);
+        this.store.dispatch(updateComponentFilters(componentId, newFilters));
+        this.eventBus.emit({
+          kind: 'componentUpdateFilterKey',
+          data: [componentId, deserializeComponentFilterDict(newFilters)],
+        });
+      }
+    } else {
+      // TODO: handle input that's not already mapped to a controller;
+      // see above in `onAwaitedComponentBinding`
+      // see above in `onAwaitedComponentBinding`
     }
 
     this.store.dispatch(stopListening());
@@ -93,6 +139,17 @@ export class ControllerManager {
         const handler = this.onAwaitedComponentBinding(componentId, key);
         this.nextInputListener.await(inputKind, handler);
         break;
+      }
+
+      case 'filter': {
+        const { componentId, filterIndex, filterKey, inputKind, shape } = remap;
+        const handler = this.onAwaitedFilterBinding(
+          componentId,
+          shape,
+          filterIndex,
+          filterKey,
+        );
+        this.nextInputListener.await(inputKind, handler);
       }
     }
   };

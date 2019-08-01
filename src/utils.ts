@@ -75,8 +75,11 @@ export const shallowCloneObj = <K extends string, T>(
   obj: Record<K, T>,
 ): Record<K, T> => mapObj(obj, x => x);
 
-export const mapPath = <T, O>(p: string[], f: (t: Maybe<T>) => T, o: O): O =>
-  assocPath(p, f(path(p, o)), o);
+export const mapPath = <T, O>(
+  p: (string | number)[],
+  f: (t: Maybe<T>) => T,
+  o: O,
+): O => assocPath(p, f(path(p, o)), o);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const cast = <U>(isU: (t: any) => boolean, t: any): Maybe<U> =>

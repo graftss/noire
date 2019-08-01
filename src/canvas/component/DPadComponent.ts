@@ -113,7 +113,7 @@ export class DPadComponent extends TypedComponent<
     id: string,
     graphics: DPadGraphics,
     state: Partial<DPadState>,
-    filters,
+    filters: T.TypedComponentFilterDict<DPadShapes>,
   ) {
     super(
       id,

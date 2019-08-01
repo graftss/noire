@@ -40,7 +40,7 @@ export class StaticComponent extends TypedComponent<
     id: string,
     graphics: StaticGraphics,
     state: Partial<StaticState>,
-    filters: T.ComponentFilterDict<StaticShapes>,
+    filters: T.TypedComponentFilterDict<StaticShapes>,
   ) {
     super(
       id,

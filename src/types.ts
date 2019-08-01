@@ -72,6 +72,7 @@ export {
   Component,
   ComponentGraphics,
   ComponentFilter,
+  TypedComponentFilterDict,
   ComponentFilterDict,
 } from './canvas/component/Component';
 export {
@@ -100,7 +101,11 @@ export {
 } from './canvas/component/ButtonComponent';
 export { EditorApp } from './editor';
 export { EditorAction, EditorOption } from './state/actions';
-export { DisplayState, ComponentKeyUpdate } from './state/reducers/display';
+export {
+  DisplayState,
+  ComponentKeyUpdate,
+  ComponentFilterKeyUpdate,
+} from './state/reducers/display';
 export { EditorState } from './state/reducers/root';
 export {
   InputState,
