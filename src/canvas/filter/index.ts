@@ -1,4 +1,5 @@
 import * as T from '../../types';
+import { toPairs } from '../../utils';
 import {
   stickDistort,
   dPadDistort,
@@ -41,15 +42,21 @@ export const deserializeInputFilter = <K extends InputFilterKind>(
   filter: SerializedInputFilter<K>,
 ): InputFilter<K> => inputFilters[filter.kind];
 
-export const filterInputKinds = <K extends InputFilterKind>(
-  filter: SerializedInputFilter<K>,
-): Dict<T.InputKind> => {
-  switch (filter.kind) {
-    case 'stickDistort':
-      return stickDistortInputKinds;
-    case 'dPadDistort':
-      return dPadDistortInputKinds;
-  }
-
-  return {};
+const filterInputKinds: Record<T.InputFilterKind, Dict<T.InputKind>> = {
+  stickDistort: stickDistortInputKinds,
+  dPadDistort: dPadDistortInputKinds,
+  buttonZoom: {},
 };
+
+export const getInputFilterKeyList = (
+  filter: SerializedInputFilter<T.InputFilterKind>,
+): { filterKey: string; inputKind: T.InputKind }[] => {
+  return toPairs(filterInputKinds[filter.kind]).map(
+    ([filterKey, inputKind]) => ({ filterKey, inputKind }),
+  );
+};
+
+export const getFilterInputKind = (
+  filter: SerializedInputFilter<T.InputFilterKind>,
+  filterKey: string,
+): T.InputKind => filterInputKinds[filter.kind][filterKey];

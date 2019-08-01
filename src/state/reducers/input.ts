@@ -4,26 +4,26 @@ import { testInitialState } from '../testInitialState';
 
 export type RemapState =
   | {
+      kind: 'controller';
+      inputKind: T.InputKind;
       controllerId: string;
       fullUpdate?: boolean;
-      inputKind: T.InputKind;
       key: string;
-      kind: 'controller';
     }
   | {
+      kind: 'component';
+      inputKind: T.InputKind;
       componentId: string;
       fullUpdate?: boolean;
-      inputKind: T.InputKind;
       key: string;
-      kind: 'component';
     }
   | {
-      componentId: string;
+      kind: 'filter';
       inputKind: T.InputKind;
+      componentId: string;
       shape: string;
       filterIndex: number;
       filterKey: string;
-      kind: 'filter';
     };
 
 export interface InputState {

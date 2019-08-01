@@ -60,8 +60,7 @@ export const mapComponentWithId = (
 
 export const currentTabKind = (state: T.TabState): T.TabKind => state.kind;
 
-export const isListening = (
-  state: T.InputState,
+export const isListening = (state: T.InputState) => (
   remap: T.RemapState,
 ): boolean => {
   if (!state.remap) return false;

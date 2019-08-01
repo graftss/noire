@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as T from '../../../types';
 import { toPairs } from '../../../utils';
-import { filterInputKinds } from '../../../canvas/filter';
+import { getInputFilterKeyList } from '../../../canvas/filter';
 import { RemapButton } from '../controls/RemapButton';
 
 interface ComponentFiltersProps {
@@ -22,27 +22,21 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
                 <div>{filter.kind}</div>
                 <div>{JSON.stringify(filter.config)}</div>
                 <div>
-                  {toPairs(filterInputKinds(filter)).map(
-                    ([filterKey, inputKind]) => (
-                      <div key={filterKey}>
-                        {filterKey}:
-                        <RemapButton
-                          value={{
-                            kind: 'controllerKey',
-                            controllerKey: inputMap[filterKey],
-                          }}
-                          remapTo={{
-                            kind: 'filter',
-                            componentId: component.id,
-                            inputKind,
-                            shape,
-                            filterIndex,
-                            filterKey,
-                          }}
-                        />
-                      </div>
-                    ),
-                  )}
+                  {getInputFilterKeyList(filter).map(({ filterKey }) => (
+                    <div key={filterKey}>
+                      {filterKey}:
+                      <RemapButton
+                        value={{
+                          kind: 'filter',
+                          component,
+                          controllerKey: inputMap[filterKey],
+                          shape,
+                          filterIndex,
+                          filterKey,
+                        }}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}

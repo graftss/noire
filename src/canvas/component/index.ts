@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import * as T from '../../types';
 import { deserializeTexture } from '../texture/';
-import { deserializeInputFilter } from '../filter';
+import { deserializeInputFilter, getFilterInputKind } from '../filter';
 import { assoc, mapObj } from '../../utils';
 import {
   ButtonComponent,
@@ -89,12 +89,17 @@ export const componentEditorConfigs: Record<
   static: staticEditorConfig,
 };
 
-export const componentInputKinds: Record<ComponentKind, Dict<T.InputKind>> = {
+const componentInputKinds: Record<ComponentKind, Dict<T.InputKind>> = {
   button: buttonInputKinds,
   stick: stickInputKinds,
   dpad: dPadInputKinds,
   static: staticInputKinds,
 };
+
+export const getComponentKeyInputKind = (
+  component: SerializedComponent,
+  componentKey: ComponentKey,
+): T.InputKind => componentInputKinds[component.kind][componentKey.key];
 
 export const stringifyComponentKey = ({
   label,
@@ -155,6 +160,19 @@ export interface SerializedComponentFilter<K extends T.InputFilterKind> {
 export type SerializedComponentFilterDict = Dict<
   SerializedComponentFilter<T.InputFilterKind>[]
 >;
+
+export const getComponentFilterInputKind = (
+  component: T.SerializedComponent,
+  shape: string,
+  filterIndex: number,
+  filterKey: string,
+): Maybe<T.InputKind> =>
+  component.filters !== undefined
+    ? getFilterInputKind(
+        component.filters[shape][filterIndex].filter,
+        filterKey,
+      )
+    : undefined;
 
 const deserializeComponentFilter = ({
   filter,
