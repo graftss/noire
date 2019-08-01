@@ -20,6 +20,15 @@ export const tabReducer = (
     case 'setTab': {
       return { ...state, kind: action.data };
     }
+
+    case 'selectEditorOption': {
+      switch (action.data.kind) {
+        case 'component':
+          return { ...state, kind: 'components' };
+        case 'controller':
+          return { ...state, kind: 'controllers' };
+      }
+    }
   }
 
   return state;
