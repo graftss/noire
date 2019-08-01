@@ -2,11 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
-import {
-  allComponents,
-  controllersById,
-  selectedComponent,
-} from '../../../state/selectors';
+import { allComponents, selectedComponent } from '../../../state/selectors';
 import {
   emitDisplayEvents,
   listenNextInput,
@@ -18,26 +14,19 @@ import { ComponentSelect } from './ComponentSelect';
 
 interface PropsFromState {
   components: T.SerializedComponent[];
-  controllersById: Dict<T.Controller>;
-  remapState: Maybe<T.RemapState>;
   selected: Maybe<T.SerializedComponent>;
 }
+
+const mapStateToProps = (state: T.EditorState): PropsFromState => ({
+  components: allComponents(state.display),
+  selected: selectedComponent(state.display),
+});
 
 interface PropsFromDispatch {
   emitDisplayEvents: (events: T.DisplayEvent[]) => void;
   selectComponent: (id: string) => void;
   updateComponentState: (id: string, state: T.ComponentState) => void;
-  listenNextInput: (s: T.RemapState) => void;
 }
-
-interface ComponentPaneProps extends PropsFromState, PropsFromDispatch {}
-
-const mapStateToProps = (state): PropsFromState => ({
-  components: allComponents(state.display),
-  controllersById: controllersById(state.input),
-  remapState: state.input.remap,
-  selected: selectedComponent(state.display),
-});
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(
@@ -50,12 +39,11 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
     dispatch,
   );
 
+interface ComponentPaneProps extends PropsFromState, PropsFromDispatch {}
+
 const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
   components,
-  controllersById,
   emitDisplayEvents,
-  listenNextInput,
-  remapState,
   selectComponent,
   selected,
   updateComponentState,
@@ -70,12 +58,6 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
       }}
     />
     <ComponentEditor
-      controllersById={controllersById}
-      listenNextInput={(remap: T.RemapState) => {
-        listenNextInput(remap);
-        emitDisplayEvents([{ kind: 'listenNextInput', data: [remap] }]);
-      }}
-      remapState={remapState}
       selected={selected}
       updateComponentState={updateComponentState}
     />

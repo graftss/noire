@@ -118,3 +118,15 @@ export const assoc = <K extends string, V>(
   ...obj,
   [key]: value,
 });
+
+export const equalAtKeys = (
+  keys: string[],
+  o1: object,
+  o2: object,
+): boolean => {
+  for (let i = 0; i < keys.length; i++) {
+    if (o1[keys[i]] !== o2[keys[i]]) return false;
+  }
+
+  return true;
+};

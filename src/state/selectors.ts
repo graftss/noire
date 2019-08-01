@@ -1,5 +1,5 @@
 import * as T from '../types';
-import { find, keyBy, mapIf } from '../utils';
+import { equalAtKeys, find, keyBy, mapIf } from '../utils';
 import { hasKeyBoundTo } from '../input/controller';
 
 export const componentById = (
@@ -59,3 +59,25 @@ export const mapComponentWithId = (
 });
 
 export const currentTabKind = (state: T.TabState): T.TabKind => state.kind;
+
+export const isListening = (
+  state: T.InputState,
+  remap: T.RemapState,
+): boolean => {
+  if (!state.remap) return false;
+
+  let keys: string[] = [];
+  switch (remap.kind) {
+    case 'controller':
+      keys = ['kind', 'controllerId', 'key'];
+      break;
+    case 'component':
+      keys = ['kind', 'componentId', 'key'];
+      break;
+    case 'filter':
+      keys = ['kind', 'componentId', 'shape', 'filterIndex', 'filterKey'];
+      break;
+  }
+
+  return equalAtKeys(keys, state.remap, remap);
+};

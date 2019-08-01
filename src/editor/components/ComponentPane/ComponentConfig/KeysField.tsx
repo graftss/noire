@@ -5,25 +5,12 @@ import {
   stringifyComponentKey,
   mappedControllerKey,
 } from '../../../../canvas/component';
-import { stringifyControllerKey } from '../../../../input/controller';
+import { RemapButton } from '../../controls/RemapButton';
 
 interface KeysFieldProps {
   component: T.SerializedComponent;
-  controllersById: Dict<T.Controller>;
   keys: T.ComponentKey[];
-  listenNextInput: (s: T.RemapState) => void;
-  remapState: Maybe<T.RemapState>;
 }
-
-const isListening = (
-  remapState: Maybe<T.RemapState>,
-  componentId: string,
-  componentKey: string,
-): boolean =>
-  remapState !== undefined &&
-  remapState.kind === 'component' &&
-  remapState.componentId === componentId &&
-  remapState.key === componentKey;
 
 const getRemapState = (
   component: T.SerializedComponent,
@@ -35,33 +22,20 @@ const getRemapState = (
   inputKind: componentInputKinds[component.kind][key],
 });
 
-export const KeysField: React.SFC<KeysFieldProps> = ({
-  component,
-  controllersById,
-  keys,
-  listenNextInput,
-  remapState,
-}) => {
+export const KeysField: React.SFC<KeysFieldProps> = ({ component, keys }) => {
   return (
     <div>
       {keys.map((ck: T.ComponentKey) => {
         return (
           <div key={ck.key}>
-            <div>
-              {stringifyComponentKey(ck)}
-              <button
-                onClick={() =>
-                  listenNextInput(getRemapState(component, ck.key))
-                }
-              >
-                {stringifyControllerKey(
-                  mappedControllerKey(component, ck),
-                  controllersById,
-                  false,
-                  isListening(remapState, component.id, ck.key),
-                )}
-              </button>
-            </div>
+            {stringifyComponentKey(ck)}
+            <RemapButton
+              value={{
+                kind: 'controllerKey',
+                controllerKey: mappedControllerKey(component, ck),
+              }}
+              remapTo={getRemapState(component, ck.key)}
+            />
           </div>
         );
       })}

@@ -6,16 +6,10 @@ import { KeysField } from './KeysField';
 
 interface ComponentConfigProps {
   component: T.SerializedComponent;
-  controllersById: Dict<T.Controller>;
-  listenNextInput: (s: T.RemapState) => void;
-  remapState: Maybe<T.RemapState>;
 }
 
 export const ComponentConfig: React.SFC<ComponentConfigProps> = ({
   component,
-  controllersById,
-  listenNextInput,
-  remapState,
 }) => {
   const renderField = (field: T.ComponentEditorField): Maybe<JSX.Element> => {
     switch (field.kind) {
@@ -23,15 +17,7 @@ export const ComponentConfig: React.SFC<ComponentConfigProps> = ({
         return <FixedField label={field.data.label} />;
 
       case 'keys': {
-        return (
-          <KeysField
-            component={component}
-            controllersById={controllersById}
-            keys={field.data.keys}
-            listenNextInput={listenNextInput}
-            remapState={remapState}
-          />
-        );
+        return <KeysField component={component} keys={field.data.keys} />;
       }
     }
   };
