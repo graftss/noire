@@ -65,8 +65,7 @@ export class ControllerManager {
       const update: T.ComponentKeyUpdate = {
         componentId,
         inputKey,
-        controllerId: controller.id,
-        bindingsKey: key,
+        controllerKey: { controllerId: controller.id, key },
       };
 
       const newState = updateComponentKey(
@@ -89,9 +88,7 @@ export class ControllerManager {
 
   private onAwaitedFilterBinding = (
     componentId: string,
-    shape: string,
-    filterIndex: number,
-    filterKey: string,
+    componentFilterKey: T.ComponentFilterKey,
   ) => (binding: T.Binding): void => {
     const state = this.store.getState();
     const c = controllerWithBinding(state.input, binding);
@@ -99,13 +96,10 @@ export class ControllerManager {
 
     if (c && component) {
       const { controller, key } = c;
-      const update = {
+      const update: T.ComponentFilterKeyUpdate = {
         componentId,
-        shape,
-        filterIndex,
-        filterKey,
-        controllerId: controller.id,
-        bindingsKey: key,
+        componentFilterKey,
+        controllerKey: { controllerId: controller.id, key },
       };
 
       if (component.filters) {
@@ -142,12 +136,10 @@ export class ControllerManager {
       }
 
       case 'filter': {
-        const { componentId, filterIndex, filterKey, inputKind, shape } = remap;
+        const { componentId, inputKind, componentFilterKey } = remap;
         const handler = this.onAwaitedFilterBinding(
           componentId,
-          shape,
-          filterIndex,
-          filterKey,
+          componentFilterKey,
         );
         this.nextInputListener.await(inputKind, handler);
       }

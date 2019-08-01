@@ -74,7 +74,7 @@ export const isListening = (state: T.InputState) => (
       keys = ['kind', 'componentId', 'key'];
       break;
     case 'filter':
-      keys = ['kind', 'componentId', 'shape', 'filterIndex', 'filterKey'];
+      keys = ['kind', 'componentId', 'componentFilterKey'];
       break;
   }
 

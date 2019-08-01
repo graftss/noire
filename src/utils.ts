@@ -1,5 +1,6 @@
 import { assocPath, map, mapObjIndexed, path } from 'ramda';
 import uuidv4 from 'uuid/v4';
+import { equals } from 'ramda';
 
 export { equals, range } from 'ramda';
 
@@ -128,7 +129,7 @@ export const equalAtKeys = (
   o2: object,
 ): boolean => {
   for (let i = 0; i < keys.length; i++) {
-    if (o1[keys[i]] !== o2[keys[i]]) return false;
+    if (!equals(o1[keys[i]], o2[keys[i]])) return false;
   }
 
   return true;

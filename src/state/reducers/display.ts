@@ -7,22 +7,6 @@ export interface DisplayState {
   selectedComponentId?: string;
 }
 
-export interface ComponentKeyUpdate {
-  componentId: string;
-  inputKey: string;
-  controllerId?: string;
-  bindingsKey?: string;
-}
-
-export interface ComponentFilterKeyUpdate {
-  componentId: string;
-  shape: string;
-  filterIndex: number;
-  filterKey: string;
-  controllerId?: string;
-  bindingsKey?: string;
-}
-
 export const displayReducer = (
   state: DisplayState = testInitialState.display,
   action: T.EditorAction,

@@ -14,9 +14,7 @@ export const ConfigKeys: React.SFC<ConfigKeysProps> = ({ component, keys }) => {
       {keys.map((componentKey: T.ComponentKey) => (
         <div key={componentKey.key}>
           {stringifyComponentKey(componentKey)}
-          <RemapButton
-            value={{ kind: 'component', component, componentKey }}
-          />
+          <RemapButton value={{ kind: 'component', component, componentKey }} />
         </div>
       ))}
     </div>

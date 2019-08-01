@@ -36,9 +36,7 @@ type RemapButtonValue =
       kind: 'filter';
       component: T.SerializedComponent;
       controllerKey: Maybe<T.ControllerKey>;
-      shape: string;
-      filterIndex: number;
-      filterKey: string;
+      componentFilterKey: T.ComponentFilterKey;
     };
 
 interface RemapButtonProps extends PropsFromState, PropsFromDispatch {
@@ -83,19 +81,15 @@ const computeRemapState = (value: RemapButtonValue): T.RemapState => {
     }
 
     case 'filter':
-      const { component, shape, filterKey, filterIndex } = value;
+      const { component, componentFilterKey } = value;
       return {
         kind: 'filter',
         inputKind: getComponentFilterInputKind(
           component,
-          shape,
-          filterIndex,
-          filterKey,
+          componentFilterKey,
         ) as T.InputKind,
         componentId: component.id,
-        shape,
-        filterKey,
-        filterIndex,
+        componentFilterKey,
       };
   }
 };

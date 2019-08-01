@@ -30,9 +30,11 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
                           kind: 'filter',
                           component,
                           controllerKey: inputMap[filterKey],
-                          shape,
-                          filterIndex,
-                          filterKey,
+                          componentFilterKey: {
+                            shape,
+                            filterIndex,
+                            filterKey,
+                          },
                         }}
                       />
                     </div>

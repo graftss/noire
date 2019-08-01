@@ -67,16 +67,17 @@ export const stringifyComponentKey = ({
   inputKind,
 }: ComponentKey): string => `${label} (${inputKind})`;
 
+export interface ComponentKeyUpdate {
+  componentId: string;
+  inputKey: string;
+  controllerKey?: T.ControllerKey;
+}
+
 export const updateComponentKey = (
   state: T.ComponentState,
-  update: T.ComponentKeyUpdate,
+  update: ComponentKeyUpdate,
 ): typeof state => {
-  const { controllerId, bindingsKey, inputKey } = update;
-
-  const controllerKey: Maybe<T.ControllerKey> =
-    controllerId !== undefined && bindingsKey !== undefined
-      ? { controllerId, key: bindingsKey }
-      : undefined;
+  const { controllerKey, inputKey } = update;
 
   return {
     ...state,
@@ -135,15 +136,19 @@ export interface SerializedComponentFilter<K extends T.InputFilterKind> {
   inputMap: Dict<T.ControllerKey>;
 }
 
+export interface ComponentFilterKey {
+  shape: string;
+  filterIndex: number;
+  filterKey: string;
+}
+
 export type SerializedComponentFilterDict = Dict<
   SerializedComponentFilter<T.InputFilterKind>[]
 >;
 
 export const getComponentFilterInputKind = (
   component: T.SerializedComponent,
-  shape: string,
-  filterIndex: number,
-  filterKey: string,
+  { shape, filterIndex, filterKey }: ComponentFilterKey,
 ): Maybe<T.InputKind> =>
   component.filters !== undefined
     ? getFilterInputKind(
@@ -168,16 +173,20 @@ export const deserializeComponentFilterDict = (
 ): T.ComponentFilterDict =>
   mapObj(filters, shapeFilters => shapeFilters.map(deserializeComponentFilter));
 
+export interface ComponentFilterKeyUpdate {
+  componentId: string;
+  componentFilterKey: T.ComponentFilterKey;
+  controllerKey?: T.ControllerKey;
+}
+
 export const updateComponentFilterKey = (
   filterDict: SerializedComponentFilterDict,
-  update: T.ComponentFilterKeyUpdate,
+  update: ComponentFilterKeyUpdate,
 ): SerializedComponentFilterDict => {
-  const { controllerId, bindingsKey, shape, filterIndex, filterKey } = update;
-
-  const controllerKey: Maybe<T.ControllerKey> =
-    controllerId !== undefined && bindingsKey !== undefined
-      ? { controllerId, key: bindingsKey }
-      : undefined;
+  const {
+    controllerKey,
+    componentFilterKey: { shape, filterIndex, filterKey },
+  } = update;
 
   return mapPath(
     [shape, filterIndex, 'inputMap', filterKey],
