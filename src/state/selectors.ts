@@ -44,25 +44,25 @@ export const selectedComponent = lift(
 
 export const controllers = lift(
   'input',
-  (state: T.InputState): T.Controller[] => state && state.controller.all,
+  (state: T.InputState): T.Controller[] => state && state.controllers,
 );
 
 export const controllerById = lift(
   'input',
   (state: T.InputState) => (id: string): Maybe<T.Controller> =>
-    state && find(c => c.id === id, state.controller.all),
+    state && find(c => c.id === id, state.controllers),
 );
 
 export const controllersById = lift(
   'input',
   (state: T.InputState): Dict<T.Controller> =>
-    keyBy(state.controller.all, c => c.id),
+    keyBy(state.controllers, c => c.id),
 );
 
 export const selectedController = lift(
   'input',
   (state: T.InputState): Maybe<T.Controller> =>
-    find(c => c.id === state.controller.selectedId, state.controller.all),
+    find(c => c.id === state.selectedControllerId, state.controllers),
 );
 
 export const controllerWithBinding = lift(
@@ -70,7 +70,7 @@ export const controllerWithBinding = lift(
   (state: T.InputState) => (
     binding: T.Binding,
   ): Maybe<{ controller: T.Controller; key: string }> => {
-    for (const controller of state.controller.all) {
+    for (const controller of state.controllers) {
       const key = hasKeyBoundTo(controller, binding);
       if (key) return { controller, key };
     }

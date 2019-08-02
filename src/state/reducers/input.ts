@@ -26,10 +26,8 @@ export type RemapState =
 
 export interface InputState {
   remap: Maybe<RemapState>;
-  controller: {
-    all: T.Controller[];
-    selectedId?: string;
-  };
+  controllers: T.Controller[];
+  selectedControllerId?: string;
 }
 
 // const defaultInputState: InputState = {};

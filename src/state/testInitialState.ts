@@ -331,9 +331,7 @@ export const testInitialState: T.EditorState = {
     components,
   },
   input: {
-    controller: {
-      all: [ps2Controller1, ps2Controller2, defaultKeyboardController],
-    },
+    controllers: [ps2Controller1, ps2Controller2, defaultKeyboardController],
     remap: undefined,
   },
   tab: { kind: 'controllers' },
