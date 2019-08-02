@@ -3,15 +3,14 @@ import * as T from '../../types';
 import { mapObj, unMaybeList, values } from '../../utils';
 import { defaultInputByKind, rawifyInputDict } from '../../input/input';
 
-export type ComponentState = TypedComponentState<Dict<T.Input>>;
+export interface ComponentGraphics<SS extends string, TS extends string> {
+  shapes: Record<SS, Maybe<Konva.Shape>>;
+  textures: Record<TS, Maybe<T.Texture>>;
+}
 
-export type Component = TypedComponent<
-  string,
-  string,
-  ComponentGraphics<string, string>,
-  Dict<T.Input>,
-  ComponentState
->;
+type InputKinds<I extends Dict<T.Input>> = {
+  [K in keyof I]: I[K]['kind'];
+};
 
 export interface TypedComponentState<I extends Dict<T.Input>> {
   defaultInput?: Partial<I>;
@@ -19,14 +18,7 @@ export interface TypedComponentState<I extends Dict<T.Input>> {
   name: string;
 }
 
-type InputKinds<I extends Dict<T.Input>> = {
-  [K in keyof I]: I[K]['kind'];
-};
-
-export interface ComponentGraphics<SS extends string, TS extends string> {
-  shapes: Record<SS, Maybe<Konva.Shape>>;
-  textures: Record<TS, Maybe<T.Texture>>;
-}
+export type ComponentState = TypedComponentState<Dict<T.Input>>;
 
 export interface ComponentFilter<K extends T.InputFilterKind> {
   filter: T.InputFilter<K>;
@@ -125,3 +117,11 @@ export abstract class TypedComponent<
 
   abstract update(input: Partial<I>, dt: number): void;
 }
+
+export type Component = TypedComponent<
+  string,
+  string,
+  ComponentGraphics<string, string>,
+  Dict<T.Input>,
+  ComponentState
+>;

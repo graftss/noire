@@ -11,14 +11,6 @@ export type StaticGraphics = T.ComponentGraphics<StaticShapes, StaticTextures>;
 
 export type StaticInput = Record<string, T.Input> & {};
 
-export type SerializedStaticComponent = T.Serialized<
-  'static',
-  StaticShapes,
-  StaticTextures,
-  StaticState,
-  StaticInput
->;
-
 export const staticInputKinds: T.InputKindProjection<StaticInput> = {};
 
 const staticKeys: T.ComponentKey[] = [];
@@ -29,6 +21,14 @@ export const defaultStaticState: StaticState = {
   name: 'Static Component',
   inputMap: {},
 };
+
+export type SerializedStaticComponent = T.Serialized<
+  'static',
+  StaticShapes,
+  StaticTextures,
+  StaticState,
+  StaticInput
+>;
 
 export const staticEditorConfig: T.ComponentEditorConfig = {
   title: 'Static',

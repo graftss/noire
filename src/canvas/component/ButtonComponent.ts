@@ -12,14 +12,6 @@ export type ButtonComponentGraphics = T.ComponentGraphics<
   ButtonTextures
 >;
 
-export type SerializedButtonComponent = T.Serialized<
-  'button',
-  ButtonShapes,
-  ButtonTextures,
-  ButtonComponentState,
-  ButtonComponentInput
->;
-
 export interface ButtonComponentInput extends Dict<T.Input> {
   button: T.ButtonInput;
 }
@@ -38,6 +30,14 @@ export const defaultButtonComponentState: ButtonComponentState = {
   name: 'Button Component',
   inputMap: {},
 };
+
+export type SerializedButtonComponent = T.Serialized<
+  'button',
+  ButtonShapes,
+  ButtonTextures,
+  ButtonComponentState,
+  ButtonComponentInput
+>;
 
 export const buttonEditorConfig: T.ComponentEditorConfig = {
   title: 'Button',
