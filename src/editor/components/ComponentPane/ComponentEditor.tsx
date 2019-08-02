@@ -5,23 +5,23 @@ import { ComponentConfig } from './ComponentConfig';
 import { ComponentFilters } from './ComponentFilters';
 
 interface ComponentEditorProps {
-  selected: Maybe<T.SerializedComponent>;
+  component: Maybe<T.SerializedComponent>;
   updateComponentState: (id: string, state: T.ComponentState) => void;
 }
 
 export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
-  selected,
+  component,
   updateComponentState,
 }) =>
-  selected ? (
+  !component ? null : (
     <div>
       <ComponentName
-        initialName={selected.state && selected.state.name}
+        initialName={component.state && component.state.name}
         save={name =>
-          updateComponentState(selected.id, { ...selected.state, name })
+          updateComponentState(component.id, { ...component.state, name })
         }
       />
-      <ComponentConfig component={selected} />
-      <ComponentFilters component={selected} />
+      <ComponentConfig component={component} />
+      <ComponentFilters component={component} />
     </div>
-  ) : null;
+  );

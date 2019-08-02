@@ -1,6 +1,6 @@
 import * as T from '../../types';
 import { testInitialState } from '../testInitialState';
-import { mapComponentWithId } from '../selectors';
+import { mapComponentWithId } from '../maps';
 
 export interface DisplayState {
   components: T.SerializedComponent[];
@@ -24,7 +24,7 @@ export const displayReducer = (
     case 'updateComponentState': {
       const { data } = action;
 
-      return mapComponentWithId(state, data.id, c => ({
+      return mapComponentWithId.proj(state)(data.id, c => ({
         ...c,
         state: data.state,
       }));
@@ -33,10 +33,7 @@ export const displayReducer = (
     case 'updateComponentFilters': {
       const { id, filters } = action.data;
 
-      return mapComponentWithId(state, id, c => ({
-        ...c,
-        filters,
-      }));
+      return mapComponentWithId.proj(state)(id, c => ({ ...c, filters }));
     }
   }
 

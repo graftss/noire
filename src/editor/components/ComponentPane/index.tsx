@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
-import { allComponents, selectedComponent } from '../../../state/selectors';
+import { components, selectedComponent } from '../../../state/selectors';
 import {
   emitDisplayEvents,
   selectEditorOption,
@@ -13,12 +13,12 @@ import { ComponentSelect } from './ComponentSelect';
 
 interface PropsFromState {
   components: T.SerializedComponent[];
-  selected: Maybe<T.SerializedComponent>;
+  selectedComponent: Maybe<T.SerializedComponent>;
 }
 
 const mapStateToProps = (state: T.EditorState): PropsFromState => ({
-  components: allComponents(state.display),
-  selected: selectedComponent(state.display),
+  components: components(state),
+  selectedComponent: selectedComponent(state),
 });
 
 interface PropsFromDispatch {
@@ -43,20 +43,20 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
   components,
   emitDisplayEvents,
   selectComponent,
-  selected,
+  selectedComponent,
   updateComponentState,
 }) => (
   <div>
     <ComponentSelect
-      all={components}
-      selected={selected}
+      components={components}
+      selected={selectedComponent}
       selectComponent={(id: string) => {
         selectComponent(id);
         emitDisplayEvents([{ kind: 'componentSelect', data: [id] }]);
       }}
     />
     <ComponentEditor
-      selected={selected}
+      component={selectedComponent}
       updateComponentState={updateComponentState}
     />
   </div>

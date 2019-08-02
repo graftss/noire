@@ -15,16 +15,6 @@ import {
   mappedControllerKey,
 } from '../../../canvas/component';
 
-interface PropsFromState {
-  controllersById: Dict<T.Controller>;
-  isListening: (s: T.RemapState) => boolean;
-}
-
-interface PropsFromDispatch {
-  emitDisplayEvents: (e: T.DisplayEvent[]) => void;
-  listenNextInput: (s: T.RemapState) => void;
-}
-
 type RemapButtonValue =
   | { kind: 'controller'; controller: T.Controller; key: string }
   | {
@@ -39,14 +29,24 @@ type RemapButtonValue =
       componentFilterKey: T.ComponentFilterKey;
     };
 
-interface RemapButtonProps extends PropsFromState, PropsFromDispatch {
-  value: RemapButtonValue;
+interface PropsFromState {
+  controllersById: Dict<T.Controller>;
+  isListening: (s: T.RemapState) => boolean;
 }
 
 const mapStateToProps = (state: T.EditorState): PropsFromState => ({
-  controllersById: controllersById(state.input),
-  isListening: isListening(state.input),
+  controllersById: controllersById(state),
+  isListening: isListening(state),
 });
+
+interface PropsFromDispatch {
+  emitDisplayEvents: (e: T.DisplayEvent[]) => void;
+  listenNextInput: (s: T.RemapState) => void;
+}
+
+interface RemapButtonProps extends PropsFromState, PropsFromDispatch {
+  value: RemapButtonValue;
+}
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
-import { selectedController, allControllers } from '../../../state/selectors';
+import { selectedController, controllers } from '../../../state/selectors';
 import {
   selectEditorOption,
   updateControllerName,
@@ -15,17 +15,17 @@ interface PropsFromState {
   selectedController: Maybe<T.Controller>;
 }
 
+const mapStateToProps = (state: T.EditorState): PropsFromState => ({
+  controllers: controllers(state),
+  selectedController: selectedController(state),
+});
+
 interface PropsFromDispatch {
   selectEditorOption: (o: T.EditorOption) => void;
   updateControllerName: (id: string, name: string) => void;
 }
 
 interface ControllerEditorProps extends PropsFromState, PropsFromDispatch {}
-
-const mapStateToProps = (state: T.EditorState): PropsFromState => ({
-  controllers: allControllers(state.input),
-  selectedController: selectedController(state.input),
-});
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(
@@ -49,7 +49,7 @@ const BaseControllerPane: React.SFC<ControllerEditorProps> = ({
 }) => (
   <div>
     <ControllerSelect
-      all={controllers}
+      controllers={controllers}
       selected={selectedController}
       selectController={id => selectEditorOption(toEditorOption(id))}
     />

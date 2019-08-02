@@ -3,7 +3,7 @@ import Select from 'react-select';
 import * as T from '../../../types';
 
 interface ComponentSelectProps {
-  all: T.SerializedComponent[];
+  components: T.SerializedComponent[];
   selected: Maybe<T.SerializedComponent>;
   selectComponent: (id: string) => void;
 }
@@ -19,14 +19,14 @@ const toOption = (b: T.SerializedComponent): ComponentOption => ({
 });
 
 export const ComponentSelect: React.SFC<ComponentSelectProps> = ({
-  all,
+  components,
   selected,
   selectComponent,
 }) => (
   <div>
     <Select
       value={selected ? toOption(selected) : null}
-      options={all.map(toOption)}
+      options={components.map(toOption)}
       onChange={o => selectComponent(o.value)}
       placeholder="Components"
     />

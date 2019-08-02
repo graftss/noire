@@ -7,7 +7,7 @@ import {
 } from '../state/actions';
 import {
   controllerWithBinding,
-  allControllers,
+  controllers,
   componentById,
 } from '../state/selectors';
 import { DisplayEventBus } from '../canvas/display/DisplayEventBus';
@@ -57,11 +57,11 @@ export class ControllerManager {
     inputKey: string,
   ) => (binding: T.Binding): void => {
     const state = this.store.getState();
-    const c = controllerWithBinding(state.input, binding);
-    const component = componentById(state.display, componentId);
+    const bindingLocation = controllerWithBinding(state)(binding);
+    const component = componentById(state)(componentId);
 
-    if (c && component) {
-      const { controller, key } = c;
+    if (bindingLocation && component) {
+      const { controller, key } = bindingLocation;
       const update: T.ComponentKeyUpdate = {
         componentId,
         inputKey,
@@ -91,8 +91,8 @@ export class ControllerManager {
     componentFilterKey: T.ComponentFilterKey,
   ) => (binding: T.Binding): void => {
     const state = this.store.getState();
-    const c = controllerWithBinding(state.input, binding);
-    const component = componentById(state.display, componentId);
+    const c = controllerWithBinding(state)(binding);
+    const component = componentById(state)(componentId);
 
     if (c && component) {
       const { controller, key } = c;
@@ -148,9 +148,9 @@ export class ControllerManager {
 
   getInput(): GlobalControllerInput {
     const result: GlobalControllerInput = {};
-    const controllers = allControllers(this.store.getState().input);
+    const cs = controllers(this.store.getState());
 
-    controllers.forEach((controller: T.Controller) => {
+    cs.forEach((controller: T.Controller) => {
       const controllerInput: Dict<T.Input> = {};
 
       for (const bindingKey in controller.bindings) {

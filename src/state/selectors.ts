@@ -1,82 +1,105 @@
 import * as T from '../types';
-import { equalAtKeys, find, keyBy, mapIf } from '../utils';
+import { equalAtKeys, find, keyBy } from '../utils';
 import { hasKeyBoundTo } from '../input/controller';
 
-export const componentById = (
-  state: Maybe<T.DisplayState>,
-  id: string,
-): Maybe<T.SerializedComponent> =>
-  state && find(c => c.id === id, state.components);
+// an instance of the `LiftedSelector` type is a function on a
+// substate slice of `EditorState`, lifted to a function on the
+// full state. the original function on the substate is kept in
+// the `proj` property of the instance, for use in e.g. reducers,
+// which don't have access to the full state.
 
-export const allControllers = (state: T.InputState): T.Controller[] =>
-  state && state.controller.all;
+export type LiftedSelector<S extends keyof T.EditorState, V> = ((
+  state: T.EditorState,
+) => V) & { proj: (substate: T.EditorState[S]) => V };
 
-export const controllerById = (
-  state: T.InputState,
-  id: string,
-): Maybe<T.Controller> => state && find(c => c.id === id, state.controller.all);
+export const lift = <S extends keyof T.EditorState, V>(
+  substateKey: S,
+  substateSelector: (substate: T.EditorState[S]) => V,
+): LiftedSelector<S, V> => {
+  const lifted = (state: T.EditorState): V =>
+    substateSelector(state[substateKey]);
 
-export const controllersById = (state: T.InputState): Dict<T.Controller> =>
-  keyBy(state.controller.all, c => c.id);
-
-export const selectedController = (state: T.InputState): Maybe<T.Controller> =>
-  find(c => c.id === state.controller.selectedId, state.controller.all);
-
-export const controllerWithBinding = (
-  state: T.InputState,
-  binding: T.Binding,
-): Maybe<{ controller: T.Controller; key: string }> => {
-  for (const controller of state.controller.all) {
-    const key = hasKeyBoundTo(controller, binding);
-    if (key) return { controller, key };
-  }
+  lifted.proj = substateSelector;
+  return lifted;
 };
 
-export const allComponents = (state: T.DisplayState): T.SerializedComponent[] =>
-  state.components;
+export const componentById = lift(
+  'display',
+  (state: Maybe<T.DisplayState>) => (
+    id: string,
+  ): Maybe<T.SerializedComponent> =>
+    state && find(c => c.id === id, state.components),
+);
 
-export const selectedComponent = (
-  state: T.DisplayState,
-): Maybe<T.SerializedComponent> =>
-  find(c => c.id === state.selectedComponentId, state.components);
+export const components = lift(
+  'display',
+  (state: T.DisplayState): T.SerializedComponent[] => state.components,
+);
 
-export const selectedComponentProp = <K extends keyof T.SerializedComponent>(
-  state: Maybe<T.DisplayState>,
-  prop: K,
-): Maybe<T.SerializedComponent[K]> => {
-  if (!state) return;
-  const c = selectedComponent(state);
-  return c && c[prop];
-};
+export const selectedComponent = lift(
+  'display',
+  (state: T.DisplayState): Maybe<T.SerializedComponent> =>
+    find(c => c.id === state.selectedComponentId, state.components),
+);
 
-export const mapComponentWithId = (
-  state: T.DisplayState,
-  id: string,
-  f: Auto<T.SerializedComponent>,
-): T.DisplayState => ({
-  ...state,
-  components: mapIf(state.components, c => c.id === id, f),
-});
+export const controllers = lift(
+  'input',
+  (state: T.InputState): T.Controller[] => state && state.controller.all,
+);
 
-export const currentTabKind = (state: T.TabState): T.TabKind => state.kind;
+export const controllerById = lift(
+  'input',
+  (state: T.InputState) => (id: string): Maybe<T.Controller> =>
+    state && find(c => c.id === id, state.controller.all),
+);
 
-export const isListening = (state: T.InputState) => (
-  remap: T.RemapState,
-): boolean => {
-  if (!state.remap) return false;
+export const controllersById = lift(
+  'input',
+  (state: T.InputState): Dict<T.Controller> =>
+    keyBy(state.controller.all, c => c.id),
+);
 
-  let keys: string[] = [];
-  switch (remap.kind) {
-    case 'controller':
-      keys = ['kind', 'controllerId', 'key'];
-      break;
-    case 'component':
-      keys = ['kind', 'componentId', 'key'];
-      break;
-    case 'filter':
-      keys = ['kind', 'componentId', 'componentFilterKey'];
-      break;
-  }
+export const selectedController = lift(
+  'input',
+  (state: T.InputState): Maybe<T.Controller> =>
+    find(c => c.id === state.controller.selectedId, state.controller.all),
+);
 
-  return equalAtKeys(keys, state.remap, remap);
-};
+export const controllerWithBinding = lift(
+  'input',
+  (state: T.InputState) => (
+    binding: T.Binding,
+  ): Maybe<{ controller: T.Controller; key: string }> => {
+    for (const controller of state.controller.all) {
+      const key = hasKeyBoundTo(controller, binding);
+      if (key) return { controller, key };
+    }
+  },
+);
+
+export const isListening = lift(
+  'input',
+  (state: T.InputState) => (remap: T.RemapState): boolean => {
+    if (!state.remap) return false;
+
+    let keys: string[] = [];
+    switch (remap.kind) {
+      case 'controller':
+        keys = ['kind', 'controllerId', 'key'];
+        break;
+      case 'component':
+        keys = ['kind', 'componentId', 'key'];
+        break;
+      case 'filter':
+        keys = ['kind', 'componentId', 'componentFilterKey'];
+        break;
+    }
+
+    return equalAtKeys(keys, state.remap, remap);
+  },
+);
+
+export const currentTabKind = lift(
+  'tab',
+  (state: T.TabState): T.TabKind => state.kind,
+);

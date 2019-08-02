@@ -3,7 +3,7 @@ import Select from 'react-select';
 import * as T from '../../../types';
 
 interface ControllerSelectProps {
-  all: T.Controller[];
+  controllers: T.Controller[];
   selected: Maybe<T.Controller>;
   selectController: (id: string) => void;
 }
@@ -19,14 +19,14 @@ const toOption = (b: T.Controller): ControllerOption => ({
 });
 
 export const ControllerSelect: React.SFC<ControllerSelectProps> = ({
-  all,
+  controllers,
   selected,
   selectController,
 }) => (
   <div>
     <Select
       value={selected ? toOption(selected) : null}
-      options={all.map(toOption)}
+      options={controllers.map(toOption)}
       onChange={o => selectController(o.value)}
       placeholder="Controllers"
     />

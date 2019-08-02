@@ -11,12 +11,12 @@ interface ComponentConfigProps {
 export const ComponentConfig: React.SFC<ComponentConfigProps> = ({
   component,
 }) => {
-  const config = getEditorConfig(component.kind);
+  const { title, keys } = getEditorConfig(component.kind);
 
   return (
     <div>
-      <ConfigTitle label={config.title} />
-      <ConfigKeys component={component} keys={config.keys} />
+      <ConfigTitle label={title} />
+      <ConfigKeys component={component} keys={keys} />
     </div>
   );
 };
