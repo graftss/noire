@@ -101,6 +101,7 @@ export class ControllerManager {
 
       if (component.filters) {
         const newFilters = updateComponentFilterKey(component.filters, update);
+
         this.store.dispatch(updateComponentFilters(componentId, newFilters));
         this.eventBus.emit({
           kind: 'updateComponentFilters',
@@ -149,15 +150,11 @@ export class ControllerManager {
       const controllerInput: Dict<T.Input> = {};
 
       for (const bindingKey in controller.bindings) {
-        const binding: Maybe<T.Binding> = controller.bindings[bindingKey];
+        const binding = controller.bindings[bindingKey];
         if (!binding) continue;
 
-        const input: Maybe<T.Input> = this.globalInputSources.parseBinding(
-          binding,
-        );
-        if (!input) continue;
-
-        controllerInput[bindingKey] = input;
+        const input = this.globalInputSources.parseBinding(binding);
+        if (input) controllerInput[bindingKey] = input;
       }
 
       result[controller.id] = controllerInput;

@@ -81,8 +81,8 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     // component has a parent.
     // in general, the order of the calls made here is very brittle
     // and should be changed carefully.
-
-    const group = new Konva.Group();
+    const offset = component.state.offset;
+    const group = new Konva.Group({ x: offset.x, y: offset.y });
     this.groupsById[component.id] = group;
 
     component.shapeList().forEach(shape => {
@@ -90,6 +90,13 @@ export class KonvaComponentPlugin extends DisplayPlugin {
       shape.on('click', () =>
         this.eventBus.emit({ kind: 'selectComponent', data: component.id }),
       );
+    });
+
+    this.eventBus.on({
+      kind: 'updateComponentState',
+      cb: ([id, state]: [string, T.ComponentState]) => {
+        if (state.offset) this.groupsById[id].setPosition(state.offset);
+      },
     });
 
     this.layer.add(group);

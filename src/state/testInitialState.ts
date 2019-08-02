@@ -93,7 +93,7 @@ const vert: T.SerializedComponent = {
     name: 'vert',
     defaultInput: {},
     inputMap: {},
-    offset: { x: 0, y: 0 },
+    offset: { x: 30, y: 0 },
   },
   graphics: {
     shapes: {
