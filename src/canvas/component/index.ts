@@ -163,7 +163,7 @@ const deserializeComponentFilter = ({
 > => ({
   filter: deserializeInputFilter(filter),
   inputMap,
-  config: filter.config,
+  state: filter.state,
 });
 
 export const deserializeComponentFilterDict = (

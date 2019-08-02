@@ -20,7 +20,7 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
             {filters.map(({ filter, inputMap }, filterIndex) => (
               <div key={filterIndex}>
                 <div>{filter.kind}</div>
-                <div>{JSON.stringify(filter.config)}</div>
+                <div>{JSON.stringify(filter.state)}</div>
                 <div>
                   {getInputFilterKeyList(filter).map(({ filterKey }) => (
                     <div key={filterKey}>

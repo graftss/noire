@@ -132,23 +132,20 @@ export { FillTextureState } from './canvas/texture/FillTexture';
 export { ImageTextureState } from './canvas/texture/ImageTexture';
 export {
   DistortFilterState,
-  StickDistortConfig,
   StickDistortInput,
   StickDistortData,
-  DPadDistortConfig,
   DPadDistortInput,
   DPadDistortData,
 } from './canvas/filter/distort';
 export {
   ZoomFilterState,
-  ButtonZoomConfig,
   ButtonZoomRawInput,
   ButtonZoomData,
 } from './canvas/filter/zoom';
 export {
   Filter,
-  TypedInputFilter,
-  InputFilter,
+  FilterFactory,
+  InputFilterFactory,
   InputFilterKind,
   InputFilterData,
   SerializedInputFilter,

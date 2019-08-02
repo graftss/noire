@@ -108,7 +108,7 @@ const vert: T.SerializedComponent = {
       {
         filter: {
           kind: 'stickDistort',
-          config: {
+          state: {
             xc: 150,
             yc: 300,
             r: 39,
@@ -127,7 +127,7 @@ const vert: T.SerializedComponent = {
       {
         filter: {
           kind: 'stickDistort',
-          config: {
+          state: {
             xc: 240,
             yc: 298,
             r: 39,
@@ -154,8 +154,8 @@ vertProd.graphics.shapes.shape = new Konva.Rect({
   width: 437,
   height: 606,
 });
-(vertProd.filters as any).shape[0].filter.config.debug = false;
-(vertProd.filters as any).shape[1].filter.config.debug = false;
+(vertProd.filters as any).shape[0].filter.state.debug = false;
+(vertProd.filters as any).shape[1].filter.state.debug = false;
 
 const stickGraphics: any = {
   shapes: {

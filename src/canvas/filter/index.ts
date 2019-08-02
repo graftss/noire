@@ -14,33 +14,31 @@ export interface InputFilterData {
   stickDistort: T.StickDistortData;
 }
 
-const inputFilters: { [K in InputFilterKind]: InputFilter<K> } = {
+const inputFilters: { [K in InputFilterKind]: InputFilterFactory<K> } = {
   buttonZoom,
   dPadDistort,
   stickDistort,
 };
 
-export type Filter<S = {}> = (state: S) => (i: ImageData) => void;
+export type Filter = (i: ImageData) => void;
 
-export type TypedInputFilter<C, I extends Dict<T.RawInput>> = (
-  config: C,
-) => Filter<I>;
+export type FilterFactory<S = {}> = (state: S) => (i: ImageData) => void;
 
 export type InputFilterKind = keyof InputFilterData;
 
-export type InputFilter<K extends InputFilterKind> = TypedInputFilter<
-  InputFilterData[K]['config'],
-  InputFilterData[K]['input']
->;
+export type InputFilterFactory<K extends InputFilterKind> = FilterFactory<{
+  state: InputFilterData[K]['state'];
+  input: InputFilterData[K]['input'];
+}>;
 
 export interface SerializedInputFilter<K extends InputFilterKind> {
   kind: K;
-  config: InputFilterData[K]['config'];
+  state: InputFilterData[K]['state'];
 }
 
 export const deserializeInputFilter = <K extends InputFilterKind>(
   filter: SerializedInputFilter<K>,
-): InputFilter<K> => inputFilters[filter.kind];
+): InputFilterFactory<K> => inputFilters[filter.kind];
 
 const filterInputKinds: Record<T.InputFilterKind, Dict<T.InputKind>> = {
   stickDistort: stickDistortInputKinds,

@@ -20,7 +20,7 @@ export interface ZoomFilterState {
   debug?: boolean;
 }
 
-export const zoom: T.Filter<ZoomFilterState> = ({
+export const zoom: T.FilterFactory<ZoomFilterState> = ({
   xc,
   yc,
   r,
@@ -109,18 +109,18 @@ export const zoom: T.Filter<ZoomFilterState> = ({
   copyImageData(resultData, outputData);
 };
 
-export type ButtonZoomConfig = ZoomFilterState;
+export type ButtonZoomState = ZoomFilterState;
 
 export interface ButtonZoomRawInput extends Dict<T.RawInput> {
   down: boolean;
 }
 
 export interface ButtonZoomData {
-  config: ButtonZoomConfig;
+  state: ButtonZoomState;
   input: ButtonZoomRawInput;
 }
 
-export const buttonZoom: T.TypedInputFilter<
-  ButtonZoomConfig,
-  ButtonZoomRawInput
-> = config => ({ down }) => (down ? zoom(config) : noop);
+export const buttonZoom: T.InputFilterFactory<'buttonZoom'> = ({
+  state,
+  input: { down },
+}) => (down ? zoom(state) : noop);

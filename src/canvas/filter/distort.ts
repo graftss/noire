@@ -23,7 +23,7 @@ export interface DistortFilterState {
   debug?: boolean;
 }
 
-export const distort: T.Filter<DistortFilterState> = ({
+export const distort: T.FilterFactory<DistortFilterState> = ({
   xc,
   yc,
   R,
@@ -99,7 +99,7 @@ export const distort: T.Filter<DistortFilterState> = ({
   copyImageData(resultData, outputData);
 };
 
-export interface StickDistortConfig {
+export interface DistortState {
   xc: number;
   yc: number;
   R: number;
@@ -126,14 +126,14 @@ export interface StickDistortInput extends Dict<T.RawInput> {
 }
 
 export interface StickDistortData {
-  config: StickDistortConfig;
+  state: DistortState;
   input: StickDistortInput;
 }
 
-export const stickDistort: T.TypedInputFilter<
-  StickDistortConfig,
-  StickDistortInput
-> = ({ xc, yc, debug, R, r, leash }) => ({ xp, xn, yp, yn }) =>
+export const stickDistort: T.InputFilterFactory<'stickDistort'> = ({
+  state: { xc, yc, debug, R, r, leash },
+  input: { xp, xn, yp, yn },
+}) =>
   distort({
     xc,
     yc,
@@ -143,8 +143,6 @@ export const stickDistort: T.TypedInputFilter<
     xd: Math.round(leash * (R - r) * normalizeAxis(xp, xn)),
     yd: Math.round(leash * (R - r) * normalizeAxis(yp, yn)),
   });
-
-export type DPadDistortConfig = StickDistortConfig;
 
 export const dPadDistortInputKinds: Dict<T.InputKind> = {
   u: 'button',
@@ -156,14 +154,14 @@ export const dPadDistortInputKinds: Dict<T.InputKind> = {
 export type DPadDistortInput = T.DPadInput;
 
 export interface DPadDistortData {
-  config: DPadDistortConfig;
+  state: DistortState;
   input: DPadDistortInput;
 }
 
-export const dPadDistort: T.TypedInputFilter<
-  DPadDistortConfig,
-  DPadDistortInput
-> = ({ xc, yc, debug, R, r: _r, leash }) => ({ u, l, d, r }) =>
+export const dPadDistort: T.InputFilterFactory<'dPadDistort'> = ({
+  state: { xc, yc, debug, R, r: _r, leash },
+  input: { u, l, d, r },
+}) =>
   distort({
     xc,
     yc,

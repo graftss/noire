@@ -19,8 +19,8 @@ export interface ComponentState<
 export interface ComponentFilter<
   K extends T.InputFilterKind = T.InputFilterKind
 > {
-  filter: T.InputFilter<K>;
-  config: T.InputFilterData[K]['config'];
+  filter: T.InputFilterFactory<K>;
+  state: T.InputFilterData[K]['state'];
   inputMap: Dict<T.ControllerKey>;
 }
 
@@ -84,9 +84,9 @@ export abstract class Component<
         const shapeFilterInput = filterInput[key];
 
         const initFilter = (
-          { filter, config }: ComponentFilter,
+          { filter, state }: ComponentFilter,
           index: number,
-        ) => filter(config)(shapeFilterInput[index] as any);
+        ): T.Filter => filter({ state, input: shapeFilterInput[index] as any });
 
         shape.filters(this.filters[key].map(initFilter));
       }
