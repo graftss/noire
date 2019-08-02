@@ -3,12 +3,10 @@ import * as T from '../../types';
 import { Component } from '../component/Component';
 import { without } from '../../utils';
 
-type ComponentState = T.ComponentState<Dict<T.Input>>;
-
 export type Handler =
   | { kind: 'listenNextInput'; cb: CB1<T.RemapState> }
   | { kind: 'stageClick'; cb: CB1<Konva.Stage> }
-  | { kind: 'componentUpdateState'; cb: CB2<string, ComponentState> }
+  | { kind: 'componentUpdateState'; cb: CB2<string, T.ComponentState> }
   | {
       kind: 'componentUpdateFilterKey';
       cb: CB2<string, T.ComponentFilterDict>;
@@ -21,7 +19,7 @@ export type Handler =
 export type DisplayEvent =
   | { kind: 'listenNextInput'; data: [T.RemapState] }
   | { kind: 'stageClick'; data: [Konva.Stage] }
-  | { kind: 'componentUpdateState'; data: [string, ComponentState] }
+  | { kind: 'componentUpdateState'; data: [string, T.ComponentState] }
   | {
       kind: 'componentUpdateFilterKey';
       data: [string, T.ComponentFilterDict];

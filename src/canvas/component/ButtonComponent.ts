@@ -12,19 +12,17 @@ export type ButtonComponentGraphics = T.ComponentGraphics<
   ButtonTextures
 >;
 
-export interface ButtonComponentInput extends Dict<T.Input> {
-  button: T.ButtonInput;
-}
-
-export const buttonInputKinds: T.InputKindProjection<ButtonComponentInput> = {
+export const buttonInputKinds = {
   button: 'button',
-};
+} as const;
+
+export type ButtonComponentInput = T.KindsToRaw<typeof buttonInputKinds>;
 
 const buttonKeys: T.ComponentKey[] = [
   { key: 'button', label: 'Button', inputKind: 'button' },
 ];
 
-export type ButtonComponentState = T.ComponentState<ButtonComponentInput>;
+export type ButtonComponentState = T.ComponentState<typeof buttonInputKinds>;
 
 export const defaultButtonComponentState: ButtonComponentState = {
   name: 'Button Component',
@@ -35,8 +33,8 @@ export type SerializedButtonComponent = T.Serialized<
   'button',
   ButtonShapes,
   ButtonTextures,
-  ButtonComponentState,
-  ButtonComponentInput
+  typeof buttonInputKinds,
+  ButtonComponentState
 >;
 
 export const buttonEditorConfig: T.ComponentEditorConfig = {
@@ -49,7 +47,7 @@ export const buttonEditorConfig: T.ComponentEditorConfig = {
 export class ButtonComponent extends Component<
   ButtonShapes,
   ButtonTextures,
-  ButtonComponentInput,
+  typeof buttonInputKinds,
   ButtonComponentState
 > {
   constructor(
@@ -72,7 +70,7 @@ export class ButtonComponent extends Component<
 
   update(input: Partial<ButtonComponentInput>): void {
     const { textures, shapes } = this.graphics;
-    const { button } = this.computeRawInput(input);
+    const { button } = input;
 
     if (button && shapes.on && textures.on) {
       if (shapes.off) shapes.off.hide();

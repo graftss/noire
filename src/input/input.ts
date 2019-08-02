@@ -16,6 +16,15 @@ export interface ButtonInput {
 
 export type Input = AxisInput | ButtonInput;
 
+export interface RawInputOfKind {
+  button: RawButtonInput;
+  axis: RawAxisInput;
+}
+
+export type KindsToRaw<KS extends Dict<InputKind>> = {
+  [K in keyof KS]: RawInputOfKind[KS[K]];
+};
+
 export type InputKind = Input['kind'];
 
 export type InputKindProjection<I extends Dict<Input>> = {
@@ -36,13 +45,13 @@ export const rawifyInputDict = <I extends Dict<Input>>(
   return mapObj(inputDict, i => i && i.input) as any;
 };
 
-export function defaultInputByKind(kind: 'axis'): AxisInput;
-export function defaultInputByKind(kind: 'button'): ButtonInput;
-export function defaultInputByKind(kind: InputKind): Input {
+export function defaultInputByKind(kind: 'axis'): RawAxisInput;
+export function defaultInputByKind(kind: 'button'): RawButtonInput;
+export function defaultInputByKind(kind: InputKind): RawInput {
   switch (kind) {
     case 'axis':
-      return { kind, input: 0 };
+      return 0;
     case 'button':
-      return { kind, input: false };
+      return false;
   }
 }

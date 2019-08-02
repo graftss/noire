@@ -20,7 +20,7 @@ const inputFilters: { [K in InputFilterKind]: InputFilter<K> } = {
   stickDistort,
 };
 
-export type Filter<S> = (state: S) => (i: ImageData) => void;
+export type Filter<S = {}> = (state: S) => (i: ImageData) => void;
 
 export type TypedInputFilter<C, I extends Dict<T.RawInput>> = (
   config: C,

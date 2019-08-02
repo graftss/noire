@@ -22,14 +22,14 @@ type DPadTextures = typeof dPadTextures[number];
 
 export type DPadGraphics = T.ComponentGraphics<DPadShapes, DPadTextures>;
 
-export type DPadInput = Record<Dir, T.ButtonInput>;
-
-export const dPadInputKinds: T.InputKindProjection<DPadInput> = {
+export const dPadInputKinds = {
   u: 'button',
   l: 'button',
   d: 'button',
   r: 'button',
 } as const;
+
+export type DPadInput = T.KindsToRaw<typeof dPadInputKinds>;
 
 const dPadKeys: T.ComponentKey[] = [
   { key: 'u', label: 'Up', inputKind: 'button' },
@@ -38,7 +38,7 @@ const dPadKeys: T.ComponentKey[] = [
   { key: 'r', label: 'Right', inputKind: 'button' },
 ];
 
-export type DPadState = T.ComponentState<DPadInput> & {};
+export type DPadState = T.ComponentState<typeof dPadInputKinds>;
 
 export const defaultDPadState: DPadState = {
   name: 'DPad Component',
@@ -49,8 +49,8 @@ export type SerializedDPadComponent = T.Serialized<
   'dpad',
   DPadShapes,
   DPadTextures,
-  DPadState,
-  DPadInput
+  typeof dPadInputKinds,
+  DPadState
 >;
 
 export const dPadEditorConfig: T.ComponentEditorConfig = {
@@ -109,7 +109,7 @@ export const simpleDPadTextures = (
 export class DPadComponent extends Component<
   DPadShapes,
   DPadTextures,
-  DPadInput,
+  typeof dPadInputKinds,
   DPadState
 > {
   constructor(
@@ -138,7 +138,7 @@ export class DPadComponent extends Component<
   }
 
   update(input: DPadInput): void {
-    const { u, l, d, r } = this.computeRawInput(input);
+    const { u, l, d, r } = input;
     const { shapes, textures } = this.graphics;
 
     this.updateDirection(u, shapes.u, textures.uOn, textures.uOff);

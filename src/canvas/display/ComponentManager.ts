@@ -1,7 +1,8 @@
-import { map } from 'ramda';
+import { compose, map } from 'ramda';
 import * as T from '../../types';
 import { Component } from '../component/Component';
-import { find, mapObj } from '../../utils';
+import { find, mapObj, unMaybeObj } from '../../utils';
+import { rawifyInputDict } from '../../input/input';
 import { DisplayEventBus } from './DisplayEventBus';
 
 export class ComponentManager {
@@ -61,14 +62,25 @@ export class ComponentManager {
         component.state.inputMap || {},
       );
 
+      const componentRawInput = compose(
+        component.applyDefaultInput,
+        rawifyInputDict,
+        unMaybeObj as (i: Dict<Maybe<T.Input>>) => Dict<T.Input>,
+      )(componentInput);
+
       const filterInput =
         component.filters &&
         mapObj(component.filters, shapeFilters =>
-          shapeFilters.map(getFilterInput),
+          shapeFilters.map(
+            compose(
+              rawifyInputDict,
+              getFilterInput,
+            ),
+          ),
         );
 
       component.applyFilterInput(filterInput);
-      component.update(componentInput, dt);
+      component.update(componentRawInput, dt);
     });
   }
 

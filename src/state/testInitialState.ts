@@ -205,8 +205,8 @@ const dualSticks = (
         boundaryRadius,
         center: { x: center.x - stickDistance / 2, y: center.y },
         inputMap: {
-          xp: { controllerId, key: 'lsXP' },
-          xn: { controllerId, key: 'lsXN' },
+          // xp: { controllerId, key: 'lsXP' },
+          // xn: { controllerId, key: 'lsXN' },
           yn: { controllerId, key: 'lsYN' },
           yp: { controllerId, key: 'lsYP' },
           button: { controllerId, key: 'l3' },

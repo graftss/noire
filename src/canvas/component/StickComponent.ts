@@ -10,21 +10,15 @@ type StickTextures = typeof stickTextures[number];
 
 export type StickGraphics = T.ComponentGraphics<StickShapes, StickTextures>;
 
-export interface StickInput extends Dict<T.Input> {
-  xp: T.AxisInput;
-  xn: T.AxisInput;
-  yp: T.AxisInput;
-  yn: T.AxisInput;
-  button: T.ButtonInput;
-}
-
-export const stickInputKinds: T.InputKindProjection<StickInput> = {
+export const stickInputKinds = {
   xp: 'axis',
   xn: 'axis',
   yp: 'axis',
   yn: 'axis',
   button: 'button',
 } as const;
+
+export type StickInput = T.KindsToRaw<typeof stickInputKinds>;
 
 const stickKeys: T.ComponentKey[] = [
   { key: 'xp', label: 'Right', inputKind: 'axis' },
@@ -34,7 +28,7 @@ const stickKeys: T.ComponentKey[] = [
   { key: 'button', label: 'Trigger', inputKind: 'button' },
 ];
 
-export type StickState = T.ComponentState<StickInput> & {
+export type StickState = T.ComponentState<typeof stickInputKinds> & {
   boundaryRadius: number;
   center: Vec2;
   useDepthScaling: boolean;
@@ -52,8 +46,8 @@ export type SerializedStickComponent = T.Serialized<
   'stick',
   StickShapes,
   StickTextures,
-  StickState,
-  StickInput
+  typeof stickInputKinds,
+  StickState
 >;
 
 export const stickEditorConfig: T.ComponentEditorConfig = {
@@ -69,7 +63,7 @@ const depthFactor = (t: number): number =>
 export class StickComponent extends Component<
   StickShapes,
   StickTextures,
-  StickInput,
+  typeof stickInputKinds,
   StickState
 > {
   constructor(
@@ -144,7 +138,7 @@ export class StickComponent extends Component<
   }
 
   update(input: StickInput): void {
-    const { xn, xp, yn, yp, button } = this.computeRawInput(input);
+    const { xn, xp, yn, yp, button } = input;
     const x = normalizeAxis(xp, xn);
     const y = normalizeAxis(yp, yn);
 

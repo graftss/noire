@@ -122,6 +122,8 @@ export {
   InputKindProjection,
   RawInput,
   RawInputProjection,
+  KindsToRaw,
+  RawInputOfKind,
 } from './input/input';
 export { Texture, SerializedTexture } from './canvas/texture';
 export { TypedSerializedTexture, TypedTexture } from './canvas/texture/Texture';
@@ -131,10 +133,10 @@ export { ImageTextureState } from './canvas/texture/ImageTexture';
 export {
   DistortFilterState,
   StickDistortConfig,
-  StickDistortRawInput,
+  StickDistortInput,
   StickDistortData,
   DPadDistortConfig,
-  DPadDistortRawInput,
+  DPadDistortInput,
   DPadDistortData,
 } from './canvas/filter/distort';
 export {

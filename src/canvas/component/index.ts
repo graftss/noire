@@ -18,8 +18,8 @@ export interface BaseSerializedComponent<
   K,
   SS extends string,
   TS extends string,
-  S,
-  I extends Dict<T.Input>
+  I extends Dict<T.InputKind>,
+  S
 > {
   id: string;
   kind: K;

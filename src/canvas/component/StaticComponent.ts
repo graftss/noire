@@ -9,13 +9,13 @@ type StaticTextures = typeof staticTextures[number];
 
 export type StaticGraphics = T.ComponentGraphics<StaticShapes, StaticTextures>;
 
-export type StaticInput = Record<string, T.Input> & {};
+export const staticInputKinds = {};
 
-export const staticInputKinds: T.InputKindProjection<StaticInput> = {};
+export type StaticInput = T.KindsToRaw<typeof staticInputKinds>;
 
 const staticKeys: T.ComponentKey[] = [];
 
-export type StaticState = T.ComponentState<StaticInput>;
+export type StaticState = T.ComponentState<typeof staticInputKinds>;
 
 export const defaultStaticState: StaticState = {
   name: 'Static Component',
@@ -26,8 +26,8 @@ export type SerializedStaticComponent = T.Serialized<
   'static',
   StaticShapes,
   StaticTextures,
-  StaticState,
-  StaticInput
+  typeof staticInputKinds,
+  StaticState
 >;
 
 export const staticEditorConfig: T.ComponentEditorConfig = {
@@ -40,7 +40,7 @@ export const staticEditorConfig: T.ComponentEditorConfig = {
 export class StaticComponent extends Component<
   StaticShapes,
   StaticTextures,
-  StaticInput,
+  typeof staticInputKinds,
   StaticState
 > {
   constructor(
@@ -66,6 +66,7 @@ export class StaticComponent extends Component<
       textures: { texture },
       shapes: { shape },
     } = this.graphics;
+
     if (texture && shape) texture.apply(shape);
   }
 }

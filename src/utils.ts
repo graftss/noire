@@ -99,6 +99,15 @@ export const unMaybeList = <T>(mts: Maybe<T>[]): T[] => {
   return result;
 };
 
+export const unMaybeObj = <T>(mto: Dict<Maybe<T>>): Dict<T> => {
+  const result: Dict<T> = {};
+  for (const k in mto) {
+    const mt = mto[k];
+    if (mt) result[k] = mt;
+  }
+  return result;
+};
+
 export const toPrecision = (x: number, digits: number): number =>
   Number(x.toFixed(digits));
 

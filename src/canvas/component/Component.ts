@@ -1,24 +1,24 @@
 import Konva from 'konva';
 import * as T from '../../types';
 import { mapObj, unMaybeList, values } from '../../utils';
-import { defaultInputByKind, rawifyInputDict } from '../../input/input';
+import { defaultInputByKind } from '../../input/input';
 
 export interface ComponentGraphics<SS extends string, TS extends string> {
   shapes: Record<SS, Maybe<Konva.Shape>>;
   textures: Record<TS, Maybe<T.Texture>>;
 }
 
-type InputKinds<I extends Dict<T.Input>> = {
-  [K in keyof I]: I[K]['kind'];
-};
-
-export interface ComponentState<I extends Dict<T.Input> = Dict<T.Input>> {
-  defaultInput?: Partial<I>;
+export interface ComponentState<
+  I extends Dict<T.InputKind> = Dict<T.InputKind>
+> {
+  defaultInput?: Partial<T.KindsToRaw<I>>;
   inputMap?: Partial<Record<keyof I, Maybe<T.ControllerKey>>>;
   name: string;
 }
 
-export interface ComponentFilter<K extends T.InputFilterKind> {
+export interface ComponentFilter<
+  K extends T.InputFilterKind = T.InputFilterKind
+> {
   filter: T.InputFilter<K>;
   config: T.InputFilterData[K]['config'];
   inputMap: Dict<T.ControllerKey>;
@@ -32,19 +32,19 @@ export type ComponentFilterDict<SS extends string = string> = Record<
 export abstract class Component<
   SS extends string = string,
   TS extends string = string,
-  I extends Dict<T.Input> = Dict<T.Input>,
+  I extends Dict<T.InputKind> = Dict<T.InputKind>,
   S extends ComponentState<I> = ComponentState<I>
 > {
   id: string;
   graphics: ComponentGraphics<SS, TS>;
-  inputKinds: InputKinds<I>;
+  inputKinds: I;
   state: S;
   filters: Maybe<ComponentFilterDict<SS>>;
 
   constructor(
     id: string,
     graphics: ComponentGraphics<SS, TS>,
-    inputKinds: InputKinds<I>,
+    inputKinds: I,
     state: S,
     filters?: ComponentFilterDict<SS>,
   ) {
@@ -55,44 +55,40 @@ export abstract class Component<
     this.filters = filters;
   }
 
-  protected applyDefaultInput(input: Partial<I>): Required<I> {
+  applyDefaultInput = (
+    input: Partial<T.KindsToRaw<I>>,
+  ): Required<T.KindsToRaw<I>> => {
     const { defaultInput } = this.state;
-    const allInput = mapObj(this.inputKinds, defaultInputByKind) as Required<I>;
+    const allInput = mapObj(this.inputKinds, defaultInputByKind);
+
+    // typescript is too confused here, it's not worth messing with
     for (const key in allInput) {
-      let i: I[Extract<keyof I, string>];
-
-      if (input[key] !== undefined)
-        i = input[key] as I[Extract<keyof I, string>];
-      else if (defaultInput && defaultInput[key] !== undefined)
-        i = input[key] as I[Extract<keyof I, string>];
-      else i = allInput[key];
-
-      allInput[key] = i;
+      if (input[key] !== undefined) {
+        allInput[key] = input[key] as any;
+      } else if (defaultInput && defaultInput[key] !== undefined) {
+        allInput[key] = defaultInput[key] as any;
+      }
     }
 
-    return allInput;
-  }
-
-  protected computeRawInput(
-    input: Partial<I>,
-  ): T.RawInputProjection<Required<I>> {
-    return rawifyInputDict(this.applyDefaultInput(input));
-  }
+    return allInput as Required<T.KindsToRaw<I>>;
+  };
 
   applyFilterInput(
-    filterInput: Maybe<Record<string, Dict<Maybe<T.Input>>[]>>,
+    filterInput: Maybe<Record<string, Dict<Maybe<T.RawInput>>[]>>,
   ): void {
     if (!this.filters || !filterInput) return;
 
     for (const key in this.graphics.shapes) {
       if (this.filters[key]) {
         const shape = this.graphics.shapes[key] as Konva.Shape;
-        const shapeFilterInput = filterInput[key].map(rawifyInputDict);
-        shape.filters(
-          this.filters[key].map(({ filter, config }, index: number) =>
-            filter(config)(shapeFilterInput[index] as any),
-          ),
-        );
+        const shapeFilterInput = filterInput[key];
+
+        const initFilter = (
+          { filter, config }: ComponentFilter,
+          index: number,
+        ) => filter(config)(shapeFilterInput[index] as any);
+
+        shape.filters(this.filters[key].map(initFilter));
       }
     }
   }
@@ -112,5 +108,5 @@ export abstract class Component<
     this.filters = filters;
   }
 
-  abstract update(input: Partial<I>, dt: number): void;
+  abstract update(input: Partial<T.KindsToRaw<I>>, dt: number): void;
 }
