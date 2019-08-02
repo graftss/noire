@@ -1,14 +1,17 @@
 import * as React from 'react';
-import * as T from '../../../../types';
-import { stringifyComponentKey } from '../../../../canvas/component';
-import { RemapButton } from '../../controls/RemapButton';
+import * as T from '../../../types';
+import { stringifyComponentKey } from '../../../canvas/component';
+import { RemapButton } from '../controls/RemapButton';
 
-interface ConfigKeysProps {
+interface ComponentKeysProps {
   component: T.SerializedComponent;
   keys: T.ComponentKey[];
 }
 
-export const ConfigKeys: React.SFC<ConfigKeysProps> = ({ component, keys }) => {
+export const ComponentKeys: React.SFC<ComponentKeysProps> = ({
+  component,
+  keys,
+}) => {
   return (
     <div>
       {keys.map((componentKey: T.ComponentKey) => (

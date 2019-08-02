@@ -1,8 +1,10 @@
 import * as React from 'react';
 import * as T from '../../../types';
-import { ComponentName } from './ComponentName';
-import { ComponentConfig } from './ComponentConfig';
+import { getEditorConfig } from '../../../canvas/component/editor';
 import { ComponentFilters } from './ComponentFilters';
+import { ComponentKeys } from './ComponentKeys';
+import { ComponentName } from './ComponentName';
+import { ComponentTitle } from './ComponentTitle';
 
 interface ComponentEditorProps {
   component: Maybe<T.SerializedComponent>;
@@ -12,8 +14,11 @@ interface ComponentEditorProps {
 export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
   component,
   updateComponentState,
-}) =>
-  !component ? null : (
+}) => {
+  if (!component) return null;
+  const { title, keys } = getEditorConfig(component.kind);
+
+  return (
     <div>
       <ComponentName
         initialName={component.state && component.state.name}
@@ -21,7 +26,9 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
           updateComponentState(component.id, { ...component.state, name })
         }
       />
-      <ComponentConfig component={component} />
+      <ComponentTitle label={title} />
+      <ComponentKeys component={component} keys={keys} />
       <ComponentFilters component={component} />
     </div>
   );
+};
