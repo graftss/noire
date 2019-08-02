@@ -39,11 +39,7 @@ export type RawInputProjection<I extends Dict<Input>> = {
 
 export const rawifyInputDict = <I extends Dict<Input>>(
   inputDict: I,
-): RawInputProjection<I> => {
-  // TODO: is there a way to give the compiler enough information
-  // to avoid this cast?
-  return mapObj(inputDict, i => i && i.input) as any;
-};
+): RawInputProjection<I> => mapObj(i => i && i.input, inputDict) as any;
 
 export function defaultInputByKind(kind: 'axis'): RawAxisInput;
 export function defaultInputByKind(kind: 'button'): RawButtonInput;

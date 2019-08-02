@@ -9,7 +9,7 @@ export const mapComponentWithId = lift(
     f: Auto<T.SerializedComponent>,
   ): T.DisplayState => ({
     ...state,
-    components: mapIf(state.components, c => c.id === id, f),
+    components: mapIf(c => c.id === id, f, state.components),
   }),
 );
 
@@ -20,6 +20,6 @@ export const mapControllerWithId = lift(
     f: Auto<T.Controller>,
   ): T.InputState => ({
     ...state,
-    controllers: mapIf(state.controllers, c => c.id === id, f),
+    controllers: mapIf(c => c.id === id, f, state.controllers),
   }),
 );

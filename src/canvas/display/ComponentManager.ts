@@ -54,7 +54,7 @@ export class ComponentManager {
 
     const getFilterInput = (
       filter: T.ComponentFilter<T.InputFilterKind>,
-    ): Dict<Maybe<T.Input>> => mapObj(filter.inputMap, getControllerKeyInput);
+    ): Dict<Maybe<T.Input>> => mapObj(getControllerKeyInput, filter.inputMap);
 
     this.components.forEach((component: Component) => {
       const componentInput: Dict<Maybe<T.Input>> = map(
@@ -70,13 +70,15 @@ export class ComponentManager {
 
       const filterInput =
         component.filters &&
-        mapObj(component.filters, shapeFilters =>
-          shapeFilters.map(
-            compose(
-              rawifyInputDict,
-              getFilterInput,
+        mapObj(
+          shapeFilters =>
+            shapeFilters.map(
+              compose(
+                rawifyInputDict,
+                getFilterInput,
+              ),
             ),
-          ),
+          component.filters,
         );
 
       component.applyFilterInput(filterInput);

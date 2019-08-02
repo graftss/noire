@@ -56,7 +56,7 @@ export const controllerById = lift(
 export const controllersById = lift(
   'input',
   (state: T.InputState): Dict<T.Controller> =>
-    keyBy(state.controllers, c => c.id),
+    keyBy(c => c.id, state.controllers),
 );
 
 export const selectedController = lift(

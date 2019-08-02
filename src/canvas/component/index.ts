@@ -169,7 +169,7 @@ const deserializeComponentFilter = ({
 export const deserializeComponentFilterDict = (
   filters: SerializedComponentFilterDict,
 ): T.ComponentFilterDict =>
-  mapObj(filters, shapeFilters => shapeFilters.map(deserializeComponentFilter));
+  mapObj(shapeFilters => shapeFilters.map(deserializeComponentFilter), filters);
 
 export interface ComponentFilterKeyUpdate {
   componentId: string;

@@ -12,19 +12,18 @@ export const without = <T>(t: T, ts: T[]): T[] => {
 
 export const sign = (x: number): number => (x > 0 ? 1 : x < 0 ? -1 : 0);
 
-// TODO: how do generics interact with readonly?
 export const cloneArray = <T>(ts: Readonly<T[]>): T[] => ts.map(t => t);
+
+export const uuid = (): string => uuidv4();
+
+export const keyBy = <T>(map: (t: T) => string, ts: T[]): Dict<T> => {
+  return (ts || []).reduce((result, t) => ({ ...result, [map(t)]: t }), {});
+};
 
 export const find = <T>(pred: (t: T) => boolean, list: T[]): Maybe<T> => {
   for (let i = 0; i < list.length; i++) {
     if (pred(list[i])) return list[i];
   }
-};
-
-export const uuid = (): string => uuidv4();
-
-export const keyBy = <T>(ts: T[], map: (t: T) => string | number): Dict<T> => {
-  return (ts || []).reduce((result, t) => ({ ...result, [map(t)]: t }), {});
 };
 
 export const values = <T>(map: Dict<T>): T[] => {
@@ -34,14 +33,14 @@ export const values = <T>(map: Dict<T>): T[] => {
 };
 
 export const mapIf = <T>(
-  ts: T[],
   pred: (t: T) => boolean,
   f: (t: T) => T,
+  ts: T[],
 ): T[] => ts.map(t => (pred(t) ? f(t) : t));
 
 export const mapObj = <K extends string, T, U>(
-  ts: Record<K, T>,
   f: (t: T) => U,
+  ts: Record<K, T>,
 ): Record<K, U> => {
   const result: Partial<Record<K, U>> = {};
   for (let k in ts) result[k] = f(ts[k]);
@@ -50,7 +49,7 @@ export const mapObj = <K extends string, T, U>(
 
 export const shallowCloneObj = <K extends string, T>(
   obj: Record<K, T>,
-): Record<K, T> => mapObj(obj, x => x);
+): Record<K, T> => mapObj(x => x, obj);
 
 export const mapPath = <T, O>(
   p: (string | number)[],

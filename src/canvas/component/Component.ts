@@ -59,7 +59,7 @@ export abstract class Component<
     input: Partial<T.KindsToRaw<I>>,
   ): Required<T.KindsToRaw<I>> => {
     const { defaultInput } = this.state;
-    const allInput = mapObj(this.inputKinds, defaultInputByKind);
+    const allInput = mapObj(defaultInputByKind, this.inputKinds);
 
     // typescript is too confused here, it's not worth messing with
     for (const key in allInput) {
