@@ -1,4 +1,4 @@
-import { assocPath, map, mapObjIndexed, path } from 'ramda';
+import { assocPath, path } from 'ramda';
 import uuidv4 from 'uuid/v4';
 import { equals } from 'ramda';
 
@@ -10,37 +10,15 @@ export const without = <T>(t: T, ts: T[]): T[] => {
   return ts;
 };
 
-export const withoutKey = <O, K extends keyof O>(
-  o: O,
-  key: K,
-): Without<O, K> => {
-  const { [key]: _, ...rest } = o;
-  return rest;
-};
-
 export const sign = (x: number): number => (x > 0 ? 1 : x < 0 ? -1 : 0);
 
 // TODO: how do generics interact with readonly?
 export const cloneArray = <T>(ts: Readonly<T[]>): T[] => ts.map(t => t);
 
-export const mappedApply = (maps): any => mapObjIndexed((v, k) => maps[k](v));
-
-export const mappedEval = maps => k => map(f => f(k), maps);
-
 export const find = <T>(pred: (t: T) => boolean, list: T[]): Maybe<T> => {
   for (let i = 0; i < list.length; i++) {
     if (pred(list[i])) return list[i];
   }
-};
-
-export const defaults = <T>(source: Partial<T>, target: T): T => {
-  for (let key in source) {
-    target[key] = (target[key] !== undefined
-      ? target[key]
-      : source[key]) as T[typeof key];
-  }
-
-  return target;
 };
 
 export const uuid = (): string => uuidv4();
@@ -79,9 +57,6 @@ export const mapPath = <T, O>(
   f: (t: Maybe<T>) => T,
   o: O,
 ): O => assocPath(p, f(path(p, o)), o);
-
-export const cast = <U>(isU: (t: any) => boolean, t: any): Maybe<U> =>
-  isU(t) ? t : undefined;
 
 export const toPairs = <T>(obj: Dict<T>): [string, T][] => {
   const result: [string, T][] = [];
@@ -129,10 +104,10 @@ export const assoc = <K extends string, V>(
   [key]: value,
 });
 
-export const equalAtKeys = (
-  keys: string[],
-  o1: object,
-  o2: object,
+export const equalAtKeys = <KS extends string, O extends Record<KS, any>>(
+  keys: KS[],
+  o1: O,
+  o2: O,
 ): boolean => {
   for (let i = 0; i < keys.length; i++) {
     if (!equals(o1[keys[i]], o2[keys[i]])) return false;
