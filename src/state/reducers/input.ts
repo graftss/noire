@@ -1,6 +1,7 @@
 import * as T from '../../types';
-import { mapIf, mapPath } from '../../utils';
+import { mapPath } from '../../utils';
 import { testInitialState } from '../testInitialState';
+import { mapControllerWithId } from '../maps';
 
 export type RemapState =
   | {
@@ -43,28 +44,16 @@ const setControllerBinding = (key: string, binding: Maybe<T.Binding>) => (
   c: T.Controller,
 ): T.Controller => mapPath(['bindings', key], () => binding, c);
 
-const updateController = (
-  state: InputState,
-  id: string,
-  f: (c: T.Controller) => T.Controller,
-): InputState =>
-  mapPath(
-    ['controller', 'all'],
-    (cs: T.Controller[]) => mapIf(cs, c => c.id === id, f),
-    state,
-  );
-
 export const inputReducer = (
   state: InputState = defaultInputState,
   action: T.EditorAction,
 ): InputState => {
   switch (action.type) {
     case 'selectEditorOption': {
-      return mapPath(
-        ['controller', 'selectedId'],
-        () => (action.data.kind === 'controller' ? action.data.id : undefined),
-        state,
-      );
+      const selectedControllerId =
+        action.data.kind === 'controller' ? action.data.id : undefined;
+
+      return { ...state, selectedControllerId };
     }
 
     case 'listenNextInput': {
@@ -78,8 +67,7 @@ export const inputReducer = (
     case 'updateControllerBinding': {
       const { controllerId, key, binding } = action.data;
 
-      return updateController(
-        state,
+      return mapControllerWithId.proj(state)(
         controllerId,
         setControllerBinding(key, binding),
       );
@@ -89,7 +77,10 @@ export const inputReducer = (
       const input = action.data.name;
       const name = input.length === 0 ? 'Unnamed controller' : input;
 
-      return updateController(state, action.data.id, c => ({ ...c, name }));
+      return mapControllerWithId.proj(state)(action.data.id, c => ({
+        ...c,
+        name,
+      }));
     }
 
     case 'setTab': {

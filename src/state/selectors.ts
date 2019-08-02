@@ -80,22 +80,29 @@ export const controllerWithBinding = lift(
 export const isListening = lift(
   'input',
   (state: T.InputState) => (remap: T.RemapState): boolean => {
-    if (!state.remap) return false;
+    if (!state.remap || !remap) return false;
 
-    let keys: string[] = [];
     switch (remap.kind) {
       case 'controller':
-        keys = ['kind', 'controllerId', 'key'];
-        break;
+        return (
+          state.remap.kind === 'controller' &&
+          equalAtKeys(['kind', 'controllerId', 'key'], state.remap, remap)
+        );
       case 'component':
-        keys = ['kind', 'componentId', 'key'];
-        break;
+        return (
+          state.remap.kind === 'component' &&
+          equalAtKeys(['kind', 'componentId', 'key'], state.remap, remap)
+        );
       case 'filter':
-        keys = ['kind', 'componentId', 'componentFilterKey'];
-        break;
+        return (
+          state.remap.kind === 'filter' &&
+          equalAtKeys(
+            ['kind', 'componentId', 'componentFilterKey'],
+            state.remap,
+            remap,
+          )
+        );
     }
-
-    return equalAtKeys(keys, state.remap, remap);
   },
 );
 
