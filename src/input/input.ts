@@ -39,7 +39,6 @@ export const rawifyInputDict = <I extends Dict<Input>>(
 ): RawInputProjection<I> => {
   // TODO: is there a way to give the compiler enough information
   // to avoid this cast?
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return mapObj(inputDict, i => i && i.input) as any;
 };
 

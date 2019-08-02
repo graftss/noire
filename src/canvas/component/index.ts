@@ -96,7 +96,6 @@ export interface SerializedComponentGraphics<
 export const serializeGraphics = <SS extends string, TS extends string>(
   graphics: T.ComponentGraphics<SS, TS>,
 ): SerializedComponentGraphics<SS, TS> => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result: any = { shapes: {}, textures: {} };
   const { shapes, textures } = graphics;
 
@@ -116,7 +115,6 @@ export const serializeGraphics = <SS extends string, TS extends string>(
 export const deserializeGraphics = <SS extends string, TS extends string>(
   serialized: SerializedComponentGraphics<SS, TS>,
 ): T.ComponentGraphics<SS, TS> => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result: any = { shapes: {}, textures: {} };
   const { shapes, textures } = serialized;
 

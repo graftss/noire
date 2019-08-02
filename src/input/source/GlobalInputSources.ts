@@ -1,7 +1,3 @@
-// I think it makes sense to elide the type checker here for
-// the benefits of genericity and brevity
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import * as T from '../../types';
 import { Keyboard } from './keyboard/Keyboard';
 import { gamepadSourceFactory } from './gamepad';

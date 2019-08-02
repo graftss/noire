@@ -21,10 +21,8 @@ export const withoutKey = <O, K extends keyof O>(
 export const sign = (x: number): number => (x > 0 ? 1 : x < 0 ? -1 : 0);
 
 // TODO: how do generics interact with readonly?
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const cloneArray = <T>(ts: Readonly<T[]>): T[] => ts.map(t => t);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mappedApply = (maps): any => mapObjIndexed((v, k) => maps[k](v));
 
 export const mappedEval = maps => k => map(f => f(k), maps);
@@ -82,7 +80,6 @@ export const mapPath = <T, O>(
   o: O,
 ): O => assocPath(p, f(path(p, o)), o);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const cast = <U>(isU: (t: any) => boolean, t: any): Maybe<U> =>
   isU(t) ? t : undefined;
 

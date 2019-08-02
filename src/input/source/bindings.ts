@@ -13,11 +13,9 @@ export const areBindingsEqual = (
 ): boolean =>
   !b1 || !b2 || b1.sourceKind !== b2.sourceKind || !bindingAPIs[b1.sourceKind]
     ? false
-    : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      bindingAPIs[b1.sourceKind].areBindingsEqual(b1 as any, b2 as any);
+    : bindingAPIs[b1.sourceKind].areBindingsEqual(b1 as any, b2 as any);
 
 export const stringifyBinding = (b: Maybe<T.Binding>): string =>
   !b || !bindingAPIs[b.sourceKind]
     ? 'NONE'
-    : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      bindingAPIs[b.sourceKind].stringifyBinding(b as any);
+    : bindingAPIs[b.sourceKind].stringifyBinding(b as any);
