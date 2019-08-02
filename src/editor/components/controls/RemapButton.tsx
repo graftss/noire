@@ -135,7 +135,7 @@ const BaseRemapButton: React.SFC<RemapButtonProps> = ({
     <button
       onClick={() => {
         listenNextInput(remapTo);
-        emitDisplayEvents([{ kind: 'listenNextInput', data: [remapTo] }]);
+        emitDisplayEvents([{ kind: 'listenNextInput', data: remapTo }]);
       }}
     >
       {stringifyValue(value, remapTo, propsFromState)}

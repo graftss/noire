@@ -3,66 +3,62 @@ import * as T from '../../types';
 import { Component } from '../component/Component';
 import { without } from '../../utils';
 
-export type Handler =
-  | { kind: 'listenNextInput'; cb: CB1<T.RemapState> }
-  | { kind: 'stageClick'; cb: CB1<Konva.Stage> }
-  | { kind: 'componentUpdateState'; cb: CB2<string, T.ComponentState> }
-  | {
-      kind: 'componentUpdateFilterKey';
-      cb: CB2<string, T.ComponentFilterDict>;
-    }
-  | { kind: 'componentSelect'; cb: CB1<Maybe<string>> }
-  | { kind: 'componentAdd'; cb: CB1<Component> }
-  | { kind: 'bindingAdd'; cb: CB2<Component, T.Binding> }
-  | { kind: 'requestDraw'; cb: CB0 };
+type ComponentId = string;
 
-export type DisplayEvent =
-  | { kind: 'listenNextInput'; data: [T.RemapState] }
-  | { kind: 'stageClick'; data: [Konva.Stage] }
-  | { kind: 'componentUpdateState'; data: [string, T.ComponentState] }
-  | {
-      kind: 'componentUpdateFilterKey';
-      data: [string, T.ComponentFilterDict];
-    }
-  | { kind: 'componentSelect'; data: [Maybe<string>] }
-  | { kind: 'componentAdd'; data: [Component] }
-  | { kind: 'bindingAdd'; data: [Component, T.Binding] }
-  | { kind: 'requestDraw'; data?: undefined };
+interface DisplayHandlerData {
+  addComponent: Component;
+  listenNextInput: T.RemapState;
+  requestDraw: undefined;
+  selectComponent: Maybe<ComponentId>;
+  stageClick: Konva.Stage;
+  updateComponentFilters: [ComponentId, T.ComponentFilterDict];
+  updateComponentState: [ComponentId, T.ComponentState];
+}
+
+export type DisplayEventKind = keyof DisplayHandlerData;
+
+type DisplayEventCallback<K extends DisplayEventKind = DisplayEventKind> = (
+  data: DisplayHandlerData[K],
+) => void;
+
+export interface DisplayEventHandler<
+  K extends DisplayEventKind = DisplayEventKind
+> {
+  kind: K;
+  cb: DisplayEventCallback<K>;
+}
+
+export interface DisplayEvent<K extends DisplayEventKind = DisplayEventKind> {
+  kind: K;
+  data: DisplayHandlerData[K];
+}
+
+type AllDisplayEventCallbacks = {
+  [K in DisplayEventKind]: DisplayEventCallback<K>[];
+};
 
 export class DisplayEventBus {
-  private handlers: Record<Handler['kind'], Function[]> = {
+  private callbacks: AllDisplayEventCallbacks = {
+    addComponent: [],
     listenNextInput: [],
-    stageClick: [],
-    componentUpdateState: [],
-    componentUpdateFilterKey: [],
-    componentSelect: [],
-    componentAdd: [],
-    bindingAdd: [],
     requestDraw: [],
+    selectComponent: [],
+    stageClick: [],
+    updateComponentFilters: [],
+    updateComponentState: [],
   };
 
-  emit = (event: DisplayEvent): void => {
-    const eventHandlers = this.handlers[event.kind];
-
-    if (eventHandlers) {
-      const args = event.data || [];
-      eventHandlers.forEach(cb => cb(...args));
-    }
+  emit = <K extends DisplayEventKind>(event: DisplayEvent<K>): void => {
+    this.callbacks[event.kind].forEach(cb => cb(event.data));
   };
 
-  on = (handler: Handler): void => {
-    const eventHandlers = this.handlers[handler.kind];
-
-    if (eventHandlers) {
-      eventHandlers.push(handler.cb);
-    }
+  on = <K extends DisplayEventKind>(handler: DisplayEventHandler<K>): void => {
+    const cbs = this.callbacks[handler.kind] as DisplayEventCallback<K>[];
+    cbs.push(handler.cb);
   };
 
-  off = (handler: Handler): void => {
-    const eventHandlers = this.handlers[handler.kind];
-
-    if (eventHandlers) {
-      without(handler, (eventHandlers as unknown) as Handler[]);
-    }
+  off = <K extends DisplayEventKind>(handler: DisplayEventHandler<K>): void => {
+    const cbs = this.callbacks[handler.kind] as DisplayEventCallback<K>[];
+    without(handler.cb, cbs);
   };
 }

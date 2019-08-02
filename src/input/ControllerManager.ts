@@ -67,14 +67,11 @@ export class ControllerManager {
         inputKey,
         controllerKey: { controllerId: controller.id, key },
       };
+      const newState = updateComponentKey(component.state, update);
 
-      const newState = updateComponentKey(
-        component.state as T.ComponentState,
-        update,
-      );
       this.store.dispatch(updateComponentState(componentId, newState));
       this.eventBus.emit({
-        kind: 'componentUpdateState',
+        kind: 'updateComponentState',
         data: [componentId, newState],
       });
     } else {
@@ -106,7 +103,7 @@ export class ControllerManager {
         const newFilters = updateComponentFilterKey(component.filters, update);
         this.store.dispatch(updateComponentFilters(componentId, newFilters));
         this.eventBus.emit({
-          kind: 'componentUpdateFilterKey',
+          kind: 'updateComponentFilters',
           data: [componentId, deserializeComponentFilterDict(newFilters)],
         });
       }
@@ -136,12 +133,10 @@ export class ControllerManager {
       }
 
       case 'filter': {
-        const { componentId, inputKind, componentFilterKey } = remap;
-        const handler = this.onAwaitedFilterBinding(
-          componentId,
-          componentFilterKey,
-        );
+        const { componentId: id, inputKind, componentFilterKey: key } = remap;
+        const handler = this.onAwaitedFilterBinding(id, key);
         this.nextInputListener.await(inputKind, handler);
+        break;
       }
     }
   };

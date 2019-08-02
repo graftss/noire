@@ -10,16 +10,16 @@ export class ComponentManager {
 
   constructor(private eventBus: DisplayEventBus) {
     eventBus.on({
-      kind: 'componentUpdateState',
-      cb: (id: string, state: T.ComponentState) => {
+      kind: 'updateComponentState',
+      cb: ([id, state]) => {
         const component = this.findById(id);
         if (component) component.setState(state);
       },
     });
 
     eventBus.on({
-      kind: 'componentUpdateFilterKey',
-      cb: (id: string, filters: T.ComponentFilterDict) => {
+      kind: 'updateComponentFilters',
+      cb: ([id, filters]) => {
         const component = this.findById(id);
         if (component) component.setFilters(filters);
       },
@@ -27,16 +27,15 @@ export class ComponentManager {
   }
 
   sync(components: Component[] = []): void {
-    components.forEach(this.add);
     this.components = components;
+    components.forEach(component => {
+      this.add(component);
+      this.eventBus.emit({ kind: 'addComponent', data: component });
+    });
   }
 
   add = (component: Component) => {
     this.components.push(component);
-    this.eventBus.emit({
-      kind: 'componentAdd',
-      data: [component],
-    });
   };
 
   update(globalInput: T.GlobalControllerInput, dt: number): void {

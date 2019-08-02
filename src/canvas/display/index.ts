@@ -24,7 +24,7 @@ export class Display {
     this.syncWithState(getState());
 
     this.eventBus.on({
-      kind: 'componentSelect',
+      kind: 'selectComponent',
       cb: (id: Maybe<string>) =>
         dispatch(selectEditorOption({ kind: 'component', id })),
     });
@@ -41,7 +41,7 @@ export class Display {
   }
 
   draw(): void {
-    this.eventBus.emit({ kind: 'requestDraw' });
+    this.eventBus.emit({ kind: 'requestDraw', data: undefined });
   }
 
   update(input: T.GlobalControllerInput, dt: number): void {

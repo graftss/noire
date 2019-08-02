@@ -55,7 +55,11 @@ export {
   KeyboardKeyBinding,
   KeyboardState,
 } from './input/source/keyboard';
-export { Handler, DisplayEvent } from './canvas/display/DisplayEventBus';
+export {
+  DisplayEventHandler,
+  DisplayEvent,
+  DisplayEventKind,
+} from './canvas/display/DisplayEventBus';
 export {
   BaseSerializedComponent as Serialized,
   SerializedComponent,

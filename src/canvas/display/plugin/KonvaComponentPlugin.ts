@@ -63,23 +63,19 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     this.layer.add(this.border);
 
     this.stage.on('click', this.onStageClick);
-    this.eventBus.on({ kind: 'componentAdd', cb: this.onComponentAdd });
+    this.eventBus.on({ kind: 'addComponent', cb: this.onAddComponent });
     this.eventBus.on({ kind: 'requestDraw', cb: () => this.layer.draw() });
-    this.eventBus.on({ kind: 'componentSelect', cb: this.onComponentSelect });
+    this.eventBus.on({ kind: 'selectComponent', cb: this.onSelectComponent });
   }
 
   private onStageClick = ({ target }: { target: Konva.Node }) => {
     if (target === this.border) {
       this.deselectComponent();
-
-      this.eventBus.emit({
-        kind: 'stageClick',
-        data: [this.stage],
-      });
+      this.eventBus.emit({ kind: 'stageClick', data: this.stage });
     }
   };
 
-  private onComponentAdd = (component: T.Component): void => {
+  private onAddComponent = (component: T.Component): void => {
     // we need to add each shape to its group before calling `init`
     // on the component, which assumes that each shape in the
     // component has a parent.
@@ -92,7 +88,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     component.shapeList().forEach(shape => {
       group.add(shape);
       shape.on('click', () =>
-        this.eventBus.emit({ kind: 'componentSelect', data: [component.id] }),
+        this.eventBus.emit({ kind: 'selectComponent', data: component.id }),
       );
     });
 
@@ -106,7 +102,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     this.selected = undefined;
   };
 
-  private onComponentSelect = (id: Maybe<string>): void => {
+  private onSelectComponent = (id: Maybe<string>): void => {
     if (!id) return;
 
     if (this.selected && id !== this.selected.componentId) {
