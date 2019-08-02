@@ -8,8 +8,6 @@ type StickShapes = typeof stickShapes[number];
 const stickTextures = ['boundary', 'stick', 'stickDown', 'center'] as const;
 type StickTextures = typeof stickTextures[number];
 
-export type StickGraphics = T.ComponentGraphics<StickShapes, StickTextures>;
-
 export const stickInputKinds = {
   xp: 'axis',
   xn: 'axis',
@@ -68,7 +66,7 @@ export class StickComponent extends Component<
 > {
   constructor(
     id: string,
-    graphics: StickGraphics,
+    graphics: T.ComponentGraphics<StickShapes, StickTextures>,
     state: Partial<StickState>,
     filters: T.ComponentFilterDict<StickShapes>,
   ) {

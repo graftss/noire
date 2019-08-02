@@ -7,11 +7,6 @@ type ButtonShapes = typeof buttonShapes[number];
 const buttonTextures = ['on', 'off'] as const;
 type ButtonTextures = typeof buttonTextures[number];
 
-export type ButtonComponentGraphics = T.ComponentGraphics<
-  ButtonShapes,
-  ButtonTextures
->;
-
 export const buttonInputKinds = {
   button: 'button',
 } as const;
@@ -52,7 +47,7 @@ export class ButtonComponent extends Component<
 > {
   constructor(
     id: string,
-    graphics: ButtonComponentGraphics,
+    graphics: T.ComponentGraphics<ButtonShapes, ButtonTextures>,
     state: Partial<ButtonComponentState>,
     filters: T.ComponentFilterDict<ButtonShapes>,
   ) {

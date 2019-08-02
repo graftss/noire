@@ -7,8 +7,6 @@ type StaticShapes = typeof staticShapes[number];
 const staticTextures = ['texture'] as const;
 type StaticTextures = typeof staticTextures[number];
 
-export type StaticGraphics = T.ComponentGraphics<StaticShapes, StaticTextures>;
-
 export const staticInputKinds = {};
 
 export type StaticInput = T.KindsToRaw<typeof staticInputKinds>;
@@ -45,7 +43,7 @@ export class StaticComponent extends Component<
 > {
   constructor(
     id: string,
-    graphics: StaticGraphics,
+    graphics: T.ComponentGraphics<StaticShapes, StaticTextures>,
     state: Partial<StaticState>,
     filters: T.ComponentFilterDict<StaticShapes>,
   ) {

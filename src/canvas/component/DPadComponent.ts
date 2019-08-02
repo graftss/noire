@@ -20,8 +20,6 @@ const dPadTextures = [
 ] as const;
 type DPadTextures = typeof dPadTextures[number];
 
-export type DPadGraphics = T.ComponentGraphics<DPadShapes, DPadTextures>;
-
 export const dPadInputKinds = {
   u: 'button',
   l: 'button',
@@ -114,7 +112,7 @@ export class DPadComponent extends Component<
 > {
   constructor(
     id: string,
-    graphics: DPadGraphics,
+    graphics: T.ComponentGraphics<DPadShapes, DPadTextures>,
     state: Partial<DPadState>,
     filters: T.ComponentFilterDict<DPadShapes>,
   ) {
