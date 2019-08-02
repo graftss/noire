@@ -24,10 +24,14 @@ export const displayReducer = (
     case 'updateComponentState': {
       const { data } = action;
 
-      return mapComponentWithId.proj(state)(data.id, c => ({
-        ...c,
-        state: data.state,
-      }));
+      return mapComponentWithId.proj(state)(
+        data.id,
+        c =>
+          ({
+            ...c,
+            state: { ...c.state, ...data.state },
+          } as typeof c),
+      );
     }
 
     case 'updateComponentFilters': {

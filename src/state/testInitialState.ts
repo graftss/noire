@@ -89,7 +89,12 @@ const ps2Controller2: T.PS2Controller = {
 const vert: T.SerializedComponent = {
   id: ids[7],
   kind: 'static',
-  state: { name: 'vert' },
+  state: {
+    name: 'vert',
+    defaultInput: {},
+    inputMap: {},
+    offset: { x: 0, y: 0 },
+  },
   graphics: {
     shapes: {
       shape: serializeNode(
@@ -202,6 +207,8 @@ const dualSticks = (
       graphics,
       state: {
         name: 'left stick',
+        defaultInput: {},
+        offset: { x: 0, y: 0 },
         boundaryRadius,
         center: { x: center.x - stickDistance / 2, y: center.y },
         inputMap: {
@@ -220,6 +227,8 @@ const dualSticks = (
       graphics,
       state: {
         name: 'right stick',
+        defaultInput: {},
+        offset: { x: 0, y: 0 },
         boundaryRadius,
         center: { x: center.x + stickDistance / 2, y: center.y },
         inputMap: {
@@ -253,6 +262,8 @@ const dPad: T.SerializedComponent = {
     ),
   },
   state: {
+    defaultInput: {},
+    offset: { x: 0, y: 0 },
     name: 'directional pad',
     inputMap: {
       d: { controllerId, key: 'padD' },
@@ -294,6 +305,8 @@ const button: T.SerializedComponent = {
     inputMap: {
       button: { controllerId, key: 'square' },
     },
+    defaultInput: {},
+    offset: { x: 0, y: 0 },
   },
 };
 
@@ -313,7 +326,12 @@ const staticImage: T.SerializedComponent = {
       },
     },
   },
-  state: { inputMap: {}, name: 'noire' },
+  state: {
+    inputMap: {},
+    name: 'noire',
+    offset: { x: 0, y: 0 },
+    defaultInput: {},
+  },
 };
 
 const components: T.SerializedComponent[] = [

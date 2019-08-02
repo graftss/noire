@@ -13,8 +13,16 @@ export interface ComponentState<
 > {
   defaultInput?: Partial<T.KindsToRaw<I>>;
   inputMap?: Partial<Record<keyof I, Maybe<T.ControllerKey>>>;
-  name: string;
+  name?: string;
+  offset?: Vec2;
 }
+
+const defaultComponentState: Required<ComponentState> = {
+  defaultInput: {},
+  inputMap: {},
+  name: 'Untitled component',
+  offset: { x: 0, y: 0 },
+};
 
 export interface ComponentFilter<
   K extends T.InputFilterKind = T.InputFilterKind
@@ -38,7 +46,7 @@ export abstract class Component<
   id: string;
   graphics: ComponentGraphics<SS, TS>;
   inputKinds: I;
-  state: S;
+  state: Required<S>;
   filters: Maybe<ComponentFilterDict<SS>>;
 
   constructor(
@@ -51,7 +59,7 @@ export abstract class Component<
     this.id = id;
     this.graphics = graphics;
     this.inputKinds = inputKinds;
-    this.state = state;
+    this.state = { ...defaultComponentState, ...state } as Required<S>;
     this.filters = filters;
   }
 
@@ -100,8 +108,8 @@ export abstract class Component<
   // parent stage.
   init(): void {}
 
-  setState(state: S): void {
-    this.state = state;
+  updateState(state: S): void {
+    this.state = { ...this.state, ...state };
   }
 
   setFilters(filters: ComponentFilterDict<SS>): void {

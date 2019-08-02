@@ -13,7 +13,7 @@ export class ComponentManager {
       kind: 'updateComponentState',
       cb: ([id, state]) => {
         const component = this.findById(id);
-        if (component) component.setState(state);
+        if (component) component.updateState(state);
       },
     });
 
