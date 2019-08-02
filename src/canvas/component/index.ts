@@ -24,7 +24,7 @@ export interface BaseSerializedComponent<
   id: string;
   kind: K;
   graphics: SerializedComponentGraphics<SS, TS>;
-  state: Partial<S> & T.TypedComponentState<I>;
+  state: Partial<S> & T.ComponentState<I>;
   filters?: Record<SS, SerializedComponentFilter<T.InputFilterKind>[]>;
 }
 

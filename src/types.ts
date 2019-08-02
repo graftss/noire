@@ -73,11 +73,9 @@ export {
 } from './canvas/component/editor';
 export {
   ComponentState,
-  TypedComponentState,
   Component,
   ComponentGraphics,
   ComponentFilter,
-  TypedComponentFilterDict,
   ComponentFilterDict,
 } from './canvas/component/Component';
 export {
@@ -115,7 +113,6 @@ export {
 } from './state/reducers/input';
 export { EditorStore } from './state/createStore';
 export {
-  AllRaw,
   AxisInput,
   RawAxisInput,
   ButtonInput,

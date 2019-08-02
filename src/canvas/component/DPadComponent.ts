@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { TypedComponent } from './Component';
+import { Component } from './Component';
 
 const dirs = ['u', 'l', 'd', 'r'] as const;
 type Dir = typeof dirs[number];
@@ -38,7 +38,7 @@ const dPadKeys: T.ComponentKey[] = [
   { key: 'r', label: 'Right', inputKind: 'button' },
 ];
 
-export type DPadState = T.TypedComponentState<DPadInput> & {};
+export type DPadState = T.ComponentState<DPadInput> & {};
 
 export const defaultDPadState: DPadState = {
   name: 'DPad Component',
@@ -106,10 +106,9 @@ export const simpleDPadTextures = (
   rOff: off,
 });
 
-export class DPadComponent extends TypedComponent<
+export class DPadComponent extends Component<
   DPadShapes,
   DPadTextures,
-  DPadGraphics,
   DPadInput,
   DPadState
 > {
@@ -117,7 +116,7 @@ export class DPadComponent extends TypedComponent<
     id: string,
     graphics: DPadGraphics,
     state: Partial<DPadState>,
-    filters: T.TypedComponentFilterDict<DPadShapes>,
+    filters: T.ComponentFilterDict<DPadShapes>,
   ) {
     super(
       id,

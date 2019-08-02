@@ -1,6 +1,6 @@
 import * as T from '../../types';
 import { normalizeAxis } from '../../utils';
-import { TypedComponent } from './Component';
+import { Component } from './Component';
 
 const stickShapes = ['boundary', 'stick', 'center'] as const;
 type StickShapes = typeof stickShapes[number];
@@ -34,7 +34,7 @@ const stickKeys: T.ComponentKey[] = [
   { key: 'button', label: 'Trigger', inputKind: 'button' },
 ];
 
-export type StickState = T.TypedComponentState<StickInput> & {
+export type StickState = T.ComponentState<StickInput> & {
   boundaryRadius: number;
   center: Vec2;
   useDepthScaling: boolean;
@@ -66,10 +66,9 @@ export const stickEditorConfig: T.ComponentEditorConfig = {
 const depthFactor = (t: number): number =>
   t > 0.2 ? 1 - 0.08 * Math.abs(t) : 1 - 0.02 * Math.abs(t);
 
-export class StickComponent extends TypedComponent<
+export class StickComponent extends Component<
   StickShapes,
   StickTextures,
-  StickGraphics,
   StickInput,
   StickState
 > {
@@ -77,7 +76,7 @@ export class StickComponent extends TypedComponent<
     id: string,
     graphics: StickGraphics,
     state: Partial<StickState>,
-    filters: T.TypedComponentFilterDict<StickShapes>,
+    filters: T.ComponentFilterDict<StickShapes>,
   ) {
     super(
       id,

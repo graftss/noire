@@ -3,7 +3,7 @@ import * as T from '../../types';
 import { Component } from '../component/Component';
 import { without } from '../../utils';
 
-type ComponentState = T.TypedComponentState<Dict<T.Input>>;
+type ComponentState = T.ComponentState<Dict<T.Input>>;
 
 export type Handler =
   | { kind: 'listenNextInput'; cb: CB1<T.RemapState> }

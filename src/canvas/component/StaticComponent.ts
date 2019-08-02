@@ -1,5 +1,5 @@
 import * as T from '../../types';
-import { TypedComponent } from './Component';
+import { Component } from './Component';
 
 const staticShapes = ['shape'] as const;
 type StaticShapes = typeof staticShapes[number];
@@ -15,7 +15,7 @@ export const staticInputKinds: T.InputKindProjection<StaticInput> = {};
 
 const staticKeys: T.ComponentKey[] = [];
 
-export type StaticState = T.TypedComponentState<StaticInput>;
+export type StaticState = T.ComponentState<StaticInput>;
 
 export const defaultStaticState: StaticState = {
   name: 'Static Component',
@@ -37,10 +37,9 @@ export const staticEditorConfig: T.ComponentEditorConfig = {
   textures: staticTextures,
 };
 
-export class StaticComponent extends TypedComponent<
+export class StaticComponent extends Component<
   StaticShapes,
   StaticTextures,
-  StaticGraphics,
   StaticInput,
   StaticState
 > {
@@ -48,7 +47,7 @@ export class StaticComponent extends TypedComponent<
     id: string,
     graphics: StaticGraphics,
     state: Partial<StaticState>,
-    filters: T.TypedComponentFilterDict<StaticShapes>,
+    filters: T.ComponentFilterDict<StaticShapes>,
   ) {
     super(
       id,

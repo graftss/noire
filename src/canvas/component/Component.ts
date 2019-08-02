@@ -12,13 +12,11 @@ type InputKinds<I extends Dict<T.Input>> = {
   [K in keyof I]: I[K]['kind'];
 };
 
-export interface TypedComponentState<I extends Dict<T.Input>> {
+export interface ComponentState<I extends Dict<T.Input> = Dict<T.Input>> {
   defaultInput?: Partial<I>;
   inputMap?: Partial<Record<keyof I, Maybe<T.ControllerKey>>>;
   name: string;
 }
-
-export type ComponentState = TypedComponentState<Dict<T.Input>>;
 
 export interface ComponentFilter<K extends T.InputFilterKind> {
   filter: T.InputFilter<K>;
@@ -26,32 +24,29 @@ export interface ComponentFilter<K extends T.InputFilterKind> {
   inputMap: Dict<T.ControllerKey>;
 }
 
-export type TypedComponentFilterDict<SS extends string> = Record<
+export type ComponentFilterDict<SS extends string = string> = Record<
   SS,
   ComponentFilter<T.InputFilterKind>[]
 >;
 
-export type ComponentFilterDict = Dict<ComponentFilter<T.InputFilterKind>[]>;
-
-export abstract class TypedComponent<
-  SS extends string,
-  TS extends string,
-  G extends ComponentGraphics<SS, TS>,
-  I extends Dict<T.Input>,
-  S extends TypedComponentState<I>
+export abstract class Component<
+  SS extends string = string,
+  TS extends string = string,
+  I extends Dict<T.Input> = Dict<T.Input>,
+  S extends ComponentState<I> = ComponentState<I>
 > {
   id: string;
-  graphics: G;
+  graphics: ComponentGraphics<SS, TS>;
   inputKinds: InputKinds<I>;
   state: S;
-  filters: Maybe<TypedComponentFilterDict<SS>>;
+  filters: Maybe<ComponentFilterDict<SS>>;
 
   constructor(
     id: string,
-    graphics: G,
+    graphics: ComponentGraphics<SS, TS>,
     inputKinds: InputKinds<I>,
     state: S,
-    filters?: TypedComponentFilterDict<SS>,
+    filters?: ComponentFilterDict<SS>,
   ) {
     this.id = id;
     this.graphics = graphics;
@@ -78,7 +73,9 @@ export abstract class TypedComponent<
     return allInput;
   }
 
-  protected computeRawInput(input: Partial<I>): T.AllRaw<I> {
+  protected computeRawInput(
+    input: Partial<I>,
+  ): T.RawInputProjection<Required<I>> {
     return rawifyInputDict(this.applyDefaultInput(input));
   }
 
@@ -111,17 +108,9 @@ export abstract class TypedComponent<
     this.state = state;
   }
 
-  setFilters(filters: TypedComponentFilterDict<SS>): void {
+  setFilters(filters: ComponentFilterDict<SS>): void {
     this.filters = filters;
   }
 
   abstract update(input: Partial<I>, dt: number): void;
 }
-
-export type Component = TypedComponent<
-  string,
-  string,
-  ComponentGraphics<string, string>,
-  Dict<T.Input>,
-  ComponentState
->;
