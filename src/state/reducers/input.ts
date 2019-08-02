@@ -91,6 +91,17 @@ export const inputReducer = (
 
       return updateController(state, action.data.id, c => ({ ...c, name }));
     }
+
+    case 'setTab': {
+      const shouldAutoSelect =
+        action.data === 'controllers' &&
+        state.controllers.length > 0 &&
+        state.selectedControllerId === undefined;
+
+      return shouldAutoSelect
+        ? { ...state, selectedControllerId: state.controllers[0].id }
+        : state;
+    }
   }
 
   return state;
