@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as T from '../../../types';
 import { TextField } from '../controls/TextField';
+import { BooleanField } from '../controls/BooleanField';
 import { FloatField } from '../controls/FloatField';
 
 interface ComponentStateProps {
@@ -35,10 +36,9 @@ const renderField = (
       return (
         <div>
           <span>{field.label}: </span>
-          <input
-            type="checkbox"
-            checked={value}
-            onChange={() => update(field.stateKey, !value)}
+          <BooleanField
+            defaultValue={value}
+            update={boolean => update(field.stateKey, boolean)}
           />
         </div>
       );
