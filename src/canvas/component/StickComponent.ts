@@ -28,16 +28,13 @@ const stickKeys: T.ComponentKey[] = [
 
 export type StickState = T.ComponentState<typeof stickInputKinds> & {
   boundaryRadius: number;
-  center: Vec2;
   useDepthScaling: boolean;
 };
 
 export const defaultStickState: StickState = {
   name: 'Stick Component',
   boundaryRadius: 26,
-  center: { x: 0, y: 0 },
   useDepthScaling: false,
-  inputMap: {},
 };
 
 export type SerializedStickComponent = T.Serialized<
@@ -85,21 +82,19 @@ export class StickComponent extends Component<
   }
 
   private centerPosition(x: number, y: number): Vec2 {
-    const { center, boundaryRadius } = this.state;
+    const { boundaryRadius } = this.state;
 
     return {
-      x: center.x + x * boundaryRadius,
-      y: center.y + y * boundaryRadius,
+      x: x * boundaryRadius,
+      y: y * boundaryRadius,
     };
   }
 
   private updateBoundary(): void {
     const shape = this.graphics.shapes.boundary;
     const texture = this.graphics.textures.boundary;
-    const { center } = this.state;
 
     if (shape && texture) {
-      shape.position(center);
       texture.apply(shape);
     }
   }

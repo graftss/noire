@@ -17,7 +17,6 @@ export type StaticState = T.ComponentState<typeof staticInputKinds>;
 
 export const defaultStaticState: StaticState = {
   name: 'Static Component',
-  inputMap: {},
 };
 
 export type SerializedStaticComponent = T.Serialized<

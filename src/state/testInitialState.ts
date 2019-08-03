@@ -166,7 +166,6 @@ const stickGraphics: any = {
   shapes: {
     boundary: serializeNode(new Konva.Circle({ radius: 20 })),
     stick: serializeNode(new Konva.Circle({ radius: 3 })),
-    // center: serializeNode(new Konva.Circle({ radius: 3 })),
   },
   textures: {
     boundary: {
@@ -196,7 +195,7 @@ const stickGraphics: any = {
 
 const dualSticks = (
   graphics,
-  center: Vec2,
+  offset: Vec2,
   stickDistance: number,
   boundaryRadius: number,
 ): [T.SerializedComponent, T.SerializedComponent] => {
@@ -208,9 +207,8 @@ const dualSticks = (
       state: {
         name: 'left stick',
         defaultInput: {},
-        offset: { x: 0, y: 0 },
+        offset,
         boundaryRadius,
-        center: { x: center.x - stickDistance / 2, y: center.y },
         inputMap: {
           // xp: { controllerId, key: 'lsXP' },
           // xn: { controllerId, key: 'lsXN' },
@@ -228,9 +226,8 @@ const dualSticks = (
       state: {
         name: 'right stick',
         defaultInput: {},
-        offset: { x: 0, y: 0 },
+        offset: { x: offset.x + stickDistance, y: offset.y },
         boundaryRadius,
-        center: { x: center.x + stickDistance / 2, y: center.y },
         inputMap: {
           xp: { controllerId, key: 'rsXP' },
           xn: { controllerId, key: 'rsXN' },

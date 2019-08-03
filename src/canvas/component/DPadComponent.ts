@@ -40,7 +40,6 @@ export type DPadState = T.ComponentState<typeof dPadInputKinds>;
 
 export const defaultDPadState: DPadState = {
   name: 'DPad Component',
-  inputMap: {},
 };
 
 export type SerializedDPadComponent = T.Serialized<
