@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InputWithDefault } from '../controls/InputWithDefault';
+import { TextField } from '../controls/TextField';
 
 interface ControllerNameProps {
   initialName: string;
@@ -12,7 +12,7 @@ export const ControllerName: React.SFC<ControllerNameProps> = ({
 }) => {
   return (
     <div>
-      name: <InputWithDefault defaultValue={initialName} update={update} />
+      name: <TextField defaultValue={initialName} type="text" update={update} />
     </div>
   );
 };

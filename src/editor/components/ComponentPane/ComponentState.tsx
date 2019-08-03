@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as T from '../../../types';
-import { InputWithDefault } from '../controls/InputWithDefault';
+import { TextField } from '../controls/TextField';
 
 interface ComponentStateProps {
   component: T.SerializedComponent;
@@ -20,8 +20,9 @@ const renderField = (
       return (
         <div>
           <span>{field.label}: </span>
-          <InputWithDefault
+          <TextField
             defaultValue={value}
+            type="text"
             update={string => update(field.stateKey, string)}
           />
         </div>
@@ -34,8 +35,9 @@ const renderField = (
       return (
         <div>
           <span>{field.label}: </span>
-          <InputWithDefault
+          <TextField
             defaultValue={value.toString()}
+            type="number"
             update={number => update(field.stateKey, Number(number))}
           />
         </div>
@@ -63,12 +65,14 @@ const renderField = (
       return (
         <div>
           <span>{field.label}: </span>
-          <InputWithDefault
+          <TextField
             defaultValue={value.x.toString()}
+            type="number"
             update={x => update(field.stateKey, { x: parseInt(x), y: value.y })}
           />
-          <InputWithDefault
+          <TextField
             defaultValue={value.y.toString()}
+            type="number"
             update={y => update(field.stateKey, { x: value.x, y: parseInt(y) })}
           />
         </div>
