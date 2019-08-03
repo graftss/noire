@@ -4,11 +4,12 @@ import { stickEditorConfig } from './StickComponent';
 import { dPadEditorConfig } from './DPadComponent';
 import { staticEditorConfig } from './StaticComponent';
 
-export interface ComponentEditorField {
+export type ComponentEditorField = {
   stateKey: string;
-  kind: 'string' | 'number' | 'boolean' | 'Vec2';
   label: string;
-}
+} & (
+  | { kind: 'string' | 'boolean' }
+  | { kind: 'Vec2' | 'number'; precision?: number });
 
 export interface ComponentEditorConfig {
   title: string;
@@ -27,8 +28,8 @@ const componentEditorConfigs: Record<T.ComponentKind, ComponentEditorConfig> = {
 
 const baseEditorFields: ComponentEditorField[] = [
   { label: 'Name', kind: 'string', stateKey: 'name' },
-  { label: 'Offset', kind: 'Vec2', stateKey: 'offset' },
-  { label: 'Scale', kind: 'Vec2', stateKey: 'scale' },
+  { label: 'Offset', kind: 'Vec2', stateKey: 'offset', precision: 1 },
+  { label: 'Scale', kind: 'Vec2', stateKey: 'scale', precision: 2 },
 ];
 
 export const getEditorConfig = (

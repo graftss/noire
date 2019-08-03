@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as T from '../../../types';
 import { TextField } from '../controls/TextField';
+import { FloatField } from '../controls/FloatField';
 
 interface ComponentStateProps {
   component: T.SerializedComponent;
@@ -22,23 +23,7 @@ const renderField = (
           <span>{field.label}: </span>
           <TextField
             defaultValue={value}
-            type="text"
             update={string => update(field.stateKey, string)}
-          />
-        </div>
-      );
-    }
-
-    case 'number': {
-      const value: number = component.state[field.stateKey];
-
-      return (
-        <div>
-          <span>{field.label}: </span>
-          <TextField
-            defaultValue={value.toString()}
-            type="number"
-            update={number => update(field.stateKey, Number(number))}
           />
         </div>
       );
@@ -59,21 +44,36 @@ const renderField = (
       );
     }
 
-    case 'Vec2': {
-      const value: Vec2 = component.state[field.stateKey];
+    case 'number': {
+      const value: number = component.state[field.stateKey];
 
       return (
         <div>
           <span>{field.label}: </span>
-          <TextField
-            defaultValue={value.x.toString()}
-            type="number"
-            update={x => update(field.stateKey, { x: parseInt(x), y: value.y })}
+          <FloatField
+            defaultValue={value}
+            precision={field.precision}
+            update={number => update(field.stateKey, number)}
           />
-          <TextField
-            defaultValue={value.y.toString()}
-            type="number"
-            update={y => update(field.stateKey, { x: value.x, y: parseInt(y) })}
+        </div>
+      );
+    }
+
+    case 'Vec2': {
+      const { x, y }: Vec2 = component.state[field.stateKey];
+
+      return (
+        <div>
+          <span>{field.label}: </span>
+          <FloatField
+            defaultValue={x}
+            precision={field.precision}
+            update={newX => update(field.stateKey, { x: newX, y })}
+          />
+          <FloatField
+            defaultValue={y}
+            precision={field.precision}
+            update={newY => update(field.stateKey, { x, y: newY })}
           />
         </div>
       );

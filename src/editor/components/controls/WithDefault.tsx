@@ -17,14 +17,14 @@ export class WithDefault<T> extends React.Component<Props<T>, State<T>> {
   }
 
   componentWillReceiveProps(nextProps: Props<T>): void {
-    if (nextProps.defaultValue !== this.props.defaultValue) {
-      this.setState({ value: nextProps.defaultValue });
+    if (nextProps.defaultValue !== this.state.value) {
+      this.setValue(nextProps.defaultValue);
     }
   }
 
+  setValue = (value: T) => this.setState({ value });
+
   render(): React.ReactNode {
-    return this.props.render(this.state.value, value =>
-      this.setState({ value }),
-    );
+    return this.props.render(this.state.value, this.setValue);
   }
 }
