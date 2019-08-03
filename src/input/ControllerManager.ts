@@ -10,12 +10,12 @@ import {
   controllers,
   componentById,
 } from '../state/selectors';
-import { DisplayEventBus } from '../canvas/display/DisplayEventBus';
+import { DisplayEventBus } from '../display/DisplayEventBus';
 import {
   deserializeComponentFilterDict,
   updateComponentKey,
   updateComponentFilterKey,
-} from '../canvas/component';
+} from '../display/component';
 import { NextInputListener } from './NextInputListener';
 import { GlobalInputSources } from './source/GlobalInputSources';
 import { getGamepads } from './source/gamepad';

@@ -1,8 +1,8 @@
 import { compose, map } from 'ramda';
-import * as T from '../../types';
-import { Component } from '../component/Component';
-import { find, mapObj, unMaybeObj } from '../../utils';
-import { rawifyInputDict } from '../../input/input';
+import * as T from '../types';
+import { find, mapObj, unMaybeObj } from '../utils';
+import { rawifyInputDict } from '../input/input';
+import { Component } from './component/Component';
 import { DisplayEventBus } from './DisplayEventBus';
 
 export class ComponentManager {

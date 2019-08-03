@@ -1,7 +1,7 @@
 import Konva from 'konva';
-import * as T from '../../types';
-import { Component } from '../component/Component';
-import { without } from '../../utils';
+import * as T from '../types';
+import { without } from '../utils';
+import { Component } from './component/Component';
 
 type ComponentId = string;
 

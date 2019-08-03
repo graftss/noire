@@ -13,7 +13,7 @@ import {
   getComponentKeyInputKind,
   getComponentFilterInputKind,
   mappedControllerKey,
-} from '../../../canvas/component';
+} from '../../../display/component';
 
 type RemapButtonValue =
   | { kind: 'controller'; controller: T.Controller; key: string }

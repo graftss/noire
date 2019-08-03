@@ -1,7 +1,7 @@
 import * as T from './types';
 import { ControllerManager } from './input/ControllerManager';
-import { Display } from './canvas/display';
-import { DisplayEventBus } from './canvas/display/DisplayEventBus';
+import { Display } from './display';
+import { DisplayEventBus } from './display/DisplayEventBus';
 import { createEditorApp } from './editor';
 
 // TODO: figure out how to not need this to recompile types.ts when the

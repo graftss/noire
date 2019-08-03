@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import * as T from '../../../types';
+import * as T from '../../types';
 import { DisplayPlugin } from './DisplayPlugin';
 import { Display } from '..';
 

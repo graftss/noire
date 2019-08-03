@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as T from '../../../types';
-import { stringifyComponentKey } from '../../../canvas/component';
+import { stringifyComponentKey } from '../../../display/component';
 import { RemapButton } from '../controls/RemapButton';
 
 interface ComponentKeysProps {

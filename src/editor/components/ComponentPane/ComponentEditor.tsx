@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as T from '../../../types';
-import { getEditorConfig } from '../../../canvas/component/editor';
+import { getEditorConfig } from '../../../display/component/editor';
 import { ComponentFilters } from './ComponentFilters';
 import { ComponentKeys } from './ComponentKeys';
 import { ComponentState } from './ComponentState';

@@ -1,4 +1,4 @@
-import * as T from '../../../types';
+import * as T from '../../types';
 import { Display } from '..';
 
 export class DisplayPlugin {

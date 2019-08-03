@@ -1,6 +1,6 @@
-import * as T from '../../types';
-import { deserializeComponent } from '../component';
-import { selectEditorOption } from '../../state/actions';
+import * as T from '../types';
+import { selectEditorOption } from '../state/actions';
+import { deserializeComponent } from './component';
 import { ComponentManager } from './ComponentManager';
 import { KonvaComponentPlugin } from './plugin/KonvaComponentPlugin';
 import { DisplayEventBus } from './DisplayEventBus';

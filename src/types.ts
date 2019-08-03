@@ -59,7 +59,7 @@ export {
   DisplayEventHandler,
   DisplayEvent,
   DisplayEventKind,
-} from './canvas/display/DisplayEventBus';
+} from './display/DisplayEventBus';
 export {
   BaseSerializedComponent as Serialized,
   SerializedComponent,
@@ -70,38 +70,38 @@ export {
   ComponentKind,
   ComponentKeyUpdate,
   ComponentFilterKeyUpdate,
-} from './canvas/component/';
+} from './display/component/';
 export {
   ComponentEditorConfig,
   ComponentEditorField,
-} from './canvas/component/editor';
+} from './display/component/editor';
 export {
   ComponentState,
   Component,
   ComponentGraphics,
   ComponentFilter,
   ComponentFilterDict,
-} from './canvas/component/Component';
+} from './display/component/Component';
 export {
   StickState,
   StickInput,
   SerializedStickComponent,
-} from './canvas/component/StickComponent';
+} from './display/component/StickComponent';
 export {
   SerializedStaticComponent,
   StaticInput,
   StaticState,
-} from './canvas/component/StaticComponent';
+} from './display/component/StaticComponent';
 export {
   DPadState,
   DPadInput,
   SerializedDPadComponent,
-} from './canvas/component/DPadComponent';
+} from './display/component/DPadComponent';
 export {
   ButtonComponentState,
   ButtonComponentInput,
   SerializedButtonComponent,
-} from './canvas/component/ButtonComponent';
+} from './display/component/ButtonComponent';
 export { EditorApp } from './editor';
 export { EditorAction, EditorOption } from './state/actions';
 export { DisplayState } from './state/reducers/display';
@@ -125,23 +125,26 @@ export {
   KindsToRaw,
   RawInputOfKind,
 } from './input/input';
-export { Texture, SerializedTexture } from './canvas/texture';
-export { TypedSerializedTexture, TypedTexture } from './canvas/texture/Texture';
+export { Texture, SerializedTexture } from './display/texture';
+export {
+  TypedSerializedTexture,
+  TypedTexture,
+} from './display/texture/Texture';
 export { NoireConfig } from '.';
-export { FillTextureState } from './canvas/texture/FillTexture';
-export { ImageTextureState } from './canvas/texture/ImageTexture';
+export { FillTextureState } from './display/texture/FillTexture';
+export { ImageTextureState } from './display/texture/ImageTexture';
 export {
   DistortFilterState,
   StickDistortInput,
   StickDistortData,
   DPadDistortInput,
   DPadDistortData,
-} from './canvas/filter/distort';
+} from './display/filter/distort';
 export {
   ZoomFilterState,
   ButtonZoomRawInput,
   ButtonZoomData,
-} from './canvas/filter/zoom';
+} from './display/filter/zoom';
 export {
   Filter,
   FilterFactory,
@@ -149,5 +152,5 @@ export {
   InputFilterKind,
   InputFilterData,
   SerializedInputFilter,
-} from './canvas/filter';
+} from './display/filter';
 export { TabKind, TabState } from './state/reducers/tab';
