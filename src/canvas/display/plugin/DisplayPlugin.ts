@@ -1,13 +1,8 @@
 import * as T from '../../../types';
-import { DisplayEventBus } from '../DisplayEventBus';
-import { ComponentManager } from '../ComponentManager';
+import { Display } from '..';
 
 export class DisplayPlugin {
-  constructor(
-    protected config: T.NoireConfig,
-    protected eventBus: DisplayEventBus,
-    protected cm: ComponentManager,
-  ) {}
+  constructor(protected config: T.NoireConfig, protected display: Display) {}
 
   update(): void {}
 }

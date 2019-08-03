@@ -7,18 +7,24 @@ import { DisplayEventBus } from './DisplayEventBus';
 import { DisplayPlugin } from './plugin/DisplayPlugin';
 
 export class Display {
-  private cm: ComponentManager;
   private plugins: DisplayPlugin[];
+  cm: ComponentManager;
+  config: T.NoireConfig;
+  store: T.EditorStore;
+  eventBus: DisplayEventBus;
 
   constructor(
-    private config: T.NoireConfig,
-    private store: T.EditorStore,
-    private eventBus: DisplayEventBus,
+    config: T.NoireConfig,
+    store: T.EditorStore,
+    eventBus: DisplayEventBus,
   ) {
-    const { getState, dispatch } = store;
+    this.config = config;
+    this.store = store;
+    this.eventBus = eventBus;
 
+    const { getState, dispatch } = store;
     this.cm = new ComponentManager(this.eventBus);
-    this.plugins = [new KonvaComponentPlugin(config, this.eventBus, this.cm)];
+    this.plugins = [new KonvaComponentPlugin(config, this)];
 
     // sync display with the store's initial state
     this.syncWithState(getState());
@@ -38,6 +44,11 @@ export class Display {
 
   private syncWithState(state: T.EditorState): void {
     this.cm.sync(state.display.components.map(deserializeComponent));
+  }
+
+  emitUpdateComponentState(id: string, state: T.ComponentState): void {
+    this.store.dispatch({ type: 'updateComponentState', data: { id, state } });
+    this.eventBus.emit({ kind: 'updateComponentState', data: [id, state] });
   }
 
   draw(): void {

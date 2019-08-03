@@ -4,6 +4,7 @@ import { getEditorConfig } from '../../../canvas/component/editor';
 import { ComponentFilters } from './ComponentFilters';
 import { ComponentKeys } from './ComponentKeys';
 import { ComponentName } from './ComponentName';
+import { ComponentState } from './ComponentState';
 import { ComponentTitle } from './ComponentTitle';
 
 interface ComponentEditorProps {
@@ -26,6 +27,7 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
           updateComponentState(component.id, { ...component.state, name })
         }
       />
+      <ComponentState component={component} />
       <ComponentTitle label={title} />
       <ComponentKeys component={component} keys={keys} />
       <ComponentFilters component={component} />
