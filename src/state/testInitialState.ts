@@ -165,7 +165,7 @@ vertProd.graphics.shapes.shape = new Konva.Rect({
 const stickGraphics: any = {
   shapes: {
     boundary: serializeNode(new Konva.Circle({ radius: 20 })),
-    stick: serializeNode(new Konva.Circle({ radius: 3 })),
+    stick: serializeNode(new Konva.Circle({ radius: 10 })),
   },
   textures: {
     boundary: {
@@ -210,8 +210,8 @@ const dualSticks = (
         offset,
         boundaryRadius,
         inputMap: {
-          // xp: { controllerId, key: 'lsXP' },
-          // xn: { controllerId, key: 'lsXN' },
+          xp: { controllerId, key: 'lsXP' },
+          xn: { controllerId, key: 'lsXN' },
           yn: { controllerId, key: 'lsYN' },
           yp: { controllerId, key: 'lsYP' },
           button: { controllerId, key: 'l3' },

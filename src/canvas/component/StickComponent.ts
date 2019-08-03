@@ -45,8 +45,14 @@ export type SerializedStickComponent = T.Serialized<
   StickState
 >;
 
+const stickEditorState: T.ComponentEditorField[] = [
+  { kind: 'boolean', label: 'Depth scaling', stateKey: 'useDepthScaling' },
+  { kind: 'number', label: 'Boundary radius', stateKey: 'boundaryRadius' },
+];
+
 export const stickEditorConfig: T.ComponentEditorConfig = {
   title: 'Stick',
+  state: stickEditorState,
   keys: stickKeys,
   shapes: stickShapes,
   textures: stickTextures,

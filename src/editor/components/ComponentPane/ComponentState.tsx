@@ -28,6 +28,35 @@ const renderField = (
       );
     }
 
+    case 'number': {
+      const value: number = component.state[field.stateKey];
+
+      return (
+        <div>
+          <span>{field.label}: </span>
+          <InputWithDefault
+            defaultValue={value.toString()}
+            update={number => update(field.stateKey, Number(number))}
+          />
+        </div>
+      );
+    }
+
+    case 'boolean': {
+      const value: boolean = component.state[field.stateKey];
+
+      return (
+        <div>
+          <span>{field.label}: </span>
+          <input
+            type="checkbox"
+            checked={value}
+            onChange={() => update(field.stateKey, !value)}
+          />
+        </div>
+      );
+    }
+
     case 'Vec2': {
       const value: Vec2 = component.state[field.stateKey];
 
