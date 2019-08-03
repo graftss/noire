@@ -3,7 +3,6 @@ import * as T from '../../../types';
 import { getEditorConfig } from '../../../canvas/component/editor';
 import { ComponentFilters } from './ComponentFilters';
 import { ComponentKeys } from './ComponentKeys';
-import { ComponentName } from './ComponentName';
 import { ComponentState } from './ComponentState';
 import { ComponentTitle } from './ComponentTitle';
 
@@ -17,19 +16,22 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
   updateComponentState,
 }) => {
   if (!component) return null;
-  const { title, keys } = getEditorConfig(component.kind);
+  const config = getEditorConfig(component.kind);
 
   return (
     <div>
-      <ComponentName
-        initialName={component.state && component.state.name}
-        save={name =>
-          updateComponentState(component.id, { ...component.state, name })
+      <ComponentTitle label={config.title} />
+      <ComponentState
+        component={component}
+        stateConfig={config.state}
+        update={(stateKey, value) =>
+          updateComponentState(component.id, {
+            ...component.state,
+            [stateKey]: value,
+          })
         }
       />
-      <ComponentState component={component} />
-      <ComponentTitle label={title} />
-      <ComponentKeys component={component} keys={keys} />
+      <ComponentKeys component={component} keys={config.keys} />
       <ComponentFilters component={component} />
     </div>
   );

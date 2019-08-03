@@ -2,14 +2,14 @@ import * as React from 'react';
 
 interface Props {
   defaultValue: string;
-  save: (o: string) => void;
+  update: (o: string) => void;
 }
 
 interface State {
   value: string;
 }
 
-export class TextInputWithDefault extends React.Component<Props, State> {
+export class InputWithDefault extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { value: props.defaultValue };
@@ -29,7 +29,7 @@ export class TextInputWithDefault extends React.Component<Props, State> {
     const target = e.target as HTMLInputElement;
 
     if (e.keyCode === 13) {
-      this.props.save(target.value);
+      this.props.update(target.value);
       target.blur();
     }
   };
@@ -39,7 +39,7 @@ export class TextInputWithDefault extends React.Component<Props, State> {
       <input
         value={this.state.value}
         onChange={this.onInputChange}
-        onBlur={e => this.props.save(e.target.value)}
+        onBlur={e => this.props.update(e.target.value)}
         onKeyDown={this.onKeyDown}
         type="text"
       />

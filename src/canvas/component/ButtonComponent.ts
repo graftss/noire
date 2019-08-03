@@ -14,7 +14,7 @@ export const buttonInputKinds = {
 export type ButtonComponentInput = T.KindsToRaw<typeof buttonInputKinds>;
 
 const buttonKeys: T.ComponentKey[] = [
-  { key: 'button', label: 'Button', inputKind: 'button' },
+  { key: 'button', label: 'Pressed', inputKind: 'button' },
 ];
 
 export type ButtonComponentState = T.ComponentState<typeof buttonInputKinds>;
@@ -32,8 +32,14 @@ export type SerializedButtonComponent = T.Serialized<
   ButtonComponentState
 >;
 
+const buttonStateConfig: T.ComponentEditorField[] = [
+  { label: 'Name', kind: 'string', stateKey: 'name' },
+  { label: 'Offset', kind: 'Vec2', stateKey: 'offset' },
+];
+
 export const buttonEditorConfig: T.ComponentEditorConfig = {
   title: 'Button',
+  state: buttonStateConfig,
   keys: buttonKeys,
   shapes: buttonShapes,
   textures: buttonTextures,

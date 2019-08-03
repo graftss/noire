@@ -16,7 +16,7 @@ export const ControllerEditor: React.SFC<ControllerEditorProps> = ({
     <div>
       <ControllerName
         initialName={controller.name}
-        save={name => updateControllerName(controller.id, name)}
+        update={name => updateControllerName(controller.id, name)}
       />
       <ControllerBindings controller={controller} />
     </div>

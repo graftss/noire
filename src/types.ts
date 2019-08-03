@@ -73,7 +73,7 @@ export {
 } from './canvas/component/';
 export {
   ComponentEditorConfig,
-  ComponentEditorFieldKind,
+  ComponentEditorField,
 } from './canvas/component/editor';
 export {
   ComponentState,

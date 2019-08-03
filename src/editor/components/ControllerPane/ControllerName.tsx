@@ -1,18 +1,18 @@
 import * as React from 'react';
-import { TextInputWithDefault } from '../TextInputWithDefault';
+import { InputWithDefault } from '../controls/InputWithDefault';
 
 interface ControllerNameProps {
   initialName: string;
-  save: (o: string) => void;
+  update: (o: string) => void;
 }
 
 export const ControllerName: React.SFC<ControllerNameProps> = ({
   initialName,
-  save,
+  update,
 }) => {
   return (
     <div>
-      name: <TextInputWithDefault defaultValue={initialName} save={save} />
+      name: <InputWithDefault defaultValue={initialName} update={update} />
     </div>
   );
 };

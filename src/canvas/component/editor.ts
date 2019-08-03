@@ -4,11 +4,15 @@ import { stickEditorConfig } from './StickComponent';
 import { dPadEditorConfig } from './DPadComponent';
 import { staticEditorConfig } from './StaticComponent';
 
-export type ComponentEditorFieldKind = 'string' | 'number' | 'boolean';
+export interface ComponentEditorField {
+  stateKey: string;
+  kind: 'string' | 'number' | 'boolean' | 'Vec2';
+  label: string;
+}
 
 export interface ComponentEditorConfig {
   title: string;
-  state?: Dict<ComponentEditorFieldKind>;
+  state?: ComponentEditorField[];
   keys: T.ComponentKey[];
   shapes: readonly string[];
   textures: readonly string[];
