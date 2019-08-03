@@ -28,6 +28,7 @@ const componentEditorConfigs: Record<T.ComponentKind, ComponentEditorConfig> = {
 const baseEditorFields: ComponentEditorField[] = [
   { label: 'Name', kind: 'string', stateKey: 'name' },
   { label: 'Offset', kind: 'Vec2', stateKey: 'offset' },
+  { label: 'Scale', kind: 'Vec2', stateKey: 'scale' },
 ];
 
 export const getEditorConfig = (

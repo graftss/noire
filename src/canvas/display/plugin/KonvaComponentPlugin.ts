@@ -12,12 +12,16 @@ interface DragEndEvent {
   target: { attrs: Vec2 };
 }
 
+interface TransformEndEvent {
+  target: { attrs: { scaleX: number; scaleY: number } };
+}
+
 const attachTransformer = (
   shape: Konva.Group,
   layer: Konva.Layer,
 ): Konva.Transformer => {
   const transformer = new Konva.Transformer({
-    anchorSize: 6,
+    anchorSize: 7,
     borderDash: [4, 4],
     borderStroke: 'red',
     borderStrokeWidth: 2,
@@ -99,15 +103,26 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
     group.on('dragend', (event: DragEndEvent) => {
       const { x, y } = event.target.attrs;
-      const state: T.ComponentState = { offset: { x, y } };
-      this.display.emitUpdateComponentState(id, state);
+      const update: T.ComponentState = { offset: { x, y } };
+      this.display.emitUpdateComponentState(id, update);
+    });
+
+    group.on('transformend', (event: TransformEndEvent) => {
+      const { scaleX: x, scaleY: y } = event.target.attrs;
+      const update: T.ComponentState = { scale: { x, y } };
+      this.display.emitUpdateComponentState(id, update);
     });
 
     eventBus.on({
       kind: 'updateComponentState',
       cb: ([eventId, update]: [string, T.ComponentState]) => {
-        if (eventId === id && update.offset !== undefined) {
-          group.setPosition({ x: update.offset.x, y: update.offset.y });
+        if (eventId === id) {
+          if (update.offset !== undefined) {
+            group.setPosition({ x: update.offset.x, y: update.offset.y });
+          }
+          if (update.scale !== undefined) {
+            group.scale({ x: update.scale.x, y: update.scale.y });
+          }
         }
       },
     });

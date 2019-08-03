@@ -94,6 +94,7 @@ const vert: T.SerializedComponent = {
     defaultInput: {},
     inputMap: {},
     offset: { x: 30, y: 0 },
+    scale: { x: 1, y: 1 },
   },
   graphics: {
     shapes: {
@@ -208,6 +209,7 @@ const dualSticks = (
         name: 'left stick',
         defaultInput: {},
         offset,
+        scale: { x: 1, y: 1 },
         boundaryRadius,
         inputMap: {
           xp: { controllerId, key: 'lsXP' },
@@ -227,6 +229,7 @@ const dualSticks = (
         name: 'right stick',
         defaultInput: {},
         offset: { x: offset.x + stickDistance, y: offset.y },
+        scale: { x: 1, y: 1 },
         boundaryRadius,
         inputMap: {
           xp: { controllerId, key: 'rsXP' },
@@ -261,6 +264,7 @@ const dPad: T.SerializedComponent = {
   state: {
     defaultInput: {},
     offset: { x: 0, y: 0 },
+    scale: { x: 1, y: 1 },
     name: 'directional pad',
     inputMap: {
       d: { controllerId, key: 'padD' },
@@ -304,6 +308,7 @@ const button: T.SerializedComponent = {
     },
     defaultInput: {},
     offset: { x: 0, y: 0 },
+    scale: { x: 1, y: 1 },
   },
 };
 
@@ -327,6 +332,7 @@ const staticImage: T.SerializedComponent = {
     inputMap: {},
     name: 'noire',
     offset: { x: 0, y: 0 },
+    scale: { x: 1, y: 1 },
     defaultInput: {},
   },
 };

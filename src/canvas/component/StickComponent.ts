@@ -126,6 +126,8 @@ export class StickComponent extends Component<
         x: depthFactor(Math.abs(x)),
         y: depthFactor(Math.abs(y)),
       });
+    } else {
+      shape.scale({ x: 1, y: 1 });
     }
 
     const texture =
