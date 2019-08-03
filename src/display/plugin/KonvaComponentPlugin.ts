@@ -93,13 +93,14 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     this.groupsById[id] = group;
     this.layer.add(group);
 
-    component.init();
     component.shapeList().forEach((shape: Konva.Shape) => {
       group.add(shape);
       shape.on('click', () =>
         eventBus.emit({ kind: 'selectComponent', data: id }),
       );
     });
+
+    component.init();
 
     group.on('dragend', (event: DragEndEvent) => {
       const { x, y } = event.target.attrs;
