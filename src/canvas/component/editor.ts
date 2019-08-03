@@ -25,5 +25,18 @@ const componentEditorConfigs: Record<T.ComponentKind, ComponentEditorConfig> = {
   static: staticEditorConfig,
 };
 
-export const getEditorConfig = (kind: T.ComponentKind): ComponentEditorConfig =>
-  componentEditorConfigs[kind];
+const baseEditorFields: ComponentEditorField[] = [
+  { label: 'Name', kind: 'string', stateKey: 'name' },
+  { label: 'Offset', kind: 'Vec2', stateKey: 'offset' },
+];
+
+export const getEditorConfig = (
+  kind: T.ComponentKind,
+): ComponentEditorConfig => {
+  const config = componentEditorConfigs[kind];
+
+  return {
+    ...config,
+    state: baseEditorFields.concat(config.state || []),
+  };
+};
