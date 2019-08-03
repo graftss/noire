@@ -24,12 +24,10 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
       <ComponentState
         component={component}
         stateConfig={config.state}
-        update={(stateKey, value) =>
-          updateComponentState(component.id, {
-            ...component.state,
-            [stateKey]: value,
-          })
-        }
+        update={(stateKey, value) => {
+          const newState = { ...component.state, [stateKey]: value };
+          updateComponentState(component.id, newState);
+        }}
       />
       <ComponentKeys component={component} keys={config.keys} />
       <ComponentFilters component={component} />

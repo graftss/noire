@@ -82,30 +82,35 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   // and should be changed carefully.
   private onAddComponent = (component: T.Component): void => {
     const { eventBus } = this.display;
+    const { id } = component;
     const offset = component.state.offset;
 
-    const group = new Konva.Group({
-      x: offset.x,
-      y: offset.y,
+    const group = new Konva.Group({ x: offset.x, y: offset.y });
+    this.groupsById[id] = group;
+    this.layer.add(group);
+
+    component.init();
+    component.shapeList().forEach((shape: Konva.Shape) => {
+      group.add(shape);
+      shape.on('click', () =>
+        eventBus.emit({ kind: 'selectComponent', data: id }),
+      );
     });
 
     group.on('dragend', (event: DragEndEvent) => {
       const { x, y } = event.target.attrs;
       const state: T.ComponentState = { offset: { x, y } };
-      this.display.emitUpdateComponentState(component.id, state);
+      this.display.emitUpdateComponentState(id, state);
     });
 
-    this.groupsById[component.id] = group;
-
-    component.shapeList().forEach(shape => {
-      group.add(shape);
-      shape.on('click', () =>
-        eventBus.emit({ kind: 'selectComponent', data: component.id }),
-      );
+    eventBus.on({
+      kind: 'updateComponentState',
+      cb: ([eventId, update]: [string, T.ComponentState]) => {
+        if (eventId === id && update.offset !== undefined) {
+          group.setPosition({ x: update.offset.x, y: update.offset.y });
+        }
+      },
     });
-
-    this.layer.add(group);
-    component.init();
   };
 
   private deselectComponent = (): void => {

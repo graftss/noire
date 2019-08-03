@@ -338,7 +338,7 @@ const components: T.SerializedComponent[] = [
   vert,
   // vertProd,
   // staticImage,
-  // leftStick,
+  leftStick,
   // rightStick,
   // dPad,
   button,

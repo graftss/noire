@@ -13,16 +13,34 @@ const renderField = (
   update: (stateKey: string, value: any) => void,
   field: T.ComponentEditorField,
 ): React.ReactNode => {
-  const value = component.state[field.stateKey];
-
   switch (field.kind) {
     case 'string': {
+      const value: string = component.state[field.stateKey];
+
       return (
         <div>
           <span>{field.label}: </span>
           <InputWithDefault
             defaultValue={value}
             update={string => update(field.stateKey, string)}
+          />
+        </div>
+      );
+    }
+
+    case 'Vec2': {
+      const value: Vec2 = component.state[field.stateKey];
+
+      return (
+        <div>
+          <span>{field.label}: </span>
+          <InputWithDefault
+            defaultValue={value.x.toString()}
+            update={x => update(field.stateKey, { x: parseInt(x), y: value.y })}
+          />
+          <InputWithDefault
+            defaultValue={value.y.toString()}
+            update={y => update(field.stateKey, { x: value.x, y: parseInt(y) })}
           />
         </div>
       );
@@ -38,5 +56,9 @@ export const ComponentState: React.SFC<ComponentStateProps> = ({
   update,
 }) =>
   stateConfig === undefined ? null : (
-    <div>{stateConfig.map(field => renderField(component, update, field))}</div>
+    <div>
+      {stateConfig.map(field => (
+        <div key={field.stateKey}>{renderField(component, update, field)}</div>
+      ))}
+    </div>
   );

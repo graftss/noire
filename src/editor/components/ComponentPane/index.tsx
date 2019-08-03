@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
 import { components, selectedComponent } from '../../../state/selectors';
 import {
@@ -22,26 +21,28 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 });
 
 interface PropsFromDispatch {
-  emitDisplayEvents: (events: T.DisplayEvent[]) => void;
   selectComponent: (id: string) => void;
   updateComponentState: (id: string, state: T.ComponentState) => void;
 }
 
-const mapDispatchToProps = (dispatch): PropsFromDispatch =>
-  bindActionCreators(
-    {
-      emitDisplayEvents,
-      selectComponent: id => selectEditorOption({ kind: 'component', id }),
-      updateComponentState,
-    },
-    dispatch,
-  );
+const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
+  selectComponent: (id: string) => {
+    dispatch(selectEditorOption({ kind: 'component', id }));
+    dispatch(emitDisplayEvents([{ kind: 'selectComponent', data: id }]));
+  },
+
+  updateComponentState: (id: string, state: T.ComponentState) => {
+    dispatch(updateComponentState(id, state));
+    dispatch(
+      emitDisplayEvents([{ kind: 'updateComponentState', data: [id, state] }]),
+    );
+  },
+});
 
 interface ComponentPaneProps extends PropsFromState, PropsFromDispatch {}
 
 const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
   components,
-  emitDisplayEvents,
   selectComponent,
   selectedComponent,
   updateComponentState,
