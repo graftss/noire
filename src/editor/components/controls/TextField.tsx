@@ -11,11 +11,7 @@ const onKeyDown = (
   update: CB1<string>,
   e: React.KeyboardEvent<HTMLInputElement>,
 ): void => {
-  if (e.keyCode === 13) {
-    const target = e.target as HTMLInputElement;
-    update(target.value);
-    target.blur();
-  }
+  if (e.keyCode === 13) (e.target as HTMLInputElement).blur();
 };
 
 export const TextField: React.SFC<TextFieldProps> = ({
