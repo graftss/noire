@@ -8,14 +8,12 @@ export type RemapState =
       kind: 'controller';
       inputKind: T.InputKind;
       controllerId: string;
-      fullUpdate?: boolean;
       key: string;
     }
   | {
       kind: 'component';
       inputKind: T.InputKind;
       componentId: string;
-      fullUpdate?: boolean;
       key: string;
     }
   | {
@@ -34,7 +32,7 @@ export interface InputState {
 // const defaultInputState: InputState = {};
 const defaultInputState = testInitialState.input;
 
-export interface ControllerBindingsUpdate {
+export interface ControllerBindingUpdate {
   controllerId: string;
   key: string;
   binding: Maybe<T.Binding>;

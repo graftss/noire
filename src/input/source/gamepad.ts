@@ -66,8 +66,8 @@ export type GamepadSourceFactory = T.TypedInputSourceFactory<
 export const getGamepads = (): (Maybe<Gamepad>)[] =>
   [...navigator.getGamepads()].map(g => (g === null ? undefined : g));
 
+export const DEFAULT_AXIS_DEADZONE = 0.05;
 const DEFAULT_AXIS_VALUE_MARGIN_OF_ERROR = 0.001;
-const DEFAULT_AXIS_DEADZONE = 0.005;
 const MIN_AXIS_MAGNITUDE = 0.5;
 const MIN_AXIS_DIFFERENCE = 0.1;
 const AXIS_VALUE_PRECISION = 3;
@@ -105,6 +105,7 @@ const areBindingsEqual = (b1: GamepadBinding, b2: GamepadBinding): boolean => {
     const premargin = Math.max(b1.marginOfError || 0, b2.marginOfError || 0);
     const margin =
       premargin === 0 ? DEFAULT_AXIS_VALUE_MARGIN_OF_ERROR : premargin;
+
     return b1.axis === b2.axis && Math.abs(b1.value - b2.value) <= margin;
   } else if (b1.kind === 'button' && b2.kind === 'button') {
     return b1.index === b2.index;

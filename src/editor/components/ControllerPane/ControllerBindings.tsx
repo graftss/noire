@@ -15,13 +15,7 @@ export const ControllerBindings: React.SFC<ControllerBindingsProps> = ({
     {getControllerKeyOrder(controller.kind).map(key => (
       <div key={key}>
         <span>{stringifyKeyInController(controller, key)} </span>
-        <RemapButton
-          value={{
-            kind: 'controller',
-            controller,
-            key,
-          }}
-        />
+        <RemapButton value={{ kind: 'controller', controller, key }} />
       </div>
     ))}
   </div>

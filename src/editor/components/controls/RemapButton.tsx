@@ -3,7 +3,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
 import { controllersById, isListening } from '../../../state/selectors';
-import { emitDisplayEvents, listenNextInput } from '../../../state/actions';
+import {
+  emitDisplayEvents,
+  listenNextInput,
+  updateControllerBinding,
+} from '../../../state/actions';
 import {
   stringifyControllerKey,
   getKeyInputKind,
@@ -14,6 +18,8 @@ import {
   getComponentFilterInputKind,
   mappedControllerKey,
 } from '../../../display/component';
+import { DEFAULT_AXIS_DEADZONE } from '../../../input/source/gamepad';
+import { FloatField } from './FloatField';
 
 type RemapButtonValue =
   | { kind: 'controller'; controller: T.Controller; key: string }
@@ -42,6 +48,7 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 interface PropsFromDispatch {
   emitDisplayEvents: (e: T.DisplayEvent[]) => void;
   listenNextInput: (s: T.RemapState) => void;
+  updateControllerBinding: (u: T.ControllerBindingUpdate) => void;
 }
 
 interface RemapButtonProps extends PropsFromState, PropsFromDispatch {
@@ -53,6 +60,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
     {
       emitDisplayEvents,
       listenNextInput,
+      updateControllerBinding,
     },
     dispatch,
   );
@@ -94,6 +102,31 @@ const computeRemapState = (value: RemapButtonValue): T.RemapState => {
   }
 };
 
+// TODO: find a better place for this
+const renderDeadzoneField = (
+  value: RemapButtonValue,
+  updateControllerBinding: (u: T.ControllerBindingUpdate) => void,
+): React.ReactNode => {
+  if (value.kind !== 'controller') return null;
+
+  const { controller, key } = value;
+  const binding: T.Binding = controller.bindings[key];
+
+  return binding.inputKind === 'axis' ? (
+    <FloatField
+      defaultValue={binding.deadzone || DEFAULT_AXIS_DEADZONE}
+      precision={3}
+      update={(deadzone: number) =>
+        updateControllerBinding({
+          controllerId: controller.id,
+          key,
+          binding: { ...binding, deadzone },
+        })
+      }
+    />
+  ) : null;
+};
+
 const stringifyValue = (
   value: RemapButtonValue,
   remapTo: T.RemapState,
@@ -126,20 +159,24 @@ const stringifyValue = (
 const BaseRemapButton: React.SFC<RemapButtonProps> = ({
   emitDisplayEvents,
   listenNextInput,
+  updateControllerBinding,
   value,
   ...propsFromState
 }) => {
   const remapTo = computeRemapState(value);
 
   return (
-    <button
-      onClick={() => {
-        listenNextInput(remapTo);
-        emitDisplayEvents([{ kind: 'listenNextInput', data: remapTo }]);
-      }}
-    >
-      {stringifyValue(value, remapTo, propsFromState)}
-    </button>
+    <span>
+      <button
+        onClick={() => {
+          listenNextInput(remapTo);
+          emitDisplayEvents([{ kind: 'listenNextInput', data: remapTo }]);
+        }}
+      >
+        {stringifyValue(value, remapTo, propsFromState)}
+      </button>
+      {renderDeadzoneField(value, updateControllerBinding)}
+    </span>
   );
 };
 

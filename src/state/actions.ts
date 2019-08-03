@@ -8,7 +8,7 @@ export type EditorAction =
   | { type: 'emitDisplayEvents'; data: T.DisplayEvent[] }
   | { type: 'selectEditorOption'; data: EditorOption }
   | { type: 'startFullControllerUpdate' }
-  | { type: 'updateControllerBinding'; data: T.ControllerBindingsUpdate }
+  | { type: 'updateControllerBinding'; data: T.ControllerBindingUpdate }
   | { type: 'updateControllerName'; data: { id: string; name: string } }
   | {
       type: 'updateComponentState';
@@ -37,7 +37,7 @@ export const startFullControllerUpdate = (): EditorAction => ({
 });
 
 export const updateControllerBinding = (
-  update: T.ControllerBindingsUpdate,
+  update: T.ControllerBindingUpdate,
 ): EditorAction => ({
   type: 'updateControllerBinding',
   data: update,
