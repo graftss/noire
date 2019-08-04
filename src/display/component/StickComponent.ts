@@ -55,7 +55,7 @@ const stickEditorState: T.StateEditorField[] = [
     kind: 'number',
     label: 'Boundary radius',
     key: 'boundaryRadius',
-    precision: 1,
+    props: { precision: 1 },
   },
 ];
 

@@ -7,11 +7,11 @@ import { staticEditorConfig } from './component/StaticComponent';
 
 export type EditorFieldKind = 'string' | 'boolean' | 'Vec2' | 'number';
 
-export type EditorField = { label: string } & (
+export type EditorField = { label: string; props?: object } & (
   | { kind: 'string'; defaultValue?: string }
   | { kind: 'boolean'; defaultValue?: boolean }
-  | { kind: 'number'; defaultValue?: number; precision?: number }
-  | { kind: 'Vec2'; defaultValue?: Vec2; precision?: number });
+  | { kind: 'number'; defaultValue?: number; props?: { precision?: number } }
+  | { kind: 'Vec2'; defaultValue?: Vec2; props?: { precision?: number } });
 
 export type StateEditorField = EditorField & {
   key: string;
@@ -31,9 +31,9 @@ const baseStateEditorFields: StateEditorField[] = [
     label: 'offset x',
     kind: 'Vec2',
     key: 'offset',
-    precision: 1,
+    props: { precision: 1 },
   },
-  { label: 'Scale', kind: 'Vec2', key: 'scale', precision: 2 },
+  { label: 'Scale', kind: 'Vec2', key: 'scale', props: { precision: 2 } },
 ];
 
 const componentEditorConfigs: Record<T.ComponentKind, ComponentEditorConfig> = {
