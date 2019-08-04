@@ -10,14 +10,13 @@ import {
   simpleDPadTextures,
 } from '../display/component/DPadComponent';
 import { defaultKeyboardController } from '../input/controller/keyboard';
+import { serializeKonvaNode } from '../display/component';
 
 const ids = 'qwertyuiopasdfghjklzxcvbnm,';
 
 const ref: T.GamepadSourceRef = { kind: 'gamepad', index: 1 };
 const sourceKind = 'gamepad';
 const controllerId = 'test';
-
-const serializeNode = (node: Konva.Node): object => JSON.parse(node.toJSON());
 
 const toAxisValue = (axis, value): T.GamepadAxisValueBinding => ({
   ref,
@@ -98,7 +97,7 @@ const vert: T.SerializedComponent = {
   },
   graphics: {
     shapes: {
-      shape: serializeNode(
+      shape: serializeKonvaNode(
         new Konva.Rect({ x: 0, y: 0, width: 437, height: 606 }),
       ),
     },
@@ -165,8 +164,8 @@ vertProd.graphics.shapes.shape = new Konva.Rect({
 
 const stickGraphics: any = {
   shapes: {
-    boundary: serializeNode(new Konva.Circle({ radius: 20 })),
-    stick: serializeNode(new Konva.Circle({ radius: 10 })),
+    boundary: serializeKonvaNode(new Konva.Circle({ radius: 20 })),
+    stick: serializeKonvaNode(new Konva.Circle({ radius: 10 })),
   },
   textures: {
     boundary: {
@@ -280,10 +279,10 @@ const button: T.SerializedComponent = {
   kind: 'button',
   graphics: {
     shapes: {
-      on: serializeNode(
+      on: serializeKonvaNode(
         new Konva.Rect({ x: 50, y: 50, width: 30, height: 30 }),
       ),
-      off: serializeNode(
+      off: serializeKonvaNode(
         new Konva.Rect({ x: 150, y: 50, width: 30, height: 30 }),
       ),
     },
@@ -317,7 +316,7 @@ const staticImage: T.SerializedComponent = {
   kind: 'static',
   graphics: {
     shapes: {
-      shape: serializeNode(
+      shape: serializeKonvaNode(
         new Konva.Rect({ x: 0, y: 0, width: 675, height: 1000 }),
       ),
     },

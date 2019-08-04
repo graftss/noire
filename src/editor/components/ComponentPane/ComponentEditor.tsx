@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as T from '../../../types';
-import { getEditorConfig } from '../../../display/component/editor';
+import { getComponentEditorConfig } from '../../../display/editor';
 import { ComponentFilters } from './ComponentFilters';
 import { ComponentKeys } from './ComponentKeys';
 import { ComponentState } from './ComponentState';
+import { ComponentShapes } from './ComponentShapes';
 import { ComponentTitle } from './ComponentTitle';
 
 interface ComponentEditorProps {
@@ -16,7 +17,7 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
   updateComponentState,
 }) => {
   if (!component) return null;
-  const config = getEditorConfig(component.kind);
+  const config = getComponentEditorConfig(component.kind);
 
   return (
     <div>
@@ -24,12 +25,16 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
       <ComponentState
         component={component}
         stateConfig={config.state}
-        update={(stateKey, value) => {
-          const newState = { ...component.state, [stateKey]: value };
+        update={(EditorField, value) => {
+          const newState = {
+            ...component.state,
+            [EditorField]: value,
+          };
           updateComponentState(component.id, newState);
         }}
       />
       <ComponentKeys component={component} keys={config.keys} />
+      <ComponentShapes component={component} shapeList={config.shapes} />
       <ComponentFilters component={component} />
     </div>
   );

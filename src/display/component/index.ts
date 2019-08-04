@@ -85,13 +85,21 @@ export const updateComponentKey = (
   };
 };
 
+export interface SerializedKonvaShape {
+  attrs: object;
+  className: string;
+}
+
 export interface SerializedComponentGraphics<
   SS extends string,
   TS extends string
 > {
-  shapes: Record<SS, object>;
+  shapes: Record<SS, SerializedKonvaShape>;
   textures: Record<TS, T.SerializedTexture>;
 }
+
+export const serializeKonvaNode = (node: Konva.Node): SerializedKonvaShape =>
+  JSON.parse(node.toJSON());
 
 export const serializeGraphics = <SS extends string, TS extends string>(
   graphics: T.ComponentGraphics<SS, TS>,
@@ -101,7 +109,7 @@ export const serializeGraphics = <SS extends string, TS extends string>(
 
   for (const k in shapes) {
     const shape = shapes[k];
-    if (shape) result.shapes[k] = JSON.parse(shape.toJSON());
+    if (shape) result.shapes[k] = serializeKonvaNode(shape as Konva.Shape);
   }
 
   for (const k in textures) {

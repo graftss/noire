@@ -62,19 +62,24 @@ export {
 } from './display/DisplayEventBus';
 export {
   BaseSerializedComponent as Serialized,
+  ComponentFilterKey,
+  ComponentFilterKeyUpdate,
+  ComponentKey,
+  ComponentKeyUpdate,
+  ComponentKind,
   SerializedComponent,
   SerializedComponentFilter,
   SerializedComponentFilterDict,
-  ComponentKey,
-  ComponentFilterKey,
-  ComponentKind,
-  ComponentKeyUpdate,
-  ComponentFilterKeyUpdate,
+  SerializedKonvaShape,
 } from './display/component/';
 export {
   ComponentEditorConfig,
-  ComponentEditorField,
-} from './display/component/editor';
+  EditorField,
+  EditorFieldKind,
+  KonvaShapeKind,
+  ShapeEditorField,
+  StateEditorField,
+} from './display/editor';
 export {
   ComponentState,
   Component,
