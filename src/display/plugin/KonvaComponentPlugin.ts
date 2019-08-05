@@ -4,10 +4,14 @@ import { updateKonvaShape } from '../editor';
 import { DisplayPlugin } from './DisplayPlugin';
 import { Display } from '..';
 
-interface SelectedComponentState {
-  componentId: string;
-  transformer: Konva.Transformer;
-}
+type TransformerState =
+  | { kind: 'component'; target: Konva.Group; transformer: Konva.Transformer }
+  | {
+      kind: 'shape';
+      componentId: string;
+      target: Konva.Shape;
+      transformer: Konva.Transformer;
+    };
 
 interface DragEndEvent {
   target: { attrs: Vec2 };
@@ -38,7 +42,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   private stage: Konva.Stage;
   private layer: Konva.Layer;
   private border: Konva.Rect;
-  private selected: Maybe<SelectedComponentState>;
+  private transformerState: Maybe<TransformerState>;
   private groupsById: Dict<Konva.Group> = {};
   private componentsById: Dict<T.Component> = {};
 
@@ -84,7 +88,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
   private onStageClick = ({ target }: { target: Konva.Node }) => {
     if (target === this.border) {
-      this.deselectComponent();
+      this.destroyTransformer();
       this.display.eventBus.emit({ kind: 'stageClick', data: this.stage });
     }
   };
@@ -127,30 +131,29 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     });
   };
 
-  private deselectComponent = (): void => {
-    if (!this.selected) return;
-    const { componentId, transformer } = this.selected;
+  private destroyTransformer = (): void => {
+    if (!this.transformerState) return;
+    const { transformer, target } = this.transformerState;
 
-    this.groupsById[componentId].draggable(false);
+    target.draggable(false);
     transformer.destroy();
-    this.selected = undefined;
+    this.transformerState = undefined;
   };
 
   private onSelectComponent = (id: Maybe<string>): void => {
     if (!id) return;
 
-    if (this.selected && id !== this.selected.componentId) {
-      this.deselectComponent();
-    }
+    const ts = this.transformerState;
+    const newTarget: Maybe<Konva.Group> = this.groupsById[id];
+    if (ts && newTarget !== ts.target) this.destroyTransformer();
+    if (!newTarget) return;
 
-    if (!this.selected) {
-      const group: Maybe<Konva.Group> = this.groupsById[id];
-      group.draggable(true);
-      this.selected = group && {
-        componentId: id,
-        transformer: attachTransformer(group, this.layer),
-      };
-    }
+    newTarget.draggable(true);
+    this.transformerState = {
+      kind: 'component',
+      target: newTarget,
+      transformer: attachTransformer(newTarget, this.layer),
+    };
   };
 
   onUpdateComponentState = (data: [string, T.ComponentState]) => {
