@@ -22,7 +22,7 @@ interface TransformEndEvent {
 }
 
 const attachTransformer = (
-  model: Konva.Group,
+  model: Konva.Node,
   layer: Konva.Layer,
 ): Konva.Transformer => {
   const transformer = new Konva.Transformer({
@@ -138,15 +138,28 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     target.draggable(false);
     transformer.destroy();
     this.transformerState = undefined;
+    this.layer.draw();
+  };
+
+  // since both Konva and this app use event handlers to do a lot of
+  // things, it appears as though we need to put the transformer update
+  // at the back of the event queue for it to realise anything has
+  // changed
+  private updateTransformer = (): void => {
+    setTimeout(() => {
+      if (!this.transformerState) return;
+      this.transformerState.transformer.forceUpdate();
+    }, 0);
   };
 
   private onSelectComponent = (id: Maybe<string>): void => {
     if (!id) return;
 
-    const ts = this.transformerState;
     const newTarget: Maybe<Konva.Group> = this.groupsById[id];
-    if (ts && newTarget !== ts.target) this.destroyTransformer();
     if (!newTarget) return;
+
+    const ts = this.transformerState;
+    if (ts && ts.target === newTarget) return;
 
     newTarget.draggable(true);
     this.transformerState = {
@@ -156,7 +169,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     };
   };
 
-  onUpdateComponentState = (data: [string, T.ComponentState]) => {
+  private onUpdateComponentState = (data: [string, T.ComponentState]) => {
     const [componentId, update] = data;
 
     if (this.componentsById[componentId]) {
@@ -172,7 +185,9 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     }
   };
 
-  onRequestUpdateComponentModel = (data: [string, string, string, any]) => {
+  private onRequestUpdateComponentModel = (
+    data: [string, string, string, any],
+  ) => {
     const [componentId, modelName, modelKey, value] = data;
     const component: Maybe<T.Component> = this.componentsById[componentId];
     if (!component) return;
@@ -180,6 +195,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     const model: Maybe<Konva.Shape> = component.graphics.models[modelName];
     if (model === undefined) return;
 
+    this.updateTransformer();
     const newModel = updateKonvaModel(model, modelKey, value);
     this.display.eventBus.emit({
       kind: 'updateComponentModel',
