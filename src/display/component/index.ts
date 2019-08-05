@@ -86,8 +86,8 @@ export const updateComponentKey = (
 };
 
 export interface SerializedKonvaShape {
-  attrs: object;
-  className: string;
+  attrs: { x: number; y: number };
+  className: T.KonvaShapeKind;
 }
 
 export interface SerializedComponentGraphics<

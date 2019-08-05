@@ -1,6 +1,7 @@
 import * as T from '../../types';
 import { testInitialState } from '../testInitialState';
 import { mapComponentWithId } from '../maps';
+import { mapPath } from '../../utils';
 
 export interface DisplayState {
   components: T.SerializedComponent[];
@@ -38,6 +39,14 @@ export const displayReducer = (
       const { id, filters } = action.data;
 
       return mapComponentWithId.proj(state)(id, c => ({ ...c, filters }));
+    }
+
+    case 'updateComponentShape': {
+      const { id, shapeName, shape } = action.data;
+
+      return mapComponentWithId.proj(state)(id, c =>
+        mapPath(['graphics', 'shapes', shapeName], () => shape, c),
+      );
     }
   }
 

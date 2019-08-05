@@ -1,5 +1,6 @@
 import Konva from 'konva';
 import * as T from '../types';
+import { find, mapObj, mapPath } from '../utils';
 import { buttonEditorConfig } from './component/ButtonComponent';
 import { stickEditorConfig } from './component/StickComponent';
 import { dPadEditorConfig } from './component/DPadComponent';
@@ -36,41 +37,71 @@ const baseStateEditorFields: StateEditorField[] = [
   { label: 'Scale', kind: 'Vec2', key: 'scale', props: { precision: 2 } },
 ];
 
-const componentEditorConfigs: Record<T.ComponentKind, ComponentEditorConfig> = {
+const baseComponentEditorConfigs: Record<
+  T.ComponentKind,
+  ComponentEditorConfig
+> = {
   button: buttonEditorConfig,
   stick: stickEditorConfig,
   dpad: dPadEditorConfig,
   static: staticEditorConfig,
 };
 
+const componentEditorConfigs = mapObj(
+  config => ({
+    ...config,
+    state: baseStateEditorFields.concat(config.state || []),
+  }),
+  baseComponentEditorConfigs,
+);
+
 export type KonvaShapeKind = 'Rect' | 'Circle';
 
-export type ShapeEditorField = EditorField & {
-  setter: (shape: Konva.Shape, ...args: any) => void;
+export type ShapeEditorField<V = any> = EditorField & {
+  defaultValue: V;
+  key: string;
+  getter: (shape: Konva.Shape) => V;
+  serialGetter: (shape: T.SerializedKonvaShape) => V;
+  setter: (shape: Konva.Shape, value: V) => Konva.Shape;
+  serialSetter: (
+    shape: T.SerializedKonvaShape,
+    value: V,
+  ) => T.SerializedKonvaShape;
 };
 
 export interface KonvaShapeConfig {
   label: string;
   className: string;
-  fields?: ShapeEditorField[];
+  fields: ShapeEditorField[];
 }
 
 const baseShapeFields: ShapeEditorField[] = [
   {
     label: 'x offset',
     kind: 'number',
+    key: 'x',
     defaultValue: 0,
+    props: { precision: 1 },
+    getter: (shape: Konva.Shape) => shape.offsetX(),
+    serialGetter: (shape: T.SerializedKonvaShape) => shape.attrs.x,
     setter: (shape: Konva.Shape, x: number) => shape.offsetX(x),
-  },
+    serialSetter: (shape: T.SerializedKonvaShape, x: number) =>
+      mapPath(['attrs', 'x'], () => x, shape),
+  } as ShapeEditorField<number>,
   {
     label: 'y offset',
     kind: 'number',
     defaultValue: 0,
+    props: { precision: 1 },
+    getter: (shape: Konva.Shape) => shape.offsetY(),
+    serialGetter: (shape: T.SerializedKonvaShape) => shape.attrs.y,
     setter: (shape: Konva.Shape, y: number) => shape.offsetY(y),
-  },
+    serialSetter: (shape: T.SerializedKonvaShape, y: number) =>
+      mapPath(['attrs', 'y'], () => y, shape),
+  } as ShapeEditorField<number>,
 ];
 
-const konvaShapeConfigs: Record<T.KonvaShapeKind, KonvaShapeConfig> = {
+const baseKonvaShapeConfigs: Record<T.KonvaShapeKind, KonvaShapeConfig> = {
   Rect: {
     label: 'Rectangle',
     className: 'Rect',
@@ -80,21 +111,42 @@ const konvaShapeConfigs: Record<T.KonvaShapeKind, KonvaShapeConfig> = {
   Circle: {
     label: 'Circle',
     className: 'Circle',
+    fields: [],
   },
 };
 
-export const getKonvaShapeConfig = (kind: KonvaShapeKind): KonvaShapeConfig => {
-  const config = konvaShapeConfigs[kind];
-  return { ...config, fields: baseShapeFields.concat(config.fields || []) };
-};
+const konvaShapeConfigs = mapObj(
+  config => ({ ...config, fields: baseShapeFields.concat(config.fields) }),
+  baseKonvaShapeConfigs,
+);
+
+export const getKonvaShapeConfig = (kind: KonvaShapeKind): KonvaShapeConfig =>
+  konvaShapeConfigs[kind];
 
 export const getComponentEditorConfig = (
   kind: T.ComponentKind,
-): ComponentEditorConfig => {
-  const config = componentEditorConfigs[kind];
+): ComponentEditorConfig => componentEditorConfigs[kind];
 
-  return {
-    ...config,
-    state: baseStateEditorFields.concat(config.state || []),
-  };
+const findFieldByKey = (
+  className: KonvaShapeKind,
+  key: string,
+): Maybe<ShapeEditorField> =>
+  find(field => field.key === key, konvaShapeConfigs[className].fields);
+
+export const updateSerializedShape = <V>(
+  shape: T.SerializedKonvaShape,
+  key: string,
+  value: V,
+): typeof shape => {
+  const field = findFieldByKey(shape.className, key);
+  return field ? field.serialSetter(shape, value) : shape;
+};
+
+export const updateShape = <V>(
+  shape: Konva.Shape,
+  key: string,
+  value: V,
+): typeof shape => {
+  const field = findFieldByKey(shape.className as KonvaShapeKind, key);
+  return field ? field.setter(shape, value) : shape;
 };

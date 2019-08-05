@@ -10,11 +10,18 @@ import { ComponentTitle } from './ComponentTitle';
 interface ComponentEditorProps {
   component: Maybe<T.SerializedComponent>;
   updateComponentState: (id: string, state: T.ComponentState) => void;
+  updateComponentShape: (
+    component: T.SerializedComponent,
+    shapeName: string,
+    key: string,
+    value: any,
+  ) => void;
 }
 
 export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
   component,
   updateComponentState,
+  updateComponentShape,
 }) => {
   if (!component) return null;
   const config = getComponentEditorConfig(component.kind);
@@ -34,7 +41,11 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
         }}
       />
       <ComponentKeys component={component} keys={config.keys} />
-      <ComponentShapes component={component} shapeList={config.shapes} />
+      <ComponentShapes
+        component={component}
+        shapeList={config.shapes}
+        updateComponentShape={updateComponentShape}
+      />
       <ComponentFilters component={component} />
     </div>
   );

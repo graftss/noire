@@ -6,7 +6,9 @@ import {
   emitDisplayEvents,
   selectEditorOption,
   updateComponentState,
+  updateComponentShape,
 } from '../../../state/actions';
+import { updateSerializedShape } from '../../../display/editor';
 import { ComponentEditor } from './ComponentEditor';
 import { ComponentSelect } from './ComponentSelect';
 
@@ -23,6 +25,12 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 interface PropsFromDispatch {
   selectComponent: (id: string) => void;
   updateComponentState: (id: string, state: T.ComponentState) => void;
+  updateComponentShape: (
+    component: T.SerializedComponent,
+    shapeName: string,
+    key: string,
+    value: any,
+  ) => void;
 }
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
@@ -37,6 +45,21 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
       emitDisplayEvents([{ kind: 'updateComponentState', data: [id, state] }]),
     );
   },
+
+  updateComponentShape: (
+    component: T.SerializedComponent,
+    shapeName: string,
+    key: string,
+    value: any,
+  ) => {
+    dispatch(
+      updateComponentShape(
+        component.id,
+        shapeName,
+        updateSerializedShape(component.graphics.shapes[shapeName], key, value),
+      ),
+    );
+  },
 });
 
 interface ComponentPaneProps extends PropsFromState, PropsFromDispatch {}
@@ -46,19 +69,18 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
   selectComponent,
   selectedComponent,
   updateComponentState,
+  updateComponentShape,
 }) => (
   <div>
     <ComponentSelect
       components={components}
       selected={selectedComponent}
-      selectComponent={(id: string) => {
-        selectComponent(id);
-        emitDisplayEvents([{ kind: 'selectComponent', data: id }]);
-      }}
+      selectComponent={selectComponent}
     />
     <ComponentEditor
       component={selectedComponent}
       updateComponentState={updateComponentState}
+      updateComponentShape={updateComponentShape}
     />
   </div>
 );

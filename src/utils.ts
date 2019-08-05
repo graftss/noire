@@ -47,15 +47,15 @@ export const mapObj = <K extends string, T, U>(
   return result as Record<K, U>;
 };
 
-export const shallowCloneObj = <K extends string, T>(
-  obj: Record<K, T>,
-): Record<K, T> => mapObj(x => x, obj);
-
 export const mapPath = <T, O>(
   p: (string | number)[],
   f: (t: Maybe<T>) => T,
   o: O,
 ): O => assocPath(p, f(path(p, o)), o);
+
+export const shallowCloneObj = <K extends string, T>(
+  obj: Record<K, T>,
+): Record<K, T> => mapObj(x => x, obj);
 
 export const toPairs = <T>(obj: Dict<T>): [string, T][] => {
   const result: [string, T][] = [];

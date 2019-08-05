@@ -18,6 +18,10 @@ export type EditorAction =
       type: 'updateComponentFilters';
       data: { id: string; filters: T.SerializedComponentFilterDict };
     }
+  | {
+      type: 'updateComponentShape';
+      data: { id: string; shapeName: string; shape: T.SerializedKonvaShape };
+    }
   | { type: 'listenNextInput'; data: T.RemapState }
   | { type: 'stopListening' }
   | { type: 'setTab'; data: T.TabKind };
@@ -57,6 +61,15 @@ export const updateComponentState = (
 ): EditorAction => ({
   type: 'updateComponentState',
   data: { id, state },
+});
+
+export const updateComponentShape = (
+  id: string,
+  shapeName: string,
+  shape: T.SerializedKonvaShape,
+): EditorAction => ({
+  type: 'updateComponentShape',
+  data: { id, shapeName, shape },
 });
 
 export const updateComponentFilters = (

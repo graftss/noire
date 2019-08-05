@@ -6,7 +6,7 @@ import { FloatField } from './FloatField';
 import { Vec2Field } from './Vec2Field';
 
 interface EditorFieldProps<V> {
-  field: T.StateEditorField;
+  field: T.EditorField;
   defaultValue: V;
   update: (value: V) => void;
 }

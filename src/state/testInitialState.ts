@@ -153,12 +153,14 @@ const vert: T.SerializedComponent = {
 };
 
 const vertProd = clone(vert);
-vertProd.graphics.shapes.shape = new Konva.Rect({
-  x: 0,
-  y: 0,
-  width: 437,
-  height: 606,
-});
+vertProd.graphics.shapes.shape = serializeKonvaNode(
+  new Konva.Rect({
+    x: 0,
+    y: 0,
+    width: 437,
+    height: 606,
+  }),
+);
 (vertProd.filters as any).shape[0].filter.state.debug = false;
 (vertProd.filters as any).shape[1].filter.state.debug = false;
 

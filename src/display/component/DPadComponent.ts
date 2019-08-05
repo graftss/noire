@@ -1,6 +1,8 @@
 import Konva from 'konva';
 import * as T from '../../types';
+import { mapObj } from '../../utils';
 import { Component } from './Component';
+import { serializeKonvaNode } from '.';
 
 const dirs = ['u', 'l', 'd', 'r'] as const;
 type Dir = typeof dirs[number];
@@ -62,32 +64,33 @@ export const simpleDPadRects = (
   y: number,
   width: number,
   height: number,
-): Record<DPadShapes, Konva.Rect> => ({
-  u: new Konva.Rect({
-    x,
-    y: y - height,
-    width,
-    height,
-  }),
-  l: new Konva.Rect({
-    x: x - width,
-    y,
-    width,
-    height,
-  }),
-  d: new Konva.Rect({
-    x,
-    y: y + height,
-    width,
-    height,
-  }),
-  r: new Konva.Rect({
-    x: x + width,
-    y,
-    width,
-    height,
-  }),
-});
+): Record<DPadShapes, T.SerializedKonvaShape> =>
+  mapObj(serializeKonvaNode, {
+    u: new Konva.Rect({
+      x,
+      y: y - height,
+      width,
+      height,
+    }),
+    l: new Konva.Rect({
+      x: x - width,
+      y,
+      width,
+      height,
+    }),
+    d: new Konva.Rect({
+      x,
+      y: y + height,
+      width,
+      height,
+    }),
+    r: new Konva.Rect({
+      x: x + width,
+      y,
+      width,
+      height,
+    }),
+  });
 
 export const simpleDPadTextures = (
   off: T.SerializedTexture,
