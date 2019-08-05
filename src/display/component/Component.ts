@@ -4,7 +4,7 @@ import { mapObj, unMaybeList, values } from '../../utils';
 import { defaultInputByKind } from '../../input/input';
 
 export interface ComponentGraphics<SS extends string, TS extends string> {
-  shapes: Record<SS, Maybe<Konva.Shape>>;
+  models: Record<SS, Maybe<Konva.Shape>>;
   textures: Record<TS, Maybe<T.Texture>>;
 }
 
@@ -88,22 +88,22 @@ export abstract class Component<
   ): void {
     if (!this.filters || !filterInput) return;
 
-    for (const key in this.graphics.shapes) {
+    for (const key in this.graphics.models) {
       if (this.filters[key]) {
-        const shape = this.graphics.shapes[key] as Konva.Shape;
-        const shapeFilterInput = filterInput[key];
+        const model = this.graphics.models[key] as Konva.Shape;
+        const modelFilterInput = filterInput[key];
 
         const initFilter = (
           { filter, state }: ComponentFilter,
           index: number,
-        ): T.Filter => filter({ state, input: shapeFilterInput[index] as any });
+        ): T.Filter => filter({ state, input: modelFilterInput[index] as any });
 
-        shape.filters(this.filters[key].map(initFilter));
+        model.filters(this.filters[key].map(initFilter));
       }
     }
   }
 
-  shapeList = (): Konva.Shape[] => unMaybeList(values(this.graphics.shapes));
+  modelList = (): Konva.Shape[] => unMaybeList(values(this.graphics.models));
 
   // `init` is called after the component is added to the
   // `KonvaComponentPlugin`, and has been added to its

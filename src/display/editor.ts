@@ -22,7 +22,7 @@ export interface ComponentEditorConfig {
   title: string;
   state?: StateEditorField[];
   keys: T.ComponentKey[];
-  shapes: readonly string[];
+  models: readonly string[];
   textures: readonly string[];
 }
 
@@ -55,54 +55,54 @@ const componentEditorConfigs = mapObj(
   baseComponentEditorConfigs,
 );
 
-export type KonvaShapeKind = 'Rect' | 'Circle';
+export type KonvaModelKind = 'Rect' | 'Circle';
 
-export type ShapeEditorField<V = any> = EditorField & {
+export type ModelEditorField<V = any> = EditorField & {
   defaultValue: V;
   key: string;
-  getter: (shape: Konva.Shape) => V;
-  serialGetter: (shape: T.SerializedKonvaShape) => V;
-  setter: (shape: Konva.Shape, value: V) => Konva.Shape;
+  getter: (model: Konva.Shape) => V;
+  serialGetter: (model: T.SerializedKonvaModel) => V;
+  setter: (model: Konva.Shape, value: V) => Konva.Shape;
   serialSetter: (
-    shape: T.SerializedKonvaShape,
+    model: T.SerializedKonvaModel,
     value: V,
-  ) => T.SerializedKonvaShape;
+  ) => T.SerializedKonvaModel;
 };
 
-export interface KonvaShapeConfig {
+export interface KonvaModelConfig {
   label: string;
   className: string;
-  fields: ShapeEditorField[];
+  fields: ModelEditorField[];
 }
 
-const baseShapeFields: ShapeEditorField[] = [
+const baseModelFields: ModelEditorField[] = [
   {
     label: 'x offset',
     kind: 'number',
     key: 'x',
     defaultValue: 0,
     props: { precision: 1 },
-    getter: (shape: Konva.Shape) => shape.offsetX(),
-    serialGetter: (shape: T.SerializedKonvaShape) => shape.attrs.x,
-    setter: (shape: Konva.Shape, x: number) => shape.x(x),
-    serialSetter: (shape: T.SerializedKonvaShape, x: number) =>
-      mapPath(['attrs', 'x'], () => x, shape),
-  } as ShapeEditorField<number>,
+    getter: (model: Konva.Shape) => model.offsetX(),
+    serialGetter: (model: T.SerializedKonvaModel) => model.attrs.x,
+    setter: (model: Konva.Shape, x: number) => model.x(x),
+    serialSetter: (model: T.SerializedKonvaModel, x: number) =>
+      mapPath(['attrs', 'x'], () => x, model),
+  } as ModelEditorField<number>,
   {
     label: 'y offset',
     kind: 'number',
     key: 'y',
     defaultValue: 0,
     props: { precision: 1 },
-    getter: (shape: Konva.Shape) => shape.offsetY(),
-    serialGetter: (shape: T.SerializedKonvaShape) => shape.attrs.y,
-    setter: (shape: Konva.Shape, y: number) => shape.y(y),
-    serialSetter: (shape: T.SerializedKonvaShape, y: number) =>
-      mapPath(['attrs', 'y'], () => y, shape),
-  } as ShapeEditorField<number>,
+    getter: (model: Konva.Shape) => model.offsetY(),
+    serialGetter: (model: T.SerializedKonvaModel) => model.attrs.y,
+    setter: (model: Konva.Shape, y: number) => model.y(y),
+    serialSetter: (model: T.SerializedKonvaModel, y: number) =>
+      mapPath(['attrs', 'y'], () => y, model),
+  } as ModelEditorField<number>,
 ];
 
-const baseKonvaShapeConfigs: Record<T.KonvaShapeKind, KonvaShapeConfig> = {
+const baseKonvaModelConfigs: Record<T.KonvaModelKind, KonvaModelConfig> = {
   Rect: {
     label: 'Rectangle',
     className: 'Rect',
@@ -116,38 +116,38 @@ const baseKonvaShapeConfigs: Record<T.KonvaShapeKind, KonvaShapeConfig> = {
   },
 };
 
-const konvaShapeConfigs = mapObj(
-  config => ({ ...config, fields: baseShapeFields.concat(config.fields) }),
-  baseKonvaShapeConfigs,
+const konvaModelConfigs = mapObj(
+  config => ({ ...config, fields: baseModelFields.concat(config.fields) }),
+  baseKonvaModelConfigs,
 );
 
-export const getKonvaShapeConfig = (kind: KonvaShapeKind): KonvaShapeConfig =>
-  konvaShapeConfigs[kind];
+export const getKonvaModelConfig = (kind: KonvaModelKind): KonvaModelConfig =>
+  konvaModelConfigs[kind];
 
 export const getComponentEditorConfig = (
   kind: T.ComponentKind,
 ): ComponentEditorConfig => componentEditorConfigs[kind];
 
 const findFieldByKey = (
-  className: KonvaShapeKind,
+  className: KonvaModelKind,
   key: string,
-): Maybe<ShapeEditorField> =>
-  find(field => field.key === key, konvaShapeConfigs[className].fields);
+): Maybe<ModelEditorField> =>
+  find(field => field.key === key, konvaModelConfigs[className].fields);
 
-export const updateSerializedShape = <V>(
-  shape: T.SerializedKonvaShape,
+export const updateSerializedModel = <V>(
+  model: T.SerializedKonvaModel,
   key: string,
   value: V,
-): typeof shape => {
-  const field = findFieldByKey(shape.className, key);
-  return field ? field.serialSetter(shape, value) : shape;
+): typeof model => {
+  const field = findFieldByKey(model.className, key);
+  return field ? field.serialSetter(model, value) : model;
 };
 
-export const updateKonvaShape = <V>(
-  shape: Konva.Shape,
+export const updateKonvaModel = <V>(
+  model: Konva.Shape,
   key: string,
   value: V,
-): typeof shape => {
-  const field = findFieldByKey(shape.className as KonvaShapeKind, key);
-  return field ? field.setter(shape, value) : shape;
+): typeof model => {
+  const field = findFieldByKey(model.className as KonvaModelKind, key);
+  return field ? field.setter(model, value) : model;
 };

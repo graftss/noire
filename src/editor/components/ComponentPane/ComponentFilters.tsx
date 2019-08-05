@@ -13,10 +13,10 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
 }) =>
   !component.filters ? null : (
     <div>
-      {toPairs(component.filters).map(([shape, filters]) => (
-        <div key={shape}>
+      {toPairs(component.filters).map(([model, filters]) => (
+        <div key={model}>
           <div>
-            {`${shape}:`}
+            {`${model}:`}
             {filters.map(({ filter, inputMap }, filterIndex) => (
               <div key={filterIndex}>
                 <div>{filter.kind}</div>
@@ -31,7 +31,7 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
                           component,
                           controllerKey: inputMap[filterKey],
                           componentFilterKey: {
-                            shape,
+                            model,
                             filterIndex,
                             filterKey,
                           },

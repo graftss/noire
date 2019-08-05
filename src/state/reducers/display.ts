@@ -41,11 +41,11 @@ export const displayReducer = (
       return mapComponentWithId.proj(state)(id, c => ({ ...c, filters }));
     }
 
-    case 'updateComponentShape': {
-      const { id, shapeName, shape } = action.data;
+    case 'updateComponentModel': {
+      const { id, modelName, model } = action.data;
 
       return mapComponentWithId.proj(state)(id, c =>
-        mapPath(['graphics', 'shapes', shapeName], () => shape, c),
+        mapPath(['graphics', 'models', modelName], () => model, c),
       );
     }
   }

@@ -8,7 +8,7 @@ export interface TypedSerializedTexture<K extends string, S extends object> {
 export abstract class TypedTexture<K extends string, S extends object> {
   constructor(protected kind: K, protected state: S) {}
 
-  abstract apply: (shape: Konva.Shape) => void;
+  abstract apply: (model: Konva.Shape) => void;
 
   serialize = (): TypedSerializedTexture<K, S> => ({
     kind: this.kind,

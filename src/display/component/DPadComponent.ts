@@ -7,8 +7,8 @@ import { serializeKonvaNode } from '.';
 const dirs = ['u', 'l', 'd', 'r'] as const;
 type Dir = typeof dirs[number];
 
-const dPadShapes = dirs;
-type DPadShapes = Dir;
+const dPadModels = dirs;
+type DPadModels = Dir;
 
 const dPadTextures = [
   'uOn',
@@ -46,7 +46,7 @@ export const defaultDPadState: DPadState = {
 
 export type SerializedDPadComponent = T.Serialized<
   'dpad',
-  DPadShapes,
+  DPadModels,
   DPadTextures,
   typeof dPadInputKinds,
   DPadState
@@ -55,7 +55,7 @@ export type SerializedDPadComponent = T.Serialized<
 export const dPadEditorConfig: T.ComponentEditorConfig = {
   title: 'D-Pad',
   keys: dPadKeys,
-  shapes: dPadShapes,
+  models: dPadModels,
   textures: dPadTextures,
 };
 
@@ -64,7 +64,7 @@ export const simpleDPadRects = (
   y: number,
   width: number,
   height: number,
-): Record<DPadShapes, T.SerializedKonvaShape> =>
+): Record<DPadModels, T.SerializedKonvaModel> =>
   mapObj(serializeKonvaNode, {
     u: new Konva.Rect({
       x,
@@ -107,16 +107,16 @@ export const simpleDPadTextures = (
 });
 
 export class DPadComponent extends Component<
-  DPadShapes,
+  DPadModels,
   DPadTextures,
   typeof dPadInputKinds,
   DPadState
 > {
   constructor(
     id: string,
-    graphics: T.ComponentGraphics<DPadShapes, DPadTextures>,
+    graphics: T.ComponentGraphics<DPadModels, DPadTextures>,
     state: Partial<DPadState>,
-    filters: T.ComponentFilterDict<DPadShapes>,
+    filters: T.ComponentFilterDict<DPadModels>,
   ) {
     super(
       id,
@@ -129,21 +129,21 @@ export class DPadComponent extends Component<
 
   private updateDirection(
     input: boolean,
-    shape: Maybe<Konva.Shape>,
+    model: Maybe<Konva.Shape>,
     on: Maybe<T.Texture>,
     off: Maybe<T.Texture>,
   ): void {
-    if (input && shape && on) on.apply(shape);
-    else if (!input && shape && off) off.apply(shape);
+    if (input && model && on) on.apply(model);
+    else if (!input && model && off) off.apply(model);
   }
 
   update(input: DPadInput): void {
     const { u, l, d, r } = input;
-    const { shapes, textures } = this.graphics;
+    const { models, textures } = this.graphics;
 
-    this.updateDirection(u, shapes.u, textures.uOn, textures.uOff);
-    this.updateDirection(l, shapes.l, textures.lOn, textures.lOff);
-    this.updateDirection(d, shapes.d, textures.dOn, textures.dOff);
-    this.updateDirection(r, shapes.r, textures.rOn, textures.rOff);
+    this.updateDirection(u, models.u, textures.uOn, textures.uOff);
+    this.updateDirection(l, models.l, textures.lOn, textures.lOff);
+    this.updateDirection(d, models.d, textures.dOn, textures.dOff);
+    this.updateDirection(r, models.r, textures.rOn, textures.rOff);
   }
 }

@@ -10,7 +10,7 @@ import { StickComponent, stickInputKinds } from './StickComponent';
 import { Component } from './Component';
 
 // K: identifying kind of component
-// SS: shape keys
+// SS: model keys
 // TS: texture keys
 // S: component state
 // I: component input
@@ -85,31 +85,31 @@ export const updateComponentKey = (
   };
 };
 
-export interface SerializedKonvaShape {
+export interface SerializedKonvaModel {
   attrs: { x: number; y: number };
-  className: T.KonvaShapeKind;
+  className: T.KonvaModelKind;
 }
 
 export interface SerializedComponentGraphics<
   SS extends string,
   TS extends string
 > {
-  shapes: Record<SS, SerializedKonvaShape>;
+  models: Record<SS, SerializedKonvaModel>;
   textures: Record<TS, T.SerializedTexture>;
 }
 
-export const serializeKonvaNode = (node: Konva.Node): SerializedKonvaShape =>
+export const serializeKonvaNode = (node: Konva.Node): SerializedKonvaModel =>
   JSON.parse(node.toJSON());
 
 export const serializeGraphics = <SS extends string, TS extends string>(
   graphics: T.ComponentGraphics<SS, TS>,
 ): SerializedComponentGraphics<SS, TS> => {
-  const result: any = { shapes: {}, textures: {} };
-  const { shapes, textures } = graphics;
+  const result: any = { models: {}, textures: {} };
+  const { models, textures } = graphics;
 
-  for (const k in shapes) {
-    const shape = shapes[k];
-    if (shape) result.shapes[k] = serializeKonvaNode(shape as Konva.Shape);
+  for (const k in models) {
+    const model = models[k];
+    if (model) result.models[k] = serializeKonvaNode(model as Konva.Shape);
   }
 
   for (const k in textures) {
@@ -123,11 +123,11 @@ export const serializeGraphics = <SS extends string, TS extends string>(
 export const deserializeGraphics = <SS extends string, TS extends string>(
   serialized: SerializedComponentGraphics<SS, TS>,
 ): T.ComponentGraphics<SS, TS> => {
-  const result: any = { shapes: {}, textures: {} };
-  const { shapes, textures } = serialized;
+  const result: any = { models: {}, textures: {} };
+  const { models, textures } = serialized;
 
-  for (const k in shapes) {
-    result.shapes[k] = Konva.Node.create(shapes[k], undefined) as Konva.Shape;
+  for (const k in models) {
+    result.models[k] = Konva.Node.create(models[k], undefined) as Konva.Shape;
   }
 
   for (const k in textures) {
@@ -143,7 +143,7 @@ export interface SerializedComponentFilter<K extends T.InputFilterKind> {
 }
 
 export interface ComponentFilterKey {
-  shape: string;
+  model: string;
   filterIndex: number;
   filterKey: string;
 }
@@ -154,11 +154,11 @@ export type SerializedComponentFilterDict = Dict<
 
 export const getComponentFilterInputKind = (
   component: T.SerializedComponent,
-  { shape, filterIndex, filterKey }: ComponentFilterKey,
+  { model, filterIndex, filterKey }: ComponentFilterKey,
 ): Maybe<T.InputKind> =>
   component.filters !== undefined
     ? getFilterInputKind(
-        component.filters[shape][filterIndex].filter,
+        component.filters[model][filterIndex].filter,
         filterKey,
       )
     : undefined;
@@ -177,7 +177,7 @@ const deserializeComponentFilter = ({
 export const deserializeComponentFilterDict = (
   filters: SerializedComponentFilterDict,
 ): T.ComponentFilterDict =>
-  mapObj(shapeFilters => shapeFilters.map(deserializeComponentFilter), filters);
+  mapObj(modelFilters => modelFilters.map(deserializeComponentFilter), filters);
 
 export interface ComponentFilterKeyUpdate {
   componentId: string;
@@ -191,11 +191,11 @@ export const updateComponentFilterKey = (
 ): SerializedComponentFilterDict => {
   const {
     controllerKey,
-    componentFilterKey: { shape, filterIndex, filterKey },
+    componentFilterKey: { model, filterIndex, filterKey },
   } = update;
 
   return mapPath(
-    [shape, filterIndex, 'inputMap', filterKey],
+    [model, filterIndex, 'inputMap', filterKey],
     () => controllerKey,
     filterDict,
   );

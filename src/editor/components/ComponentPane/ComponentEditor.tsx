@@ -4,15 +4,15 @@ import { getComponentEditorConfig } from '../../../display/editor';
 import { ComponentFilters } from './ComponentFilters';
 import { ComponentKeys } from './ComponentKeys';
 import { ComponentState } from './ComponentState';
-import { ComponentShapes } from './ComponentShapes';
+import { ComponentModels } from './ComponentModels';
 import { ComponentTitle } from './ComponentTitle';
 
 interface ComponentEditorProps {
   component: Maybe<T.SerializedComponent>;
   updateComponentState: (id: string, state: T.ComponentState) => void;
-  updateComponentShape: (
+  updateComponentModel: (
     component: T.SerializedComponent,
-    shapeName: string,
+    modelName: string,
     key: string,
     value: any,
   ) => void;
@@ -21,7 +21,7 @@ interface ComponentEditorProps {
 export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
   component,
   updateComponentState,
-  updateComponentShape,
+  updateComponentModel,
 }) => {
   if (!component) return null;
   const config = getComponentEditorConfig(component.kind);
@@ -41,10 +41,10 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
         }}
       />
       <ComponentKeys component={component} keys={config.keys} />
-      <ComponentShapes
+      <ComponentModels
         component={component}
-        shapeList={config.shapes}
-        updateComponentShape={updateComponentShape}
+        modelList={config.models}
+        updateComponentModel={updateComponentModel}
       />
       <ComponentFilters component={component} />
     </div>

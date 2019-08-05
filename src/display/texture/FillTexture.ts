@@ -16,10 +16,10 @@ export class FillTexture extends T.TypedTexture<'fill', FillTextureState> {
     this.state = { ...this.state, ...updates };
   }
 
-  apply = (shape: Konva.Shape): void => {
-    shape.fillPriority('color');
-    if (this.state.fill) shape.fill(this.state.fill);
-    if (this.state.stroke) shape.stroke(this.state.stroke);
-    if (this.state.strokeWidth) shape.strokeWidth(this.state.strokeWidth);
+  apply = (model: Konva.Shape): void => {
+    model.fillPriority('color');
+    if (this.state.fill) model.fill(this.state.fill);
+    if (this.state.stroke) model.stroke(this.state.stroke);
+    if (this.state.strokeWidth) model.strokeWidth(this.state.strokeWidth);
   };
 }

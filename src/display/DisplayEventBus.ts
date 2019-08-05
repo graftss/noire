@@ -4,9 +4,9 @@ import { without } from '../utils';
 import { Component } from './component/Component';
 
 type ComponentId = string;
-type ShapeName = string;
-type ShapeKey = string;
-type ShapeValue = any;
+type ModelName = string;
+type ModelKey = string;
+type ModelValue = any;
 
 interface DisplayHandlerData {
   addComponent: Component;
@@ -16,8 +16,8 @@ interface DisplayHandlerData {
   stageClick: Konva.Stage;
   updateComponentFilters: [ComponentId, T.ComponentFilterDict];
   updateComponentState: [ComponentId, T.ComponentState];
-  requestUpdateComponentShape: [ComponentId, ShapeName, ShapeKey, ShapeValue];
-  updateComponentShape: [ComponentId, ShapeName, Konva.Shape];
+  requestUpdateComponentModel: [ComponentId, ModelName, ModelKey, ModelValue];
+  updateComponentModel: [ComponentId, ModelName, Konva.Shape];
 }
 
 export type DisplayEventKind = keyof DisplayHandlerData;
@@ -51,8 +51,8 @@ export class DisplayEventBus {
     stageClick: [],
     updateComponentFilters: [],
     updateComponentState: [],
-    requestUpdateComponentShape: [],
-    updateComponentShape: [],
+    requestUpdateComponentModel: [],
+    updateComponentModel: [],
   };
 
   emit = <K extends DisplayEventKind>(event: DisplayEvent<K>): void => {

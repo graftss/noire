@@ -70,8 +70,8 @@ export class ComponentManager {
       const filterInput =
         component.filters &&
         mapObj(
-          shapeFilters =>
-            shapeFilters.map(
+          modelFilters =>
+            modelFilters.map(
               compose(
                 rawifyInputDict,
                 getFilterInput,

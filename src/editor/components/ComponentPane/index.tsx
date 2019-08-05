@@ -6,9 +6,9 @@ import {
   emitDisplayEvents,
   selectEditorOption,
   updateComponentState,
-  updateComponentShape,
+  updateComponentModel,
 } from '../../../state/actions';
-import { updateSerializedShape } from '../../../display/editor';
+import { updateSerializedModel } from '../../../display/editor';
 import { ComponentEditor } from './ComponentEditor';
 import { ComponentSelect } from './ComponentSelect';
 
@@ -25,9 +25,9 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 interface PropsFromDispatch {
   selectComponent: (id: string) => void;
   updateComponentState: (id: string, state: T.ComponentState) => void;
-  updateComponentShape: (
+  updateComponentModel: (
     component: T.SerializedComponent,
-    shapeName: string,
+    modelName: string,
     key: string,
     value: any,
   ) => void;
@@ -46,25 +46,25 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     );
   },
 
-  updateComponentShape: (
+  updateComponentModel: (
     component: T.SerializedComponent,
-    shapeName: string,
+    modelName: string,
     key: string,
     value: any,
   ) => {
     dispatch(
-      updateComponentShape(
+      updateComponentModel(
         component.id,
-        shapeName,
-        updateSerializedShape(component.graphics.shapes[shapeName], key, value),
+        modelName,
+        updateSerializedModel(component.graphics.models[modelName], key, value),
       ),
     );
 
     dispatch(
       emitDisplayEvents([
         {
-          kind: 'requestUpdateComponentShape',
-          data: [component.id, shapeName, key, value],
+          kind: 'requestUpdateComponentModel',
+          data: [component.id, modelName, key, value],
         },
       ]),
     );
@@ -78,7 +78,7 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
   selectComponent,
   selectedComponent,
   updateComponentState,
-  updateComponentShape,
+  updateComponentModel,
 }) => (
   <div>
     <ComponentSelect
@@ -89,7 +89,7 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
     <ComponentEditor
       component={selectedComponent}
       updateComponentState={updateComponentState}
-      updateComponentShape={updateComponentShape}
+      updateComponentModel={updateComponentModel}
     />
   </div>
 );

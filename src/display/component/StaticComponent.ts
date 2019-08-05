@@ -1,8 +1,8 @@
 import * as T from '../../types';
 import { Component } from './Component';
 
-const staticShapes = ['shape'] as const;
-type StaticShapes = typeof staticShapes[number];
+const staticModels = ['model'] as const;
+type StaticModels = typeof staticModels[number];
 
 const staticTextures = ['texture'] as const;
 type StaticTextures = typeof staticTextures[number];
@@ -21,7 +21,7 @@ export const defaultStaticState: StaticState = {
 
 export type SerializedStaticComponent = T.Serialized<
   'static',
-  StaticShapes,
+  StaticModels,
   StaticTextures,
   typeof staticInputKinds,
   StaticState
@@ -30,21 +30,21 @@ export type SerializedStaticComponent = T.Serialized<
 export const staticEditorConfig: T.ComponentEditorConfig = {
   title: 'Static',
   keys: staticKeys,
-  shapes: staticShapes,
+  models: staticModels,
   textures: staticTextures,
 };
 
 export class StaticComponent extends Component<
-  StaticShapes,
+  StaticModels,
   StaticTextures,
   typeof staticInputKinds,
   StaticState
 > {
   constructor(
     id: string,
-    graphics: T.ComponentGraphics<StaticShapes, StaticTextures>,
+    graphics: T.ComponentGraphics<StaticModels, StaticTextures>,
     state: Partial<StaticState>,
-    filters: T.ComponentFilterDict<StaticShapes>,
+    filters: T.ComponentFilterDict<StaticModels>,
   ) {
     super(
       id,
@@ -61,9 +61,9 @@ export class StaticComponent extends Component<
   update(): void {
     const {
       textures: { texture },
-      shapes: { shape },
+      models: { model },
     } = this.graphics;
 
-    if (texture && shape) texture.apply(shape);
+    if (texture && model) texture.apply(model);
   }
 }

@@ -31,15 +31,15 @@ export class ImageTexture extends T.TypedTexture<'image', ImageTextureState> {
     this.state.offset = v;
   };
 
-  apply = (shape: Konva.Shape): void => {
-    shape.fillPriority('pattern');
+  apply = (model: Konva.Shape): void => {
+    model.fillPriority('pattern');
 
-    shape.cache(0);
+    model.cache(0);
 
     switch (this.loadState) {
       case 'loaded': {
-        shape.fillPatternImage(this.image);
-        shape.fillPatternOffset(this.state.offset);
+        model.fillPatternImage(this.image);
+        model.fillPatternOffset(this.state.offset);
         break;
       }
     }

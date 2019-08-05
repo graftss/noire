@@ -1,8 +1,8 @@
 import * as T from '../../types';
 import { Component } from './Component';
 
-const buttonShapes = ['on', 'off'] as const;
-type ButtonShapes = typeof buttonShapes[number];
+const buttonModels = ['on', 'off'] as const;
+type ButtonModels = typeof buttonModels[number];
 
 const buttonTextures = ['on', 'off'] as const;
 type ButtonTextures = typeof buttonTextures[number];
@@ -25,7 +25,7 @@ export const defaultButtonComponentState: ButtonComponentState = {
 
 export type SerializedButtonComponent = T.Serialized<
   'button',
-  ButtonShapes,
+  ButtonModels,
   ButtonTextures,
   typeof buttonInputKinds,
   ButtonComponentState
@@ -34,21 +34,21 @@ export type SerializedButtonComponent = T.Serialized<
 export const buttonEditorConfig: T.ComponentEditorConfig = {
   title: 'Button',
   keys: buttonKeys,
-  shapes: buttonShapes,
+  models: buttonModels,
   textures: buttonTextures,
 };
 
 export class ButtonComponent extends Component<
-  ButtonShapes,
+  ButtonModels,
   ButtonTextures,
   typeof buttonInputKinds,
   ButtonComponentState
 > {
   constructor(
     id: string,
-    graphics: T.ComponentGraphics<ButtonShapes, ButtonTextures>,
+    graphics: T.ComponentGraphics<ButtonModels, ButtonTextures>,
     state: Partial<ButtonComponentState>,
-    filters: T.ComponentFilterDict<ButtonShapes>,
+    filters: T.ComponentFilterDict<ButtonModels>,
   ) {
     super(
       id,
@@ -63,17 +63,17 @@ export class ButtonComponent extends Component<
   }
 
   update(input: Partial<ButtonComponentInput>): void {
-    const { textures, shapes } = this.graphics;
+    const { textures, models } = this.graphics;
     const { button } = input;
 
-    if (button && shapes.on && textures.on) {
-      if (shapes.off) shapes.off.hide();
-      shapes.on.show();
-      textures.on.apply(shapes.on);
-    } else if (shapes.off && textures.off) {
-      if (shapes.on) shapes.on.hide();
-      shapes.off.show();
-      textures.off.apply(shapes.off);
+    if (button && models.on && textures.on) {
+      if (models.off) models.off.hide();
+      models.on.show();
+      textures.on.apply(models.on);
+    } else if (models.off && textures.off) {
+      if (models.on) models.on.hide();
+      models.off.show();
+      textures.off.apply(models.off);
     }
   }
 }

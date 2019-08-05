@@ -70,14 +70,14 @@ export {
   SerializedComponent,
   SerializedComponentFilter,
   SerializedComponentFilterDict,
-  SerializedKonvaShape,
+  SerializedKonvaModel,
 } from './display/component/';
 export {
   ComponentEditorConfig,
   EditorField,
   EditorFieldKind,
-  KonvaShapeKind,
-  ShapeEditorField,
+  KonvaModelKind,
+  ModelEditorField,
   StateEditorField,
 } from './display/editor';
 export {

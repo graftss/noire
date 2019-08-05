@@ -2,8 +2,8 @@ import * as T from '../../types';
 import { normalizeAxis } from '../../utils';
 import { Component } from './Component';
 
-const stickShapes = ['boundary', 'stick', 'center'] as const;
-type StickShapes = typeof stickShapes[number];
+const stickModels = ['boundary', 'stick', 'center'] as const;
+type StickModels = typeof stickModels[number];
 
 const stickTextures = ['boundary', 'stick', 'stickDown', 'center'] as const;
 type StickTextures = typeof stickTextures[number];
@@ -39,7 +39,7 @@ export const defaultStickState: StickState = {
 
 export type SerializedStickComponent = T.Serialized<
   'stick',
-  StickShapes,
+  StickModels,
   StickTextures,
   typeof stickInputKinds,
   StickState
@@ -63,7 +63,7 @@ export const stickEditorConfig: T.ComponentEditorConfig = {
   title: 'Stick',
   state: stickEditorState,
   keys: stickKeys,
-  shapes: stickShapes,
+  models: stickModels,
   textures: stickTextures,
 };
 
@@ -71,16 +71,16 @@ const depthFactor = (t: number): number =>
   t > 0.2 ? 1 - 0.08 * Math.abs(t) : 1 - 0.02 * Math.abs(t);
 
 export class StickComponent extends Component<
-  StickShapes,
+  StickModels,
   StickTextures,
   typeof stickInputKinds,
   StickState
 > {
   constructor(
     id: string,
-    graphics: T.ComponentGraphics<StickShapes, StickTextures>,
+    graphics: T.ComponentGraphics<StickModels, StickTextures>,
     state: Partial<StickState>,
-    filters: T.ComponentFilterDict<StickShapes>,
+    filters: T.ComponentFilterDict<StickModels>,
   ) {
     super(
       id,
@@ -92,7 +92,7 @@ export class StickComponent extends Component<
   }
 
   init(): void {
-    const { boundary } = this.graphics.shapes;
+    const { boundary } = this.graphics.models;
     if (boundary) boundary.moveToBottom();
   }
 
@@ -106,37 +106,37 @@ export class StickComponent extends Component<
   }
 
   private updateBoundary(): void {
-    const shape = this.graphics.shapes.boundary;
+    const model = this.graphics.models.boundary;
     const texture = this.graphics.textures.boundary;
 
-    if (shape && texture) {
-      texture.apply(shape);
+    if (model && texture) {
+      texture.apply(model);
     }
   }
 
   private updateCenter(x: number, y: number): void {
-    const shape = this.graphics.shapes.center;
+    const model = this.graphics.models.center;
     const texture = this.graphics.textures.center;
 
-    if (shape && texture) {
-      shape.position(this.centerPosition(x, y));
-      texture.apply(shape);
+    if (model && texture) {
+      model.position(this.centerPosition(x, y));
+      texture.apply(model);
     }
   }
 
   private updateStick(x: number, y: number, down: boolean): void {
-    const shape = this.graphics.shapes.stick;
-    if (!shape) return;
+    const model = this.graphics.models.stick;
+    if (!model) return;
 
-    shape.position(this.centerPosition(x, y));
+    model.position(this.centerPosition(x, y));
 
     if (this.state.useDepthScaling) {
-      shape.scale({
+      model.scale({
         x: depthFactor(Math.abs(x)),
         y: depthFactor(Math.abs(y)),
       });
     } else {
-      shape.scale({ x: 1, y: 1 });
+      model.scale({ x: 1, y: 1 });
     }
 
     const texture =
@@ -144,7 +144,7 @@ export class StickComponent extends Component<
         ? this.graphics.textures.stickDown
         : this.graphics.textures.stick;
 
-    if (texture) texture.apply(shape);
+    if (texture) texture.apply(model);
   }
 
   update(input: StickInput): void {

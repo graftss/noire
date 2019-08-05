@@ -2,7 +2,7 @@ import Konva from 'konva';
 import * as T from '../types';
 import {
   selectEditorOption,
-  updateComponentShape,
+  updateComponentModel,
   updateComponentState,
 } from '../state/actions';
 import { deserializeComponent } from './component';
@@ -56,16 +56,16 @@ export class Display {
     this.eventBus.emit({ kind: 'updateComponentState', data: [id, state] });
   }
 
-  emitUpdateComponentShape(
+  emitUpdateComponentModel(
     id: string,
-    shapeName: string,
-    serialShape: T.SerializedKonvaShape,
-    shape: Konva.Shape,
+    modelName: string,
+    serialModel: T.SerializedKonvaModel,
+    model: Konva.Shape,
   ): void {
-    this.store.dispatch(updateComponentShape(id, shapeName, serialShape));
+    this.store.dispatch(updateComponentModel(id, modelName, serialModel));
     this.eventBus.emit({
-      kind: 'updateComponentShape',
-      data: [id, shapeName, shape],
+      kind: 'updateComponentModel',
+      data: [id, modelName, model],
     });
   }
 

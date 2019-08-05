@@ -96,8 +96,8 @@ const vert: T.SerializedComponent = {
     scale: { x: 1, y: 1 },
   },
   graphics: {
-    shapes: {
-      shape: serializeKonvaNode(
+    models: {
+      model: serializeKonvaNode(
         new Konva.Rect({ x: 0, y: 0, width: 437, height: 606 }),
       ),
     },
@@ -109,7 +109,7 @@ const vert: T.SerializedComponent = {
     },
   },
   filters: {
-    shape: [
+    model: [
       {
         filter: {
           kind: 'stickDistort',
@@ -153,7 +153,7 @@ const vert: T.SerializedComponent = {
 };
 
 const vertProd = clone(vert);
-vertProd.graphics.shapes.shape = serializeKonvaNode(
+vertProd.graphics.models.model = serializeKonvaNode(
   new Konva.Rect({
     x: 0,
     y: 0,
@@ -161,11 +161,11 @@ vertProd.graphics.shapes.shape = serializeKonvaNode(
     height: 606,
   }),
 );
-(vertProd.filters as any).shape[0].filter.state.debug = false;
-(vertProd.filters as any).shape[1].filter.state.debug = false;
+(vertProd.filters as any).model[0].filter.state.debug = false;
+(vertProd.filters as any).model[1].filter.state.debug = false;
 
 const stickGraphics: any = {
-  shapes: {
+  models: {
     boundary: serializeKonvaNode(new Konva.Circle({ radius: 20 })),
     stick: serializeKonvaNode(new Konva.Circle({ radius: 10 })),
   },
@@ -256,7 +256,7 @@ const dPad: T.SerializedComponent = {
   id: ids[2],
   kind: 'dpad',
   graphics: {
-    shapes: simpleDPadRects(200, 50, 30, 30),
+    models: simpleDPadRects(200, 50, 30, 30),
     textures: simpleDPadTextures(
       { kind: 'fill', state: { fill: 'black' } },
       { kind: 'fill', state: { fill: 'red', stroke: 'black', strokeWidth: 1 } },
@@ -280,7 +280,7 @@ const button: T.SerializedComponent = {
   id: ids[3],
   kind: 'button',
   graphics: {
-    shapes: {
+    models: {
       on: serializeKonvaNode(
         new Konva.Rect({ x: 50, y: 50, width: 30, height: 30 }),
       ),
@@ -317,8 +317,8 @@ const staticImage: T.SerializedComponent = {
   id: ids[4],
   kind: 'static',
   graphics: {
-    shapes: {
-      shape: serializeKonvaNode(
+    models: {
+      model: serializeKonvaNode(
         new Konva.Rect({ x: 0, y: 0, width: 675, height: 1000 }),
       ),
     },

@@ -1,13 +1,13 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { updateKonvaShape } from '../editor';
+import { updateKonvaModel } from '../editor';
 import { DisplayPlugin } from './DisplayPlugin';
 import { Display } from '..';
 
 type TransformerState =
   | { kind: 'component'; target: Konva.Group; transformer: Konva.Transformer }
   | {
-      kind: 'shape';
+      kind: 'model';
       componentId: string;
       target: Konva.Shape;
       transformer: Konva.Transformer;
@@ -22,7 +22,7 @@ interface TransformEndEvent {
 }
 
 const attachTransformer = (
-  shape: Konva.Group,
+  model: Konva.Group,
   layer: Konva.Layer,
 ): Konva.Transformer => {
   const transformer = new Konva.Transformer({
@@ -33,7 +33,7 @@ const attachTransformer = (
     rotateEnabled: false,
   });
 
-  transformer.attachTo(shape);
+  transformer.attachTo(model);
   layer.add(transformer);
   return transformer;
 };
@@ -81,8 +81,8 @@ export class KonvaComponentPlugin extends DisplayPlugin {
       cb: this.onUpdateComponentState,
     });
     eventBus.on({
-      kind: 'requestUpdateComponentShape',
-      cb: this.onRequestUpdateComponentShape,
+      kind: 'requestUpdateComponentModel',
+      cb: this.onRequestUpdateComponentModel,
     });
   }
 
@@ -93,8 +93,8 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     }
   };
 
-  // we need to add each shape to its group before calling `init`
-  // on the component, which assumes that each shape in the
+  // we need to add each model to its group before calling `init`
+  // on the component, which assumes that each model in the
   // component has a parent.
   // in general, the order of the calls made here is very brittle
   // and should be changed carefully.
@@ -109,9 +109,9 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     this.groupsById[id] = group;
     this.layer.add(group);
 
-    component.shapeList().forEach((shape: Konva.Shape) => {
-      group.add(shape);
-      shape.on('click', () =>
+    component.modelList().forEach((model: Konva.Shape) => {
+      group.add(model);
+      model.on('click', () =>
         eventBus.emit({ kind: 'selectComponent', data: id }),
       );
     });
@@ -172,18 +172,18 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     }
   };
 
-  onRequestUpdateComponentShape = (data: [string, string, string, any]) => {
-    const [componentId, shapeName, shapeKey, value] = data;
+  onRequestUpdateComponentModel = (data: [string, string, string, any]) => {
+    const [componentId, modelName, modelKey, value] = data;
     const component: Maybe<T.Component> = this.componentsById[componentId];
     if (!component) return;
 
-    const shape: Maybe<Konva.Shape> = component.graphics.shapes[shapeName];
-    if (shape === undefined) return;
+    const model: Maybe<Konva.Shape> = component.graphics.models[modelName];
+    if (model === undefined) return;
 
-    const newShape = updateKonvaShape(shape, shapeKey, value);
+    const newModel = updateKonvaModel(model, modelKey, value);
     this.display.eventBus.emit({
-      kind: 'updateComponentShape',
-      data: [componentId, shapeKey, newShape],
+      kind: 'updateComponentModel',
+      data: [componentId, modelKey, newModel],
     });
   };
 }
