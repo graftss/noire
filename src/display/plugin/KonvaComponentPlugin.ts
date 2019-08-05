@@ -1,5 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
+import { updateKonvaShape } from '../editor';
 import { DisplayPlugin } from './DisplayPlugin';
 import { Display } from '..';
 
@@ -116,14 +117,31 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
     eventBus.on({
       kind: 'updateComponentState',
-      cb: ([eventId, update]: [string, T.ComponentState]) => {
-        if (eventId === id) {
+      cb: ([componentId, update]: [string, T.ComponentState]) => {
+        if (componentId === id) {
           if (update.offset !== undefined) {
             group.setPosition({ x: update.offset.x, y: update.offset.y });
           }
           if (update.scale !== undefined) {
             group.scale({ x: update.scale.x, y: update.scale.y });
           }
+        }
+      },
+    });
+
+    eventBus.on({
+      kind: 'requestUpdateComponentShape',
+      cb: ([componentId, shapeName, shapeKey, value]) => {
+        if (componentId === id) {
+          const shape: Maybe<Konva.Shape> =
+            component.graphics.shapes[shapeName];
+          if (shape === undefined) return;
+
+          const newShape = updateKonvaShape(shape, shapeKey, value);
+          eventBus.emit({
+            kind: 'updateComponentShape',
+            data: [id, shapeKey, newShape],
+          });
         }
       },
     });

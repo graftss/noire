@@ -59,6 +59,15 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
         updateSerializedShape(component.graphics.shapes[shapeName], key, value),
       ),
     );
+
+    dispatch(
+      emitDisplayEvents([
+        {
+          kind: 'requestUpdateComponentShape',
+          data: [component.id, shapeName, key, value],
+        },
+      ]),
+    );
   },
 });
 

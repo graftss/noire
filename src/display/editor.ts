@@ -84,18 +84,19 @@ const baseShapeFields: ShapeEditorField[] = [
     props: { precision: 1 },
     getter: (shape: Konva.Shape) => shape.offsetX(),
     serialGetter: (shape: T.SerializedKonvaShape) => shape.attrs.x,
-    setter: (shape: Konva.Shape, x: number) => shape.offsetX(x),
+    setter: (shape: Konva.Shape, x: number) => shape.x(x),
     serialSetter: (shape: T.SerializedKonvaShape, x: number) =>
       mapPath(['attrs', 'x'], () => x, shape),
   } as ShapeEditorField<number>,
   {
     label: 'y offset',
     kind: 'number',
+    key: 'y',
     defaultValue: 0,
     props: { precision: 1 },
     getter: (shape: Konva.Shape) => shape.offsetY(),
     serialGetter: (shape: T.SerializedKonvaShape) => shape.attrs.y,
-    setter: (shape: Konva.Shape, y: number) => shape.offsetY(y),
+    setter: (shape: Konva.Shape, y: number) => shape.y(y),
     serialSetter: (shape: T.SerializedKonvaShape, y: number) =>
       mapPath(['attrs', 'y'], () => y, shape),
   } as ShapeEditorField<number>,
@@ -142,7 +143,7 @@ export const updateSerializedShape = <V>(
   return field ? field.serialSetter(shape, value) : shape;
 };
 
-export const updateShape = <V>(
+export const updateKonvaShape = <V>(
   shape: Konva.Shape,
   key: string,
   value: V,

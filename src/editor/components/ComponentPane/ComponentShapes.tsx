@@ -22,8 +22,10 @@ export const ComponentShapes: React.SFC<ComponentShapesProps> = ({
   <div>
     <div>---</div>
     {shapeList.map((shapeName: string) => {
-      const shape: T.SerializedKonvaShape =
+      const shape: Maybe<T.SerializedKonvaShape> =
         component.graphics.shapes[shapeName];
+      if (!shape) return null;
+
       const { label, fields } = getKonvaShapeConfig(shape.className);
 
       return (
