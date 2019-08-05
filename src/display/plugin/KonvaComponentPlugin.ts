@@ -40,6 +40,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   private border: Konva.Rect;
   private selected: Maybe<SelectedComponentState>;
   private groupsById: Dict<Konva.Group> = {};
+  private componentsById: Dict<T.Component> = {};
 
   constructor(config: T.NoireConfig, display: Display) {
     super(config, display);
@@ -71,6 +72,14 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     eventBus.on({ kind: 'addComponent', cb: this.onAddComponent });
     eventBus.on({ kind: 'requestDraw', cb: () => this.layer.draw() });
     eventBus.on({ kind: 'selectComponent', cb: this.onSelectComponent });
+    eventBus.on({
+      kind: 'updateComponentState',
+      cb: this.onUpdateComponentState,
+    });
+    eventBus.on({
+      kind: 'requestUpdateComponentShape',
+      cb: this.onRequestUpdateComponentShape,
+    });
   }
 
   private onStageClick = ({ target }: { target: Konva.Node }) => {
@@ -89,6 +98,8 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     const { eventBus } = this.display;
     const { id } = component;
     const offset = component.state.offset;
+
+    this.componentsById[id] = component;
 
     const group = new Konva.Group({ x: offset.x, y: offset.y });
     this.groupsById[id] = group;
@@ -113,37 +124,6 @@ export class KonvaComponentPlugin extends DisplayPlugin {
       const { scaleX: x, scaleY: y } = event.target.attrs;
       const update: T.ComponentState = { scale: { x, y } };
       this.display.emitUpdateComponentState(id, update);
-    });
-
-    eventBus.on({
-      kind: 'updateComponentState',
-      cb: ([componentId, update]: [string, T.ComponentState]) => {
-        if (componentId === id) {
-          if (update.offset !== undefined) {
-            group.setPosition({ x: update.offset.x, y: update.offset.y });
-          }
-          if (update.scale !== undefined) {
-            group.scale({ x: update.scale.x, y: update.scale.y });
-          }
-        }
-      },
-    });
-
-    eventBus.on({
-      kind: 'requestUpdateComponentShape',
-      cb: ([componentId, shapeName, shapeKey, value]) => {
-        if (componentId === id) {
-          const shape: Maybe<Konva.Shape> =
-            component.graphics.shapes[shapeName];
-          if (shape === undefined) return;
-
-          const newShape = updateKonvaShape(shape, shapeKey, value);
-          eventBus.emit({
-            kind: 'updateComponentShape',
-            data: [id, shapeKey, newShape],
-          });
-        }
-      },
     });
   };
 
@@ -171,5 +151,36 @@ export class KonvaComponentPlugin extends DisplayPlugin {
         transformer: attachTransformer(group, this.layer),
       };
     }
+  };
+
+  onUpdateComponentState = (data: [string, T.ComponentState]) => {
+    const [componentId, update] = data;
+
+    if (this.componentsById[componentId]) {
+      const group: Konva.Group = this.groupsById[componentId];
+
+      if (update.offset !== undefined) {
+        group.setPosition({ x: update.offset.x, y: update.offset.y });
+      }
+
+      if (update.scale !== undefined) {
+        group.scale({ x: update.scale.x, y: update.scale.y });
+      }
+    }
+  };
+
+  onRequestUpdateComponentShape = (data: [string, string, string, any]) => {
+    const [componentId, shapeName, shapeKey, value] = data;
+    const component: Maybe<T.Component> = this.componentsById[componentId];
+    if (!component) return;
+
+    const shape: Maybe<Konva.Shape> = component.graphics.shapes[shapeName];
+    if (shape === undefined) return;
+
+    const newShape = updateKonvaShape(shape, shapeKey, value);
+    this.display.eventBus.emit({
+      kind: 'updateComponentShape',
+      data: [componentId, shapeKey, newShape],
+    });
   };
 }
