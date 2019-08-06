@@ -162,6 +162,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     if (ts && ts.target === newTarget) return;
 
     newTarget.draggable(true);
+    this.destroyTransformer();
     this.transformerState = {
       kind: 'component',
       target: newTarget,
