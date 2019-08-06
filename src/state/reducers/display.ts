@@ -17,11 +17,22 @@ export const displayReducer = (
   switch (action.type) {
     case 'selectEditorOption': {
       const { data } = action;
-      return {
-        ...state,
-        selectedComponentId:
-          data.kind === 'component' && data.id ? data.id : undefined,
-      };
+      if (data.kind !== 'component' || data.id === undefined) {
+        return {
+          ...state,
+          selectedComponentId: undefined,
+          transformerTarget: undefined,
+        };
+      } else if (data.id !== state.selectedComponentId) {
+        return {
+          ...state,
+          selectedComponentId: data.id,
+          transformerTarget: { kind: 'component', id: data.id },
+          transformerVisibility: true,
+        };
+      } else {
+        return state;
+      }
     }
 
     case 'updateComponentState': {
