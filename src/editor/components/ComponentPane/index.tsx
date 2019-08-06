@@ -4,7 +4,7 @@ import * as T from '../../../types';
 import { components, selectedComponent } from '../../../state/selectors';
 import {
   emitDisplayEvents,
-  selectEditorOption,
+  selectComponent,
   updateComponentState,
   updateComponentModel,
 } from '../../../state/actions';
@@ -35,7 +35,7 @@ interface PropsFromDispatch {
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
   selectComponent: (id: string) => {
-    dispatch(selectEditorOption({ kind: 'component', id }));
+    dispatch(selectComponent(id));
     dispatch(emitDisplayEvents([{ kind: 'selectComponent', data: id }]));
   },
 

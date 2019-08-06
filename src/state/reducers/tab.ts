@@ -21,13 +21,12 @@ export const tabReducer = (
       return { ...state, kind: action.data };
     }
 
-    case 'selectEditorOption': {
-      switch (action.data.kind) {
-        case 'component':
-          return { ...state, kind: 'components' };
-        case 'controller':
-          return { ...state, kind: 'controllers' };
-      }
+    case 'selectComponent': {
+      return { ...state, kind: 'components' };
+    }
+
+    case 'selectController': {
+      return { ...state, kind: 'controllers' };
     }
   }
 

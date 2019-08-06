@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import * as T from '../types';
 import {
-  selectEditorOption,
+  selectComponent,
   updateComponentModel,
   updateComponentState,
 } from '../state/actions';
@@ -36,14 +36,12 @@ export class Display {
 
     this.eventBus.on({
       kind: 'selectComponent',
-      cb: (id: Maybe<string>) =>
-        dispatch(selectEditorOption({ kind: 'component', id })),
+      cb: (id: Maybe<string>) => dispatch(selectComponent(id)),
     });
 
     this.eventBus.on({
       kind: 'stageClick',
-      cb: () =>
-        dispatch(selectEditorOption({ kind: 'component', id: undefined })),
+      cb: () => dispatch(selectComponent()),
     });
   }
 

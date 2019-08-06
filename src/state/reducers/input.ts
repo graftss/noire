@@ -47,11 +47,8 @@ export const inputReducer = (
   action: T.EditorAction,
 ): InputState => {
   switch (action.type) {
-    case 'selectEditorOption': {
-      const selectedControllerId =
-        action.data.kind === 'controller' ? action.data.id : undefined;
-
-      return { ...state, selectedControllerId };
+    case 'selectController': {
+      return { ...state, selectedControllerId: action.data };
     }
 
     case 'listenNextInput': {

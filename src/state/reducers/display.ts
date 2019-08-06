@@ -15,19 +15,19 @@ export const displayReducer = (
   action: T.EditorAction,
 ): DisplayState => {
   switch (action.type) {
-    case 'selectEditorOption': {
-      const { data } = action;
-      if (data.kind !== 'component' || data.id === undefined) {
+    case 'selectComponent': {
+      const id = action.data;
+      if (id === undefined) {
         return {
           ...state,
           selectedComponentId: undefined,
           transformerTarget: undefined,
         };
-      } else if (data.id !== state.selectedComponentId) {
+      } else if (id !== state.selectedComponentId) {
         return {
           ...state,
-          selectedComponentId: data.id,
-          transformerTarget: { kind: 'component', id: data.id },
+          selectedComponentId: id,
+          transformerTarget: { kind: 'component', id },
           transformerVisibility: true,
         };
       } else {

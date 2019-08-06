@@ -120,7 +120,7 @@ export {
   SerializedButtonComponent,
 } from './display/component/ButtonComponent';
 export { EditorApp } from './editor';
-export { EditorAction, EditorOption } from './state/actions';
+export { EditorAction } from './state/actions';
 export { DisplayState } from './state/reducers/display';
 export { EditorState } from './state/reducers/root';
 export {
