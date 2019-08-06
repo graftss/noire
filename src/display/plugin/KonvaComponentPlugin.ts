@@ -4,14 +4,14 @@ import { updateKonvaModel } from '../model/konva';
 import { DisplayPlugin } from './DisplayPlugin';
 import { Display } from '..';
 
-type TransformerState =
-  | { kind: 'component'; target: Konva.Group; transformer: Konva.Transformer }
-  | {
-      kind: 'model';
-      componentId: string;
-      target: Konva.Shape;
-      transformer: Konva.Transformer;
-    };
+export type KonvaTransformerTarget =
+  | { kind: 'component'; id: string }
+  | { kind: 'model'; id: string; modelName: string };
+
+interface TransformerState {
+  transformer: Konva.Transformer;
+  node: Konva.Node;
+}
 
 interface DragEndEvent {
   target: { attrs: Vec2 };
@@ -21,6 +21,7 @@ interface TransformEndEvent {
   target: { attrs: { scaleX: number; scaleY: number } };
 }
 
+// TODO: possibly allow transformer config
 const attachTransformer = (
   model: Konva.Node,
   layer: Konva.Layer,
@@ -84,6 +85,14 @@ export class KonvaComponentPlugin extends DisplayPlugin {
       kind: 'requestUpdateComponentModel',
       cb: this.onRequestUpdateComponentModel,
     });
+    eventBus.on({
+      kind: 'setKonvaTransformerVisibility',
+      cb: this.onSetTransformerVisibility,
+    });
+    eventBus.on({
+      kind: 'setKonvaTransformerTarget',
+      cb: this.onSetKonvaTransformerTarget,
+    });
   }
 
   private onStageClick = ({ target }: { target: Konva.Node }) => {
@@ -92,6 +101,19 @@ export class KonvaComponentPlugin extends DisplayPlugin {
       this.display.eventBus.emit({ kind: 'stageClick', data: this.stage });
     }
   };
+
+  private targetToNode(target: KonvaTransformerTarget): Maybe<Konva.Node> {
+    switch (target.kind) {
+      case 'component':
+        return this.groupsById[target.id];
+      case 'model': {
+        const { id, modelName } = target;
+        return this.componentsById[id].graphics.models[modelName];
+      }
+    }
+
+    throw new Error('unhandled `KonvaTransformerTarget` kind');
+  }
 
   // we need to add each model to its group before calling `init`
   // on the component, which assumes that each model in the
@@ -133,9 +155,9 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
   private destroyTransformer = (): void => {
     if (!this.transformerState) return;
-    const { transformer, target } = this.transformerState;
+    const { transformer, node } = this.transformerState;
 
-    target.draggable(false);
+    node.draggable(false);
     transformer.destroy();
     this.transformerState = undefined;
     this.layer.draw();
@@ -152,37 +174,37 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     }, 0);
   };
 
+  private initTransformer = (node: Konva.Node): void => {
+    node.draggable(true);
+    this.destroyTransformer();
+    this.transformerState = {
+      node,
+      transformer: attachTransformer(node, this.layer),
+    };
+  };
+
   private onSelectComponent = (id: Maybe<string>): void => {
     if (!id) return;
 
-    const newTarget: Maybe<Konva.Group> = this.groupsById[id];
-    if (!newTarget) return;
+    const newNode: Maybe<Konva.Group> = this.groupsById[id];
+    if (!newNode) return;
 
     const ts = this.transformerState;
-    if (ts && ts.target === newTarget) return;
-
-    newTarget.draggable(true);
-    this.destroyTransformer();
-    this.transformerState = {
-      kind: 'component',
-      target: newTarget,
-      transformer: attachTransformer(newTarget, this.layer),
-    };
+    if (!ts || ts.node !== newNode) this.initTransformer(newNode);
   };
 
   private onUpdateComponentState = (data: [string, T.ComponentState]) => {
     const [componentId, update] = data;
+    if (!this.componentsById[componentId]) return;
 
-    if (this.componentsById[componentId]) {
-      const group: Konva.Group = this.groupsById[componentId];
+    const group: Konva.Group = this.groupsById[componentId];
 
-      if (update.offset !== undefined) {
-        group.setPosition({ x: update.offset.x, y: update.offset.y });
-      }
+    if (update.offset !== undefined) {
+      group.setPosition({ x: update.offset.x, y: update.offset.y });
+    }
 
-      if (update.scale !== undefined) {
-        group.scale({ x: update.scale.x, y: update.scale.y });
-      }
+    if (update.scale !== undefined) {
+      group.scale({ x: update.scale.x, y: update.scale.y });
     }
   };
 
@@ -202,5 +224,22 @@ export class KonvaComponentPlugin extends DisplayPlugin {
       kind: 'updateComponentModel',
       data: [componentId, modelKey, newModel],
     });
+  };
+
+  private onSetTransformerVisibility = (visibility: boolean): void => {
+    if (this.transformerState) {
+      this.transformerState.transformer.visible(visibility);
+    }
+  };
+
+  private onSetKonvaTransformerTarget = (
+    data: [KonvaTransformerTarget, boolean],
+  ): void => {
+    const [target, visibility] = data;
+    const node = this.targetToNode(target);
+    if (node) {
+      this.initTransformer(node);
+      this.onSetTransformerVisibility(visibility);
+    }
   };
 }

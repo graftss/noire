@@ -60,6 +60,7 @@ export {
   DisplayEvent,
   DisplayEventKind,
 } from './display/DisplayEventBus';
+export { KonvaTransformerTarget } from './display/plugin/KonvaComponentPlugin';
 export {
   ComponentFilterKey,
   ComponentFilterKeyUpdate,

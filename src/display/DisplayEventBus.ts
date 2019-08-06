@@ -18,6 +18,8 @@ interface DisplayHandlerData {
   updateComponentState: [ComponentId, T.ComponentState];
   requestUpdateComponentModel: [ComponentId, ModelName, ModelKey, ModelValue];
   updateComponentModel: [ComponentId, ModelName, Konva.Shape];
+  setKonvaTransformerVisibility: boolean;
+  setKonvaTransformerTarget: [T.KonvaTransformerTarget, boolean];
 }
 
 export type DisplayEventKind = keyof DisplayHandlerData;
@@ -53,6 +55,8 @@ export class DisplayEventBus {
     updateComponentState: [],
     requestUpdateComponentModel: [],
     updateComponentModel: [],
+    setKonvaTransformerVisibility: [],
+    setKonvaTransformerTarget: [],
   };
 
   emit = <K extends DisplayEventKind>(event: DisplayEvent<K>): void => {
