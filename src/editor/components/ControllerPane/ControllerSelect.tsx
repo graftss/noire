@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Select from 'react-select';
+import { EditorSelect } from '../controls/EditorSelect';
 import * as T from '../../../types';
 
 interface ControllerSelectProps {
@@ -24,11 +24,12 @@ export const ControllerSelect: React.SFC<ControllerSelectProps> = ({
   selectController,
 }) => (
   <div>
-    <Select
-      value={selected ? toOption(selected) : null}
-      options={controllers.map(toOption)}
+    <EditorSelect
+      data={controllers}
+      selected={selected}
       onChange={o => selectController(o.value)}
       placeholder="Controllers"
+      toOption={toOption}
     />
   </div>
 );

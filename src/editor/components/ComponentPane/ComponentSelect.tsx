@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Select from 'react-select';
+import { EditorSelect } from '../controls/EditorSelect';
 import * as T from '../../../types';
 
 interface ComponentSelectProps {
@@ -24,11 +24,12 @@ export const ComponentSelect: React.SFC<ComponentSelectProps> = ({
   selectComponent,
 }) => (
   <div>
-    <Select
-      value={selected ? toOption(selected) : null}
-      options={components.map(toOption)}
+    <EditorSelect
+      data={components}
       onChange={o => selectComponent(o.value)}
       placeholder="Components"
+      selected={selected}
+      toOption={toOption}
     />
   </div>
 );
