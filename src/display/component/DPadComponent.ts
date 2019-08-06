@@ -1,8 +1,7 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { mapObj } from '../../utils';
+import { serializeKonvaModel } from '../model/konva';
 import { Component } from './Component';
-import { serializeKonvaNode } from '.';
 
 const dirs = ['u', 'l', 'd', 'r'] as const;
 type Dir = typeof dirs[number];
@@ -44,7 +43,7 @@ export const defaultDPadState: DPadState = {
   name: 'DPad Component',
 };
 
-export type SerializedDPadComponent = T.Serialized<
+export type SerializedDPadComponent = T.SerializedComponent<
   'dpad',
   DPadModels,
   DPadTextures,
@@ -64,33 +63,40 @@ export const simpleDPadRects = (
   y: number,
   width: number,
   height: number,
-): Record<DPadModels, T.SerializedKonvaModel> =>
-  mapObj(serializeKonvaNode, {
-    u: new Konva.Rect({
+): Record<DPadModels, T.SerializedKonvaModel<'Rect'>> => ({
+  u: serializeKonvaModel(
+    new Konva.Rect({
       x,
       y: y - height,
       width,
       height,
     }),
-    l: new Konva.Rect({
+  ),
+  l: serializeKonvaModel(
+    new Konva.Rect({
       x: x - width,
       y,
       width,
       height,
     }),
-    d: new Konva.Rect({
+  ),
+  d: serializeKonvaModel(
+    new Konva.Rect({
       x,
       y: y + height,
       width,
       height,
     }),
-    r: new Konva.Rect({
+  ),
+  r: serializeKonvaModel(
+    new Konva.Rect({
       x: x + width,
       y,
       width,
       height,
     }),
-  });
+  ),
+});
 
 export const simpleDPadTextures = (
   off: T.SerializedTexture,

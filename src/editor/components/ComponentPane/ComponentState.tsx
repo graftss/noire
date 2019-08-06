@@ -4,7 +4,7 @@ import { EditorField } from '../controls/EditorField';
 
 interface ComponentStateProps {
   component: T.SerializedComponent;
-  stateConfig: Maybe<T.StateEditorField[]>;
+  stateConfig: Maybe<T.ComponentStateEditorField[]>;
   update: (key: string, value: any) => void;
 }
 export const ComponentState: React.SFC<ComponentStateProps> = ({
@@ -17,7 +17,7 @@ export const ComponentState: React.SFC<ComponentStateProps> = ({
       {stateConfig.map(field => (
         <div key={field.key}>
           <EditorField
-            defaultValue={component.state[field.key]}
+            defaultValue={field.getter(component.state)}
             field={field}
             update={v => update(field.key, v)}
           />

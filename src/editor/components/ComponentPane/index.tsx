@@ -8,7 +8,7 @@ import {
   updateComponentState,
   updateComponentModel,
 } from '../../../state/actions';
-import { updateSerializedModel } from '../../../display/editor';
+import { updateSerializedKonvaModel } from '../../../display/model/konva';
 import { ComponentEditor } from './ComponentEditor';
 import { ComponentSelect } from './ComponentSelect';
 
@@ -56,7 +56,11 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
       updateComponentModel(
         component.id,
         modelName,
-        updateSerializedModel(component.graphics.models[modelName], key, value),
+        updateSerializedKonvaModel(
+          component.graphics.models[modelName],
+          key,
+          value,
+        ),
       ),
     );
 

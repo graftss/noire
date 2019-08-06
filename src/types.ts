@@ -61,25 +61,36 @@ export {
   DisplayEventKind,
 } from './display/DisplayEventBus';
 export {
-  BaseSerializedComponent as Serialized,
   ComponentFilterKey,
   ComponentFilterKeyUpdate,
   ComponentKey,
   ComponentKeyUpdate,
   ComponentKind,
   SerializedComponent,
+  SerializedComponentStateData,
   SerializedComponentFilter,
   SerializedComponentFilterDict,
-  SerializedKonvaModel,
 } from './display/component/';
 export {
-  ComponentEditorConfig,
-  EditorField,
-  EditorFieldKind,
+  KonvaCircleAttrs,
+  KonvaModelData,
+  KonvaModel,
+  KonvaModelField,
   KonvaModelKind,
-  ModelEditorField,
-  StateEditorField,
+  KonvaRectAttrs,
+  KonvaShapeAttrs,
+  SerializedKonvaModel,
+} from './display/model/konva';
+export {
+  EditorField,
+  EditorFieldData,
+  EditorFieldKind,
+  EditorFieldType,
 } from './display/editor';
+export {
+  ComponentEditorConfig,
+  ComponentStateEditorField,
+} from './display/component/editor';
 export {
   ComponentState,
   Component,

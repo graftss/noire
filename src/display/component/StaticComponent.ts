@@ -19,7 +19,7 @@ export const defaultStaticState: StaticState = {
   name: 'Static Component',
 };
 
-export type SerializedStaticComponent = T.Serialized<
+export type SerializedStaticComponent = T.SerializedComponent<
   'static',
   StaticModels,
   StaticTextures,

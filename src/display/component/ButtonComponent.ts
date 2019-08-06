@@ -23,7 +23,7 @@ export const defaultButtonComponentState: ButtonComponentState = {
   name: 'Button Component',
 };
 
-export type SerializedButtonComponent = T.Serialized<
+export type SerializedButtonComponent = T.SerializedComponent<
   'button',
   ButtonModels,
   ButtonTextures,

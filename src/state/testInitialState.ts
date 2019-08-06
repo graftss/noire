@@ -10,7 +10,7 @@ import {
   simpleDPadTextures,
 } from '../display/component/DPadComponent';
 import { defaultKeyboardController } from '../input/controller/keyboard';
-import { serializeKonvaNode } from '../display/component';
+import { serializeKonvaModel } from '../display/model/konva';
 
 const ids = 'qwertyuiopasdfghjklzxcvbnm,';
 
@@ -97,7 +97,7 @@ const vert: T.SerializedComponent = {
   },
   graphics: {
     models: {
-      model: serializeKonvaNode(
+      model: serializeKonvaModel(
         new Konva.Rect({ x: 0, y: 0, width: 437, height: 606 }),
       ),
     },
@@ -153,7 +153,7 @@ const vert: T.SerializedComponent = {
 };
 
 const vertProd = clone(vert);
-vertProd.graphics.models.model = serializeKonvaNode(
+vertProd.graphics.models.model = serializeKonvaModel(
   new Konva.Rect({
     x: 0,
     y: 0,
@@ -166,8 +166,8 @@ vertProd.graphics.models.model = serializeKonvaNode(
 
 const stickGraphics: any = {
   models: {
-    boundary: serializeKonvaNode(new Konva.Circle({ radius: 20 })),
-    stick: serializeKonvaNode(new Konva.Circle({ radius: 10 })),
+    boundary: serializeKonvaModel(new Konva.Circle({ radius: 20 })),
+    stick: serializeKonvaModel(new Konva.Circle({ radius: 10 })),
   },
   textures: {
     boundary: {
@@ -281,10 +281,10 @@ const button: T.SerializedComponent = {
   kind: 'button',
   graphics: {
     models: {
-      on: serializeKonvaNode(
+      on: serializeKonvaModel(
         new Konva.Rect({ x: 50, y: 50, width: 30, height: 30 }),
       ),
-      off: serializeKonvaNode(
+      off: serializeKonvaModel(
         new Konva.Rect({ x: 150, y: 50, width: 30, height: 30 }),
       ),
     },
@@ -318,7 +318,7 @@ const staticImage: T.SerializedComponent = {
   kind: 'static',
   graphics: {
     models: {
-      model: serializeKonvaNode(
+      model: serializeKonvaModel(
         new Konva.Rect({ x: 0, y: 0, width: 675, height: 1000 }),
       ),
     },

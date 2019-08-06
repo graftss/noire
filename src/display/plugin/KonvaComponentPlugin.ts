@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { updateKonvaModel } from '../editor';
+import { updateKonvaModel } from '../model/konva';
 import { DisplayPlugin } from './DisplayPlugin';
 import { Display } from '..';
 

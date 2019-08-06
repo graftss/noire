@@ -3,6 +3,7 @@ import * as T from '../../types';
 import { deserializeTexture } from '../texture/';
 import { deserializeInputFilter, getFilterInputKind } from '../filter';
 import { assoc, mapObj, mapPath } from '../../utils';
+import { serializeKonvaModel } from '../model/konva';
 import { ButtonComponent, buttonInputKinds } from './ButtonComponent';
 import { DPadComponent, dPadInputKinds } from './DPadComponent';
 import { StaticComponent, staticInputKinds } from './StaticComponent';
@@ -12,14 +13,14 @@ import { Component } from './Component';
 // K: identifying kind of component
 // SS: model keys
 // TS: texture keys
-// S: component state
 // I: component input
-export interface BaseSerializedComponent<
-  K,
-  SS extends string,
-  TS extends string,
-  I extends Dict<T.InputKind>,
-  S
+// S: component state
+export interface SerializedComponent<
+  K = ComponentKind,
+  SS extends string = string,
+  TS extends string = string,
+  I extends Dict<T.InputKind> = {},
+  S = any
 > {
   id: string;
   kind: K;
@@ -28,13 +29,14 @@ export interface BaseSerializedComponent<
   filters?: Record<SS, SerializedComponentFilter<T.InputFilterKind>[]>;
 }
 
-export type SerializedComponent =
-  | T.SerializedButtonComponent
-  | T.SerializedStickComponent
-  | T.SerializedDPadComponent
-  | T.SerializedStaticComponent;
+export interface SerializedComponentStateData {
+  button: T.SerializedButtonComponent['state'];
+  stick: T.SerializedStickComponent['state'];
+  dpad: T.SerializedDPadComponent['state'];
+  static: T.SerializedStaticComponent['state'];
+}
 
-export type ComponentKind = SerializedComponent['kind'];
+export type ComponentKind = keyof SerializedComponentStateData;
 
 export interface ComponentKey {
   key: string;
@@ -85,21 +87,13 @@ export const updateComponentKey = (
   };
 };
 
-export interface SerializedKonvaModel {
-  attrs: { x: number; y: number };
-  className: T.KonvaModelKind;
-}
-
 export interface SerializedComponentGraphics<
   SS extends string,
   TS extends string
 > {
-  models: Record<SS, SerializedKonvaModel>;
+  models: Record<SS, T.SerializedKonvaModel>;
   textures: Record<TS, T.SerializedTexture>;
 }
-
-export const serializeKonvaNode = (node: Konva.Node): SerializedKonvaModel =>
-  JSON.parse(node.toJSON());
 
 export const serializeGraphics = <SS extends string, TS extends string>(
   graphics: T.ComponentGraphics<SS, TS>,
@@ -108,8 +102,9 @@ export const serializeGraphics = <SS extends string, TS extends string>(
   const { models, textures } = graphics;
 
   for (const k in models) {
-    const model = models[k];
-    if (model) result.models[k] = serializeKonvaNode(model as Konva.Shape);
+    if (models[k]) {
+      result.models[k] = serializeKonvaModel(models[k] as T.KonvaModel);
+    }
   }
 
   for (const k in textures) {

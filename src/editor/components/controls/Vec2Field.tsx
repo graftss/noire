@@ -8,20 +8,20 @@ interface Vec2FieldProps {
 }
 
 export const Vec2Field: React.SFC<Vec2FieldProps> = ({
-  defaultValue: { x, y },
+  defaultValue,
   precision,
   update,
 }) => (
   <span>
     <FloatField
-      defaultValue={x}
+      defaultValue={defaultValue.x}
       precision={precision}
-      update={newX => update({ x: newX, y })}
+      update={newX => update({ x: newX, y: defaultValue.y })}
     />
     <FloatField
-      defaultValue={y}
+      defaultValue={defaultValue.y}
       precision={precision}
-      update={newY => update({ x, y: newY })}
+      update={newY => update({ x: defaultValue.x, y: newY })}
     />
   </span>
 );

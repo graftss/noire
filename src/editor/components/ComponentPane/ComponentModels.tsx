@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as T from '../../../types';
-import { getKonvaModelConfig } from '../../../display/editor';
+import { getKonvaModelFields } from '../../../display/model/konva';
 import { EditorField } from '../controls/EditorField';
 
 interface ComponentModelsProps {
@@ -26,12 +26,12 @@ export const ComponentModels: React.SFC<ComponentModelsProps> = ({
         component.graphics.models[modelName];
       if (!model) return null;
 
-      const { label, fields } = getKonvaModelConfig(model.className);
+      const fields = getKonvaModelFields(model.className);
 
       return (
         <div key={modelName}>
           <div>
-            <em>{label}</em>
+            <em>{model.className}</em>
           </div>
           <div>
             {fields.map(field => (

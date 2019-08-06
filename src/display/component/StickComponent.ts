@@ -37,7 +37,7 @@ export const defaultStickState: StickState = {
   useDepthScaling: false,
 };
 
-export type SerializedStickComponent = T.Serialized<
+export type SerializedStickComponent = T.SerializedComponent<
   'stick',
   StickModels,
   StickTextures,
@@ -45,18 +45,22 @@ export type SerializedStickComponent = T.Serialized<
   StickState
 >;
 
-const stickEditorState: T.StateEditorField[] = [
+const stickEditorState: T.ComponentStateEditorField[] = [
   {
     kind: 'boolean',
     label: 'Depth scaling',
     key: 'useDepthScaling',
-  },
+    getter: c => c.useDepthScaling,
+    setter: (c, useDepthScaling) => ({ ...c, useDepthScaling }),
+  } as T.ComponentStateEditorField<'boolean', 'stick'>,
   {
     kind: 'number',
-    label: 'Boundary radius',
+    label: 'Movement radius',
     key: 'boundaryRadius',
     props: { precision: 1 },
-  },
+    getter: c => c.boundaryRadius,
+    setter: (c, boundaryRadius) => ({ ...c, boundaryRadius }),
+  } as T.ComponentStateEditorField<'number', 'stick'>,
 ];
 
 export const stickEditorConfig: T.ComponentEditorConfig = {
