@@ -4,9 +4,10 @@ import { updateKonvaModel } from '../model/konva';
 import { DisplayPlugin } from './DisplayPlugin';
 import { Display } from '..';
 
-export type KonvaTransformerTarget =
+export type KonvaSelectable =
   | { kind: 'component'; id: string }
-  | { kind: 'model'; id: string; modelName: string };
+  | { kind: 'model'; id: string; modelName: string }
+  | { kind: 'filter'; id: string; modelName: string; filterIndex: number };
 
 interface TransformerState {
   transformer: Konva.Transformer;
@@ -78,6 +79,10 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     eventBus.on({ kind: 'requestDraw', cb: () => this.layer.draw() });
     eventBus.on({ kind: 'selectComponent', cb: this.onSelectComponent });
     eventBus.on({
+      kind: 'selectModel',
+      cb: this.onSelectModel,
+    });
+    eventBus.on({
       kind: 'updateComponentState',
       cb: this.onUpdateComponentState,
     });
@@ -89,10 +94,6 @@ export class KonvaComponentPlugin extends DisplayPlugin {
       kind: 'setKonvaTransformerVisibility',
       cb: this.onSetTransformerVisibility,
     });
-    eventBus.on({
-      kind: 'setKonvaTransformerTarget',
-      cb: this.onSetKonvaTransformerTarget,
-    });
   }
 
   private onStageClick = ({ target }: { target: Konva.Node }) => {
@@ -102,17 +103,15 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     }
   };
 
-  private targetToNode(target: KonvaTransformerTarget): Maybe<Konva.Node> {
-    switch (target.kind) {
+  private selectionToNode(selection: KonvaSelectable): Maybe<Konva.Node> {
+    switch (selection.kind) {
       case 'component':
-        return this.groupsById[target.id];
+        return this.groupsById[selection.id];
       case 'model': {
-        const { id, modelName } = target;
+        const { id, modelName } = selection;
         return this.componentsById[id].graphics.models[modelName];
       }
     }
-
-    throw new Error('unhandled `KonvaTransformerTarget` kind');
   }
 
   // we need to add each model to its group before calling `init`
@@ -152,6 +151,17 @@ export class KonvaComponentPlugin extends DisplayPlugin {
       this.display.emitUpdateComponentState(id, update);
     });
   };
+
+  private findComponentId(
+    id: Maybe<string>,
+  ): Maybe<
+    | { component: T.Component; group: Konva.Group }
+    | { component: undefined; group: undefined }
+  > {
+    return id === undefined
+      ? undefined
+      : { component: this.componentsById[id], group: this.groupsById[id] };
+  }
 
   private destroyTransformer = (): void => {
     if (!this.transformerState) return;
@@ -193,6 +203,13 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     if (!ts || ts.node !== newNode) this.initTransformer(newNode);
   };
 
+  private onSelectModel = ([id, modelName]: [Maybe<string>, string]): void => {
+    if (!id) return;
+
+    const node = this.selectionToNode({ kind: 'model', id, modelName });
+    if (node) this.initTransformer(node);
+  };
+
   private onUpdateComponentState = (data: [string, T.ComponentState]) => {
     const [componentId, update] = data;
     if (!this.componentsById[componentId]) return;
@@ -229,17 +246,6 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   private onSetTransformerVisibility = (visibility: boolean): void => {
     if (this.transformerState) {
       this.transformerState.transformer.visible(visibility);
-    }
-  };
-
-  private onSetKonvaTransformerTarget = (
-    data: [KonvaTransformerTarget, boolean],
-  ): void => {
-    const [target, visibility] = data;
-    const node = this.targetToNode(target);
-    if (node) {
-      this.initTransformer(node);
-      this.onSetTransformerVisibility(visibility);
     }
   };
 }

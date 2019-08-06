@@ -24,13 +24,15 @@ export interface KonvaModelData {
 
 export type KonvaModelKind = keyof KonvaModelData;
 
-export interface SerializedKonvaModel<K extends KonvaModelKind = any> {
+export interface SerializedKonvaModel<
+  K extends KonvaModelKind = KonvaModelKind
+> {
   className: K;
   attrs: KonvaModelData[K]['attrs'];
 }
 
 export type KonvaModel<
-  K extends KonvaModelKind = any
+  K extends KonvaModelKind = KonvaModelKind
 > = KonvaModelData[K]['class'];
 
 export interface KonvaModelField<

@@ -42,6 +42,17 @@ export const selectedComponent = lift(
     find(c => c.id === state.selectedComponentId, state.components),
 );
 
+export const transformerTarget = lift(
+  'display',
+  (state: T.DisplayState): Maybe<T.KonvaSelectable> => state.transformerTarget,
+);
+
+export const transformerVisibility = lift(
+  'display',
+  (state: T.DisplayState): boolean =>
+    state.transformerVisibility ? true : false,
+);
+
 export const controllers = lift(
   'input',
   (state: T.InputState): T.Controller[] => state && state.controllers,

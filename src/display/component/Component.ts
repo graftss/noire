@@ -4,7 +4,7 @@ import { mapObj, unMaybeList, values } from '../../utils';
 import { defaultInputByKind } from '../../input/input';
 
 export interface ComponentGraphics<SS extends string, TS extends string> {
-  models: Record<SS, Maybe<Konva.Shape>>;
+  models: Record<SS, Maybe<T.KonvaModel>>;
   textures: Record<TS, Maybe<T.Texture>>;
 }
 
@@ -60,6 +60,7 @@ export abstract class Component<
   ) {
     this.id = id;
     this.graphics = graphics;
+    this.graphics.models;
     this.inputKinds = inputKinds;
     this.state = { ...defaultComponentState, ...state } as Required<S>;
     this.filters = filters;
@@ -103,7 +104,9 @@ export abstract class Component<
     }
   }
 
-  modelList = (): Konva.Shape[] => unMaybeList(values(this.graphics.models));
+  modelList = (): T.KonvaModel[] => unMaybeList(values(this.graphics.models));
+
+  getModel = (name: string): Maybe<T.KonvaModel> => this.graphics.models[name];
 
   // `init` is called after the component is added to the
   // `KonvaComponentPlugin`, and has been added to its

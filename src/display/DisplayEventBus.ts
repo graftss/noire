@@ -13,13 +13,13 @@ interface DisplayHandlerData {
   listenNextInput: T.RemapState;
   requestDraw: undefined;
   selectComponent: Maybe<ComponentId>;
+  selectModel: [Maybe<ComponentId>, ModelName];
   stageClick: Konva.Stage;
   updateComponentFilters: [ComponentId, T.ComponentFilterDict];
   updateComponentState: [ComponentId, T.ComponentState];
   requestUpdateComponentModel: [ComponentId, ModelName, ModelKey, ModelValue];
   updateComponentModel: [ComponentId, ModelName, Konva.Shape];
   setKonvaTransformerVisibility: boolean;
-  setKonvaTransformerTarget: [T.KonvaTransformerTarget, boolean];
 }
 
 export type DisplayEventKind = keyof DisplayHandlerData;
@@ -50,13 +50,13 @@ export class DisplayEventBus {
     listenNextInput: [],
     requestDraw: [],
     selectComponent: [],
+    selectModel: [],
     stageClick: [],
     updateComponentFilters: [],
     updateComponentState: [],
     requestUpdateComponentModel: [],
     updateComponentModel: [],
     setKonvaTransformerVisibility: [],
-    setKonvaTransformerTarget: [],
   };
 
   emit = <K extends DisplayEventKind>(event: DisplayEvent<K>): void => {

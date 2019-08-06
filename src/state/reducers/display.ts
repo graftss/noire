@@ -6,6 +6,8 @@ import { mapPath } from '../../utils';
 export interface DisplayState {
   components: T.SerializedComponent[];
   selectedComponentId?: string;
+  transformerTarget?: T.KonvaSelectable;
+  transformerVisibility?: boolean;
 }
 
 export const displayReducer = (
@@ -47,6 +49,10 @@ export const displayReducer = (
       return mapComponentWithId.proj(state)(id, c =>
         mapPath(['graphics', 'models', modelName], () => model, c),
       );
+    }
+
+    case 'toggleKonvaTransformer': {
+      return { ...state, transformerVisibility: !state.transformerVisibility };
     }
   }
 

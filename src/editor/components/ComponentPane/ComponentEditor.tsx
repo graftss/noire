@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as T from '../../../types';
 import { getComponentEditorConfig } from '../../../display/component/editor';
+import { TransformerToggle } from '../controls/TransformerToggle';
 import { ComponentFilters } from './ComponentFilters';
 import { ComponentKeys } from './ComponentKeys';
 import { ComponentState } from './ComponentState';
@@ -29,6 +30,7 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
   return (
     <div>
       <ComponentTitle label={config.title} />
+      <TransformerToggle />
       <ComponentState
         component={component}
         stateConfig={config.state}

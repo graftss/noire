@@ -22,6 +22,7 @@ export type EditorAction =
       type: 'updateComponentModel';
       data: { id: string; modelName: string; model: T.SerializedKonvaModel };
     }
+  | { type: 'toggleKonvaTransformer' }
   | { type: 'listenNextInput'; data: T.RemapState }
   | { type: 'stopListening' }
   | { type: 'setTab'; data: T.TabKind };
@@ -70,6 +71,10 @@ export const updateComponentModel = (
 ): EditorAction => ({
   type: 'updateComponentModel',
   data: { id, modelName, model },
+});
+
+export const toggleKonvaTransformer = (): EditorAction => ({
+  type: 'toggleKonvaTransformer',
 });
 
 export const updateComponentFilters = (
