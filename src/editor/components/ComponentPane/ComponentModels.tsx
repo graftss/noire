@@ -31,7 +31,9 @@ export const ComponentModels: React.SFC<ComponentModelsProps> = ({
       return (
         <div key={modelName}>
           <div>
-            <em>{model.className}</em>
+            <b>
+              {modelName} ({model.className})
+            </b>
           </div>
           <div>
             {fields.map(field => (

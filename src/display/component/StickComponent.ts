@@ -100,12 +100,12 @@ export class StickComponent extends Component<
     if (boundary) boundary.moveToBottom();
   }
 
-  private centerPosition(x: number, y: number): Vec2 {
+  private stickOffset(x: number, y: number): Vec2 {
     const { boundaryRadius } = this.state;
 
     return {
-      x: x * boundaryRadius,
-      y: y * boundaryRadius,
+      x: -x * boundaryRadius,
+      y: -y * boundaryRadius,
     };
   }
 
@@ -123,7 +123,7 @@ export class StickComponent extends Component<
     const texture = this.graphics.textures.center;
 
     if (model && texture) {
-      model.position(this.centerPosition(x, y));
+      model.offset(this.stickOffset(x, y));
       texture.apply(model);
     }
   }
@@ -132,7 +132,7 @@ export class StickComponent extends Component<
     const model = this.graphics.models.stick;
     if (!model) return;
 
-    model.position(this.centerPosition(x, y));
+    model.offset(this.stickOffset(x, y));
 
     if (this.state.useDepthScaling) {
       model.scale({
