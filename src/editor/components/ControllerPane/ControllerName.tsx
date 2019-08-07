@@ -12,7 +12,12 @@ export const ControllerName: React.SFC<ControllerNameProps> = ({
 }) => {
   return (
     <div>
-      name: <TextField initialValue={initialName} update={update} />
+      name:{' '}
+      <TextField
+        defaultValue="Unnamed Controller"
+        initialValue={initialName}
+        update={update}
+      />
     </div>
   );
 };

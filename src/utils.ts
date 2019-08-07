@@ -120,3 +120,6 @@ export const blurOnEnterKeyDown = (
 ): void => {
   if (e.keyCode === 13) (e.target as HTMLInputElement).blur();
 };
+
+export const defaultTo = <T>(value: Maybe<T>, defaultValue: T): T =>
+  value === undefined ? defaultValue : value;

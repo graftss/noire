@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { blurOnEnterKeyDown, toPrecision } from '../../../utils';
+import { blurOnEnterKeyDown, defaultTo, toPrecision } from '../../../utils';
 import { WithDefault } from './WithDefault';
 
 interface FloatFieldProps {
-  initialValue: number;
+  defaultValue: number;
+  initialValue: Maybe<number>;
   precision?: number;
   update: (value: number) => void;
 }
@@ -12,12 +13,16 @@ const parseNumber = (value: string, precision: number): number =>
   (precision === 1 ? parseInt : parseFloat)(value);
 
 export const FloatField: React.SFC<FloatFieldProps> = ({
+  defaultValue,
   initialValue,
   precision = 1,
   update,
 }) => (
   <WithDefault
-    initialValue={toPrecision(initialValue, precision).toString()}
+    initialValue={toPrecision(
+      defaultTo(initialValue, defaultValue),
+      precision,
+    ).toString()}
     update={(value: string) => update(parseNumber(value, precision))}
     render={(value, setValue) => (
       <input

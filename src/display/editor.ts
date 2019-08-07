@@ -19,6 +19,6 @@ export interface EditorField<K extends EditorFieldKind = EditorFieldKind> {
   label: string;
   key: string;
   kind: K;
-  defaultValue?: EditorFieldType<K>;
+  defaultValue: EditorFieldType<K>;
   props: EditorFieldProps<K>;
 }

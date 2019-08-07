@@ -5,18 +5,23 @@ import { BooleanField } from './BooleanField';
 import { FloatField } from './FloatField';
 import { Vec2Field } from './Vec2Field';
 
-interface EditorFieldProps<V> {
-  field: T.EditorField;
-  initialValue: V;
-  update: (value: V) => void;
+interface EditorFieldProps<V extends T.EditorFieldKind> {
+  field: T.EditorField<V>;
+  initialValue: Maybe<T.EditorFieldType<V>>;
+  update: (value: T.EditorFieldType<V>) => void;
 }
 
-function renderFieldInput<V>({
+function renderFieldInput<V extends T.EditorFieldKind>({
   field,
   initialValue,
   update,
-}: EditorFieldProps<typeof field.kind>): React.ReactNode {
-  const props = { initialValue, update, ...field.props };
+}: EditorFieldProps<V>): React.ReactNode {
+  const props: any = {
+    defaultValue: field.defaultValue,
+    initialValue,
+    update,
+    ...field.props,
+  };
 
   switch (field.kind) {
     case 'string':
@@ -30,7 +35,9 @@ function renderFieldInput<V>({
   }
 }
 
-export function EditorField<V>(props: EditorFieldProps<V>): JSX.Element {
+export function EditorField<V extends T.EditorFieldKind>(
+  props: EditorFieldProps<V>,
+): JSX.Element {
   return (
     <div>
       <span>{props.field.label}: </span>

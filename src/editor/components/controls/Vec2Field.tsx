@@ -2,26 +2,34 @@ import * as React from 'react';
 import { FloatField } from './FloatField';
 
 interface Vec2FieldProps {
-  initialValue: Vec2;
+  defaultValue: Vec2;
+  initialValue: Maybe<Vec2>;
   precision?: number;
   update: (value: Vec2) => void;
 }
 
 export const Vec2Field: React.SFC<Vec2FieldProps> = ({
+  defaultValue: { x: dx, y: dy },
   initialValue,
   precision,
   update,
 }) => (
   <span>
     <FloatField
-      initialValue={initialValue.x}
+      defaultValue={dx}
+      initialValue={initialValue && initialValue.x}
       precision={precision}
-      update={newX => update({ x: newX, y: initialValue.y })}
+      update={newX =>
+        update({ x: newX, y: initialValue ? initialValue.y : dx })
+      }
     />
     <FloatField
-      initialValue={initialValue.y}
+      defaultValue={dy}
+      initialValue={initialValue && initialValue.y}
       precision={precision}
-      update={newY => update({ x: initialValue.x, y: newY })}
+      update={newY =>
+        update({ x: initialValue ? initialValue.x : dx, y: newY })
+      }
     />
   </span>
 );

@@ -1,18 +1,20 @@
 import * as React from 'react';
-import { blurOnEnterKeyDown } from '../../../utils';
+import { blurOnEnterKeyDown, defaultTo } from '../../../utils';
 import { WithDefault } from './WithDefault';
 
 interface TextFieldProps {
-  initialValue: string;
+  defaultValue: string;
+  initialValue: Maybe<string>;
   update: (value: string) => void;
 }
 
 export const TextField: React.SFC<TextFieldProps> = ({
+  defaultValue,
   initialValue,
   update,
 }) => (
   <WithDefault
-    initialValue={initialValue}
+    initialValue={defaultTo(initialValue, defaultValue)}
     update={update}
     render={(value, setValue) => (
       <input
