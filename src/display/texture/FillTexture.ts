@@ -7,13 +7,12 @@ export type FillTextureState = Partial<{
   strokeWidth: number;
 }>;
 
-export class FillTexture extends T.TypedTexture<'fill', FillTextureState> {
-  constructor(state: FillTextureState) {
-    super('fill', state);
-  }
+export class FillTexture implements T.Texture<'fill'> {
+  kind: 'fill';
+  state: FillTextureState;
 
-  updateState(updates: Partial<FillTextureState>): void {
-    this.state = { ...this.state, ...updates };
+  constructor(state: FillTextureState) {
+    this.state = state;
   }
 
   apply = (model: Konva.Shape): void => {

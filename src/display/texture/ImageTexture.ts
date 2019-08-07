@@ -9,12 +9,14 @@ export interface ImageTextureState {
 
 type ImageLoadState = 'requested' | 'loaded';
 
-export class ImageTexture extends T.TypedTexture<'image', ImageTextureState> {
+export class ImageTexture implements T.Texture<'image'> {
+  kind: 'image';
+  state: ImageTextureState;
   private image: HTMLImageElement;
   private loadState: ImageLoadState;
 
   constructor(state: ImageTextureState) {
-    super('image', state);
+    this.state = state;
 
     this.image = new Image();
     this.image.src = state.src;

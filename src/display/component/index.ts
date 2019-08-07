@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { deserializeTexture } from '../texture/';
+import { deserializeTexture, serializeTexture } from '../texture/';
 import { deserializeInputFilter, getFilterInputKind } from '../filter';
 import { assoc, mapObj, mapPath } from '../../utils';
 import { serializeKonvaModel } from '../model/konva';
@@ -109,7 +109,7 @@ export const serializeGraphics = <SS extends string, TS extends string>(
 
   for (const k in textures) {
     const texture = textures[k];
-    if (texture) result.textures[k] = texture.serialize();
+    if (texture) result.textures[k] = serializeTexture(texture as T.Texture);
   }
 
   return result;

@@ -142,11 +142,12 @@ export {
   KindsToRaw,
   RawInputOfKind,
 } from './input/input';
-export { Texture, SerializedTexture } from './display/texture';
 export {
-  TypedSerializedTexture,
-  TypedTexture,
-} from './display/texture/Texture';
+  Texture,
+  TextureKind,
+  TextureData,
+  SerializedTexture,
+} from './display/texture/';
 export { NoireConfig } from '.';
 export { FillTextureState } from './display/texture/FillTexture';
 export { ImageTextureState } from './display/texture/ImageTexture';
