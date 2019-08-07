@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as T from '../../types';
-import { closePresentationSnackbar } from '../../state/actions';
+import * as T from '../../../types';
+import { closePresentationSnackbar } from '../../../state/actions';
 import {
   inPresentationMode,
   isPresentationSnackbarOpen,
-} from '../../state/selectors';
+} from '../../../state/selectors';
 import { Editor } from './Editor';
 import { PresentationSnackbar } from './PresentationSnackbar';
 

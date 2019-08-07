@@ -2,13 +2,13 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Tabs, Tab, AppBar } from '@material-ui/core';
-import * as T from '../../types';
+import * as T from '../../../types';
 import {
   closePresentationSnackbar,
   enterPresentationMode,
   setTab,
-} from '../../state/actions';
-import { tabOrder } from '../../state/reducers/tab';
+} from '../../../state/actions';
+import { tabOrder } from '../../../state/reducers/tab';
 
 interface PropsFromState {
   currentTab: T.TabKind;
