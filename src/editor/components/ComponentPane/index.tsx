@@ -7,8 +7,10 @@ import {
   selectComponent,
   updateComponentState,
   updateComponentModel,
+  updateComponentTexture,
 } from '../../../state/actions';
 import { updateSerializedKonvaModel } from '../../../display/model/konva';
+import { updateTexture } from '../../../display/texture';
 import { ComponentEditor } from './ComponentEditor';
 import { ComponentSelect } from './ComponentSelect';
 
@@ -28,6 +30,12 @@ interface PropsFromDispatch {
   updateComponentModel: (
     component: T.SerializedComponent,
     modelName: string,
+    key: string,
+    value: any,
+  ) => void;
+  updateComponentTexture: (
+    component: T.SerializedComponent,
+    textureName: string,
     key: string,
     value: any,
   ) => void;
@@ -73,6 +81,23 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
       ]),
     );
   },
+
+  updateComponentTexture: (
+    component: T.SerializedComponent,
+    textureName: string,
+    key: string,
+    value: any,
+  ) => {
+    const texture = component.graphics.textures[textureName];
+
+    dispatch(
+      updateComponentTexture(
+        component.id,
+        textureName,
+        updateTexture(texture, key, value),
+      ),
+    );
+  },
 });
 
 interface ComponentPaneProps extends PropsFromState, PropsFromDispatch {}
@@ -83,6 +108,7 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
   selectedComponent,
   updateComponentState,
   updateComponentModel,
+  updateComponentTexture,
 }) => (
   <div>
     <ComponentSelect
@@ -94,6 +120,7 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
       component={selectedComponent}
       updateComponentState={updateComponentState}
       updateComponentModel={updateComponentModel}
+      updateComponentTexture={updateComponentTexture}
     />
   </div>
 );

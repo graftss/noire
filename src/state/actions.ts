@@ -19,6 +19,10 @@ export type EditorAction =
       type: 'updateComponentModel';
       data: { id: string; modelName: string; model: T.SerializedKonvaModel };
     }
+  | {
+      type: 'updateComponentTexture';
+      data: { id: string; textureName: string; texture: T.SerializedTexture };
+    }
   | { type: 'toggleKonvaTransformer' }
   | { type: 'listenNextInput'; data: T.RemapState }
   | { type: 'stopListening' }
@@ -76,6 +80,15 @@ export const updateComponentModel = (
 ): EditorAction => ({
   type: 'updateComponentModel',
   data: { id, modelName, model },
+});
+
+export const updateComponentTexture = (
+  id: string,
+  textureName: string,
+  texture: T.SerializedTexture,
+): EditorAction => ({
+  type: 'updateComponentTexture',
+  data: { id, textureName, texture },
 });
 
 export const toggleKonvaTransformer = (): EditorAction => ({

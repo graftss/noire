@@ -6,14 +6,22 @@ import { EditorField } from '../controls/EditorField';
 interface ComponentTexturesProps {
   component: T.SerializedComponent;
   textureList: readonly string[];
+  updateComponentTexture: (
+    component: T.SerializedComponent,
+    textureName: string,
+    key: string,
+    value: any,
+  ) => void;
 }
 
 const Texture = ({
   name,
   texture,
+  update,
 }: {
   name: string;
   texture: Maybe<T.SerializedTexture>;
+  update: (key: string, value: any) => void;
 }): JSX.Element =>
   !texture ? (
     <div></div>
@@ -25,7 +33,7 @@ const Texture = ({
           <EditorField
             field={field}
             defaultValue={field.getter(texture)}
-            update={v => v}
+            update={value => update(field.key, value)}
           />
         </div>
       ))}
@@ -35,6 +43,7 @@ const Texture = ({
 export const ComponentTextures: React.SFC<ComponentTexturesProps> = ({
   component,
   textureList,
+  updateComponentTexture,
 }) => {
   return (
     <div>
@@ -45,6 +54,9 @@ export const ComponentTextures: React.SFC<ComponentTexturesProps> = ({
             key={name}
             name={name}
             texture={component.graphics.textures[name]}
+            update={(key: string, value) =>
+              updateComponentTexture(component, name, key, value)
+            }
           />
         ))}
       </div>

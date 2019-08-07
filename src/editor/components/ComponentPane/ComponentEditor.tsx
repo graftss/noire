@@ -18,12 +18,19 @@ interface ComponentEditorProps {
     key: string,
     value: any,
   ) => void;
+  updateComponentTexture: (
+    component: T.SerializedComponent,
+    textureName: string,
+    key: string,
+    value: any,
+  ) => void;
 }
 
 export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
   component,
-  updateComponentState,
   updateComponentModel,
+  updateComponentState,
+  updateComponentTexture,
 }) => {
   if (!component) return null;
   const config = getComponentEditorConfig(component.kind);
@@ -49,7 +56,11 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
         modelList={config.models}
         updateComponentModel={updateComponentModel}
       />
-      <ComponentTextures component={component} textureList={config.textures} />
+      <ComponentTextures
+        component={component}
+        textureList={config.textures}
+        updateComponentTexture={updateComponentTexture}
+      />
       <ComponentFilters component={component} />
     </div>
   );

@@ -62,6 +62,14 @@ export const displayReducer = (
       );
     }
 
+    case 'updateComponentTexture': {
+      const { id, textureName, texture } = action.data;
+
+      return mapComponentWithId.proj(state)(id, c =>
+        mapPath(['graphics', 'textures', textureName], () => texture, c),
+      );
+    }
+
     case 'toggleKonvaTransformer': {
       return { ...state, transformerVisibility: !state.transformerVisibility };
     }
