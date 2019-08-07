@@ -22,7 +22,10 @@ export type EditorAction =
   | { type: 'toggleKonvaTransformer' }
   | { type: 'listenNextInput'; data: T.RemapState }
   | { type: 'stopListening' }
-  | { type: 'setTab'; data: T.TabKind };
+  | { type: 'setTab'; data: T.TabKind }
+  | { type: 'enterPresentationMode' }
+  | { type: 'closePresentationSnackbar' }
+  | { type: 'exitPresentationMode' };
 
 export const emitDisplayEvents = (events: T.DisplayEvent[]): EditorAction => ({
   type: 'emitDisplayEvents',
@@ -99,4 +102,16 @@ export const stopListening = (): EditorAction => ({
 export const setTab = (kind: T.TabKind): EditorAction => ({
   type: 'setTab',
   data: kind,
+});
+
+export const enterPresentationMode = (): EditorAction => ({
+  type: 'enterPresentationMode',
+});
+
+export const closePresentationSnackbar = (): EditorAction => ({
+  type: 'closePresentationSnackbar',
+});
+
+export const exitPresentationMode = (): EditorAction => ({
+  type: 'exitPresentationMode',
 });

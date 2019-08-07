@@ -3,7 +3,11 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Tabs, Tab, AppBar } from '@material-ui/core';
 import * as T from '../../types';
-import { setTab } from '../../state/actions';
+import {
+  closePresentationSnackbar,
+  enterPresentationMode,
+  setTab,
+} from '../../state/actions';
 import { tabOrder } from '../../state/reducers/tab';
 
 interface PropsFromState {
@@ -15,25 +19,48 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 });
 
 interface PropsFromDispatch {
+  closePresentationSnackbar: () => void;
+  enterPresentationMode: () => void;
   setTab: (kind: T.TabKind) => void;
 }
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
-  bindActionCreators({ setTab }, dispatch);
+  bindActionCreators(
+    {
+      closePresentationSnackbar,
+      enterPresentationMode,
+      setTab,
+    },
+    dispatch,
+  );
 
 interface EditorTabsProps extends PropsFromState, PropsFromDispatch {}
 
 const kindToLabel: Record<T.TabKind, string> = {
   components: 'Components',
   controllers: 'Controllers',
+  presentation: 'Hide editor',
 };
 
-const BaseEditorTabs: React.SFC<EditorTabsProps> = ({ currentTab, setTab }) => (
+const onChange = ({
+  closePresentationSnackbar,
+  setTab,
+  enterPresentationMode,
+}: EditorTabsProps) => (_, index) => {
+  if (index === 0 || index === 1) {
+    setTab(tabOrder[index]);
+  } else if (index === 2) {
+    enterPresentationMode();
+    setTimeout(closePresentationSnackbar, 1000);
+  }
+};
+
+const BaseEditorTabs: React.SFC<EditorTabsProps> = props => (
   <div>
     <AppBar position="static" color="default">
       <Tabs
-        value={tabOrder.indexOf(currentTab)}
-        onChange={(_, index) => setTab(tabOrder[index])}
+        value={tabOrder.indexOf(props.currentTab)}
+        onChange={onChange(props)}
         indicatorColor="primary"
         textColor="primary"
       >

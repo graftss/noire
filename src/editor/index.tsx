@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { createStore } from '../state/createStore';
 import * as T from '../types';
 import { DisplayEventBus } from '../display/DisplayEventBus';
-import { Editor } from './components/Editor';
+import { EditorContainer } from './components/EditorContainer';
 
 export interface EditorApp {
   store: T.EditorStore;
@@ -13,7 +13,7 @@ export interface EditorApp {
 
 // I'm not really sure how to get around this right now, it seems like
 // you need to use the `ReactReduxContext` element from react-redux
-const _Editor: any = Editor;
+const _Editor: any = EditorContainer;
 
 export const createEditorApp = (
   target: HTMLElement,

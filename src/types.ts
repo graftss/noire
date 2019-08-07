@@ -171,3 +171,4 @@ export {
   SerializedInputFilter,
 } from './display/filter';
 export { TabKind, TabState } from './state/reducers/tab';
+export { PresentationState } from './state/reducers/presentation';

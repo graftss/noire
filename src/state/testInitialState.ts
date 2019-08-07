@@ -356,5 +356,6 @@ export const testInitialState: T.EditorState = {
     controllers: [ps2Controller1, ps2Controller2, defaultKeyboardController],
     remap: undefined,
   },
+  presentation: { inPresentationMode: false, showSnackbar: false },
   tab: { kind: 'controllers' },
 };

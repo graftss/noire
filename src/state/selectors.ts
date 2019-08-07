@@ -121,3 +121,13 @@ export const currentTabKind = lift(
   'tab',
   (state: T.TabState): T.TabKind => state.kind,
 );
+
+export const inPresentationMode = lift(
+  'presentation',
+  (state: T.PresentationState): boolean => state.inPresentationMode,
+);
+
+export const isPresentationSnackbarOpen = lift(
+  'presentation',
+  (state: T.PresentationState): boolean => state.showSnackbar,
+);

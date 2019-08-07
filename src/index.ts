@@ -3,6 +3,7 @@ import { ControllerManager } from './input/ControllerManager';
 import { Display } from './display';
 import { DisplayEventBus } from './display/DisplayEventBus';
 import { createEditorApp } from './editor';
+import { exitPresentationMode } from './state/actions';
 
 // TODO: figure out how to not need this to recompile types.ts when the
 // watcher notices that it has changed. googling suggests that to do
@@ -46,6 +47,11 @@ export class Noire {
 
     this.controllerManager = new ControllerManager(store, eventBus);
     this.display = new Display(this.config, store, eventBus);
+
+    window.addEventListener(
+      'keydown',
+      e => e.keyCode === 27 && store.dispatch(exitPresentationMode()),
+    );
 
     this.updateLoop(0);
   }
