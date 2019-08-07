@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { mapPath, vec2 } from '../../utils';
+import { mapPath } from '../../utils';
 
 export interface ImageTextureState {
   src: string;
@@ -36,24 +36,30 @@ export class ImageTexture implements T.Texture<'image'> {
 
   constructor(state: ImageTextureState) {
     this.state = state;
-
-    this.image = new Image();
-    this.image.src = state.src;
-    this.loadState = 'requested';
-
-    this.image.onload = () => (this.loadState = 'loaded');
+    this.loadImage(state.src);
   }
 
-  moveBy = (v: Vec2): void => {
-    this.state.offset = vec2.add(this.state.offset, v);
-  };
+  private loadImage(src: string): void {
+    if (src === undefined) return;
 
-  moveTo = (v: Vec2): void => {
-    this.state.offset = v;
+    this.image = new Image();
+    this.image.src = src;
+    this.image.onload = () => (this.loadState = 'loaded');
+
+    this.loadState = 'requested';
+    this.state.src = src;
+  }
+
+  update = (update: Partial<ImageTextureState>): void => {
+    const { src, ...rest } = update;
+
+    if (src !== undefined) this.loadImage(src);
+    this.state = { ...this.state, ...rest };
   };
 
   apply = (model: Konva.Shape): void => {
     model.fillPriority('pattern');
+    model.fillPatternRepeat('no-repeat');
 
     model.cache(0);
 

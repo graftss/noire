@@ -97,6 +97,15 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
         updateTexture(texture, key, value),
       ),
     );
+
+    dispatch(
+      emitDisplayEvents([
+        {
+          kind: 'requestUpdateComponentTexture',
+          data: [component.id, textureName, key, value],
+        },
+      ]),
+    );
   },
 });
 

@@ -7,6 +7,9 @@ type ComponentId = string;
 type ModelName = string;
 type ModelKey = string;
 type ModelValue = any;
+type TextureName = string;
+type TextureKey = string;
+type TextureValue = any;
 
 interface DisplayHandlerData {
   addComponent: Component;
@@ -19,6 +22,13 @@ interface DisplayHandlerData {
   updateComponentState: [ComponentId, T.ComponentState];
   requestUpdateComponentModel: [ComponentId, ModelName, ModelKey, ModelValue];
   updateComponentModel: [ComponentId, ModelName, Konva.Shape];
+  requestUpdateComponentTexture: [
+    ComponentId,
+    TextureName,
+    TextureKey,
+    TextureValue,
+  ];
+  updateComponentTexture: [ComponentId, TextureName, T.Texture];
   setKonvaTransformerVisibility: boolean;
 }
 
@@ -56,6 +66,8 @@ export class DisplayEventBus {
     updateComponentState: [],
     requestUpdateComponentModel: [],
     updateComponentModel: [],
+    requestUpdateComponentTexture: [],
+    updateComponentTexture: [],
     setKonvaTransformerVisibility: [],
   };
 

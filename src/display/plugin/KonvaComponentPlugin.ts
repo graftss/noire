@@ -91,6 +91,10 @@ export class KonvaComponentPlugin extends DisplayPlugin {
       cb: this.onRequestUpdateComponentModel,
     });
     eventBus.on({
+      kind: 'requestUpdateComponentTexture',
+      cb: this.onRequestUpdateComponentTexture,
+    });
+    eventBus.on({
       kind: 'setKonvaTransformerVisibility',
       cb: this.onSetTransformerVisibility,
     });
@@ -227,10 +231,10 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
   private onRequestUpdateComponentModel = (
     data: [string, string, string, any],
-  ) => {
+  ): void => {
     const [componentId, modelName, modelKey, value] = data;
     const component: Maybe<T.Component> = this.componentsById[componentId];
-    if (!component) return;
+    if (component === undefined) return;
 
     const model: Maybe<Konva.Shape> = component.graphics.models[modelName];
     if (model === undefined) return;
@@ -240,6 +244,23 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     this.display.eventBus.emit({
       kind: 'updateComponentModel',
       data: [componentId, modelKey, newModel],
+    });
+  };
+
+  private onRequestUpdateComponentTexture = (
+    data: [string, string, string, any],
+  ): void => {
+    const [componentId, textureName, textureKey, value] = data;
+    const component: Maybe<T.Component> = this.componentsById[componentId];
+    if (component === undefined) return;
+
+    const texture = component.graphics.textures[textureName];
+    if (texture === undefined) return;
+
+    texture.update({ [textureKey]: value });
+    this.display.eventBus.emit({
+      kind: 'updateComponentTexture',
+      data: [componentId, textureKey, texture],
     });
   };
 

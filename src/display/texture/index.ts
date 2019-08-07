@@ -19,6 +19,7 @@ export interface SerializedTexture<K extends TextureKind = TextureKind> {
 export interface Texture<K extends TextureKind = TextureKind>
   extends SerializedTexture<K> {
   apply: (model: Konva.Shape) => void;
+  update: (update: Partial<TextureData[K]['state']>) => void;
 }
 
 export interface TextureField<

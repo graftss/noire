@@ -44,6 +44,10 @@ export class FillTexture implements T.Texture<'fill'> {
     this.state = state;
   }
 
+  update = (update: Partial<FillTextureState>): void => {
+    this.state = { ...this.state, ...update };
+  };
+
   apply = (model: Konva.Shape): void => {
     model.fillPriority('color');
     if (this.state.fill) model.fill(this.state.fill);
