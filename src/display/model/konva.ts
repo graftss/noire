@@ -36,7 +36,7 @@ export type KonvaModel<
 > = KonvaModelData[K]['class'];
 
 export interface KonvaModelField<
-  K extends KonvaModelKind = 'Shape',
+  K extends KonvaModelKind = KonvaModelKind,
   FK extends T.EditorFieldKind = T.EditorFieldKind
 > extends T.EditorField<FK> {
   key: string;
@@ -126,7 +126,7 @@ export const getKonvaModelFields = <K extends KonvaModelKind>(
   kind: K,
 ): KonvaModelField<K>[] => konvaModelFields[kind] as KonvaModelField<K>[];
 
-export const findFieldByKey = <K extends KonvaModelKind>(
+export const findKonvaFieldByKey = <K extends KonvaModelKind>(
   className: K,
   key: string,
 ): Maybe<KonvaModelField<K>> =>
@@ -137,7 +137,7 @@ export const updateSerializedKonvaModel = <K extends KonvaModelKind>(
   key: string,
   value: any,
 ): SerializedKonvaModel<K> => {
-  const field = findFieldByKey(model.className, key);
+  const field = findKonvaFieldByKey(model.className, key);
   return field ? field.serialSetter(model, value) : model;
 };
 
@@ -146,7 +146,7 @@ export const updateKonvaModel = <K extends KonvaModelKind>(
   key: string,
   value: any,
 ): KonvaModel<K> => {
-  const field = findFieldByKey(model.className as KonvaModelKind, key);
+  const field = findKonvaFieldByKey(model.className as KonvaModelKind, key);
   return field ? field.setter(model, value) : model;
 };
 

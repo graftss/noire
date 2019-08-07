@@ -144,8 +144,9 @@ export {
 } from './input/input';
 export {
   Texture,
-  TextureKind,
   TextureData,
+  TextureField,
+  TextureKind,
   SerializedTexture,
 } from './display/texture/';
 export { NoireConfig } from '.';

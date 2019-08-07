@@ -9,6 +9,25 @@ export interface ImageTextureState {
 
 type ImageLoadState = 'requested' | 'loaded';
 
+export const imageTextureFields: T.TextureField<'image'>[] = [
+  {
+    key: 'src',
+    label: 'Image URL',
+    kind: 'string',
+    defaultValue: '',
+    getter: t => t.src,
+    setter: (t, src) => ({ ...t, src }),
+  } as T.TextureField<'image', 'string'>,
+  {
+    key: 'offset',
+    label: 'Offset',
+    kind: 'Vec2',
+    defaultValue: { x: 0, y: 0 },
+    getter: t => t.offset,
+    setter: (t, offset) => ({ ...t, offset }),
+  } as T.TextureField<'image', 'Vec2'>,
+];
+
 export class ImageTexture implements T.Texture<'image'> {
   kind: 'image';
   state: ImageTextureState;

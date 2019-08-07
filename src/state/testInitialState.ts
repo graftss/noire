@@ -258,7 +258,10 @@ const dPad: T.SerializedComponent = {
   graphics: {
     models: simpleDPadRects(200, 50, 30, 30),
     textures: simpleDPadTextures(
-      { kind: 'fill', state: { fill: 'black' } },
+      {
+        kind: 'fill',
+        state: { fill: 'black', stroke: 'black', strokeWidth: 0 },
+      },
       { kind: 'fill', state: { fill: 'red', stroke: 'black', strokeWidth: 1 } },
     ),
   },

@@ -1,7 +1,8 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { FillTexture } from './FillTexture';
-import { ImageTexture } from './ImageTexture';
+import { find } from '../../utils';
+import { FillTexture, fillTextureFields } from './FillTexture';
+import { ImageTexture, imageTextureFields } from './ImageTexture';
 
 export interface TextureData {
   fill: { class: FillTexture; kind: 'fill'; state: T.FillTextureState };
@@ -20,6 +21,21 @@ export interface Texture<K extends TextureKind = TextureKind>
   apply: (model: Konva.Shape) => void;
 }
 
+export interface TextureField<
+  K extends TextureKind = TextureKind,
+  FK extends T.EditorFieldKind = T.EditorFieldKind
+> extends T.EditorField<FK> {
+  key: string;
+  label: string;
+  kind: FK;
+  defaultValue: T.EditorFieldType<FK>;
+  getter: (texture: TextureData[K]['state']) => T.EditorFieldType<FK>;
+  setter: (
+    texture: TextureData[K]['state'],
+    value: T.EditorFieldType<FK>,
+  ) => TextureData[K]['state'];
+}
+
 export const serializeTexture = <K extends TextureKind>({
   kind,
   state,
@@ -36,4 +52,29 @@ export const deserializeTexture = <K extends TextureKind>(
   }
 
   throw new Error('unrecognized texture kind');
+};
+
+const textureFields: { [K in TextureKind]: TextureField<K>[] } = {
+  fill: fillTextureFields,
+  image: imageTextureFields,
+};
+
+export const getTextureFields = <K extends TextureKind>(
+  kind: K,
+): TextureField<K>[] => textureFields[kind] as TextureField<K>[];
+
+export const findTextureFieldByKey = <K extends TextureKind>(
+  kind: K,
+  key: string,
+): Maybe<TextureField<K>> =>
+  find(field => field.key === key, getTextureFields(kind));
+
+export const updateTexture = <K extends TextureKind>(
+  texture: SerializedTexture<K>,
+  key: string,
+  value: any,
+): SerializedTexture<K> => {
+  const { kind, state } = texture;
+  const field = findTextureFieldByKey(kind, key);
+  return field ? { kind, state: field.setter(state, value) } : texture;
 };
