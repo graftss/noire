@@ -29,11 +29,11 @@ export interface TextureField<
   label: string;
   kind: FK;
   defaultValue: T.EditorFieldType<FK>;
-  getter: (texture: TextureData[K]['state']) => T.EditorFieldType<FK>;
+  getter: (texture: SerializedTexture<K>) => T.EditorFieldType<FK>;
   setter: (
-    texture: TextureData[K]['state'],
+    texture: SerializedTexture<K>,
     value: T.EditorFieldType<FK>,
-  ) => TextureData[K]['state'];
+  ) => SerializedTexture<K>;
 }
 
 export const serializeTexture = <K extends TextureKind>({
@@ -74,7 +74,6 @@ export const updateTexture = <K extends TextureKind>(
   key: string,
   value: any,
 ): SerializedTexture<K> => {
-  const { kind, state } = texture;
-  const field = findTextureFieldByKey(kind, key);
-  return field ? { kind, state: field.setter(state, value) } : texture;
+  const field = findTextureFieldByKey(texture.kind, key);
+  return field ? field.setter(texture, value) : texture;
 };

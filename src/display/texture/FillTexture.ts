@@ -1,5 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
+import { mapPath } from '../../utils';
 
 export interface FillTextureState {
   fill: string;
@@ -13,24 +14,25 @@ export const fillTextureFields: T.TextureField<'fill'>[] = [
     label: 'Fill',
     kind: 'string',
     defaultValue: 'red',
-    getter: t => t.fill,
-    setter: (t, fill) => ({ ...t, fill }),
+    getter: t => t.state.fill,
+    setter: (t, fill) => mapPath(['state', 'fill'], () => fill, t),
   } as T.TextureField<'fill', 'string'>,
   {
     key: 'stroke',
     label: 'Stroke',
     kind: 'string',
     defaultValue: 'black',
-    getter: t => t.stroke,
-    setter: (t, stroke) => ({ ...t, stroke }),
+    getter: t => t.state.stroke,
+    setter: (t, stroke) => mapPath(['state', 'stroke'], () => stroke, t),
   } as T.TextureField<'fill', 'string'>,
   {
     key: 'strokeWidth',
     label: 'Stroke width',
     kind: 'number',
     defaultValue: 1,
-    getter: t => t.strokeWidth,
-    setter: (t, strokeWidth) => ({ ...t, strokeWidth }),
+    getter: t => t.state.strokeWidth,
+    setter: (t, strokeWidth) =>
+      mapPath(['state', 'strokeWidth'], () => strokeWidth, t),
   } as T.TextureField<'fill', 'number'>,
 ];
 

@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { vec2 } from '../../utils';
+import { mapPath, vec2 } from '../../utils';
 
 export interface ImageTextureState {
   src: string;
@@ -15,16 +15,16 @@ export const imageTextureFields: T.TextureField<'image'>[] = [
     label: 'Image URL',
     kind: 'string',
     defaultValue: '',
-    getter: t => t.src,
-    setter: (t, src) => ({ ...t, src }),
+    getter: t => t.state.src,
+    setter: (t, src) => mapPath(['state', 'src'], () => src, t),
   } as T.TextureField<'image', 'string'>,
   {
     key: 'offset',
     label: 'Offset',
     kind: 'Vec2',
     defaultValue: { x: 0, y: 0 },
-    getter: t => t.offset,
-    setter: (t, offset) => ({ ...t, offset }),
+    getter: t => t.state.offset,
+    setter: (t, offset) => mapPath(['state', 'offset'], () => offset, t),
   } as T.TextureField<'image', 'Vec2'>,
 ];
 

@@ -49,7 +49,7 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
         modelList={config.models}
         updateComponentModel={updateComponentModel}
       />
-      <ComponentTextures component={component} />
+      <ComponentTextures component={component} textureList={config.textures} />
       <ComponentFilters component={component} />
     </div>
   );
