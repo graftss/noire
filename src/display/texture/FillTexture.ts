@@ -8,12 +8,18 @@ export interface FillTextureState {
   strokeWidth: number;
 }
 
+const defaultFillTextureState: FillTextureState = {
+  fill: 'rgba(0,0,0,0)',
+  stroke: 'rgba(0,0,0,0)',
+  strokeWidth: 0,
+};
+
 export const fillTextureFields: T.TextureField<'fill'>[] = [
   {
     key: 'fill',
     label: 'Fill',
     kind: 'string',
-    defaultValue: 'red',
+    defaultValue: defaultFillTextureState.fill,
     getter: t => t.state.fill,
     setter: (t, fill) => mapPath(['state', 'fill'], () => fill, t),
   } as T.TextureField<'fill', 'string'>,
@@ -21,7 +27,7 @@ export const fillTextureFields: T.TextureField<'fill'>[] = [
     key: 'stroke',
     label: 'Stroke',
     kind: 'string',
-    defaultValue: 'black',
+    defaultValue: defaultFillTextureState.stroke,
     getter: t => t.state.stroke,
     setter: (t, stroke) => mapPath(['state', 'stroke'], () => stroke, t),
   } as T.TextureField<'fill', 'string'>,
@@ -29,7 +35,7 @@ export const fillTextureFields: T.TextureField<'fill'>[] = [
     key: 'strokeWidth',
     label: 'Stroke width',
     kind: 'number',
-    defaultValue: 1,
+    defaultValue: defaultFillTextureState.strokeWidth,
     getter: t => t.state.strokeWidth,
     setter: (t, strokeWidth) =>
       mapPath(['state', 'strokeWidth'], () => strokeWidth, t),
@@ -41,7 +47,7 @@ export class FillTexture implements T.Texture<'fill'> {
   state: FillTextureState;
 
   constructor(state: FillTextureState) {
-    this.state = state;
+    this.state = { ...defaultFillTextureState, ...state };
   }
 
   update = (update: Partial<FillTextureState>): void => {
