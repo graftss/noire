@@ -3,16 +3,16 @@ import { blurOnEnterKeyDown } from '../../../utils';
 import { WithDefault } from './WithDefault';
 
 interface TextFieldProps {
-  defaultValue: string;
+  initialValue: string;
   update: (value: string) => void;
 }
 
 export const TextField: React.SFC<TextFieldProps> = ({
-  defaultValue,
+  initialValue,
   update,
 }) => (
   <WithDefault
-    defaultValue={defaultValue}
+    initialValue={initialValue}
     update={update}
     render={(value, setValue) => (
       <input

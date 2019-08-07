@@ -114,7 +114,7 @@ const renderDeadzoneField = (
 
   return binding.inputKind === 'axis' ? (
     <FloatField
-      defaultValue={binding.deadzone || DEFAULT_AXIS_DEADZONE}
+      initialValue={binding.deadzone || DEFAULT_AXIS_DEADZONE}
       precision={3}
       update={(deadzone: number) =>
         updateControllerBinding({

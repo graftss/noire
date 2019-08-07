@@ -32,7 +32,7 @@ const Texture = ({
         <div key={field.key}>
           <EditorField
             field={field}
-            defaultValue={field.getter(texture)}
+            initialValue={field.getter(texture)}
             update={value => update(field.key, value)}
           />
         </div>

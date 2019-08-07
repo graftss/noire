@@ -45,7 +45,7 @@ const BaseTransformerToggle: React.SFC<TransformerToggleProps> = ({
   visibility,
 }) => (
   <BooleanField
-    defaultValue={visibility}
+    initialValue={visibility}
     update={() => {
       if (!target) return;
 

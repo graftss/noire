@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 interface Props<T> {
-  defaultValue: T;
+  initialValue: T;
   render: (value: T, setValue: (v: T) => void) => React.ReactNode;
   update: (o: T) => void;
 }
@@ -13,12 +13,12 @@ interface State<T> {
 export class WithDefault<T> extends React.Component<Props<T>, State<T>> {
   constructor(props: Props<T>) {
     super(props);
-    this.state = { value: props.defaultValue };
+    this.state = { value: props.initialValue };
   }
 
   componentWillReceiveProps(nextProps: Props<T>): void {
-    if (nextProps.defaultValue !== this.state.value) {
-      this.setValue(nextProps.defaultValue);
+    if (nextProps.initialValue !== this.state.value) {
+      this.setValue(nextProps.initialValue);
     }
   }
 

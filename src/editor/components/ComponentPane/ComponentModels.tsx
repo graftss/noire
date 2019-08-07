@@ -40,7 +40,7 @@ export const ComponentModels: React.SFC<ComponentModelsProps> = ({
               <div key={field.label}>
                 <EditorField
                   field={field}
-                  defaultValue={field.serialGetter(model) || field.defaultValue}
+                  initialValue={field.serialGetter(model)}
                   update={value =>
                     updateComponentModel(component, modelName, field.key, value)
                   }

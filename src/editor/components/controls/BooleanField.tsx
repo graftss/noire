@@ -2,16 +2,16 @@ import * as React from 'react';
 import { WithDefault } from './WithDefault';
 
 interface BooleanFieldProps {
-  defaultValue: boolean;
+  initialValue: boolean;
   update: (value: boolean) => void;
 }
 
 export const BooleanField: React.SFC<BooleanFieldProps> = ({
-  defaultValue,
+  initialValue,
   update,
 }) => (
   <WithDefault
-    defaultValue={defaultValue}
+    initialValue={initialValue}
     update={update}
     render={value => (
       <input type="checkbox" checked={value} onChange={() => update(!value)} />

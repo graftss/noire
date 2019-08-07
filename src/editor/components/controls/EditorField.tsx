@@ -7,16 +7,16 @@ import { Vec2Field } from './Vec2Field';
 
 interface EditorFieldProps<V> {
   field: T.EditorField;
-  defaultValue: V;
+  initialValue: V;
   update: (value: V) => void;
 }
 
 function renderFieldInput<V>({
   field,
-  defaultValue,
+  initialValue,
   update,
 }: EditorFieldProps<typeof field.kind>): React.ReactNode {
-  const props = { defaultValue, update, ...field.props };
+  const props = { initialValue, update, ...field.props };
 
   switch (field.kind) {
     case 'string':

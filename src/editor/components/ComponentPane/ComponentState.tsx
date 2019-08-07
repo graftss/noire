@@ -17,7 +17,7 @@ export const ComponentState: React.SFC<ComponentStateProps> = ({
       {stateConfig.map(field => (
         <div key={field.key}>
           <EditorField
-            defaultValue={field.getter(component.state)}
+            initialValue={field.getter(component.state)}
             field={field}
             update={v => update(field.key, v)}
           />
