@@ -32,6 +32,12 @@ export const values = <T>(map: Dict<T>): T[] => {
   return result;
 };
 
+export const keys = <T extends string>(map: Record<T, any>): T[] => {
+  const result: T[] = [];
+  for (const k in map) result.push(k);
+  return result;
+};
+
 export const mapIf = <T>(
   pred: (t: T) => boolean,
   f: (t: T) => T,

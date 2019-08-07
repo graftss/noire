@@ -1,15 +1,33 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { find } from '../../utils';
+import { find, keys } from '../../utils';
 import { FillTexture, fillTextureFields } from './FillTexture';
 import { ImageTexture, imageTextureFields } from './ImageTexture';
 
 export interface TextureData {
-  fill: { class: FillTexture; kind: 'fill'; state: T.FillTextureState };
-  image: { class: ImageTexture; kind: 'image'; state: T.ImageTextureState };
+  fill: { class: FillTexture; state: T.FillTextureState };
+  image: { class: ImageTexture; state: T.ImageTextureState };
 }
 
 export type TextureKind = keyof TextureData;
+
+type TextureConstructor<K extends TextureKind> = (
+  s: TextureData[K]['state'],
+) => Texture<K>;
+
+const textureConstructors: {
+  [K in TextureKind]: TextureConstructor<K>;
+} = {
+  fill: s => new FillTexture(s),
+  image: s => new ImageTexture(s),
+};
+
+const textureFields: { [K in TextureKind]: TextureField<K>[] } = {
+  fill: fillTextureFields,
+  image: imageTextureFields,
+};
+
+export const textureKinds: TextureKind[] = keys(textureConstructors);
 
 export interface SerializedTexture<K extends TextureKind = TextureKind> {
   kind: K;
@@ -42,23 +60,11 @@ export const serializeTexture = <K extends TextureKind>({
   state,
 }: Texture<K>): SerializedTexture<K> => ({ state, kind });
 
-export const deserializeTexture = <K extends TextureKind>(
-  serialized: SerializedTexture<K>,
-): Texture<K> => {
-  switch (serialized.kind) {
-    case 'fill':
-      return new FillTexture(serialized.state as T.FillTextureState) as any;
-    case 'image':
-      return new ImageTexture(serialized.state as T.ImageTextureState) as any;
-  }
-
-  throw new Error('unrecognized texture kind');
-};
-
-const textureFields: { [K in TextureKind]: TextureField<K>[] } = {
-  fill: fillTextureFields,
-  image: imageTextureFields,
-};
+export const deserializeTexture = <K extends TextureKind>({
+  kind,
+  state,
+}: SerializedTexture<K>): Texture<K> =>
+  (textureConstructors[kind] as TextureConstructor<K>)(state);
 
 export const getTextureFields = <K extends TextureKind>(
   kind: K,
