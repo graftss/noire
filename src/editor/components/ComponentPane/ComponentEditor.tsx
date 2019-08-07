@@ -3,6 +3,7 @@ import * as T from '../../../types';
 import { getComponentEditorConfig } from '../../../display/component/editor';
 import { TransformerToggle } from '../controls/TransformerToggle';
 import { ComponentFilters } from './ComponentFilters';
+import { ComponentTextures } from './ComponentTextures';
 import { ComponentKeys } from './ComponentKeys';
 import { ComponentState } from './ComponentState';
 import { ComponentModels } from './ComponentModels';
@@ -48,6 +49,7 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
         modelList={config.models}
         updateComponentModel={updateComponentModel}
       />
+      <ComponentTextures component={component} />
       <ComponentFilters component={component} />
     </div>
   );
