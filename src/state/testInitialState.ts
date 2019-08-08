@@ -166,13 +166,13 @@ vertProd.graphics.models.model = serializeKonvaModel(
 
 const stickGraphics: any = {
   models: {
-    boundary: serializeKonvaModel(new Konva.Circle({ radius: 20 })),
-    stick: serializeKonvaModel(new Konva.Circle({ radius: 10 })),
+    boundary: serializeKonvaModel(new Konva.Circle({ radius: 17 })),
+    stick: serializeKonvaModel(new Konva.Circle({ radius: 5 })),
   },
   textures: {
     boundary: {
       kind: 'fill',
-      state: { fill: 'white', stroke: 'black', strokeWidth: 3 },
+      state: { fill: 'white', stroke: 'black', strokeWidth: 1 },
     },
     // stick: {
     //   kind: 'fill',
@@ -185,12 +185,12 @@ const stickGraphics: any = {
     stickDown: {
       kind: 'fill',
       state: {
-        fill: 'green',
+        fill: 'darkred',
       },
     },
     stick: {
       kind: 'fill',
-      state: { fill: 'red' },
+      state: { fill: 'black' },
     },
   },
 };
@@ -342,13 +342,13 @@ const staticImage: T.SerializedComponent = {
 };
 
 const components: T.SerializedComponent[] = [
-  vert,
-  // vertProd,
+  // vert,
+  vertProd,
   // staticImage,
-  leftStick,
+  // leftStick,
   // rightStick,
   // dPad,
-  button,
+  // button,
 ];
 
 export const testInitialState: T.EditorState = {

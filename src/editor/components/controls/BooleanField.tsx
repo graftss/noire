@@ -15,7 +15,6 @@ export const BooleanField: React.SFC<BooleanFieldProps> = ({
 }) => (
   <WithDefault
     initialValue={defaultTo(initialValue, defaultValue)}
-    update={update}
     render={value => (
       <input type="checkbox" checked={value} onChange={() => update(!value)} />
     )}

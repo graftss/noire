@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as T from '../../../types';
 import { getTextureFields } from '../../../display/texture';
 import { EditorField } from '../controls/EditorField';
+import { TextureKindSelect } from './TextureKindSelect';
 
 interface TextureEditorProps {
   name: string;
@@ -21,6 +22,7 @@ export const TextureEditor: React.SFC<TextureEditorProps> = ({
       <div>{name}</div>
       {getTextureFields(texture.kind).map(field => (
         <div key={field.key}>
+          <TextureKindSelect initialValue={texture.kind} />
           <EditorField
             field={field}
             initialValue={field.getter(texture)}

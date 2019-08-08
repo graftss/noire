@@ -15,7 +15,6 @@ export const TextField: React.SFC<TextFieldProps> = ({
 }) => (
   <WithDefault
     initialValue={defaultTo(initialValue, defaultValue)}
-    update={update}
     render={(value, setValue) => (
       <input
         value={value}

@@ -27,7 +27,7 @@ const textureFields: { [K in TextureKind]: TextureField<K>[] } = {
   image: imageTextureFields,
 };
 
-export const textureKinds: TextureKind[] = keys(textureConstructors);
+const textureKinds: TextureKind[] = keys(textureConstructors);
 
 export interface SerializedTexture<K extends TextureKind = TextureKind> {
   kind: K;
@@ -69,6 +69,8 @@ export const deserializeTexture = <K extends TextureKind>({
 export const getTextureFields = <K extends TextureKind>(
   kind: K,
 ): TextureField<K>[] => textureFields[kind] as TextureField<K>[];
+
+export const getTextureKinds = (): TextureKind[] => [...textureKinds];
 
 export const findTextureFieldByKey = <K extends TextureKind>(
   kind: K,

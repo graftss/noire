@@ -23,7 +23,6 @@ export const FloatField: React.SFC<FloatFieldProps> = ({
       defaultTo(initialValue, defaultValue),
       precision,
     ).toString()}
-    update={(value: string) => update(parseNumber(value, precision))}
     render={(value, setValue) => (
       <input
         value={value.toString()}

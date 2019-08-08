@@ -3,7 +3,6 @@ import * as React from 'react';
 interface Props<T> {
   initialValue: T;
   render: (value: T, setValue: (v: T) => void) => React.ReactNode;
-  update: (o: T) => void;
 }
 
 interface State<T> {

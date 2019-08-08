@@ -8,10 +8,10 @@ interface BaseOption {
 
 interface EditorSelectProps<T, O extends BaseOption> {
   data: T[];
-  onChange: (o: O) => void;
+  onChange?: Maybe<(o: O) => void>;
   placeholder: string;
-  selected: T;
-  toOption: (t: T) => O;
+  selected: Maybe<T>;
+  toOption: (t: T, index?: number) => O;
 }
 
 export function EditorSelect<T, O extends BaseOption>({
