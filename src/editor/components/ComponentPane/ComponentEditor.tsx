@@ -11,6 +11,11 @@ import { ComponentTitle } from './ComponentTitle';
 
 interface ComponentEditorProps {
   component: Maybe<T.SerializedComponent>;
+  setDefaultTexture: (
+    id: string,
+    textureName: string,
+    kind: T.TextureKind,
+  ) => void;
   updateComponentState: (id: string, state: T.ComponentState) => void;
   updateComponentModel: (
     component: T.SerializedComponent,
@@ -28,6 +33,7 @@ interface ComponentEditorProps {
 
 export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
   component,
+  setDefaultTexture,
   updateComponentModel,
   updateComponentState,
   updateComponentTexture,
@@ -58,6 +64,7 @@ export const ComponentEditor: React.SFC<ComponentEditorProps> = ({
       />
       <ComponentTextures
         component={component}
+        setDefaultTexture={setDefaultTexture}
         textureList={config.textures}
         updateComponentTexture={updateComponentTexture}
       />

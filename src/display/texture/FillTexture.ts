@@ -43,10 +43,10 @@ export const fillTextureFields: T.TextureField<'fill'>[] = [
 ];
 
 export class FillTexture implements T.Texture<'fill'> {
-  kind: 'fill';
+  readonly kind = 'fill';
   state: FillTextureState;
 
-  constructor(state: FillTextureState) {
+  constructor(state?: FillTextureState) {
     this.state = { ...defaultFillTextureState, ...state };
   }
 

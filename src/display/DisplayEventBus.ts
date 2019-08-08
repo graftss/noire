@@ -28,6 +28,7 @@ interface DisplayHandlerData {
     TextureKey,
     TextureValue,
   ];
+  requestDefaultComponentTexture: [ComponentId, TextureName, T.TextureKind];
   updateComponentTexture: [ComponentId, TextureName, T.Texture];
   setKonvaTransformerVisibility: boolean;
 }
@@ -67,6 +68,7 @@ export class DisplayEventBus {
     requestUpdateComponentModel: [],
     updateComponentModel: [],
     requestUpdateComponentTexture: [],
+    requestDefaultComponentTexture: [],
     updateComponentTexture: [],
     setKonvaTransformerVisibility: [],
   };

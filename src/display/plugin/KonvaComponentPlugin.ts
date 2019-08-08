@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import * as T from '../../types';
 import { updateKonvaModel } from '../model/konva';
+import { defaultTexture } from '../texture';
 import { DisplayPlugin } from './DisplayPlugin';
 import { Display } from '..';
 
@@ -93,6 +94,10 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     eventBus.on({
       kind: 'requestUpdateComponentTexture',
       cb: this.onRequestUpdateComponentTexture,
+    });
+    eventBus.on({
+      kind: 'requestDefaultComponentTexture',
+      cb: this.onRequestDefaultComponentTexture,
     });
     eventBus.on({
       kind: 'setKonvaTransformerVisibility',
@@ -260,7 +265,23 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     texture.update({ [textureKey]: value });
     this.display.eventBus.emit({
       kind: 'updateComponentTexture',
-      data: [componentId, textureKey, texture],
+      data: [componentId, textureName, texture],
+    });
+  };
+
+  private onRequestDefaultComponentTexture = (
+    data: [string, string, T.TextureKind],
+  ): void => {
+    const [componentId, textureName, textureKind] = data;
+    const component: Maybe<T.Component> = this.componentsById[componentId];
+    if (component === undefined) return;
+
+    const texture = defaultTexture(textureKind);
+
+    component.graphics.textures[textureName] = texture;
+    this.display.eventBus.emit({
+      kind: 'updateComponentTexture',
+      data: [componentId, textureName, texture],
     });
   };
 

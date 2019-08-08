@@ -12,7 +12,7 @@ const defaultImageTextureState: ImageTextureState = {
   offset: { x: 0, y: 0 },
 };
 
-type ImageLoadState = 'requested' | 'loaded';
+type ImageLoadState = 'requested' | 'loaded' | 'error';
 
 export const imageTextureFields: T.TextureField<'image'>[] = [
   {
@@ -34,22 +34,21 @@ export const imageTextureFields: T.TextureField<'image'>[] = [
 ];
 
 export class ImageTexture implements T.Texture<'image'> {
-  kind: 'image';
+  readonly kind = 'image';
   state: ImageTextureState;
   private image: HTMLImageElement;
   private loadState: ImageLoadState;
 
-  constructor(state: ImageTextureState) {
+  constructor(state?: ImageTextureState) {
     this.state = { ...defaultImageTextureState, ...state };
-    this.loadImage(state.src);
+    this.loadImage(this.state.src);
   }
 
   private loadImage(src: string): void {
-    if (src === undefined) return;
-
     this.image = new Image();
     this.image.src = src;
     this.image.onload = () => (this.loadState = 'loaded');
+    this.image.onerror = () => (this.loadState = 'error');
 
     this.loadState = 'requested';
     this.state.src = src;
@@ -63,16 +62,17 @@ export class ImageTexture implements T.Texture<'image'> {
   };
 
   apply = (model: Konva.Shape): void => {
-    model.fillPriority('pattern');
-    model.fillPatternRepeat('no-repeat');
-
-    model.cache(0);
-
     switch (this.loadState) {
       case 'loaded': {
+        model.fillPriority('pattern');
+        model.fillPatternRepeat('no-repeat');
         model.fillPatternImage(this.image);
         model.fillPatternOffset(this.state.offset);
         break;
+      }
+      default: {
+        model.fillPriority('color');
+        model.fill('rgba(0,0,0,0)');
       }
     }
   };

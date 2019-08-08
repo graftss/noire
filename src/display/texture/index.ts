@@ -12,7 +12,7 @@ export interface TextureData {
 export type TextureKind = keyof TextureData;
 
 type TextureConstructor<K extends TextureKind> = (
-  s: TextureData[K]['state'],
+  s?: TextureData[K]['state'],
 ) => Texture<K>;
 
 const textureConstructors: {
@@ -65,6 +65,15 @@ export const deserializeTexture = <K extends TextureKind>({
   state,
 }: SerializedTexture<K>): Texture<K> =>
   (textureConstructors[kind] as TextureConstructor<K>)(state);
+
+export const defaultTexture = <K extends TextureKind>(
+  kind: TextureKind,
+): Texture<K> => (textureConstructors[kind] as TextureConstructor<K>)();
+
+export const defaultSerializedTexture = <K extends TextureKind>(
+  kind: TextureKind,
+): SerializedTexture<K> =>
+  serializeTexture((textureConstructors[kind] as TextureConstructor<K>)());
 
 export const getTextureFields = <K extends TextureKind>(
   kind: K,
