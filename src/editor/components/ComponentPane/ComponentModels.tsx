@@ -6,7 +6,7 @@ import { EditorField } from '../controls/EditorField';
 interface ComponentModelsProps {
   component: T.SerializedComponent;
   modelList: readonly string[];
-  updateComponentModel: (
+  updateModel: (
     id: T.SerializedComponent,
     modelName: string,
     key: string,
@@ -17,7 +17,7 @@ interface ComponentModelsProps {
 export const ComponentModels: React.SFC<ComponentModelsProps> = ({
   component,
   modelList,
-  updateComponentModel,
+  updateModel,
 }) => (
   <div>
     <div>---</div>
@@ -42,7 +42,7 @@ export const ComponentModels: React.SFC<ComponentModelsProps> = ({
                   field={field}
                   initialValue={field.serialGetter(model)}
                   update={value =>
-                    updateComponentModel(component, modelName, field.key, value)
+                    updateModel(component, modelName, field.key, value)
                   }
                 />
               </div>

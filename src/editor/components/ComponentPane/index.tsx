@@ -14,35 +14,51 @@ import {
   defaultSerializedTexture,
   updateTexture,
 } from '../../../display/texture';
-import { ComponentEditor } from './ComponentEditor';
+import { getComponentEditorConfig } from '../../../display/component/editor';
+import { TransformerToggle } from '../controls/TransformerToggle';
 import { ComponentSelect } from './ComponentSelect';
+import { ComponentFilters } from './ComponentFilters';
+import { ComponentTextures } from './ComponentTextures';
+import { ComponentKeys } from './ComponentKeys';
+import { ComponentState } from './ComponentState';
+import { ComponentModels } from './ComponentModels';
+import { ComponentTitle } from './ComponentTitle';
 
 interface PropsFromState {
+  component: Maybe<T.SerializedComponent>;
+  componentConfig: Maybe<T.ComponentEditorConfig>;
   components: T.SerializedComponent[];
-  selectedComponent: Maybe<T.SerializedComponent>;
 }
 
-const mapStateToProps = (state: T.EditorState): PropsFromState => ({
-  components: components(state),
-  selectedComponent: selectedComponent(state),
-});
+const mapStateToProps = (state: T.EditorState): PropsFromState => {
+  const component = selectedComponent(state);
+  const componentConfig = component
+    ? getComponentEditorConfig(component.kind)
+    : undefined;
+
+  return {
+    component,
+    componentConfig,
+    components: components(state),
+  };
+};
 
 interface PropsFromDispatch {
   selectComponent: (id: string) => void;
   setDefaultTexture: (
     id: string,
     textureName: string,
-    kind: T.TextureKind,
+    k: T.TextureKind,
   ) => void;
-  updateComponentState: (id: string, state: T.ComponentState) => void;
-  updateComponentModel: (
-    component: T.SerializedComponent,
+  updateState: (c: T.SerializedComponent, key: string, value: any) => void;
+  updateModel: (
+    c: T.SerializedComponent,
     modelName: string,
     key: string,
     value: any,
   ) => void;
-  updateComponentTexture: (
-    component: T.SerializedComponent,
+  updateTexture: (
+    c: T.SerializedComponent,
     textureName: string,
     key: string,
     value: any,
@@ -56,107 +72,106 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
   },
 
   setDefaultTexture: (id: string, textureName: string, kind: T.TextureKind) => {
-    dispatch(
-      updateComponentTexture(id, textureName, defaultSerializedTexture(kind)),
-    );
-    dispatch(
-      emitDisplayEvents([
-        {
-          kind: 'requestDefaultComponentTexture',
-          data: [id, textureName, kind],
-        },
-      ]),
-    );
+    const texture = defaultSerializedTexture(kind);
+    const event: T.DisplayEvent = {
+      kind: 'requestDefaultComponentTexture',
+      data: [id, textureName, kind],
+    };
+
+    dispatch(updateComponentTexture(id, textureName, texture));
+    dispatch(emitDisplayEvents([event]));
   },
 
-  updateComponentState: (id: string, state: T.ComponentState) => {
-    dispatch(updateComponentState(id, state));
-    dispatch(
-      emitDisplayEvents([{ kind: 'updateComponentState', data: [id, state] }]),
-    );
+  updateState: (component: T.SerializedComponent, key: string, value: any) => {
+    const { id, state } = component;
+    const newState = { ...state, [key]: value };
+    const event: T.DisplayEvent = {
+      kind: 'updateComponentState',
+      data: [id, state],
+    };
+
+    dispatch(updateComponentState(id, newState));
+    dispatch(emitDisplayEvents([event]));
   },
 
-  updateComponentModel: (
+  updateModel: (
     component: T.SerializedComponent,
     modelName: string,
     key: string,
     value: any,
   ) => {
-    dispatch(
-      updateComponentModel(
-        component.id,
-        modelName,
-        updateSerializedKonvaModel(
-          component.graphics.models[modelName],
-          key,
-          value,
-        ),
-      ),
-    );
+    const model = component.graphics.models[modelName];
+    const newModel = updateSerializedKonvaModel(model, key, value);
+    const event: T.DisplayEvent = {
+      kind: 'requestUpdateComponentModel',
+      data: [component.id, modelName, key, value],
+    };
 
-    dispatch(
-      emitDisplayEvents([
-        {
-          kind: 'requestUpdateComponentModel',
-          data: [component.id, modelName, key, value],
-        },
-      ]),
-    );
+    dispatch(updateComponentModel(component.id, modelName, newModel));
+    dispatch(emitDisplayEvents([event]));
   },
 
-  updateComponentTexture: (
+  updateTexture: (
     component: T.SerializedComponent,
     textureName: string,
     key: string,
     value: any,
   ) => {
     const texture = component.graphics.textures[textureName];
+    const newTexture = updateTexture(texture, key, value);
+    const event: T.DisplayEvent = {
+      kind: 'requestUpdateComponentTexture',
+      data: [component.id, textureName, key, value],
+    };
 
-    dispatch(
-      updateComponentTexture(
-        component.id,
-        textureName,
-        updateTexture(texture, key, value),
-      ),
-    );
-
-    dispatch(
-      emitDisplayEvents([
-        {
-          kind: 'requestUpdateComponentTexture',
-          data: [component.id, textureName, key, value],
-        },
-      ]),
-    );
+    dispatch(updateComponentTexture(component.id, textureName, newTexture));
+    dispatch(emitDisplayEvents([event]));
   },
 });
 
 interface ComponentPaneProps extends PropsFromState, PropsFromDispatch {}
 
 const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
+  component,
+  componentConfig,
   components,
   selectComponent,
-  selectedComponent,
   setDefaultTexture,
-  updateComponentState,
-  updateComponentModel,
-  updateComponentTexture,
-}) => (
-  <div>
-    <ComponentSelect
-      components={components}
-      selected={selectedComponent}
-      selectComponent={selectComponent}
-    />
-    <ComponentEditor
-      component={selectedComponent}
-      setDefaultTexture={setDefaultTexture}
-      updateComponentState={updateComponentState}
-      updateComponentModel={updateComponentModel}
-      updateComponentTexture={updateComponentTexture}
-    />
-  </div>
-);
+  updateState,
+  updateModel,
+  updateTexture,
+}) =>
+  component === undefined || componentConfig === undefined ? null : (
+    <div>
+      <ComponentSelect
+        components={components}
+        selected={component}
+        selectComponent={selectComponent}
+      />
+      <div>
+        <ComponentTitle label={componentConfig.title} />
+        <TransformerToggle />
+        <ComponentState
+          component={component}
+          stateConfig={componentConfig.state}
+          update={(key, value) => updateState(component, key, value)}
+        />
+        <ComponentKeys component={component} keys={componentConfig.keys} />
+        <ComponentModels
+          component={component}
+          modelList={componentConfig.models}
+          updateModel={updateModel}
+        />
+        <ComponentTextures
+          component={component}
+          setDefaultTexture={setDefaultTexture}
+          textureList={componentConfig.textures}
+          updateTexture={updateTexture}
+        />
+        <ComponentFilters component={component} />
+      </div>
+    </div>
+  );
 
 export const ComponentPane = connect(
   mapStateToProps,
