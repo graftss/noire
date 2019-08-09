@@ -5,11 +5,17 @@ import { deserializeInputFilter, getFilterInputKind } from '../filter';
 import { assoc, mapObj, mapPath } from '../../utils';
 import { serializeKonvaModel } from '../model/konva';
 import { Texture } from '../texture/Texture';
-import { ButtonComponent, buttonInputKinds } from './ButtonComponent';
-import { DPadComponent, dPadInputKinds } from './DPadComponent';
-import { StaticComponent, staticInputKinds } from './StaticComponent';
-import { StickComponent, stickInputKinds } from './StickComponent';
+import { ButtonComponent, buttonComponentData } from './ButtonComponent';
+import { DPadComponent, dPadComponentData } from './DPadComponent';
+import { StaticComponent, staticComponentData } from './StaticComponent';
+import { StickComponent, stickComponentData } from './StickComponent';
 import { Component } from './Component';
+
+export interface ComponentData<I = any> {
+  models: readonly string[];
+  textures: readonly string[];
+  inputKinds: I;
+}
 
 // K: identifying kind of component
 // SS: model keys
@@ -39,6 +45,13 @@ export interface SerializedComponentStateData {
 
 export type ComponentKind = keyof SerializedComponentStateData;
 
+const componentData = {
+  button: buttonComponentData,
+  dpad: dPadComponentData,
+  static: staticComponentData,
+  stick: stickComponentData,
+} as const;
+
 export interface ComponentKey {
   key: string;
   label: string;
@@ -53,17 +66,17 @@ export const mappedControllerKey = (
   component.state.inputMap &&
   component.state.inputMap[componentKey.key];
 
-const componentInputKinds: Record<ComponentKind, Dict<T.InputKind>> = {
-  button: buttonInputKinds,
-  stick: stickInputKinds,
-  dpad: dPadInputKinds,
-  static: staticInputKinds,
-};
-
 export const getComponentKeyInputKind = (
   component: SerializedComponent,
   componentKey: ComponentKey,
-): T.InputKind => componentInputKinds[component.kind][componentKey.key];
+): T.InputKind => componentData[component.kind].inputKinds[componentKey.key];
+
+export const getComponentModelList = (kind: ComponentKind): readonly string[] =>
+  componentData[kind].models;
+
+export const getComponentTextureList = (
+  kind: ComponentKind,
+): readonly string[] => componentData[kind].textures;
 
 export const stringifyComponentKey = ({
   label,

@@ -2,13 +2,7 @@ import * as T from '../../types';
 import { normalizeAxis } from '../../utils';
 import { Component } from './Component';
 
-const stickModels = ['boundary', 'stick', 'center'] as const;
-type StickModels = typeof stickModels[number];
-
-const stickTextures = ['boundary', 'stick', 'stickDown', 'center'] as const;
-type StickTextures = typeof stickTextures[number];
-
-export const stickInputKinds = {
+const inputKinds = {
   xp: 'axis',
   xn: 'axis',
   yp: 'axis',
@@ -16,7 +10,20 @@ export const stickInputKinds = {
   button: 'button',
 } as const;
 
-export type StickInput = T.KindsToRaw<typeof stickInputKinds>;
+export const stickComponentData: T.ComponentData<typeof inputKinds> = {
+  models: ['boundary', 'stick', 'center'] as const,
+  textures: ['boundary', 'stick', 'stickDown', 'center'] as const,
+  inputKinds,
+};
+
+type StickModels = typeof stickComponentData.models[number];
+type StickTextures = typeof stickComponentData.textures[number];
+type StickInput = typeof stickComponentData.inputKinds;
+
+export type StickState = T.ComponentState<StickInput> & {
+  boundaryRadius: number;
+  useDepthScaling: boolean;
+};
 
 const stickKeys: T.ComponentKey[] = [
   { key: 'xp', label: 'Right', inputKind: 'axis' },
@@ -25,11 +32,6 @@ const stickKeys: T.ComponentKey[] = [
   { key: 'yn', label: 'Up', inputKind: 'axis' },
   { key: 'button', label: 'Trigger', inputKind: 'button' },
 ];
-
-export type StickState = T.ComponentState<typeof stickInputKinds> & {
-  boundaryRadius: number;
-  useDepthScaling: boolean;
-};
 
 export const defaultState: StickState = {
   name: 'Stick Component',
@@ -41,7 +43,7 @@ export type SerializedStickComponent = T.SerializedComponent<
   'stick',
   StickModels,
   StickTextures,
-  typeof stickInputKinds,
+  StickInput,
   StickState
 >;
 
@@ -67,8 +69,8 @@ export const stickEditorConfig: T.ComponentEditorConfig = {
   title: 'Stick',
   state: stickEditorState,
   keys: stickKeys,
-  models: stickModels,
-  textures: stickTextures,
+  models: stickComponentData.models,
+  textures: stickComponentData.textures,
 };
 
 const depthFactor = (t: number): number =>
@@ -77,7 +79,7 @@ const depthFactor = (t: number): number =>
 export class StickComponent extends Component<
   StickModels,
   StickTextures,
-  typeof stickInputKinds,
+  StickInput,
   StickState
 > {
   constructor(
@@ -89,7 +91,7 @@ export class StickComponent extends Component<
     super(
       id,
       graphics,
-      stickInputKinds,
+      stickComponentData.inputKinds,
       { ...defaultState, ...state },
       filters,
     );
@@ -151,7 +153,7 @@ export class StickComponent extends Component<
     if (texture) texture.apply(model);
   }
 
-  update(input: StickInput): void {
+  update(input: T.KindsToRaw<StickInput>): void {
     const { xn, xp, yn, yp, button } = input;
     const x = normalizeAxis(xp, xn);
     const y = normalizeAxis(yp, yn);

@@ -7,29 +7,36 @@ import { Component } from './Component';
 const dirs = ['u', 'l', 'd', 'r'] as const;
 type Dir = typeof dirs[number];
 
-const dPadModels = dirs;
-type DPadModels = Dir;
-
-const dPadTextures = [
-  'uOn',
-  'uOff',
-  'lOn',
-  'lOff',
-  'dOn',
-  'dOff',
-  'rOn',
-  'rOff',
-] as const;
-type DPadTextures = typeof dPadTextures[number];
-
-export const dPadInputKinds = {
+const inputKinds = {
   u: 'button',
   l: 'button',
   d: 'button',
   r: 'button',
 } as const;
 
-export type DPadInput = T.KindsToRaw<typeof dPadInputKinds>;
+export const dPadComponentData: T.ComponentData<typeof inputKinds> = {
+  models: dirs,
+  textures: [
+    'uOn',
+    'uOff',
+    'lOn',
+    'lOff',
+    'dOn',
+    'dOff',
+    'rOn',
+    'rOff',
+  ] as const,
+  inputKinds,
+};
+
+type DPadModels = typeof dPadComponentData.models[number];
+type DPadTextures = typeof dPadComponentData.textures[number];
+type DPadInput = typeof dPadComponentData.inputKinds;
+export type DPadState = T.ComponentState<DPadInput>;
+
+export const defaultState: DPadState = {
+  name: 'DPad Component',
+};
 
 const dPadKeys: T.ComponentKey[] = [
   { key: 'u', label: 'Up', inputKind: 'button' },
@@ -38,25 +45,19 @@ const dPadKeys: T.ComponentKey[] = [
   { key: 'r', label: 'Right', inputKind: 'button' },
 ];
 
-export type DPadState = T.ComponentState<typeof dPadInputKinds>;
-
-export const defaultState: DPadState = {
-  name: 'DPad Component',
-};
-
 export type SerializedDPadComponent = T.SerializedComponent<
   'dpad',
   DPadModels,
   DPadTextures,
-  typeof dPadInputKinds,
+  DPadInput,
   DPadState
 >;
 
 export const dPadEditorConfig: T.ComponentEditorConfig = {
   title: 'D-Pad',
   keys: dPadKeys,
-  models: dPadModels,
-  textures: dPadTextures,
+  models: dPadComponentData.models,
+  textures: dPadComponentData.textures,
 };
 
 export const simpleDPadRects = (
@@ -116,7 +117,7 @@ export const simpleDPadTextures = (
 export class DPadComponent extends Component<
   DPadModels,
   DPadTextures,
-  typeof dPadInputKinds,
+  DPadInput,
   DPadState
 > {
   constructor(
@@ -125,7 +126,13 @@ export class DPadComponent extends Component<
     state: Partial<DPadState>,
     filters: T.ComponentFilterDict<DPadModels>,
   ) {
-    super(id, graphics, dPadInputKinds, { ...defaultState, ...state }, filters);
+    super(
+      id,
+      graphics,
+      dPadComponentData.inputKinds,
+      { ...defaultState, ...state },
+      filters,
+    );
   }
 
   private updateDirection(
@@ -138,7 +145,7 @@ export class DPadComponent extends Component<
     else if (!input && model && off) off.apply(model);
   }
 
-  update(input: DPadInput): void {
+  update(input: T.KindsToRaw<DPadInput>): void {
     const { u, l, d, r } = input;
     const { models, textures } = this.graphics;
 

@@ -3,9 +3,7 @@
 import Konva from 'konva';
 import { clone } from 'ramda';
 import * as T from '../types';
-import { stickInputKinds } from '../display/component/StickComponent';
 import {
-  dPadInputKinds,
   simpleDPadRects,
   simpleDPadTextures,
 } from '../display/component/DPadComponent';

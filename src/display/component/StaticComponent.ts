@@ -1,43 +1,44 @@
 import * as T from '../../types';
 import { Component } from './Component';
 
-const staticModels = ['model'] as const;
-type StaticModels = typeof staticModels[number];
+const inputKinds = {} as const;
 
-const staticTextures = ['texture'] as const;
-type StaticTextures = typeof staticTextures[number];
+export const staticComponentData: T.ComponentData<typeof inputKinds> = {
+  models: ['model'] as const,
+  textures: ['texture'] as const,
+  inputKinds,
+};
 
-export const staticInputKinds = {};
-
-export type StaticInput = T.KindsToRaw<typeof staticInputKinds>;
-
-const staticKeys: T.ComponentKey[] = [];
-
-export type StaticState = T.ComponentState<typeof staticInputKinds>;
+type StaticModels = typeof staticComponentData.models[number];
+type StaticTextures = typeof staticComponentData.textures[number];
+type StaticInput = typeof staticComponentData.inputKinds;
+export type StaticState = T.ComponentState<StaticInput>;
 
 export const defaultState: StaticState = {
   name: 'Static Component',
 };
 
+const staticKeys: T.ComponentKey[] = [];
+
 export type SerializedStaticComponent = T.SerializedComponent<
   'static',
   StaticModels,
   StaticTextures,
-  typeof staticInputKinds,
+  StaticInput,
   StaticState
 >;
 
 export const staticEditorConfig: T.ComponentEditorConfig = {
   title: 'Static',
   keys: staticKeys,
-  models: staticModels,
-  textures: staticTextures,
+  models: staticComponentData.models,
+  textures: staticComponentData.textures,
 };
 
 export class StaticComponent extends Component<
   StaticModels,
   StaticTextures,
-  typeof staticInputKinds,
+  StaticInput,
   StaticState
 > {
   constructor(
@@ -49,7 +50,7 @@ export class StaticComponent extends Component<
     super(
       id,
       graphics,
-      staticInputKinds,
+      staticComponentData.inputKinds,
       { ...defaultState, ...state },
       filters,
     );

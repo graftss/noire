@@ -62,6 +62,7 @@ export {
 } from './display/DisplayEventBus';
 export { KonvaSelectable } from './display/plugin/KonvaComponentPlugin';
 export {
+  ComponentData,
   ComponentFilterKey,
   ComponentFilterKeyUpdate,
   ComponentKey,
@@ -101,22 +102,18 @@ export {
 } from './display/component/Component';
 export {
   StickState,
-  StickInput,
   SerializedStickComponent,
 } from './display/component/StickComponent';
 export {
   SerializedStaticComponent,
-  StaticInput,
   StaticState,
 } from './display/component/StaticComponent';
 export {
   DPadState,
-  DPadInput,
   SerializedDPadComponent,
 } from './display/component/DPadComponent';
 export {
   ButtonComponentState,
-  ButtonComponentInput,
   SerializedButtonComponent,
 } from './display/component/ButtonComponent';
 export { EditorApp } from './editor';

@@ -144,14 +144,19 @@ export const stickDistort: T.InputFilterFactory<'stickDistort'> = ({
     yd: Math.round(leash * (R - r) * normalizeAxis(yp, yn)),
   });
 
-export const dPadDistortInputKinds: Dict<T.InputKind> = {
+export const dPadDistortInputKinds = {
   u: 'button',
   l: 'button',
   d: 'button',
   r: 'button',
-};
+} as const;
 
-export type DPadDistortInput = T.DPadInput;
+export interface DPadDistortInput {
+  u: boolean;
+  l: boolean;
+  d: boolean;
+  r: boolean;
+}
 
 export interface DPadDistortData {
   state: DistortState;

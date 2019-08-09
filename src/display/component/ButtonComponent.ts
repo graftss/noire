@@ -1,23 +1,22 @@
 import * as T from '../../types';
 import { Component } from './Component';
 
-const buttonModels = ['on', 'off'] as const;
-type ButtonModels = typeof buttonModels[number];
+const inputKinds = { button: 'button' } as const;
 
-const buttonTextures = ['on', 'off'] as const;
-type ButtonTextures = typeof buttonTextures[number];
+export const buttonComponentData: T.ComponentData<typeof inputKinds> = {
+  models: ['on', 'off'] as const,
+  textures: ['on', 'off'] as const,
+  inputKinds,
+};
 
-export const buttonInputKinds = {
-  button: 'button',
-} as const;
-
-export type ButtonComponentInput = T.KindsToRaw<typeof buttonInputKinds>;
+type ButtonModels = typeof buttonComponentData.models[number];
+type ButtonTextures = typeof buttonComponentData.textures[number];
+type ButtonInput = typeof buttonComponentData.inputKinds;
+export type ButtonComponentState = T.ComponentState<ButtonInput>;
 
 const buttonKeys: T.ComponentKey[] = [
   { key: 'button', label: 'Pressed', inputKind: 'button' },
 ];
-
-export type ButtonComponentState = T.ComponentState<typeof buttonInputKinds>;
 
 export const defaultState: ButtonComponentState = {
   name: 'Button Component',
@@ -27,21 +26,21 @@ export type SerializedButtonComponent = T.SerializedComponent<
   'button',
   ButtonModels,
   ButtonTextures,
-  typeof buttonInputKinds,
+  ButtonInput,
   ButtonComponentState
 >;
 
 export const buttonEditorConfig: T.ComponentEditorConfig = {
   title: 'Button',
   keys: buttonKeys,
-  models: buttonModels,
-  textures: buttonTextures,
+  models: buttonComponentData.models,
+  textures: buttonComponentData.textures,
 };
 
 export class ButtonComponent extends Component<
   ButtonModels,
   ButtonTextures,
-  typeof buttonInputKinds,
+  ButtonInput,
   ButtonComponentState
 > {
   constructor(
@@ -53,13 +52,13 @@ export class ButtonComponent extends Component<
     super(
       id,
       graphics,
-      buttonInputKinds,
+      buttonComponentData.inputKinds,
       { ...defaultState, ...state },
       filters,
     );
   }
 
-  update(input: Partial<ButtonComponentInput>): void {
+  update(input: T.KindsToRaw<ButtonInput>): void {
     const { textures, models } = this.graphics;
     const { button } = input;
 

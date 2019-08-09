@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { find, mapPath } from '../../utils';
+import { find, keys, mapPath } from '../../utils';
 
 export interface KonvaShapeAttrs {
   x: number;
@@ -27,7 +27,7 @@ export type KonvaModelKind = keyof KonvaModelData;
 export interface SerializedKonvaModel<
   K extends KonvaModelKind = KonvaModelKind
 > {
-  className: K;
+  kind: K;
   attrs: KonvaModelData[K]['attrs'];
 }
 
@@ -124,22 +124,26 @@ const konvaModelFields: { [K in KonvaModelKind]: KonvaModelField<K>[] } = {
   Circle: circleModelFields,
 };
 
+const konvaModelKinds: KonvaModelKind[] = keys(konvaModelFields);
+
 export const getKonvaModelFields = <K extends KonvaModelKind>(
   kind: K,
 ): KonvaModelField<K>[] => konvaModelFields[kind] as KonvaModelField<K>[];
 
+export const getKonvaModelKinds = (): KonvaModelKind[] => [...konvaModelKinds];
+
 export const findKonvaFieldByKey = <K extends KonvaModelKind>(
-  className: K,
+  kind: K,
   key: string,
 ): Maybe<KonvaModelField<K>> =>
-  find(field => field.key === key, getKonvaModelFields(className));
+  find(field => field.key === key, getKonvaModelFields(kind));
 
 export const updateSerializedKonvaModel = <K extends KonvaModelKind>(
   model: SerializedKonvaModel<K>,
   key: string,
   value: any,
 ): SerializedKonvaModel<K> => {
-  const field = findKonvaFieldByKey(model.className, key);
+  const field = findKonvaFieldByKey(model.kind, key);
   return field ? field.serialSetter(model, value) : model;
 };
 
