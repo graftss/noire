@@ -137,7 +137,7 @@ export class DPadComponent extends Component<
 
   private updateDirection(
     input: boolean,
-    model: Maybe<Konva.Shape>,
+    model: Maybe<T.KonvaModel>,
     on: Maybe<Texture>,
     off: Maybe<Texture>,
   ): void {

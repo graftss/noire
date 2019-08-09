@@ -1,28 +1,29 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { find, keys, mapPath } from '../../utils';
-
-export interface KonvaShapeAttrs {
-  x: number;
-  y: number;
-}
-
-export interface KonvaRectAttrs extends KonvaShapeAttrs {
-  height: number;
-  width: number;
-}
-
-export interface KonvaCircleAttrs extends KonvaShapeAttrs {
-  radius: number;
-}
+import { find, keys } from '../../utils';
+import { rectModelFields, defaultRectAttrs } from './Rect';
+import { circleModelFields, defaultCircleAttrs } from './Circle';
 
 export interface KonvaModelData {
-  Shape: { class: Konva.Shape; attrs: KonvaShapeAttrs };
-  Rect: { class: Konva.Shape; attrs: KonvaRectAttrs };
-  Circle: { class: Konva.Shape; attrs: KonvaCircleAttrs };
+  Rect: T.KonvaRectData;
+  Circle: T.KonvaCircleData;
 }
 
 export type KonvaModelKind = keyof KonvaModelData;
+
+const konvaModelFields: {
+  [K in KonvaModelKind]: readonly KonvaModelField<K>[];
+} = {
+  Rect: rectModelFields,
+  Circle: circleModelFields,
+};
+
+const defaultKonvaModelAttrs: {
+  [K in KonvaModelKind]: KonvaModelData[K]['attrs'];
+} = {
+  Rect: defaultRectAttrs,
+  Circle: defaultCircleAttrs,
+};
 
 export interface SerializedKonvaModel<
   K extends KonvaModelKind = KonvaModelKind
@@ -56,73 +57,6 @@ export interface KonvaModelField<
     value: T.EditorFieldType<FK>,
   ) => SerializedKonvaModel<K>;
 }
-
-const shapeModelFields: KonvaModelField<'Shape'>[] = [
-  {
-    label: 'Offset',
-    key: 'offset',
-    kind: 'Vec2',
-    defaultValue: { x: 0, y: 0 },
-    props: { precision: 1 },
-    getter: (model: Konva.Shape) => ({ x: model.x() || 0, y: model.y() || 0 }),
-    serialGetter: (model: SerializedKonvaModel<'Shape'>) => ({
-      x: model.attrs.x || 0,
-      y: model.attrs.y || 0,
-    }),
-    setter: (model: Konva.Shape, offset: Vec2) => model.setPosition(offset),
-    serialSetter: (model: SerializedKonvaModel<'Shape'>, offset: Vec2) =>
-      mapPath(['attrs'], attrs => ({ ...attrs, ...offset }), model),
-  } as KonvaModelField<'Shape', 'Vec2'>,
-];
-
-const rectModelFields: KonvaModelField<'Rect'>[] = [
-  ...(shapeModelFields as any),
-  {
-    label: 'Dimensions',
-    key: 'dimensions',
-    kind: 'Vec2',
-    defaultValue: { x: 0, y: 0 },
-    props: { precision: 1 },
-    getter: (model: Konva.Rect) => ({
-      x: model.width() || 0,
-      y: model.height() || 0,
-    }),
-    serialGetter: (model: SerializedKonvaModel<'Rect'>) => ({
-      x: model.attrs.width || 0,
-      y: model.attrs.height || 0,
-    }),
-    setter: (model: Konva.Rect, offset: Vec2) =>
-      model.width(offset.x).height(offset.y),
-    serialSetter: (model: SerializedKonvaModel<'Rect'>, offset: Vec2) =>
-      mapPath(
-        ['attrs'],
-        attrs => ({ ...attrs, width: offset.x, height: offset.y }),
-        model,
-      ),
-  } as KonvaModelField<'Rect', 'Vec2'>,
-];
-
-const circleModelFields: KonvaModelField<'Circle'>[] = [
-  ...(shapeModelFields as any),
-  {
-    label: 'Radius',
-    kind: 'number',
-    key: 'radius',
-    defaultValue: 0,
-    props: { precision: 1 },
-    getter: (model: Konva.Circle) => model.radius(),
-    serialGetter: (model: SerializedKonvaModel<'Circle'>) => model.attrs.radius,
-    setter: (model: Konva.Circle, radius: number) => model.radius(radius),
-    serialSetter: (model: SerializedKonvaModel<'Circle'>, radius: number) =>
-      mapPath(['attrs'], attrs => ({ ...attrs, radius }), model),
-  } as KonvaModelField<'Circle', 'number'>,
-];
-
-const konvaModelFields: { [K in KonvaModelKind]: KonvaModelField<K>[] } = {
-  Shape: shapeModelFields,
-  Rect: rectModelFields,
-  Circle: circleModelFields,
-};
 
 const konvaModelKinds: KonvaModelKind[] = keys(konvaModelFields);
 
@@ -162,6 +96,10 @@ export const serializeKonvaModel = <K extends KonvaModelKind>(
   const result = JSON.parse(node.toJSON());
   return { ...result, kind: result.className };
 };
+
+export const defaultSerializedKonvaModel = <K extends KonvaModelKind>(
+  kind: K,
+): SerializedKonvaModel<K> => ({ kind, attrs: defaultKonvaModelAttrs[kind] });
 
 export const isKonvaModelCached = (node: Konva.Node): boolean =>
   node._isUnderCache;

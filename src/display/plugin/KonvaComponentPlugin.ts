@@ -241,7 +241,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     const component: Maybe<T.Component> = this.componentsById[componentId];
     if (component === undefined) return;
 
-    const model: Maybe<Konva.Shape> = component.graphics.models[modelName];
+    const model: Maybe<T.KonvaModel> = component.graphics.models[modelName];
     if (model === undefined) return;
 
     this.updateTransformer();

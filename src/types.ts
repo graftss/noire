@@ -74,15 +74,15 @@ export {
   SerializedComponentFilterDict,
 } from './display/component/';
 export {
-  KonvaCircleAttrs,
   KonvaModelData,
   KonvaModel,
   KonvaModelField,
   KonvaModelKind,
-  KonvaRectAttrs,
-  KonvaShapeAttrs,
   SerializedKonvaModel,
 } from './display/model/konva';
+export { KonvaBaseAttrs } from './display/model/Base';
+export { KonvaCircleAttrs, KonvaCircleData } from './display/model/Circle';
+export { KonvaRectAttrs, KonvaRectData } from './display/model/Rect';
 export {
   EditorField,
   EditorFieldData,
