@@ -44,19 +44,22 @@ export function SelectField<T, O extends BaseOption>({
   return (
     <WithDefault
       initialValue={initialIndex}
-      render={(index: number, setIndex: (index: number) => void) => [
-        <EditorSelect
-          key="0"
-          data={data}
-          selected={dataAtIndex(index)}
-          onChange={option => setIndex(option[indexSymbol])}
-          placeholder={placeholder}
-          toOption={indexedToOption}
-        />,
-        <button key="1" onClick={() => onConfirm(dataAtIndex(index))}>
-          confirm{' '}
-        </button>,
-      ]}
+      render={(index: number, setIndex: (index: number) => void) => (
+        <div style={{ display: 'flex' }}>
+          <div style={{ flexGrow: 100 }}>
+            <EditorSelect
+              data={data}
+              selected={dataAtIndex(index)}
+              onChange={option => setIndex(option[indexSymbol])}
+              placeholder={placeholder}
+              toOption={indexedToOption}
+            />
+          </div>
+          <button onClick={() => onConfirm(dataAtIndex(index))}>
+            confirm
+          </button>
+        </div>
+      )}
     />
   );
 }
