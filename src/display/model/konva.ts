@@ -158,7 +158,10 @@ export const updateKonvaModel = <K extends KonvaModelKind>(
 
 export const serializeKonvaModel = <K extends KonvaModelKind>(
   node: KonvaModel<K>,
-): SerializedKonvaModel<K> => JSON.parse(node.toJSON());
+): SerializedKonvaModel<K> => {
+  const result = JSON.parse(node.toJSON());
+  return { ...result, kind: result.className };
+};
 
 export const isKonvaModelCached = (node: Konva.Node): boolean =>
   node._isUnderCache;
