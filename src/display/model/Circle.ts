@@ -14,7 +14,7 @@ export interface KonvaCircleData {
 
 export const defaultCircleAttrs: KonvaCircleAttrs = {
   ...defaultBaseAttrs,
-  radius: 10,
+  radius: 40,
 } as const;
 
 export const circleModelFields: readonly T.KonvaModelField<'Circle'>[] = [

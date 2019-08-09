@@ -283,10 +283,10 @@ const button: T.SerializedComponent = {
   graphics: {
     models: {
       on: serializeKonvaModel(
-        new Konva.Rect({ x: 50, y: 50, width: 30, height: 30 }),
+        new Konva.Rect({ x: 0, y: 0, width: 30, height: 30 }),
       ),
       off: serializeKonvaModel(
-        new Konva.Rect({ x: 150, y: 50, width: 30, height: 30 }),
+        new Konva.Rect({ x: 0, y: 0, width: 30, height: 30 }),
       ),
     },
     textures: {
@@ -309,7 +309,7 @@ const button: T.SerializedComponent = {
       button: { controllerId, key: 'square' },
     },
     defaultInput: {},
-    offset: { x: 0, y: 0 },
+    offset: { x: 200, y: 300 },
     scale: { x: 1, y: 1 },
   },
 };

@@ -1,4 +1,3 @@
-import Konva from 'konva';
 import * as T from '../types';
 import {
   selectComponent,
@@ -58,7 +57,7 @@ export class Display {
     id: string,
     modelName: string,
     serialModel: T.SerializedKonvaModel,
-    model: Konva.Shape,
+    model: T.KonvaModel,
   ): void {
     this.store.dispatch(updateComponentModel(id, modelName, serialModel));
     this.eventBus.emit({

@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { updateKonvaModel } from '../model/konva';
+import { defaultKonvaModel, updateKonvaModel } from '../model/konva';
 import { defaultTexture } from '../texture';
 import { DisplayPlugin } from './DisplayPlugin';
 import { Display } from '..';
@@ -92,6 +92,10 @@ export class KonvaComponentPlugin extends DisplayPlugin {
       cb: this.onRequestUpdateComponentModel,
     });
     eventBus.on({
+      kind: 'requestDefaultComponentModel',
+      cb: this.onRequestDefaultComponentModel,
+    });
+    eventBus.on({
       kind: 'requestUpdateComponentTexture',
       cb: this.onRequestUpdateComponentTexture,
     });
@@ -123,13 +127,24 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     }
   }
 
+  private addModel = (componentId: string, group: Konva.Group) => (
+    model: Konva.Shape,
+  ) => {
+    group.add(model);
+    model.on('click', () => {
+      this.display.eventBus.emit({
+        kind: 'selectComponent',
+        data: componentId,
+      });
+    });
+  };
+
   // we need to add each model to its group before calling `init`
   // on the component, which assumes that each model in the
   // component has a parent.
   // in general, the order of the calls made here is very brittle
   // and should be changed carefully.
   private onAddComponent = (component: T.Component): void => {
-    const { eventBus } = this.display;
     const { id } = component;
     const offset = component.state.offset;
 
@@ -139,13 +154,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     this.groupsById[id] = group;
     this.layer.add(group);
 
-    component.modelList().forEach((model: Konva.Shape) => {
-      group.add(model);
-      model.on('click', () =>
-        eventBus.emit({ kind: 'selectComponent', data: id }),
-      );
-    });
-
+    component.modelList().forEach(this.addModel(id, group));
     component.init();
 
     group.on('dragend', (event: DragEndEvent) => {
@@ -250,6 +259,22 @@ export class KonvaComponentPlugin extends DisplayPlugin {
       kind: 'updateComponentModel',
       data: [componentId, modelKey, newModel],
     });
+  };
+
+  private onRequestDefaultComponentModel = (
+    data: [string, string, T.KonvaModelKind],
+  ): void => {
+    const [componentId, modelName, kind] = data;
+    const component: Maybe<T.Component> = this.componentsById[componentId];
+    if (component === undefined) return;
+
+    const group = this.groupsById[componentId];
+    const model = defaultKonvaModel(kind);
+    const oldModel = component.graphics.models[modelName];
+
+    if (oldModel) oldModel.destroy();
+    component.graphics.models[modelName] = model;
+    this.addModel(componentId, group)(model);
   };
 
   private onRequestUpdateComponentTexture = (

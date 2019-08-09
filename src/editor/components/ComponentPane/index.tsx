@@ -9,7 +9,10 @@ import {
   updateComponentModel,
   updateComponentTexture,
 } from '../../../state/actions';
-import { updateSerializedKonvaModel } from '../../../display/model/konva';
+import {
+  updateSerializedKonvaModel,
+  defaultSerializedKonvaModel,
+} from '../../../display/model/konva';
 import {
   defaultSerializedTexture,
   updateTexture,
@@ -45,6 +48,7 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => {
 
 interface PropsFromDispatch {
   selectComponent: (id: string) => void;
+  setDefaultModel: (id: string, modelName: string, k: T.KonvaModelKind) => void;
   setDefaultTexture: (
     id: string,
     textureName: string,
@@ -69,6 +73,17 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
   selectComponent: (id: string) => {
     dispatch(selectComponent(id));
     dispatch(emitDisplayEvents([{ kind: 'selectComponent', data: id }]));
+  },
+
+  setDefaultModel: (id: string, modelName: string, kind: T.KonvaModelKind) => {
+    const model = defaultSerializedKonvaModel(kind);
+    const event: T.DisplayEvent = {
+      kind: 'requestDefaultComponentModel',
+      data: [id, modelName, kind],
+    };
+
+    dispatch(updateComponentModel(id, modelName, model));
+    dispatch(emitDisplayEvents([event]));
   },
 
   setDefaultTexture: (id: string, textureName: string, kind: T.TextureKind) => {
@@ -136,6 +151,7 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
   componentConfig,
   components,
   selectComponent,
+  setDefaultModel,
   setDefaultTexture,
   updateState,
   updateModel,
@@ -160,6 +176,7 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
         <ComponentModels
           component={component}
           modelList={componentConfig.models}
+          setDefaultModel={setDefaultModel}
           updateModel={updateModel}
         />
         <ComponentTextures

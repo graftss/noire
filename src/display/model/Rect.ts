@@ -15,8 +15,8 @@ export interface KonvaRectData {
 
 export const defaultRectAttrs: KonvaRectAttrs = {
   ...defaultBaseAttrs,
-  height: 10,
-  width: 10,
+  height: 40,
+  width: 40,
 } as const;
 
 export const rectModelFields: readonly T.KonvaModelField<'Rect'>[] = [

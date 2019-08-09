@@ -22,7 +22,8 @@ interface DisplayHandlerData {
   updateComponentFilters: [ComponentId, T.ComponentFilterDict];
   updateComponentState: [ComponentId, T.ComponentState];
   requestUpdateComponentModel: [ComponentId, ModelName, ModelKey, ModelValue];
-  updateComponentModel: [ComponentId, ModelName, Konva.Shape];
+  requestDefaultComponentModel: [ComponentId, ModelName, T.KonvaModelKind];
+  updateComponentModel: [ComponentId, ModelName, T.KonvaModel];
   requestUpdateComponentTexture: [
     ComponentId,
     TextureName,
@@ -67,6 +68,7 @@ export class DisplayEventBus {
     updateComponentFilters: [],
     updateComponentState: [],
     requestUpdateComponentModel: [],
+    requestDefaultComponentModel: [],
     updateComponentModel: [],
     requestUpdateComponentTexture: [],
     requestDefaultComponentTexture: [],

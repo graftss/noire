@@ -97,9 +97,18 @@ export const serializeKonvaModel = <K extends KonvaModelKind>(
   return { ...result, kind: result.className };
 };
 
+export const deserializeKonvaModel = <K extends KonvaModelKind>(
+  model: SerializedKonvaModel<K>,
+): KonvaModel<K> =>
+  Konva.Node.create({ ...model, className: model.kind }, null);
+
 export const defaultSerializedKonvaModel = <K extends KonvaModelKind>(
   kind: K,
 ): SerializedKonvaModel<K> => ({ kind, attrs: defaultKonvaModelAttrs[kind] });
+
+export const defaultKonvaModel = <K extends KonvaModelKind>(
+  kind: K,
+): KonvaModel<K> => deserializeKonvaModel(defaultSerializedKonvaModel(kind));
 
 export const isKonvaModelCached = (node: Konva.Node): boolean =>
   node._isUnderCache;
