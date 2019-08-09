@@ -50,7 +50,7 @@ export class StaticComponent extends Component<
       id,
       graphics,
       staticInputKinds,
-      { ...defaultState, ...state, },
+      { ...defaultState, ...state },
       filters,
     );
   }

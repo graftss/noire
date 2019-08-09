@@ -342,13 +342,13 @@ const staticImage: T.SerializedComponent = {
 };
 
 const components: T.SerializedComponent[] = [
-  vert,
+  // vert,
   // vertProd,
   // staticImage,
-  // leftStick,
+  leftStick,
   // rightStick,
   // dPad,
-  // button,
+  button,
 ];
 
 export const testInitialState: T.EditorState = {

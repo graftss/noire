@@ -44,10 +44,9 @@ export const fillTextureFields: T.TextureField<'fill'>[] = [
 
 export class FillTexture extends Texture<'fill'> {
   readonly kind = 'fill';
-  state: FillTextureState;
 
   constructor(state?: FillTextureState) {
-    super({ ...state, ...defaultFillTextureState });
+    super({ ...defaultFillTextureState, ...state });
   }
 
   applyToModel = (model: T.KonvaModel): void => {
