@@ -8,7 +8,6 @@ export abstract class Texture<K extends T.TextureKind = T.TextureKind> {
 
   constructor(state: T.TextureState<K>) {
     this.update(state);
-    this.hash = uuid();
   }
 
   update(update: Partial<T.TextureState<K>>): void {

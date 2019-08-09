@@ -152,6 +152,7 @@ export {
 export { NoireConfig } from '.';
 export { FillTextureState } from './display/texture/FillTexture';
 export { ImageTextureState } from './display/texture/ImageTexture';
+export { HiddenTextureState } from './display/texture/HiddenTexture';
 export {
   DistortFilterState,
   StickDistortInput,

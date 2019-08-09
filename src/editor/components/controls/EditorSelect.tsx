@@ -23,9 +23,10 @@ export function EditorSelect<T, O extends BaseOption>({
 }: EditorSelectProps<T, O>): JSX.Element {
   return (
     <Select
+      menuPlacement="top"
+      onChange={onChange}
       options={data.map(toOption)}
       value={selected ? toOption(selected) : null}
-      onChange={onChange}
       placeholder={placeholder}
     />
   );

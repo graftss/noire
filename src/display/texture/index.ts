@@ -2,30 +2,34 @@ import * as T from '../../types';
 import { find, keys } from '../../utils';
 import { FillTexture, fillTextureFields } from './FillTexture';
 import { ImageTexture, imageTextureFields } from './ImageTexture';
+import { HiddenTexture, hiddenTextureFields } from './HiddenTexture';
 import { Texture } from './Texture';
 
 export interface TextureData {
   fill: { class: FillTexture; state: T.FillTextureState };
+  hidden: { class: HiddenTexture; state: T.HiddenTextureState };
   image: { class: ImageTexture; state: T.ImageTextureState };
 }
 
 export type TextureKind = keyof TextureData;
 
-export type TextureState<K extends T.TextureKind> = T.TextureData[K]['state'];
+export type TextureState<K extends TextureKind> = TextureData[K]['state'];
 
 type TextureConstructor<K extends TextureKind> = (
-  s?: TextureData[K]['state'],
+  s?: TextureState<K>,
 ) => Texture<K>;
 
 const textureConstructors: {
   [K in TextureKind]: TextureConstructor<K>;
 } = {
   fill: s => new FillTexture(s),
+  hidden: () => new HiddenTexture(),
   image: s => new ImageTexture(s),
 };
 
 const textureFields: { [K in TextureKind]: TextureField<K>[] } = {
   fill: fillTextureFields,
+  hidden: hiddenTextureFields,
   image: imageTextureFields,
 };
 
