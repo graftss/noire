@@ -1,6 +1,6 @@
-import Konva from 'konva';
 import * as T from '../../types';
 import { mapPath } from '../../utils';
+import { Texture } from './Texture';
 
 export interface FillTextureState {
   fill: string;
@@ -42,22 +42,20 @@ export const fillTextureFields: T.TextureField<'fill'>[] = [
   } as T.TextureField<'fill', 'number'>,
 ];
 
-export class FillTexture implements T.Texture<'fill'> {
+export class FillTexture extends Texture<'fill'> {
   readonly kind = 'fill';
   state: FillTextureState;
 
   constructor(state?: FillTextureState) {
-    this.state = { ...defaultFillTextureState, ...state };
+    super({ ...state, ...defaultFillTextureState });
   }
 
-  update = (update: Partial<FillTextureState>): void => {
-    this.state = { ...this.state, ...update };
-  };
-
-  apply = (model: Konva.Shape): void => {
+  applyToModel = (model: T.KonvaModel): void => {
+    model.clearCache();
     model.fillPriority('color');
     if (this.state.fill) model.fill(this.state.fill);
     if (this.state.stroke) model.stroke(this.state.stroke);
     if (this.state.strokeWidth) model.strokeWidth(this.state.strokeWidth);
+    model.cache(null);
   };
 }

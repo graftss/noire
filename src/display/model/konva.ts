@@ -33,7 +33,9 @@ export interface SerializedKonvaModel<
 
 export type KonvaModel<
   K extends KonvaModelKind = KonvaModelKind
-> = KonvaModelData[K]['class'];
+> = KonvaModelData[K]['class'] & {
+  lastTextureHash?: string;
+};
 
 export interface KonvaModelField<
   K extends KonvaModelKind = KonvaModelKind,
@@ -153,3 +155,6 @@ export const updateKonvaModel = <K extends KonvaModelKind>(
 export const serializeKonvaModel = <K extends KonvaModelKind>(
   node: KonvaModel<K>,
 ): SerializedKonvaModel<K> => JSON.parse(node.toJSON());
+
+export const isKonvaModelCached = (node: Konva.Node): boolean =>
+  node._isUnderCache;

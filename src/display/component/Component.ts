@@ -2,10 +2,11 @@ import Konva from 'konva';
 import * as T from '../../types';
 import { mapObj, unMaybeList, values } from '../../utils';
 import { defaultInputByKind } from '../../input/input';
+import { Texture } from '../texture/Texture';
 
 export interface ComponentGraphics<SS extends string, TS extends string> {
   models: Record<SS, Maybe<T.KonvaModel>>;
-  textures: Record<TS, Maybe<T.Texture>>;
+  textures: Record<TS, Maybe<Texture>>;
 }
 
 export type ComponentState<

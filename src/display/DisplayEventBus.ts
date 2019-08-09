@@ -2,6 +2,7 @@ import Konva from 'konva';
 import * as T from '../types';
 import { without } from '../utils';
 import { Component } from './component/Component';
+import { Texture } from './texture/Texture';
 
 type ComponentId = string;
 type ModelName = string;
@@ -29,7 +30,7 @@ interface DisplayHandlerData {
     TextureValue,
   ];
   requestDefaultComponentTexture: [ComponentId, TextureName, T.TextureKind];
-  updateComponentTexture: [ComponentId, TextureName, T.Texture];
+  updateComponentTexture: [ComponentId, TextureName, Texture];
   setKonvaTransformerVisibility: boolean;
 }
 

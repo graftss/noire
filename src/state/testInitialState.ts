@@ -342,8 +342,8 @@ const staticImage: T.SerializedComponent = {
 };
 
 const components: T.SerializedComponent[] = [
-  // vert,
-  vertProd,
+  vert,
+  // vertProd,
   // staticImage,
   // leftStick,
   // rightStick,

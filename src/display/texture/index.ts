@@ -1,8 +1,8 @@
-import Konva from 'konva';
 import * as T from '../../types';
 import { find, keys } from '../../utils';
 import { FillTexture, fillTextureFields } from './FillTexture';
 import { ImageTexture, imageTextureFields } from './ImageTexture';
+import { Texture } from './Texture';
 
 export interface TextureData {
   fill: { class: FillTexture; state: T.FillTextureState };
@@ -10,6 +10,8 @@ export interface TextureData {
 }
 
 export type TextureKind = keyof TextureData;
+
+export type TextureState<K extends T.TextureKind> = T.TextureData[K]['state'];
 
 type TextureConstructor<K extends TextureKind> = (
   s?: TextureData[K]['state'],
@@ -32,12 +34,6 @@ const textureKinds: TextureKind[] = keys(textureConstructors);
 export interface SerializedTexture<K extends TextureKind = TextureKind> {
   kind: K;
   state: TextureData[K]['state'];
-}
-
-export interface Texture<K extends TextureKind = TextureKind>
-  extends SerializedTexture<K> {
-  apply: (model: Konva.Shape) => void;
-  update: (update: Partial<TextureData[K]['state']>) => void;
 }
 
 export interface TextureField<

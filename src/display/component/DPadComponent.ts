@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import * as T from '../../types';
 import { serializeKonvaModel } from '../model/konva';
+import { Texture } from '../texture/Texture';
 import { Component } from './Component';
 
 const dirs = ['u', 'l', 'd', 'r'] as const;
@@ -136,8 +137,8 @@ export class DPadComponent extends Component<
   private updateDirection(
     input: boolean,
     model: Maybe<Konva.Shape>,
-    on: Maybe<T.Texture>,
-    off: Maybe<T.Texture>,
+    on: Maybe<Texture>,
+    off: Maybe<Texture>,
   ): void {
     if (input && model && on) on.apply(model);
     else if (!input && model && off) off.apply(model);

@@ -143,10 +143,10 @@ export {
   RawInputOfKind,
 } from './input/input';
 export {
-  Texture,
   TextureData,
   TextureField,
   TextureKind,
+  TextureState,
   SerializedTexture,
 } from './display/texture/';
 export { NoireConfig } from '.';

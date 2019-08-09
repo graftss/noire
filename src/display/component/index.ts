@@ -4,6 +4,7 @@ import { deserializeTexture, serializeTexture } from '../texture/';
 import { deserializeInputFilter, getFilterInputKind } from '../filter';
 import { assoc, mapObj, mapPath } from '../../utils';
 import { serializeKonvaModel } from '../model/konva';
+import { Texture } from '../texture/Texture';
 import { ButtonComponent, buttonInputKinds } from './ButtonComponent';
 import { DPadComponent, dPadInputKinds } from './DPadComponent';
 import { StaticComponent, staticInputKinds } from './StaticComponent';
@@ -109,7 +110,7 @@ export const serializeGraphics = <SS extends string, TS extends string>(
 
   for (const k in textures) {
     const texture = textures[k];
-    if (texture) result.textures[k] = serializeTexture(texture as T.Texture);
+    if (texture) result.textures[k] = serializeTexture(texture as Texture);
   }
 
   return result;

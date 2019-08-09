@@ -1,6 +1,6 @@
-import Konva from 'konva';
 import * as T from '../../types';
 import { mapPath } from '../../utils';
+import { Texture } from './Texture';
 
 export interface ImageTextureState {
   src: string;
@@ -33,15 +33,15 @@ export const imageTextureFields: T.TextureField<'image'>[] = [
   } as T.TextureField<'image', 'Vec2'>,
 ];
 
-export class ImageTexture implements T.Texture<'image'> {
+export class ImageTexture extends Texture<'image'> {
   readonly kind = 'image';
-  state: ImageTextureState;
   private image: HTMLImageElement;
   private loadState: ImageLoadState;
+  state: ImageTextureState;
 
   constructor(state?: ImageTextureState) {
-    this.state = { ...defaultImageTextureState, ...state };
-    this.loadImage(this.state.src);
+    super({ ...defaultImageTextureState, ...state });
+    if (state && state.src) this.loadImage(this.state.src);
   }
 
   private loadImage(src: string): void {
@@ -54,26 +54,22 @@ export class ImageTexture implements T.Texture<'image'> {
     this.state.src = src;
   }
 
-  update = (update: Partial<ImageTextureState>): void => {
-    const { src, ...rest } = update;
+  update(update: Partial<ImageTextureState>): void {
+    super.update(update);
+    if (update.src !== undefined) this.loadImage(update.src);
+  }
 
-    if (src !== undefined) this.loadImage(src);
-    this.state = { ...this.state, ...rest };
-  };
+  fillImage(model: T.KonvaModel): void {
+    model.clearCache();
+    model.fillPriority('pattern');
+    model.fillPatternRepeat('no-repeat');
+    model.fillPatternImage(this.image);
+    model.fillPatternOffset(this.state.offset);
+    model.cache(null);
+  }
 
-  apply = (model: Konva.Shape): void => {
-    switch (this.loadState) {
-      case 'loaded': {
-        model.fillPriority('pattern');
-        model.fillPatternRepeat('no-repeat');
-        model.fillPatternImage(this.image);
-        model.fillPatternOffset(this.state.offset);
-        break;
-      }
-      default: {
-        model.fillPriority('color');
-        model.fill('rgba(0,0,0,0)');
-      }
-    }
+  applyToModel = (model: T.KonvaModel): void => {
+    if (this.loadState === 'loaded') this.fillImage(model);
+    else this.image.addEventListener('load', () => this.fillImage(model));
   };
 }
