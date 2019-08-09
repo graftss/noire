@@ -76,6 +76,7 @@ export {
 export {
   KonvaModelData,
   KonvaModel,
+  KonvaModelAttrs,
   KonvaModelField,
   KonvaModelKind,
   SerializedKonvaModel,

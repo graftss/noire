@@ -102,7 +102,11 @@ export const updateKonvaModel = <K extends KonvaModelKind>(
   value: any,
 ): KonvaModel<K> => {
   const field = findKonvaFieldByKey(model.className as KonvaModelKind, key);
-  return field ? field.setter(model, value) : model;
+  if (!field) return model;
+
+  field.setter(model, value);
+  model.dirty = true;
+  return model;
 };
 
 export const serializeKonvaModel = <K extends KonvaModelKind>(

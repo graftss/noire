@@ -16,7 +16,7 @@ export abstract class Texture<K extends T.TextureKind = T.TextureKind> {
   }
 
   protected shouldReapply(model: T.KonvaModel): boolean {
-    return model.lastTextureHash !== this.hash;
+    return model.lastTextureHash !== this.hash || !!model.dirty;
   }
 
   abstract applyToModel(model: T.KonvaModel): void;
@@ -24,6 +24,7 @@ export abstract class Texture<K extends T.TextureKind = T.TextureKind> {
   apply = (model: T.KonvaModel): void => {
     if (this.shouldReapply(model)) {
       model.lastTextureHash = this.hash;
+      model.dirty = false;
       this.applyToModel(model);
     }
   };

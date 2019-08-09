@@ -1,4 +1,3 @@
-import Konva from 'konva';
 import * as T from '../../types';
 import { deserializeTexture, serializeTexture } from '../texture/';
 import { deserializeInputFilter, getFilterInputKind } from '../filter';

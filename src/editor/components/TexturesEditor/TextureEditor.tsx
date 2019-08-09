@@ -20,7 +20,7 @@ export const TextureEditor: React.SFC<TextureEditorProps> = ({
   texture === undefined ? (
     <div></div>
   ) : (
-    <div>
+    <div style={{border:'1px solid blue'}}>
       <div>{name}</div>
       <TextureKindSelect
         initialValue={texture.kind}

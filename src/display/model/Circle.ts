@@ -19,8 +19,6 @@ export const defaultCircleAttrs: KonvaCircleAttrs = {
   drawFromCenter: false,
 } as const;
 
-const drawFromCenterSymbol = Symbol('drawFromCenter');
-
 export const circleModelFields: readonly T.KonvaModelField<'Circle'>[] = [
   ...baseModelFields,
   {
@@ -42,14 +40,12 @@ export const circleModelFields: readonly T.KonvaModelField<'Circle'>[] = [
     kind: 'boolean',
     key: 'drawFromCenter',
     defaultValue: true,
-    getter: (model: Konva.Circle) =>
-      defaultTo(model[drawFromCenterSymbol], defaultCircleAttrs.drawFromCenter),
+    getter: (model: KonvaCircleModel) =>
+      defaultTo(model.attrs.drawFromCenter, defaultCircleAttrs.drawFromCenter),
     serialGetter: (model: T.SerializedKonvaModel<'Circle'>) =>
       defaultTo(model.attrs.drawFromCenter, defaultCircleAttrs.drawFromCenter),
-    setter: (model: KonvaCircleModel, drawFromCenter: boolean) => {
-      model.updateDrawFromCenter(drawFromCenter);
-      return model;
-    },
+    setter: (model: KonvaCircleModel, drawFromCenter: boolean) =>
+      model.updateDrawFromCenter(drawFromCenter),
     serialSetter: (
       model: T.SerializedKonvaModel<'Circle'>,
       drawFromCenter: boolean,
@@ -65,13 +61,14 @@ export class KonvaCircleModel extends Konva.Circle {
     this.attrs = { ...defaultCircleAttrs, ...attrs };
   }
 
-  updateDrawFromCenter(drawFromCenter: boolean): void {
+  updateDrawFromCenter(drawFromCenter: boolean): KonvaCircleModel {
     if (this.attrs.drawFromCenter !== drawFromCenter) {
       const d = drawFromCenter ? -this.radius() : this.radius();
       this.move({ x: d, y: d });
     }
 
     this.attrs.drawFromCenter = drawFromCenter;
+    return this;
   }
 
   serialize(): T.SerializedKonvaModel<'Circle'> {
