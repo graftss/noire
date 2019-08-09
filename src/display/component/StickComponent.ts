@@ -31,7 +31,7 @@ export type StickState = T.ComponentState<typeof stickInputKinds> & {
   useDepthScaling: boolean;
 };
 
-export const defaultStickState: StickState = {
+export const defaultState: StickState = {
   name: 'Stick Component',
   boundaryRadius: 26,
   useDepthScaling: false,
@@ -90,7 +90,7 @@ export class StickComponent extends Component<
       id,
       graphics,
       stickInputKinds,
-      { ...defaultStickState, ...state },
+      { ...defaultState, ...state },
       filters,
     );
   }

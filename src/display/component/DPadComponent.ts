@@ -40,7 +40,7 @@ const dPadKeys: T.ComponentKey[] = [
 
 export type DPadState = T.ComponentState<typeof dPadInputKinds>;
 
-export const defaultDPadState: DPadState = {
+export const defaultState: DPadState = {
   name: 'DPad Component',
 };
 
@@ -125,13 +125,7 @@ export class DPadComponent extends Component<
     state: Partial<DPadState>,
     filters: T.ComponentFilterDict<DPadModels>,
   ) {
-    super(
-      id,
-      graphics,
-      dPadInputKinds,
-      { ...defaultDPadState, ...state },
-      filters,
-    );
+    super(id, graphics, dPadInputKinds, { ...defaultState, ...state }, filters);
   }
 
   private updateDirection(

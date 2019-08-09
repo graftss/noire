@@ -19,7 +19,7 @@ const buttonKeys: T.ComponentKey[] = [
 
 export type ButtonComponentState = T.ComponentState<typeof buttonInputKinds>;
 
-export const defaultButtonComponentState: ButtonComponentState = {
+export const defaultState: ButtonComponentState = {
   name: 'Button Component',
 };
 
@@ -54,10 +54,7 @@ export class ButtonComponent extends Component<
       id,
       graphics,
       buttonInputKinds,
-      {
-        ...defaultButtonComponentState,
-        ...state,
-      },
+      { ...defaultState, ...state },
       filters,
     );
   }

@@ -15,7 +15,7 @@ const staticKeys: T.ComponentKey[] = [];
 
 export type StaticState = T.ComponentState<typeof staticInputKinds>;
 
-export const defaultStaticState: StaticState = {
+export const defaultState: StaticState = {
   name: 'Static Component',
 };
 
@@ -50,10 +50,7 @@ export class StaticComponent extends Component<
       id,
       graphics,
       staticInputKinds,
-      {
-        ...defaultStaticState,
-        ...state,
-      },
+      { ...defaultState, ...state, },
       filters,
     );
   }
