@@ -9,6 +9,7 @@ import {
 } from '../display/component/DPadComponent';
 import { defaultKeyboardController } from '../input/controller/keyboard';
 import { serializeKonvaModel } from '../display/model/konva';
+import { KonvaCircleModel } from '../display/model/Circle';
 
 const ids = 'qwertyuiopasdfghjklzxcvbnm,';
 
@@ -164,8 +165,8 @@ vertProd.graphics.models.model = serializeKonvaModel(
 
 const stickGraphics: any = {
   models: {
-    boundary: serializeKonvaModel(new Konva.Circle({ radius: 17 })),
-    stick: serializeKonvaModel(new Konva.Circle({ radius: 5 })),
+    boundary: serializeKonvaModel(new KonvaCircleModel({ radius: 17 })),
+    stick: serializeKonvaModel(new KonvaCircleModel({ radius: 5 })),
   },
   textures: {
     boundary: {

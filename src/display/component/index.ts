@@ -3,7 +3,7 @@ import * as T from '../../types';
 import { deserializeTexture, serializeTexture } from '../texture/';
 import { deserializeInputFilter, getFilterInputKind } from '../filter';
 import { assoc, mapObj, mapPath } from '../../utils';
-import { serializeKonvaModel } from '../model/konva';
+import { serializeKonvaModel, deserializeKonvaModel } from '../model/konva';
 import { Texture } from '../texture/Texture';
 import { ButtonComponent, buttonComponentData } from './ButtonComponent';
 import { DPadComponent, dPadComponentData } from './DPadComponent';
@@ -136,7 +136,7 @@ export const deserializeGraphics = <SS extends string, TS extends string>(
   const { models, textures } = serialized;
 
   for (const k in models) {
-    result.models[k] = Konva.Node.create(models[k], undefined) as Konva.Shape;
+    result.models[k] = deserializeKonvaModel(models[k]);
   }
 
   for (const k in textures) {

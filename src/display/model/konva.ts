@@ -2,7 +2,11 @@ import Konva from 'konva';
 import * as T from '../../types';
 import { find, keys } from '../../utils';
 import { rectModelFields, defaultRectAttrs } from './Rect';
-import { circleModelFields, defaultCircleAttrs } from './Circle';
+import {
+  circleModelFields,
+  defaultCircleAttrs,
+  KonvaCircleModel,
+} from './Circle';
 
 export interface KonvaModelData {
   Rect: T.KonvaRectData;
@@ -10,19 +14,15 @@ export interface KonvaModelData {
 }
 
 export type KonvaModelKind = keyof KonvaModelData;
+export type KonvaModelAttrs<
+  K extends KonvaModelKind
+> = KonvaModelData[K]['attrs'];
 
-const konvaModelFields: {
-  [K in KonvaModelKind]: readonly KonvaModelField<K>[];
-} = {
-  Rect: rectModelFields,
-  Circle: circleModelFields,
-};
-
-const defaultKonvaModelAttrs: {
-  [K in KonvaModelKind]: KonvaModelData[K]['attrs'];
-} = {
-  Rect: defaultRectAttrs,
-  Circle: defaultCircleAttrs,
+export type KonvaModel<
+  K extends KonvaModelKind = KonvaModelKind
+> = KonvaModelData[K]['class'] & {
+  lastTextureHash?: string;
+  dirty?: boolean;
 };
 
 export interface SerializedKonvaModel<
@@ -31,12 +31,6 @@ export interface SerializedKonvaModel<
   kind: K;
   attrs: KonvaModelData[K]['attrs'];
 }
-
-export type KonvaModel<
-  K extends KonvaModelKind = KonvaModelKind
-> = KonvaModelData[K]['class'] & {
-  lastTextureHash?: string;
-};
 
 export interface KonvaModelField<
   K extends KonvaModelKind = KonvaModelKind,
@@ -58,7 +52,28 @@ export interface KonvaModelField<
   ) => SerializedKonvaModel<K>;
 }
 
+const konvaModelFields: {
+  [K in KonvaModelKind]: readonly KonvaModelField<K>[];
+} = {
+  Rect: rectModelFields,
+  Circle: circleModelFields,
+} as const;
+
 const konvaModelKinds: KonvaModelKind[] = keys(konvaModelFields);
+
+const defaultKonvaModelAttrs: {
+  [K in KonvaModelKind]: KonvaModelAttrs<K>;
+} = {
+  Rect: defaultRectAttrs,
+  Circle: defaultCircleAttrs,
+};
+
+const konvaModelConstructors: {
+  [K in KonvaModelKind]: (a?: KonvaModelAttrs<K>) => KonvaModel<K>;
+} = {
+  Rect: attrs => new Konva.Rect(attrs),
+  Circle: attrs => new KonvaCircleModel(attrs),
+};
 
 export const getKonvaModelFields = <K extends KonvaModelKind>(
   kind: K,
@@ -99,8 +114,7 @@ export const serializeKonvaModel = <K extends KonvaModelKind>(
 
 export const deserializeKonvaModel = <K extends KonvaModelKind>(
   model: SerializedKonvaModel<K>,
-): KonvaModel<K> =>
-  Konva.Node.create({ ...model, className: model.kind }, null);
+): KonvaModel<K> => konvaModelConstructors[model.kind](model.attrs as any);
 
 export const defaultSerializedKonvaModel = <K extends KonvaModelKind>(
   kind: K,
