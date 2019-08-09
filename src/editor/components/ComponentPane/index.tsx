@@ -140,14 +140,14 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
   updateState,
   updateModel,
   updateTexture,
-}) =>
-  component === undefined || componentConfig === undefined ? null : (
-    <div>
-      <ComponentSelect
-        components={components}
-        selected={component}
-        selectComponent={selectComponent}
-      />
+}) => (
+  <div>
+    <ComponentSelect
+      components={components}
+      selected={component}
+      selectComponent={selectComponent}
+    />
+    {component === undefined || componentConfig === undefined ? null : (
       <div>
         <ComponentTitle label={componentConfig.title} />
         <TransformerToggle />
@@ -170,8 +170,9 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
         />
         <ComponentFilters component={component} />
       </div>
-    </div>
-  );
+    )}
+  </div>
+);
 
 export const ComponentPane = connect(
   mapStateToProps,
