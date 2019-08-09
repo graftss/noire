@@ -11,7 +11,7 @@ export class ComponentManager {
   constructor(private eventBus: DisplayEventBus) {
     eventBus.on({
       kind: 'updateComponentState',
-      cb: ([id, state]) => {
+      cb: ({ id, state }) => {
         const component = this.findById(id);
         if (component) component.updateState(state);
       },
@@ -19,7 +19,7 @@ export class ComponentManager {
 
     eventBus.on({
       kind: 'updateComponentFilters',
-      cb: ([id, filters]) => {
+      cb: ({ id, filters }) => {
         const component = this.findById(id);
         if (component) component.setFilters(filters);
       },

@@ -16,22 +16,35 @@ interface DisplayHandlerData {
   addComponent: Component;
   listenNextInput: T.RemapState;
   requestDraw: undefined;
-  selectComponent: Maybe<ComponentId>;
-  selectModel: [Maybe<ComponentId>, ModelName];
+  selectComponent: Maybe<string>;
+  selectModel: { id: string; modelName: string };
   stageClick: Konva.Stage;
-  updateComponentFilters: [ComponentId, T.ComponentFilterDict];
-  updateComponentState: [ComponentId, T.ComponentState];
-  requestUpdateComponentModel: [ComponentId, ModelName, ModelKey, ModelValue];
-  requestDefaultComponentModel: [ComponentId, ModelName, T.KonvaModelKind];
-  updateComponentModel: [ComponentId, ModelName, T.KonvaModel];
-  requestUpdateComponentTexture: [
-    ComponentId,
-    TextureName,
-    TextureKey,
-    TextureValue,
-  ];
-  requestDefaultComponentTexture: [ComponentId, TextureName, T.TextureKind];
-  updateComponentTexture: [ComponentId, TextureName, Texture];
+  updateComponentFilters: { id: string; filters: T.ComponentFilterDict };
+  updateComponentState: { id: string; state: T.ComponentState };
+  requestUpdateComponentModel: {
+    id: string;
+    modelName: string;
+    key: string;
+    value: any;
+  };
+  requestDefaultComponentModel: {
+    id: string;
+    modelName: string;
+    kind: T.KonvaModelKind;
+  };
+  updateComponentModel: { id: string; modelName: string; model: T.KonvaModel };
+  requestUpdateComponentTexture: {
+    id: string;
+    textureName: string;
+    key: string;
+    value: any;
+  };
+  requestDefaultComponentTexture: {
+    id: string;
+    textureName: string;
+    kind: T.TextureKind;
+  };
+  updateComponentTexture: { id: string; textureName: string; texture: Texture };
   setKonvaTransformerVisibility: boolean;
 }
 

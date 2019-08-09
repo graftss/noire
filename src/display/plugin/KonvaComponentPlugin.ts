@@ -221,92 +221,98 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     if (!ts || ts.node !== newNode) this.initTransformer(newNode);
   };
 
-  private onSelectModel = ([id, modelName]: [Maybe<string>, string]): void => {
+  private onSelectModel = ({ id, modelName }): void => {
     if (!id) return;
 
     const node = this.selectionToNode({ kind: 'model', id, modelName });
     if (node) this.initTransformer(node);
   };
 
-  private onUpdateComponentState = (data: [string, T.ComponentState]) => {
-    const [componentId, update] = data;
-    if (!this.componentsById[componentId]) return;
+  private onUpdateComponentState = ({ id, state }) => {
+    if (!this.componentsById[id]) return;
 
-    const group: Konva.Group = this.groupsById[componentId];
+    const group: Konva.Group = this.groupsById[id];
 
-    if (update.offset !== undefined) {
-      group.setPosition({ x: update.offset.x, y: update.offset.y });
+    if (state.offset !== undefined) {
+      group.setPosition({ x: state.offset.x, y: state.offset.y });
     }
 
-    if (update.scale !== undefined) {
-      group.scale({ x: update.scale.x, y: update.scale.y });
+    if (state.scale !== undefined) {
+      group.scale({ x: state.scale.x, y: state.scale.y });
     }
   };
 
-  private onRequestUpdateComponentModel = (
-    data: [string, string, string, any],
-  ): void => {
-    const [componentId, modelName, modelKey, value] = data;
-    const component: Maybe<T.Component> = this.componentsById[componentId];
+  private onRequestUpdateComponentModel = ({
+    id,
+    modelName,
+    key,
+    value,
+  }): void => {
+    const component: Maybe<T.Component> = this.componentsById[id];
     if (component === undefined) return;
 
     const model: Maybe<T.KonvaModel> = component.graphics.models[modelName];
     if (model === undefined) return;
 
     this.updateTransformer();
-    const newModel = updateKonvaModel(model, modelKey, value);
+    const newModel = updateKonvaModel(model, key, value);
     this.display.eventBus.emit({
       kind: 'updateComponentModel',
-      data: [componentId, modelKey, newModel],
+      data: { id, modelName, model: newModel },
     });
   };
 
-  private onRequestDefaultComponentModel = (
-    data: [string, string, T.KonvaModelKind],
-  ): void => {
-    const [componentId, modelName, kind] = data;
-    const component: Maybe<T.Component> = this.componentsById[componentId];
+  private onRequestDefaultComponentModel = ({ id, modelName, kind }): void => {
+    const component: Maybe<T.Component> = this.componentsById[id];
     if (component === undefined) return;
 
-    const group = this.groupsById[componentId];
+    const group = this.groupsById[id];
     const model = defaultKonvaModel(kind);
     const oldModel = component.graphics.models[modelName];
 
     if (oldModel) oldModel.destroy();
     component.graphics.models[modelName] = model;
-    this.addModel(componentId, group)(model);
+    this.addModel(id, group)(model);
+
+    this.display.eventBus.emit({
+      kind: 'updateComponentModel',
+      data: { id, modelName, model },
+    });
   };
 
-  private onRequestUpdateComponentTexture = (
-    data: [string, string, string, any],
-  ): void => {
-    const [componentId, textureName, textureKey, value] = data;
-    const component: Maybe<T.Component> = this.componentsById[componentId];
+  private onRequestUpdateComponentTexture = ({
+    id,
+    textureName,
+    key,
+    value,
+  }): void => {
+    const component: Maybe<T.Component> = this.componentsById[id];
     if (component === undefined) return;
 
     const texture = component.graphics.textures[textureName];
     if (texture === undefined) return;
 
-    texture.update({ [textureKey]: value });
+    texture.update({ [key]: value });
     this.display.eventBus.emit({
       kind: 'updateComponentTexture',
-      data: [componentId, textureName, texture],
+      data: { id, textureName, texture },
     });
   };
 
-  private onRequestDefaultComponentTexture = (
-    data: [string, string, T.TextureKind],
-  ): void => {
-    const [componentId, textureName, textureKind] = data;
-    const component: Maybe<T.Component> = this.componentsById[componentId];
+  private onRequestDefaultComponentTexture = ({
+    id,
+    textureName,
+    kind,
+  }): void => {
+    const component: Maybe<T.Component> = this.componentsById[id];
     if (component === undefined) return;
 
-    const texture = defaultTexture(textureKind);
+    const texture = defaultTexture(kind);
 
     component.graphics.textures[textureName] = texture;
     this.display.eventBus.emit({
       kind: 'updateComponentTexture',
-      data: [componentId, textureName, texture],
+      data: { id, textureName, texture },
     });
   };
 

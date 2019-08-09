@@ -50,7 +50,7 @@ export class Display {
 
   emitUpdateComponentState(id: string, state: T.ComponentState): void {
     this.store.dispatch(updateComponentState(id, state));
-    this.eventBus.emit({ kind: 'updateComponentState', data: [id, state] });
+    this.eventBus.emit({ kind: 'updateComponentState', data: { id, state } });
   }
 
   emitUpdateComponentModel(
@@ -62,7 +62,7 @@ export class Display {
     this.store.dispatch(updateComponentModel(id, modelName, serialModel));
     this.eventBus.emit({
       kind: 'updateComponentModel',
-      data: [id, modelName, model],
+      data: { id, modelName, model },
     });
   }
 

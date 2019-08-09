@@ -72,7 +72,7 @@ export class ControllerManager {
       this.store.dispatch(updateComponentState(componentId, newState));
       this.eventBus.emit({
         kind: 'updateComponentState',
-        data: [componentId, newState],
+        data: { id: componentId, state: newState },
       });
     } else {
       // TODO: handle input that's not already mapped to a controller,
@@ -105,7 +105,10 @@ export class ControllerManager {
         this.store.dispatch(updateComponentFilters(componentId, newFilters));
         this.eventBus.emit({
           kind: 'updateComponentFilters',
-          data: [componentId, deserializeComponentFilterDict(newFilters)],
+          data: {
+            id: componentId,
+            filters: deserializeComponentFilterDict(newFilters),
+          },
         });
       }
     } else {

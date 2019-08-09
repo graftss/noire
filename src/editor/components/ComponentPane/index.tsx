@@ -79,7 +79,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     const model = defaultSerializedKonvaModel(kind);
     const event: T.DisplayEvent = {
       kind: 'requestDefaultComponentModel',
-      data: [id, modelName, kind],
+      data: { id, modelName, kind },
     };
 
     dispatch(updateComponentModel(id, modelName, model));
@@ -90,7 +90,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     const texture = defaultSerializedTexture(kind);
     const event: T.DisplayEvent = {
       kind: 'requestDefaultComponentTexture',
-      data: [id, textureName, kind],
+      data: { id, textureName, kind },
     };
 
     dispatch(updateComponentTexture(id, textureName, texture));
@@ -102,7 +102,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     const newState = { ...state, [key]: value };
     const event: T.DisplayEvent = {
       kind: 'updateComponentState',
-      data: [id, state],
+      data: { id, state: newState },
     };
 
     dispatch(updateComponentState(id, newState));
@@ -119,7 +119,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     const newModel = updateSerializedKonvaModel(model, key, value);
     const event: T.DisplayEvent = {
       kind: 'requestUpdateComponentModel',
-      data: [component.id, modelName, key, value],
+      data: { id: component.id, modelName, key, value },
     };
 
     dispatch(updateComponentModel(component.id, modelName, newModel));
@@ -136,7 +136,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     const newTexture = updateTexture(texture, key, value);
     const event: T.DisplayEvent = {
       kind: 'requestUpdateComponentTexture',
-      data: [component.id, textureName, key, value],
+      data: { id: component.id, textureName, key, value },
     };
 
     dispatch(updateComponentTexture(component.id, textureName, newTexture));
