@@ -38,7 +38,7 @@ export interface SerializedComponent<
 export interface SerializedComponentStateData {
   button: T.SerializedButtonComponent['state'];
   stick: T.SerializedStickComponent['state'];
-  dpad: T.SerializedDPadComponent['state'];
+  dPad: T.SerializedDPadComponent['state'];
   static: T.SerializedStaticComponent['state'];
 }
 
@@ -46,7 +46,7 @@ export type ComponentKind = keyof SerializedComponentStateData;
 
 const componentData = {
   button: buttonComponentData,
-  dpad: dPadComponentData,
+  dPad: dPadComponentData,
   static: staticComponentData,
   stick: stickComponentData,
 } as const;
@@ -219,7 +219,7 @@ export const deserializeComponent = (s: T.SerializedComponent): Component => {
     case 'stick':
       ComponentConstructor = StickComponent;
       break;
-    case 'dpad':
+    case 'dPad':
       ComponentConstructor = DPadComponent;
       break;
     case 'static':

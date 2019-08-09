@@ -122,7 +122,11 @@ export const deserializeKonvaModel = <K extends KonvaModelKind>(
 
 export const defaultSerializedKonvaModel = <K extends KonvaModelKind>(
   kind: K,
-): SerializedKonvaModel<K> => ({ kind, attrs: defaultKonvaModelAttrs[kind] });
+  attrs?: Partial<KonvaModelAttrs<K>>,
+): SerializedKonvaModel<K> => ({
+  kind,
+  attrs: { ...defaultKonvaModelAttrs[kind], ...attrs },
+});
 
 export const defaultKonvaModel = <K extends KonvaModelKind>(
   kind: K,

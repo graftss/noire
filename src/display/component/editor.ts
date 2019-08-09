@@ -62,7 +62,7 @@ const baseComponentEditorConfigs: Record<
 > = {
   button: buttonEditorConfig,
   stick: stickEditorConfig,
-  dpad: dPadEditorConfig,
+  dPad: dPadEditorConfig,
   static: staticEditorConfig,
 };
 

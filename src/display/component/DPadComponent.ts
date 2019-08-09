@@ -46,7 +46,7 @@ const dPadKeys: T.ComponentKey[] = [
 ];
 
 export type SerializedDPadComponent = T.SerializedComponent<
-  'dpad',
+  'dPad',
   DPadModels,
   DPadTextures,
   DPadInput,

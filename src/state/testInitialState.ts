@@ -253,7 +253,7 @@ const [leftStick, rightStick] = dualSticks(
 
 const dPad: T.SerializedComponent = {
   id: ids[2],
-  kind: 'dpad',
+  kind: 'dPad',
   graphics: {
     models: simpleDPadRects(200, 50, 30, 30),
     textures: simpleDPadTextures(
@@ -346,7 +346,7 @@ const components: T.SerializedComponent[] = [
   // staticImage,
   leftStick,
   // rightStick,
-  // dPad,
+  dPad,
   button,
 ];
 
