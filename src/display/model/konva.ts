@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import * as T from '../../types';
 import { find, keys } from '../../utils';
+import { Texture } from '../texture/Texture';
 import { rectModelFields, defaultRectAttrs } from './Rect';
 import {
   circleModelFields,
@@ -21,6 +22,7 @@ export type KonvaModelAttrs<
 export type KonvaModel<
   K extends KonvaModelKind = KonvaModelKind
 > = KonvaModelData[K]['class'] & {
+  lastTexture?: Texture;
   lastTextureHash?: string;
   dirty?: boolean;
 };

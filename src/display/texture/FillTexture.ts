@@ -9,9 +9,9 @@ export interface FillTextureState {
 }
 
 const defaultFillTextureState: FillTextureState = {
-  fill: 'rgba(0,0,0,0)',
-  stroke: 'rgba(0,0,0,0)',
-  strokeWidth: 0,
+  fill: 'black',
+  stroke: 'red',
+  strokeWidth: 1,
 };
 
 export const fillTextureFields: T.TextureField<'fill'>[] = [
@@ -50,11 +50,19 @@ export class FillTexture extends Texture<'fill'> {
   }
 
   applyToModel = (model: T.KonvaModel): void => {
-    model.clearCache();
+    const { fill, stroke, strokeWidth } = this.state;
+
     model.fillPriority('color');
-    if (this.state.fill) model.fill(this.state.fill);
-    if (this.state.stroke) model.stroke(this.state.stroke);
-    if (this.state.strokeWidth) model.strokeWidth(this.state.strokeWidth);
+    model.fill(fill);
+    model.stroke(stroke);
+    model.strokeWidth(strokeWidth);
     model.cache(null);
   };
+
+  cleanup(model: T.KonvaModel): void {
+    model.clearCache();
+    model.fill('rgba(0,0,0,0)');
+    model.stroke('rgba(0,0,0,0)');
+    model.strokeWidth(0);
+  }
 }

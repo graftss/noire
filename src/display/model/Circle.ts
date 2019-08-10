@@ -15,7 +15,7 @@ export interface KonvaCircleData {
 
 export const defaultCircleAttrs: KonvaCircleAttrs = {
   ...defaultBaseAttrs,
-  radius: 40,
+  radius: 20,
   drawFromCenter: true,
 } as const;
 

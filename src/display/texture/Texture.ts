@@ -20,9 +20,12 @@ export abstract class Texture<K extends T.TextureKind = T.TextureKind> {
   }
 
   abstract applyToModel(model: T.KonvaModel): void;
+  abstract cleanup(model: T.KonvaModel): void;
 
   apply = (model: T.KonvaModel): void => {
     if (this.shouldReapply(model)) {
+      if (model.lastTexture) model.lastTexture.cleanup(model);
+      model.lastTexture = this;
       model.lastTextureHash = this.hash;
       model.dirty = false;
       this.applyToModel(model);

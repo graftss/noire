@@ -12,10 +12,14 @@ export class HiddenTexture extends Texture<'hidden'> {
     super(undefined);
   }
 
-  applyToModel = (model: T.KonvaModel): void => {
-    model.clearCache();
+  applyToModel(model: T.KonvaModel): void {
     model.fillPriority('color');
     model.fill('rgba(0,0,0,0)');
+    model.strokeWidth(0);
     model.cache(null);
-  };
+  }
+
+  cleanup(model: T.KonvaModel): void {
+    model.clearCache();
+  }
 }

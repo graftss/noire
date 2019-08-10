@@ -60,7 +60,6 @@ export class ImageTexture extends Texture<'image'> {
   }
 
   fillImage(model: T.KonvaModel): void {
-    model.clearCache();
     model.fillPriority('pattern');
     model.fillPatternRepeat('no-repeat');
     model.fillPatternImage(this.image);
@@ -68,8 +67,12 @@ export class ImageTexture extends Texture<'image'> {
     model.cache(null);
   }
 
-  applyToModel = (model: T.KonvaModel): void => {
+  applyToModel(model: T.KonvaModel): void {
     if (this.loadState === 'loaded') this.fillImage(model);
     else this.image.addEventListener('load', () => this.fillImage(model));
-  };
+  }
+
+  cleanup(model: T.KonvaModel): void {
+    model.clearCache();
+  }
 }
