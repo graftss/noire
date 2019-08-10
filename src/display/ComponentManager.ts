@@ -2,15 +2,16 @@ import { compose, map } from 'ramda';
 import * as T from '../types';
 import { find, mapObj, unMaybeObj } from '../utils';
 import { rawifyInputDict } from '../input/input';
+import * as events from './events';
 import { Component } from './component/Component';
-import { DisplayEventBus } from './DisplayEventBus';
+import { DisplayEventBus } from './events/DisplayEventBus';
 
 export class ComponentManager {
   private components: Component[] = [];
 
   constructor(private eventBus: DisplayEventBus) {
     eventBus.on({
-      kind: 'updateComponentState',
+      kind: 'setComponentState',
       cb: ({ id, state }) => {
         const component = this.findById(id);
         if (component) component.updateState(state);
@@ -18,7 +19,7 @@ export class ComponentManager {
     });
 
     eventBus.on({
-      kind: 'updateComponentFilters',
+      kind: 'setComponentFilters',
       cb: ({ id, filters }) => {
         const component = this.findById(id);
         if (component) component.setFilters(filters);
@@ -30,7 +31,7 @@ export class ComponentManager {
     this.components = components;
     components.forEach(component => {
       this.add(component);
-      this.eventBus.emit({ kind: 'addComponent', data: component });
+      this.eventBus.emit(events.addComponent(component));
     });
   }
 

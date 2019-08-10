@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
+import * as events from '../../../display/events';
 import { controllersById, isListening } from '../../../state/selectors';
 import {
   emitDisplayEvents,
@@ -171,7 +172,7 @@ const BaseRemapButton: React.SFC<RemapButtonProps> = ({
       <button
         onClick={() => {
           listenNextInput(remapTo);
-          emitDisplayEvents([{ kind: 'listenNextInput', data: remapTo }]);
+          emitDisplayEvents([events.listenNextInput(remapTo)]);
         }}
       >
         {stringifyValue(value, remapTo, propsFromState)}

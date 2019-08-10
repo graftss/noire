@@ -1,8 +1,8 @@
 import Konva from 'konva';
-import * as T from '../types';
-import { without } from '../utils';
-import { Component } from './component/Component';
-import { Texture } from './texture/Texture';
+import * as T from '../../types';
+import { without } from '../../utils';
+import { Component } from '../component/Component';
+import { Texture } from '../texture/Texture';
 
 type ComponentId = string;
 type ModelName = string;
@@ -18,33 +18,33 @@ interface DisplayHandlerData {
   requestDraw: undefined;
   selectComponent: Maybe<string>;
   selectModel: { id: string; modelName: string };
-  stageClick: Konva.Stage;
-  updateComponentFilters: { id: string; filters: T.ComponentFilterDict };
-  updateComponentState: { id: string; state: T.ComponentState };
-  requestUpdateComponentModel: {
+  konvaStageClick: Konva.Stage;
+  setComponentFilters: { id: string; filters: T.ComponentFilterDict };
+  setComponentState: { id: string; state: T.ComponentState };
+  requestModelUpdate: {
     id: string;
     modelName: string;
     key: string;
     value: any;
   };
-  requestDefaultComponentModel: {
+  requestDefaultModel: {
     id: string;
     modelName: string;
     kind: T.KonvaModelKind;
   };
-  updateComponentModel: { id: string; modelName: string; model: T.KonvaModel };
-  requestUpdateComponentTexture: {
+  setComponentModel: { id: string; modelName: string; model: T.KonvaModel };
+  requestTextureUpdate: {
     id: string;
     textureName: string;
     key: string;
     value: any;
   };
-  requestDefaultComponentTexture: {
+  requestDefaultTexture: {
     id: string;
     textureName: string;
     kind: T.TextureKind;
   };
-  updateComponentTexture: { id: string; textureName: string; texture: Texture };
+  setComponentTexture: { id: string; textureName: string; texture: Texture };
   setKonvaTransformerVisibility: boolean;
 }
 
@@ -77,15 +77,15 @@ export class DisplayEventBus {
     requestDraw: [],
     selectComponent: [],
     selectModel: [],
-    stageClick: [],
-    updateComponentFilters: [],
-    updateComponentState: [],
-    requestUpdateComponentModel: [],
-    requestDefaultComponentModel: [],
-    updateComponentModel: [],
-    requestUpdateComponentTexture: [],
-    requestDefaultComponentTexture: [],
-    updateComponentTexture: [],
+    konvaStageClick: [],
+    setComponentFilters: [],
+    setComponentState: [],
+    requestModelUpdate: [],
+    requestDefaultModel: [],
+    setComponentModel: [],
+    requestTextureUpdate: [],
+    requestDefaultTexture: [],
+    setComponentTexture: [],
     setKonvaTransformerVisibility: [],
   };
 

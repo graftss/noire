@@ -8,19 +8,19 @@ export type EditorAction =
   | { type: 'updateControllerBinding'; data: T.ControllerBindingUpdate }
   | { type: 'updateControllerName'; data: { id: string; name: string } }
   | {
-      type: 'updateComponentState';
+      type: 'setComponentState';
       data: { id: string; state: T.ComponentState };
     }
   | {
-      type: 'updateComponentFilters';
+      type: 'setComponentFilters';
       data: { id: string; filters: T.SerializedComponentFilterDict };
     }
   | {
-      type: 'updateComponentModel';
+      type: 'setComponentModel';
       data: { id: string; modelName: string; model: T.SerializedKonvaModel };
     }
   | {
-      type: 'updateComponentTexture';
+      type: 'setComponentTexture';
       data: { id: string; textureName: string; texture: T.SerializedTexture };
     }
   | { type: 'toggleKonvaTransformer' }
@@ -65,29 +65,29 @@ export const updateControllerName = (
   data: { id, name },
 });
 
-export const updateComponentState = (
+export const setComponentState = (
   id: string,
   state: T.ComponentState,
 ): EditorAction => ({
-  type: 'updateComponentState',
+  type: 'setComponentState',
   data: { id, state },
 });
 
-export const updateComponentModel = (
+export const setComponentModel = (
   id: string,
   modelName: string,
   model: T.SerializedKonvaModel,
 ): EditorAction => ({
-  type: 'updateComponentModel',
+  type: 'setComponentModel',
   data: { id, modelName, model },
 });
 
-export const updateComponentTexture = (
+export const setComponentTexture = (
   id: string,
   textureName: string,
   texture: T.SerializedTexture,
 ): EditorAction => ({
-  type: 'updateComponentTexture',
+  type: 'setComponentTexture',
   data: { id, textureName, texture },
 });
 
@@ -95,11 +95,11 @@ export const toggleKonvaTransformer = (): EditorAction => ({
   type: 'toggleKonvaTransformer',
 });
 
-export const updateComponentFilters = (
+export const setComponentFilters = (
   id: string,
   filters: T.SerializedComponentFilterDict,
 ): EditorAction => ({
-  type: 'updateComponentFilters',
+  type: 'setComponentFilters',
   data: { id, filters },
 });
 

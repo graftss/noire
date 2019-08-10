@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
+import * as events from '../../../display/events';
 import {
   emitDisplayEvents,
   toggleKonvaTransformer,
@@ -49,14 +50,8 @@ const BaseTransformerToggle: React.SFC<TransformerToggleProps> = ({
     initialValue={visibility}
     update={() => {
       if (!target) return;
-
       toggleKonvaTransformer();
-      emitDisplayEvents([
-        {
-          kind: 'setKonvaTransformerVisibility',
-          data: !visibility,
-        },
-      ]);
+      emitDisplayEvents([events.setKonvaTransformerVisibility(!visibility)]);
     }}
   />
 );

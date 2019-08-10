@@ -59,7 +59,7 @@ export {
   DisplayEventHandler,
   DisplayEvent,
   DisplayEventKind,
-} from './display/DisplayEventBus';
+} from './display/events/DisplayEventBus';
 export { KonvaSelectable } from './display/plugin/KonvaComponentPlugin';
 export {
   ComponentData,

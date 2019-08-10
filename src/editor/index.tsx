@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore } from '../state/createStore';
 import * as T from '../types';
-import { DisplayEventBus } from '../display/DisplayEventBus';
+import { DisplayEventBus } from '../display/events/DisplayEventBus';
 import { EditorContainer } from './components/EditorContainer';
 
 export interface EditorApp {

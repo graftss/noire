@@ -35,7 +35,7 @@ export const displayReducer = (
       }
     }
 
-    case 'updateComponentState': {
+    case 'setComponentState': {
       const { data } = action;
 
       return mapComponentWithId.proj(state)(
@@ -48,13 +48,13 @@ export const displayReducer = (
       );
     }
 
-    case 'updateComponentFilters': {
+    case 'setComponentFilters': {
       const { id, filters } = action.data;
 
       return mapComponentWithId.proj(state)(id, c => ({ ...c, filters }));
     }
 
-    case 'updateComponentModel': {
+    case 'setComponentModel': {
       const { id, modelName, model } = action.data;
 
       return mapComponentWithId.proj(state)(id, c =>
@@ -62,7 +62,7 @@ export const displayReducer = (
       );
     }
 
-    case 'updateComponentTexture': {
+    case 'setComponentTexture': {
       const { id, textureName, texture } = action.data;
 
       return mapComponentWithId.proj(state)(id, c =>

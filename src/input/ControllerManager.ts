@@ -1,7 +1,8 @@
 import * as T from '../types';
+import * as events from '../display/events';
 import {
-  updateComponentState,
-  updateComponentFilters,
+  setComponentState,
+  setComponentFilters,
   updateControllerBinding,
   stopListening,
 } from '../state/actions';
@@ -10,7 +11,7 @@ import {
   controllers,
   componentById,
 } from '../state/selectors';
-import { DisplayEventBus } from '../display/DisplayEventBus';
+import { DisplayEventBus } from '../display/events/DisplayEventBus';
 import {
   deserializeComponentFilterDict,
   updateComponentKey,
@@ -69,11 +70,8 @@ export class ControllerManager {
       };
       const newState = updateComponentKey(component.state, update);
 
-      this.store.dispatch(updateComponentState(componentId, newState));
-      this.eventBus.emit({
-        kind: 'updateComponentState',
-        data: { id: componentId, state: newState },
-      });
+      this.store.dispatch(setComponentState(componentId, newState));
+      this.eventBus.emit(events.setComponentState(componentId, newState));
     } else {
       // TODO: handle input that's not already mapped to a controller,
       // probably by dispatching an event to the store to let them
@@ -102,14 +100,13 @@ export class ControllerManager {
       if (component.filters) {
         const newFilters = updateComponentFilterKey(component.filters, update);
 
-        this.store.dispatch(updateComponentFilters(componentId, newFilters));
-        this.eventBus.emit({
-          kind: 'updateComponentFilters',
-          data: {
-            id: componentId,
-            filters: deserializeComponentFilterDict(newFilters),
-          },
-        });
+        this.store.dispatch(setComponentFilters(componentId, newFilters));
+        this.eventBus.emit(
+          events.setComponentFilters(
+            componentId,
+            deserializeComponentFilterDict(newFilters),
+          ),
+        );
       }
     } else {
       // TODO: handle input that's not already mapped to a controller;

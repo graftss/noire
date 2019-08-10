@@ -1,13 +1,14 @@
 import * as T from '../types';
 import {
   selectComponent,
-  updateComponentModel,
-  updateComponentState,
+  setComponentModel,
+  setComponentState,
 } from '../state/actions';
+import * as events from './events';
 import { deserializeComponent } from './component';
 import { ComponentManager } from './ComponentManager';
 import { KonvaComponentPlugin } from './plugin/KonvaComponentPlugin';
-import { DisplayEventBus } from './DisplayEventBus';
+import { DisplayEventBus } from './events/DisplayEventBus';
 import { DisplayPlugin } from './plugin/DisplayPlugin';
 
 export class Display {
@@ -39,7 +40,7 @@ export class Display {
     });
 
     this.eventBus.on({
-      kind: 'stageClick',
+      kind: 'konvaStageClick',
       cb: () => dispatch(selectComponent()),
     });
   }
@@ -49,8 +50,8 @@ export class Display {
   }
 
   emitUpdateComponentState(id: string, state: T.ComponentState): void {
-    this.store.dispatch(updateComponentState(id, state));
-    this.eventBus.emit({ kind: 'updateComponentState', data: { id, state } });
+    this.store.dispatch(setComponentState(id, state));
+    this.eventBus.emit(events.setComponentState(id, state));
   }
 
   emitUpdateComponentModel(
@@ -59,15 +60,12 @@ export class Display {
     serialModel: T.SerializedKonvaModel,
     model: T.KonvaModel,
   ): void {
-    this.store.dispatch(updateComponentModel(id, modelName, serialModel));
-    this.eventBus.emit({
-      kind: 'updateComponentModel',
-      data: { id, modelName, model },
-    });
+    this.store.dispatch(setComponentModel(id, modelName, serialModel));
+    this.eventBus.emit(events.setComponentModel(id, modelName, model));
   }
 
   draw(): void {
-    this.eventBus.emit({ kind: 'requestDraw', data: undefined });
+    this.eventBus.emit(events.requestDraw());
   }
 
   update(input: T.GlobalControllerInput, dt: number): void {

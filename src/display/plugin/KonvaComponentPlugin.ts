@@ -1,5 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
+import * as events from '../events';
 import { defaultKonvaModel, updateKonvaModel } from '../model/konva';
 import { defaultTexture } from '../texture';
 import { DisplayPlugin } from './DisplayPlugin';
@@ -84,23 +85,23 @@ export class KonvaComponentPlugin extends DisplayPlugin {
       cb: this.onSelectModel,
     });
     eventBus.on({
-      kind: 'updateComponentState',
+      kind: 'setComponentState',
       cb: this.onUpdateComponentState,
     });
     eventBus.on({
-      kind: 'requestUpdateComponentModel',
+      kind: 'requestModelUpdate',
       cb: this.onRequestUpdateComponentModel,
     });
     eventBus.on({
-      kind: 'requestDefaultComponentModel',
+      kind: 'requestDefaultModel',
       cb: this.onRequestDefaultComponentModel,
     });
     eventBus.on({
-      kind: 'requestUpdateComponentTexture',
+      kind: 'requestTextureUpdate',
       cb: this.onRequestUpdateComponentTexture,
     });
     eventBus.on({
-      kind: 'requestDefaultComponentTexture',
+      kind: 'requestDefaultTexture',
       cb: this.onRequestDefaultComponentTexture,
     });
     eventBus.on({
@@ -112,7 +113,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   private onStageClick = ({ target }: { target: Konva.Node }) => {
     if (target === this.border) {
       this.destroyTransformer();
-      this.display.eventBus.emit({ kind: 'stageClick', data: this.stage });
+      this.display.eventBus.emit(events.konvaStageClick(this.stage));
     }
   };
 
@@ -132,10 +133,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   ) => {
     group.add(model);
     model.on('click', () => {
-      this.display.eventBus.emit({
-        kind: 'selectComponent',
-        data: componentId,
-      });
+      this.display.eventBus.emit(events.selectComponent(componentId));
     });
   };
 
@@ -255,11 +253,8 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     if (model === undefined) return;
 
     this.updateTransformer();
-    const newModel = updateKonvaModel(model, key, value);
-    this.display.eventBus.emit({
-      kind: 'updateComponentModel',
-      data: { id, modelName, model: newModel },
-    });
+    updateKonvaModel(model, key, value);
+    this.display.eventBus.emit(events.setComponentModel(id, modelName, model));
   };
 
   private onRequestDefaultComponentModel = ({ id, modelName, kind }): void => {
@@ -274,10 +269,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     component.graphics.models[modelName] = model;
     this.addModel(id, group)(model);
 
-    this.display.eventBus.emit({
-      kind: 'updateComponentModel',
-      data: { id, modelName, model },
-    });
+    this.display.eventBus.emit(events.setComponentModel(id, modelName, model));
   };
 
   private onRequestUpdateComponentTexture = ({
@@ -293,10 +285,9 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     if (texture === undefined) return;
 
     texture.update({ [key]: value });
-    this.display.eventBus.emit({
-      kind: 'updateComponentTexture',
-      data: { id, textureName, texture },
-    });
+    this.display.eventBus.emit(
+      events.setComponentTexture(id, textureName, texture),
+    );
   };
 
   private onRequestDefaultComponentTexture = ({
@@ -310,10 +301,9 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     const texture = defaultTexture(kind);
 
     component.graphics.textures[textureName] = texture;
-    this.display.eventBus.emit({
-      kind: 'updateComponentTexture',
-      data: { id, textureName, texture },
-    });
+    this.display.eventBus.emit(
+      events.setComponentTexture(id, textureName, texture),
+    );
   };
 
   private onSetTransformerVisibility = (visibility: boolean): void => {

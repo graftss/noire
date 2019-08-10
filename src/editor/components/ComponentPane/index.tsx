@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import * as T from '../../../types';
+import * as events from '../../../display/events';
 import { components, selectedComponent } from '../../../state/selectors';
 import {
   emitDisplayEvents,
   selectComponent,
-  updateComponentState,
-  updateComponentModel,
-  updateComponentTexture,
+  setComponentState,
+  setComponentModel,
+  setComponentTexture,
 } from '../../../state/actions';
 import {
   updateSerializedKonvaModel,
@@ -72,41 +73,33 @@ interface PropsFromDispatch {
 const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
   selectComponent: (id: string) => {
     dispatch(selectComponent(id));
-    dispatch(emitDisplayEvents([{ kind: 'selectComponent', data: id }]));
+    dispatch(emitDisplayEvents([events.selectComponent(id)]));
   },
 
   setDefaultModel: (id: string, modelName: string, kind: T.KonvaModelKind) => {
     const model = defaultSerializedKonvaModel(kind);
-    const event: T.DisplayEvent = {
-      kind: 'requestDefaultComponentModel',
-      data: { id, modelName, kind },
-    };
 
-    dispatch(updateComponentModel(id, modelName, model));
-    dispatch(emitDisplayEvents([event]));
+    dispatch(setComponentModel(id, modelName, model));
+    dispatch(
+      emitDisplayEvents([events.requestDefaultModel(id, modelName, kind)]),
+    );
   },
 
   setDefaultTexture: (id: string, textureName: string, kind: T.TextureKind) => {
     const texture = defaultSerializedTexture(kind);
-    const event: T.DisplayEvent = {
-      kind: 'requestDefaultComponentTexture',
-      data: { id, textureName, kind },
-    };
 
-    dispatch(updateComponentTexture(id, textureName, texture));
-    dispatch(emitDisplayEvents([event]));
+    dispatch(setComponentTexture(id, textureName, texture));
+    dispatch(
+      emitDisplayEvents([events.requestDefaultTexture(id, textureName, kind)]),
+    );
   },
 
   updateState: (component: T.SerializedComponent, key: string, value: any) => {
     const { id, state } = component;
     const newState = { ...state, [key]: value };
-    const event: T.DisplayEvent = {
-      kind: 'updateComponentState',
-      data: { id, state: newState },
-    };
 
-    dispatch(updateComponentState(id, newState));
-    dispatch(emitDisplayEvents([event]));
+    dispatch(setComponentState(id, newState));
+    dispatch(emitDisplayEvents([events.setComponentState(id, newState)]));
   },
 
   updateModel: (
@@ -117,12 +110,14 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
   ) => {
     const model = component.graphics.models[modelName];
     const newModel = updateSerializedKonvaModel(model, key, value);
-    const event: T.DisplayEvent = {
-      kind: 'requestUpdateComponentModel',
-      data: { id: component.id, modelName, key, value },
-    };
+    const event = events.requestModelUpdate(
+      component.id,
+      modelName,
+      key,
+      value,
+    );
 
-    dispatch(updateComponentModel(component.id, modelName, newModel));
+    dispatch(setComponentModel(component.id, modelName, newModel));
     dispatch(emitDisplayEvents([event]));
   },
 
@@ -132,14 +127,14 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     key: string,
     value: any,
   ) => {
-    const texture = component.graphics.textures[textureName];
-    const newTexture = updateTexture(texture, key, value);
-    const event: T.DisplayEvent = {
-      kind: 'requestUpdateComponentTexture',
-      data: { id: component.id, textureName, key, value },
-    };
+    const {
+      id,
+      graphics: { textures },
+    } = component;
+    const newTexture = updateTexture(textures[textureName], key, value);
+    const event = events.requestTextureUpdate(id, textureName, key, value);
 
-    dispatch(updateComponentTexture(component.id, textureName, newTexture));
+    dispatch(setComponentTexture(component.id, textureName, newTexture));
     dispatch(emitDisplayEvents([event]));
   },
 });

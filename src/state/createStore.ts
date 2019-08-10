@@ -7,7 +7,7 @@ import {
 } from 'redux';
 import { createLogger } from 'redux-logger';
 import * as T from '../types';
-import { DisplayEventBus } from '../display/DisplayEventBus';
+import { DisplayEventBus } from '../display/events/DisplayEventBus';
 import { rootReducer } from './reducers/root';
 
 export type EditorStore = Store<T.EditorState, T.EditorAction>;

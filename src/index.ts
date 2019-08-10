@@ -1,7 +1,7 @@
 import * as T from './types';
 import { ControllerManager } from './input/ControllerManager';
 import { Display } from './display';
-import { DisplayEventBus } from './display/DisplayEventBus';
+import { DisplayEventBus } from './display/events/DisplayEventBus';
 import { createEditorApp } from './editor';
 import { exitPresentationMode } from './state/actions';
 
