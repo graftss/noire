@@ -20,7 +20,7 @@ export interface DistortFilterState {
   yd: number;
 
   // if true, draws borders around outer and inner distortion areas
-  debug?: boolean;
+  debug: boolean;
 }
 
 export const distort: T.FilterFactory<DistortFilterState> = ({
@@ -104,12 +104,62 @@ export interface DistortState {
   yc: number;
   R: number;
   r: number;
-  debug?: boolean;
+  debug: boolean;
 
   // a number between 0 and 1 that determines how close the inner region
   // can get to the outer region.
   leash: number;
 }
+
+type DistortKinds = 'dPadDistort' | 'stickDistort';
+
+export const distortStateFields: T.InputFilterField<DistortKinds>[] = [
+  {
+    label: 'x offset',
+    key: 'xc',
+    kind: 'number',
+    defaultValue: 0,
+    props: { precision: 1 },
+    getter: (s: DistortState) => s.xc,
+    setter: (s: DistortState, xc: number) => ({ ...s, xc }),
+  },
+  {
+    label: 'y offset',
+    key: 'yc',
+    kind: 'number',
+    defaultValue: 0,
+    props: { precision: 1 },
+    getter: (s: DistortState) => s.yc,
+    setter: (s: DistortState, yc: number) => ({ ...s, yc }),
+  },
+  {
+    label: 'outer radius',
+    key: 'R',
+    kind: 'number',
+    defaultValue: 45,
+    props: { precision: 1 },
+    getter: (s: DistortState) => s.R,
+    setter: (s: DistortState, R: number) => ({ ...s, R }),
+  },
+  {
+    label: 'inner radius',
+    key: 'r',
+    kind: 'number',
+    defaultValue: 25,
+    props: { precision: 1 },
+    getter: (s: DistortState) => s.r,
+    setter: (s: DistortState, r: number) => ({ ...s, r }),
+  },
+  {
+    label: 'debug',
+    key: 'debug',
+    kind: 'boolean',
+    defaultValue: true,
+    props: { precision: 1 },
+    getter: (s: DistortState) => s.debug,
+    setter: (s: DistortState, debug: boolean) => ({ ...s, debug }),
+  },
+];
 
 export const stickDistortInputKinds: Dict<T.InputKind> = {
   xp: 'axis',

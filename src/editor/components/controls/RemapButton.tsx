@@ -22,7 +22,7 @@ import {
 import { DEFAULT_AXIS_DEADZONE } from '../../../input/source/gamepad';
 import { FloatField } from './FloatField';
 
-type RemapButtonValue =
+export type RemapButtonValue =
   | { kind: 'controller'; controller: T.Controller; key: string }
   | {
       kind: 'component';

@@ -1,10 +1,11 @@
 import * as T from '../../types';
-import { toPairs } from '../../utils';
+import { keys, toPairs } from '../../utils';
 import {
   stickDistort,
   dPadDistort,
   stickDistortInputKinds,
   dPadDistortInputKinds,
+  distortStateFields,
 } from './distort';
 import { buttonZoom } from './zoom';
 
@@ -13,12 +14,6 @@ export interface InputFilterData {
   dPadDistort: T.DPadDistortData;
   stickDistort: T.StickDistortData;
 }
-
-const inputFilters: { [K in InputFilterKind]: InputFilterFactory<K> } = {
-  buttonZoom,
-  dPadDistort,
-  stickDistort,
-};
 
 export type Filter = (i: ImageData) => void;
 
@@ -31,10 +26,33 @@ export type InputFilterFactory<K extends InputFilterKind> = FilterFactory<{
   input: InputFilterData[K]['input'];
 }>;
 
-export interface SerializedInputFilter<K extends InputFilterKind> {
+export interface SerializedInputFilter<
+  K extends InputFilterKind = InputFilterKind
+> {
   kind: K;
   state: InputFilterData[K]['state'];
 }
+
+export interface InputFilterField<
+  K extends InputFilterKind = InputFilterKind,
+  FK extends T.EditorFieldKind = T.EditorFieldKind
+> extends T.EditorField<FK> {
+  getter: (s: InputFilterData[K]['state']) => T.EditorFieldType<FK>;
+  setter: (
+    s: InputFilterData[K]['state'],
+    v: T.EditorFieldType<FK>,
+  ) => InputFilterData[K]['state'];
+}
+
+const inputFilters: { [K in InputFilterKind]: InputFilterFactory<K> } = {
+  buttonZoom,
+  dPadDistort,
+  stickDistort,
+} as const;
+
+export const getInputFilterKinds = (): InputFilterKind[] => [
+  ...keys(inputFilters),
+];
 
 export const deserializeInputFilter = <K extends InputFilterKind>(
   filter: SerializedInputFilter<K>,
@@ -58,3 +76,13 @@ export const getFilterInputKind = (
   filter: SerializedInputFilter<T.InputFilterKind>,
   filterKey: string,
 ): T.InputKind => filterInputKinds[filter.kind][filterKey];
+
+const inputFilterFields: Record<InputFilterKind, InputFilterField[]> = {
+  stickDistort: distortStateFields,
+  dPadDistort: distortStateFields,
+  buttonZoom: [],
+};
+
+export const getInputFilterFields = (
+  kind: InputFilterKind,
+): InputFilterField[] => inputFilterFields[kind];

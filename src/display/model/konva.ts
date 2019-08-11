@@ -38,10 +38,6 @@ export interface KonvaModelField<
   K extends KonvaModelKind = KonvaModelKind,
   FK extends T.EditorFieldKind = T.EditorFieldKind
 > extends T.EditorField<FK> {
-  key: string;
-  label: string;
-  kind: FK;
-  defaultValue: T.EditorFieldType<FK>;
   getter: (model: KonvaModelData[K]['class']) => T.EditorFieldType<FK>;
   serialGetter: (model: SerializedKonvaModel<K>) => T.EditorFieldType<FK>;
   setter: (

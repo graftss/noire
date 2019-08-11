@@ -160,6 +160,16 @@ export type SerializedComponentFilterDict = Dict<
   SerializedComponentFilter<T.InputFilterKind>[]
 >;
 
+export const getComponentFilterControllerKey = (
+  component: SerializedComponent,
+  { model, filterIndex, filterKey }: ComponentFilterKey,
+): Maybe<T.ControllerKey> =>
+  component.filters &&
+  component.filters[model] &&
+  component.filters[model][filterIndex] &&
+  component.filters[model][filterIndex].inputMap &&
+  component.filters[model][filterIndex].inputMap[filterKey];
+
 export const getComponentFilterInputKind = (
   component: T.SerializedComponent,
   { model, filterIndex, filterKey }: ComponentFilterKey,
@@ -189,9 +199,22 @@ export const deserializeComponentFilterDict = (
 
 export interface ComponentFilterKeyUpdate {
   componentId: string;
-  componentFilterKey: T.ComponentFilterKey;
+  componentFilterKey: ComponentFilterKey;
   controllerKey?: T.ControllerKey;
 }
+
+export const updateComponentFilterState = (
+  filterDict: SerializedComponentFilterDict,
+  modelName: string,
+  filterIndex: number,
+  stateKey: string,
+  value: any,
+): SerializedComponentFilterDict =>
+  mapPath(
+    [modelName, filterIndex, 'filter', 'state', stateKey],
+    () => value,
+    filterDict,
+  );
 
 export const updateComponentFilterKey = (
   filterDict: SerializedComponentFilterDict,

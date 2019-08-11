@@ -169,7 +169,9 @@ export {
   InputFilterFactory,
   InputFilterKind,
   InputFilterData,
+  InputFilterField,
   SerializedInputFilter,
 } from './display/filter';
 export { TabKind, TabState } from './state/reducers/tab';
 export { PresentationState } from './state/reducers/presentation';
+export { RemapButtonValue } from './editor/components/controls/RemapButton';
