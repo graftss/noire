@@ -44,6 +44,7 @@ interface DisplayHandlerData {
     kind: T.TextureKind;
   };
   setComponentTexture: { id: string; textureName: string; texture: Texture };
+  setComponentFilters: { id: string; filters: T.ComponentFilterDict };
   requestFilterUpdate: {
     id: string;
     modelName: string;
@@ -51,7 +52,12 @@ interface DisplayHandlerData {
     key: string;
     value: any;
   };
-  setComponentFilters: { id: string; filters: T.ComponentFilterDict };
+  requestDefaultFilter: {
+    id: string;
+    modelName: string;
+    filterIndex: number;
+    kind: T.InputFilterKind;
+  };
   setKonvaTransformerVisibility: boolean;
 }
 
@@ -93,6 +99,7 @@ export class DisplayEventBus {
     requestDefaultTexture: [],
     setComponentTexture: [],
     requestFilterUpdate: [],
+    requestDefaultFilter: [],
     setComponentFilters: [],
     setKonvaTransformerVisibility: [],
   };

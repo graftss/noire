@@ -32,7 +32,7 @@ export interface SerializedComponent<
   kind: K;
   graphics: SerializedComponentGraphics<SS, TS>;
   state: Required<S & T.ComponentState<I>>;
-  filters?: Record<SS, SerializedComponentFilter<T.InputFilterKind>[]>;
+  filters: Record<SS, SerializedComponentFilter<T.InputFilterKind>[]>;
 }
 
 export interface SerializedComponentStateData {

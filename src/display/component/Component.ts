@@ -50,7 +50,7 @@ export abstract class Component<
   graphics: ComponentGraphics<SS, TS>;
   inputKinds: I;
   state: Required<S>;
-  filters: Maybe<ComponentFilterDict<SS>>;
+  filters: ComponentFilterDict<SS>;
 
   constructor(
     id: string,
@@ -64,7 +64,7 @@ export abstract class Component<
     this.graphics.models;
     this.inputKinds = inputKinds;
     this.state = { ...defaultComponentState, ...state } as Required<S>;
-    this.filters = filters;
+    this.filters = filters || mapObj(() => [], graphics.models);
   }
 
   applyDefaultInput = (
@@ -120,6 +120,22 @@ export abstract class Component<
 
   setFilters(filters: ComponentFilterDict<SS>): void {
     this.filters = filters;
+  }
+
+  updateFilterState(
+    modelName: string,
+    filterIndex: number,
+    key: string,
+    value: any,
+  ): void {
+    if (!this.filters[modelName]) return;
+
+    const filter: Maybe<T.ComponentFilter> = this.filters[modelName as SS][
+      filterIndex
+    ];
+    if (!filter) return;
+
+    filter.state[key] = value;
   }
 
   abstract update(input: Partial<T.KindsToRaw<I>>, dt: number): void;

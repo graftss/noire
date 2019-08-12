@@ -9,6 +9,7 @@ import {
   setComponentState,
   setComponentModel,
   setComponentTexture,
+  setComponentFilters,
 } from '../../../state/actions';
 import {
   updateSerializedKonvaModel,
@@ -18,6 +19,7 @@ import {
   defaultSerializedTexture,
   updateTexture,
 } from '../../../display/texture';
+import { updateComponentFilterState } from '../../../display/component';
 import { getComponentEditorConfig } from '../../../display/component/editor';
 import { TransformerToggle } from '../controls/TransformerToggle';
 import { ComponentSelect } from './ComponentSelect';
@@ -167,7 +169,23 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     key: string,
     value: any,
   ) => {
-    console.log('update', { component, modelName, filterIndex, key, value });
+    const newFilters = updateComponentFilterState(
+      component.filters,
+      modelName,
+      filterIndex,
+      key,
+      value,
+    );
+    const event = events.requestFilterUpdate(
+      component.id,
+      modelName,
+      filterIndex,
+      key,
+      value,
+    );
+
+    dispatch(setComponentFilters(component.id, newFilters));
+    dispatch(emitDisplayEvents([event]));
   },
 });
 

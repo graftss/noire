@@ -221,6 +221,7 @@ const dualSticks = (
         },
         useDepthScaling: true,
       },
+      filters: {},
     },
     {
       id: ids[1],
@@ -241,6 +242,7 @@ const dualSticks = (
         },
         useDepthScaling: true,
       },
+      filters: {},
     },
   ];
 };
@@ -277,6 +279,7 @@ const dPad: T.SerializedComponent = {
       r: { controllerId, key: 'padR' },
     },
   },
+  filters: {},
 };
 
 const button: T.SerializedComponent = {
@@ -314,11 +317,13 @@ const button: T.SerializedComponent = {
     offset: { x: 200, y: 300 },
     scale: { x: 1, y: 1 },
   },
+  filters: {},
 };
 
 const staticImage: T.SerializedComponent = {
   id: ids[4],
   kind: 'static',
+  filters: {},
   graphics: {
     models: {
       model: serializeKonvaModel(
