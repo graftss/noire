@@ -55,6 +55,12 @@ interface PropsFromDispatch {
     textureName: string,
     k: T.TextureKind,
   ) => void;
+  setDefaultFilter: (
+    id: string,
+    modelName: string,
+    filterIndex: number,
+    kind: T.InputFilterKind,
+  ) => void;
   updateState: (c: T.SerializedComponent, key: string, value: any) => void;
   updateModel: (
     c: T.SerializedComponent,
@@ -65,6 +71,13 @@ interface PropsFromDispatch {
   updateTexture: (
     c: T.SerializedComponent,
     textureName: string,
+    key: string,
+    value: any,
+  ) => void;
+  updateFilter: (
+    c: T.SerializedComponent,
+    modelName: string,
+    filterIndex: number,
     key: string,
     value: any,
   ) => void;
@@ -92,6 +105,15 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     dispatch(
       emitDisplayEvents([events.requestDefaultTexture(id, textureName, kind)]),
     );
+  },
+
+  setDefaultFilter: (
+    id: string,
+    modelName: string,
+    filterIndex: number,
+    kind: T.InputFilterKind,
+  ) => {
+    console.log('set default', { id, modelName, filterIndex, kind });
   },
 
   updateState: (component: T.SerializedComponent, key: string, value: any) => {
@@ -137,6 +159,16 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     dispatch(setComponentTexture(component.id, textureName, newTexture));
     dispatch(emitDisplayEvents([event]));
   },
+
+  updateFilter: (
+    component: T.SerializedComponent,
+    modelName: string,
+    filterIndex: number,
+    key: string,
+    value: any,
+  ) => {
+    console.log('update', { component, modelName, filterIndex, key, value });
+  },
 });
 
 interface ComponentPaneProps extends PropsFromState, PropsFromDispatch {}
@@ -148,9 +180,11 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
   selectComponent,
   setDefaultModel,
   setDefaultTexture,
+  setDefaultFilter,
   updateState,
   updateModel,
   updateTexture,
+  updateFilter,
 }) => (
   <div>
     <ComponentSelect
@@ -180,7 +214,11 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
           textureList={componentConfig.textures}
           updateTexture={updateTexture}
         />
-        <ComponentFilters component={component} />
+        <ComponentFilters
+          component={component}
+          setDefaultFilter={setDefaultFilter}
+          updateFilter={updateFilter}
+        />
       </div>
     )}
   </div>

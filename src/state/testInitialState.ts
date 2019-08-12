@@ -171,7 +171,7 @@ const stickGraphics: any = {
   textures: {
     boundary: {
       kind: 'fill',
-      state: { fill: 'white', stroke: 'black', strokeWidth: 1 },
+      state: { fill: 'white', stroke: 'black', strokeWidth: 2 },
     },
     // stick: {
     //   kind: 'fill',
@@ -185,11 +185,12 @@ const stickGraphics: any = {
       kind: 'fill',
       state: {
         fill: 'darkred',
+        strokeWidth: 1,
       },
     },
     stick: {
       kind: 'fill',
-      state: { fill: 'black' },
+      state: { fill: 'black', strokeWidth: 0 },
     },
   },
 };
@@ -247,7 +248,7 @@ const dualSticks = (
 const [leftStick, rightStick] = dualSticks(
   stickGraphics,
   { x: 180, y: 100 },
-  100,
+  70,
   15,
 );
 
@@ -344,8 +345,8 @@ const components: T.SerializedComponent[] = [
   vert,
   // vertProd,
   // staticImage,
-  // leftStick,
-  // rightStick,
+  leftStick,
+  rightStick,
   // dPad,
   // button,
 ];

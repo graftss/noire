@@ -2,17 +2,29 @@ import * as React from 'react';
 import * as T from '../../../types';
 import { FiltersEditor } from '../FiltersEditor';
 import { toPairs } from '../../../utils';
-import {
-  getComponentFilterControllerKey,
-  updateComponentFilterState,
-} from '../../../display/component';
+import { getComponentFilterControllerKey } from '../../../display/component';
 
 interface ComponentFiltersProps {
   component: T.SerializedComponent;
+  setDefaultFilter: (
+    id: string,
+    model: string,
+    filterIndex: number,
+    kind: T.InputFilterKind,
+  ) => void;
+  updateFilter: (
+    component: T.SerializedComponent,
+    model: string,
+    filterIndex: number,
+    key: string,
+    value: any,
+  ) => void;
 }
 
 export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
   component,
+  setDefaultFilter,
+  updateFilter,
 }) =>
   !component.filters ? null : (
     <div>
@@ -36,20 +48,10 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
                   componentFilterKey: { model, filterIndex, filterKey },
                 })}
                 label={model}
-                setDefaultFilter={kind =>
-                  console.log('default filter of kind', kind)
+                setDefaultFilter={(filterIndex, kind) =>
+                  setDefaultFilter(component.id, model, filterIndex, kind)
                 }
-                update={(index: number, key: string, value: any) => {
-                  const newState = updateComponentFilterState(
-                    component.filters as T.SerializedComponentFilterDict,
-                    model,
-                    index,
-                    key,
-                    value,
-                  );
-
-                  console.log('new', newState);
-                }}
+                update={(...args) => updateFilter(component, model, ...args)}
               />
             </div>
           </div>

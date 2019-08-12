@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as T from '../../../types';
-import { toPairs } from '../../../utils';
 import { getInputFilterKeyList } from '../../../display/filter';
 import { RemapButton } from '../controls/RemapButton';
 

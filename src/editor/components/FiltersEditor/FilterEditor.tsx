@@ -8,7 +8,7 @@ import { FilterKindSelect } from './FilterKindSelect';
 interface FilterEditorProps {
   filter: Maybe<T.SerializedInputFilter>;
   getRemapButtonValue: (filterKey: string) => T.RemapButtonValue;
-  setDefaultFilter: (name: string, k: T.InputFilterKind) => void;
+  setDefaultFilter: (k: T.InputFilterKind) => void;
   update: (key: string, value: any) => void;
 }
 
@@ -18,13 +18,11 @@ export const FilterEditor: React.SFC<FilterEditorProps> = ({
   filter,
   update,
 }) =>
-  filter === undefined ? (
-    <div></div>
-  ) : (
+  filter === undefined ? null : (
     <div style={{ border: '1px solid green' }}>
       <FilterKindSelect
         initialValue={filter.kind}
-        setDefaultFilter={kind => setDefaultFilter(name, kind)}
+        setDefaultFilter={setDefaultFilter}
       />
       {getInputFilterFields(filter.kind).map(field => (
         <div key={field.key}>

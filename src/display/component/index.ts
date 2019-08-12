@@ -145,7 +145,9 @@ export const deserializeGraphics = <SS extends string, TS extends string>(
   return result;
 };
 
-export interface SerializedComponentFilter<K extends T.InputFilterKind> {
+export interface SerializedComponentFilter<
+  K extends T.InputFilterKind = T.InputFilterKind
+> {
   filter: T.SerializedInputFilter<K>;
   inputMap: Dict<T.ControllerKey>;
 }
@@ -204,7 +206,7 @@ export interface ComponentFilterKeyUpdate {
 }
 
 export const updateComponentFilterState = (
-  filterDict: SerializedComponentFilterDict,
+  filters: SerializedComponentFilterDict,
   modelName: string,
   filterIndex: number,
   stateKey: string,
@@ -213,7 +215,7 @@ export const updateComponentFilterState = (
   mapPath(
     [modelName, filterIndex, 'filter', 'state', stateKey],
     () => value,
-    filterDict,
+    filters,
   );
 
 export const updateComponentFilterKey = (

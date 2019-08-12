@@ -19,7 +19,6 @@ interface DisplayHandlerData {
   selectComponent: Maybe<string>;
   selectModel: { id: string; modelName: string };
   konvaStageClick: Konva.Stage;
-  setComponentFilters: { id: string; filters: T.ComponentFilterDict };
   setComponentState: { id: string; state: T.ComponentState };
   requestModelUpdate: {
     id: string;
@@ -45,6 +44,14 @@ interface DisplayHandlerData {
     kind: T.TextureKind;
   };
   setComponentTexture: { id: string; textureName: string; texture: Texture };
+  requestFilterUpdate: {
+    id: string;
+    modelName: string;
+    filterIndex: number;
+    key: string;
+    value: any;
+  };
+  setComponentFilters: { id: string; filters: T.ComponentFilterDict };
   setKonvaTransformerVisibility: boolean;
 }
 
@@ -78,7 +85,6 @@ export class DisplayEventBus {
     selectComponent: [],
     selectModel: [],
     konvaStageClick: [],
-    setComponentFilters: [],
     setComponentState: [],
     requestModelUpdate: [],
     requestDefaultModel: [],
@@ -86,6 +92,8 @@ export class DisplayEventBus {
     requestTextureUpdate: [],
     requestDefaultTexture: [],
     setComponentTexture: [],
+    requestFilterUpdate: [],
+    setComponentFilters: [],
     setKonvaTransformerVisibility: [],
   };
 

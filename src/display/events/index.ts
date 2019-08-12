@@ -32,14 +32,6 @@ export const konvaStageClick = (stage: Konva.Stage): T.DisplayEvent => ({
   data: stage,
 });
 
-export const setComponentFilters = (
-  id: string,
-  filters: T.ComponentFilterDict,
-): T.DisplayEvent => ({
-  kind: 'setComponentFilters',
-  data: { id, filters },
-});
-
 export const setComponentState = (
   id: string,
   state: T.ComponentState,
@@ -102,6 +94,25 @@ export const setComponentTexture = (
 ): T.DisplayEvent => ({
   kind: 'setComponentTexture',
   data: { id, textureName, texture },
+});
+
+export const setComponentFilters = (
+  id: string,
+  filters: T.ComponentFilterDict,
+): T.DisplayEvent => ({
+  kind: 'setComponentFilters',
+  data: { id, filters },
+});
+
+export const requestFilterUpdate = (
+  id: string,
+  modelName: string,
+  filterIndex: number,
+  key: string,
+  value: any,
+): T.DisplayEvent => ({
+  kind: 'requestFilterUpdate',
+  data: { id, modelName, filterIndex, key, value },
 });
 
 export const setKonvaTransformerVisibility = (
