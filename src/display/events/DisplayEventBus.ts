@@ -13,10 +13,14 @@ type TextureKey = string;
 type TextureValue = any;
 
 interface DisplayHandlerData {
+  requestAddComponent: Component;
   addComponent: Component;
   listenNextInput: T.RemapState;
   requestDraw: undefined;
-  selectComponent: Maybe<string>;
+  requestSelectComponent: string;
+  selectComponent: string;
+  requestDeselectComponent: string;
+  deselectComponent: string;
   selectModel: { id: string; modelName: string };
   konvaStageClick: Konva.Stage;
   setComponentState: { id: string; state: T.ComponentState };
@@ -84,10 +88,14 @@ type AllDisplayEventCallbacks = {
 
 export class DisplayEventBus {
   private callbacks: AllDisplayEventCallbacks = {
+    requestAddComponent: [],
     addComponent: [],
     listenNextInput: [],
     requestDraw: [],
+    requestSelectComponent: [],
     selectComponent: [],
+    requestDeselectComponent: [],
+    deselectComponent: [],
     selectModel: [],
     konvaStageClick: [],
     setComponentState: [],

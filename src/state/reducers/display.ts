@@ -17,13 +17,7 @@ export const displayReducer = (
   switch (action.type) {
     case 'selectComponent': {
       const id = action.data;
-      if (id === undefined) {
-        return {
-          ...state,
-          selectedComponentId: undefined,
-          transformerTarget: undefined,
-        };
-      } else if (id !== state.selectedComponentId) {
+      if (id !== state.selectedComponentId) {
         return {
           ...state,
           selectedComponentId: id,
@@ -35,17 +29,21 @@ export const displayReducer = (
       }
     }
 
+    case 'deselectComponent': {
+      return {
+        ...state,
+        selectedComponentId: undefined,
+        transformerTarget: undefined,
+      };
+    }
+
     case 'setComponentState': {
       const { data } = action;
 
-      return mapComponentWithId.proj(state)(
-        data.id,
-        c =>
-          ({
-            ...c,
-            state: { ...c.state, ...data.state },
-          } as typeof c),
-      );
+      return mapComponentWithId.proj(state)(data.id, c => ({
+        ...c,
+        state: { ...c.state, ...data.state },
+      }));
     }
 
     case 'setComponentFilters': {

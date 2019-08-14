@@ -2,7 +2,8 @@ import * as T from '../types';
 
 export type EditorAction =
   | { type: 'emitDisplayEvents'; data: T.DisplayEvent[] }
-  | { type: 'selectComponent'; data: Maybe<string> }
+  | { type: 'selectComponent'; data: string }
+  | { type: 'deselectComponent'; data: string }
   | { type: 'selectController'; data: Maybe<string> }
   | { type: 'startFullControllerUpdate' }
   | { type: 'updateControllerBinding'; data: T.ControllerBindingUpdate }
@@ -50,8 +51,13 @@ export const selectController = (id?: string): EditorAction => ({
   data: id,
 });
 
-export const selectComponent = (id?: string): EditorAction => ({
+export const selectComponent = (id: string): EditorAction => ({
   type: 'selectComponent',
+  data: id,
+});
+
+export const deselectComponent = (id: string): EditorAction => ({
+  type: 'deselectComponent',
   data: id,
 });
 

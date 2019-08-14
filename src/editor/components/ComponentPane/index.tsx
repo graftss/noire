@@ -94,7 +94,7 @@ interface PropsFromDispatch {
 const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
   selectComponent: (id: string) => {
     dispatch(selectComponent(id));
-    dispatch(emitDisplayEvents([events.selectComponent(id)]));
+    dispatch(emitDisplayEvents([events.requestSelectComponent(id)]));
   },
 
   setDefaultModel: (id: string, modelName: string, kind: T.KonvaModelKind) => {

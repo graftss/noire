@@ -1,5 +1,6 @@
 import * as T from '../types';
 import {
+  deselectComponent,
   selectComponent,
   setComponentModel,
   setComponentState,
@@ -36,12 +37,12 @@ export class Display {
 
     this.eventBus.on({
       kind: 'selectComponent',
-      cb: (id: Maybe<string>) => dispatch(selectComponent(id)),
+      cb: (id: string) => dispatch(selectComponent(id)),
     });
 
     this.eventBus.on({
-      kind: 'konvaStageClick',
-      cb: () => dispatch(selectComponent()),
+      kind: 'deselectComponent',
+      cb: (id: string) => dispatch(deselectComponent(id)),
     });
   }
 

@@ -12,6 +12,7 @@ export type KonvaSelectable =
   | { kind: 'filter'; id: string; modelName: string; filterIndex: number };
 
 interface TransformerState {
+  selection: KonvaSelectable;
   transformer: Konva.Transformer;
   node: Konva.Node;
 }
@@ -79,7 +80,14 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     this.stage.on('click', this.onStageClick);
     eventBus.on({ kind: 'addComponent', cb: this.onAddComponent });
     eventBus.on({ kind: 'requestDraw', cb: () => this.layer.draw() });
-    eventBus.on({ kind: 'selectComponent', cb: this.onSelectComponent });
+    eventBus.on({
+      kind: 'requestSelectComponent',
+      cb: this.onRequestSelectComponent,
+    });
+    eventBus.on({
+      kind: 'requestDeselectComponent',
+      cb: this.onRequestDeselectComponent,
+    });
     eventBus.on({
       kind: 'selectModel',
       cb: this.onSelectModel,
@@ -116,6 +124,16 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
   private onStageClick = ({ target }: { target: Konva.Node }) => {
     if (target === this.border) {
+      if (this.transformerState) {
+        const { selection } = this.transformerState;
+        switch (selection.kind) {
+          case 'component': {
+            this.display.eventBus.emit(
+              events.requestDeselectComponent(selection.id),
+            );
+          }
+        }
+      }
       this.destroyTransformer();
       this.display.eventBus.emit(events.konvaStageClick(this.stage));
     }
@@ -137,7 +155,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   ) => {
     group.add(model);
     model.on('click', () => {
-      this.display.eventBus.emit(events.selectComponent(componentId));
+      this.display.eventBus.emit(events.requestSelectComponent(componentId));
     });
   };
 
@@ -204,30 +222,40 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     }, 0);
   };
 
-  private initTransformer = (node: Konva.Node): void => {
+  private initTransformer = (
+    selection: KonvaSelectable,
+    node: Konva.Node,
+  ): void => {
     node.draggable(true);
     this.destroyTransformer();
     this.transformerState = {
+      selection,
       node,
       transformer: attachTransformer(node, this.layer),
     };
   };
 
-  private onSelectComponent = (id: Maybe<string>): void => {
-    if (!id) return;
-
+  private onRequestSelectComponent = (id: string): void => {
     const newNode: Maybe<Konva.Group> = this.groupsById[id];
     if (!newNode) return;
 
     const ts = this.transformerState;
-    if (!ts || ts.node !== newNode) this.initTransformer(newNode);
+    if (!ts || ts.node !== newNode) {
+      this.initTransformer({ kind: 'component', id }, newNode);
+    }
+    this.display.eventBus.emit(events.selectComponent(id));
+  };
+
+  private onRequestDeselectComponent = (id: string): void => {
+    this.display.eventBus.emit(events.deselectComponent(id));
   };
 
   private onSelectModel = ({ id, modelName }): void => {
     if (!id) return;
 
-    const node = this.selectionToNode({ kind: 'model', id, modelName });
-    if (node) this.initTransformer(node);
+    const selection: KonvaSelectable = { kind: 'model', id, modelName };
+    const node = this.selectionToNode(selection);
+    if (node) this.initTransformer(selection, node);
   };
 
   private onUpdateComponentState = ({ id, state }) => {
