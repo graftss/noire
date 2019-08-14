@@ -6,8 +6,10 @@ import {
   stickDistortInputKinds,
   dPadDistortInputKinds,
   distortStateFields,
+  defaultDPadDistortState,
+  defaultStickDistortState,
 } from './distort';
-import { buttonZoom } from './zoom';
+import { buttonZoom, defaultButtonZoomState } from './zoom';
 
 export interface InputFilterData {
   buttonZoom: T.ButtonZoomData;
@@ -50,6 +52,20 @@ const inputFilters: { [K in InputFilterKind]: InputFilterFactory<K> } = {
   stickDistort,
 } as const;
 
+const filterInputKinds: Record<T.InputFilterKind, Dict<T.InputKind>> = {
+  stickDistort: stickDistortInputKinds,
+  dPadDistort: dPadDistortInputKinds,
+  buttonZoom: {},
+} as const;
+
+const defaultInputFilterStates: {
+  [K in InputFilterKind]: InputFilterData[K]['state'];
+} = {
+  stickDistort: defaultStickDistortState,
+  dPadDistort: defaultDPadDistortState,
+  buttonZoom: defaultButtonZoomState,
+};
+
 export const getInputFilterKinds = (): InputFilterKind[] => [
   ...keys(inputFilters),
 ];
@@ -57,12 +73,6 @@ export const getInputFilterKinds = (): InputFilterKind[] => [
 export const deserializeInputFilter = <K extends InputFilterKind>(
   filter: SerializedInputFilter<K>,
 ): InputFilterFactory<K> => inputFilters[filter.kind];
-
-const filterInputKinds: Record<T.InputFilterKind, Dict<T.InputKind>> = {
-  stickDistort: stickDistortInputKinds,
-  dPadDistort: dPadDistortInputKinds,
-  buttonZoom: {},
-};
 
 export const getInputFilterKeyList = (
   filter: SerializedInputFilter<T.InputFilterKind>,
@@ -86,3 +96,7 @@ const inputFilterFields: Record<InputFilterKind, InputFilterField[]> = {
 export const getInputFilterFields = (
   kind: InputFilterKind,
 ): InputFilterField[] => inputFilterFields[kind];
+
+export const defaultInputFilterState = <K extends InputFilterKind>(
+  kind: K,
+): InputFilterData[K]['state'] => defaultInputFilterStates[kind];

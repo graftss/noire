@@ -16,6 +16,15 @@ export type EditorAction =
       data: { id: string; filters: T.SerializedComponentFilterDict };
     }
   | {
+      type: 'setComponentInputFilter';
+      data: {
+        id: string;
+        modelName: string;
+        filterIndex: number;
+        state: T.SerializedInputFilter;
+      };
+    }
+  | {
       type: 'setComponentModel';
       data: { id: string; modelName: string; model: T.SerializedKonvaModel };
     }

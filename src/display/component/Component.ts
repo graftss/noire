@@ -122,6 +122,15 @@ export abstract class Component<
     this.filters = filters;
   }
 
+  setFilterState(modelName: string, filterIndex: number, state: any): void {
+    if (!this.filters[modelName]) return;
+
+    const filter = this.filters[modelName as SS][filterIndex];
+    if (!filter) return;
+
+    filter.state = state;
+  }
+
   updateFilterState(
     modelName: string,
     filterIndex: number,
@@ -130,9 +139,7 @@ export abstract class Component<
   ): void {
     if (!this.filters[modelName]) return;
 
-    const filter: Maybe<T.ComponentFilter> = this.filters[modelName as SS][
-      filterIndex
-    ];
+    const filter = this.filters[modelName as SS][filterIndex];
     if (!filter) return;
 
     filter.state[key] = value;

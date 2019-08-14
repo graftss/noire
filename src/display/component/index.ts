@@ -162,6 +162,14 @@ export type SerializedComponentFilterDict = Dict<
   SerializedComponentFilter<T.InputFilterKind>[]
 >;
 
+export const setComponentInputFilter = (
+  filterDict: SerializedComponentFilterDict,
+  modelName: string,
+  filterIndex: number,
+  filter: T.SerializedInputFilter,
+): SerializedComponentFilterDict =>
+  mapPath([modelName, filterIndex, 'filter'], () => filter, filterDict);
+
 export const getComponentFilterControllerKey = (
   component: SerializedComponent,
   { model, filterIndex, filterKey }: ComponentFilterKey,

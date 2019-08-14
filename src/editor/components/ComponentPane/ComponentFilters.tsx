@@ -7,7 +7,7 @@ import { getComponentFilterControllerKey } from '../../../display/component';
 interface ComponentFiltersProps {
   component: T.SerializedComponent;
   setDefaultFilter: (
-    id: string,
+    component: T.SerializedComponent,
     model: string,
     filterIndex: number,
     kind: T.InputFilterKind,
@@ -49,7 +49,7 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
                 })}
                 label={model}
                 setDefaultFilter={(filterIndex, kind) =>
-                  setDefaultFilter(component.id, model, filterIndex, kind)
+                  setDefaultFilter(component, model, filterIndex, kind)
                 }
                 update={(...args) => updateFilter(component, model, ...args)}
               />

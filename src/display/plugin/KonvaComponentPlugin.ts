@@ -3,6 +3,7 @@ import * as T from '../../types';
 import * as events from '../events';
 import { defaultKonvaModel, updateKonvaModel } from '../model/konva';
 import { defaultTexture } from '../texture';
+import { defaultInputFilterState } from '../filter';
 import { DisplayPlugin } from './DisplayPlugin';
 import { Display } from '..';
 
@@ -335,7 +336,16 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     modelName,
     filterIndex,
     kind,
-  }): void => {};
+  }): void => {
+    const component: Maybe<T.Component> = this.componentsById[id];
+    if (component === undefined) return;
+
+    const newState = defaultInputFilterState(kind);
+    component.setFilterState(modelName, filterIndex, newState);
+    this.display.eventBus.emit(
+      events.setComponentFilters(id, component.filters),
+    );
+  };
 
   private onSetTransformerVisibility = (visibility: boolean): void => {
     if (this.transformerState) {

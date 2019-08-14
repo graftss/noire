@@ -111,6 +111,18 @@ export const zoom: T.FilterFactory<ZoomFilterState> = ({
 
 export type ButtonZoomState = ZoomFilterState;
 
+export const buttonZoomInputKinds: Dict<T.InputKind> = {
+  down: 'button',
+} as const;
+
+export const defaultButtonZoomState: ButtonZoomState = {
+  xc: 0,
+  yc: 0,
+  r: 50,
+  zoom: 2,
+  debug: true,
+} as const;
+
 export interface ButtonZoomRawInput extends Dict<T.RawInput> {
   down: boolean;
 }

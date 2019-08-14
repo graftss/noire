@@ -19,7 +19,12 @@ import {
   defaultSerializedTexture,
   updateTexture,
 } from '../../../display/texture';
-import { updateComponentFilterState } from '../../../display/component';
+import { defaultInputFilterState } from '../../../display/filter';
+import {
+  updateComponentFilterState,
+  setComponentInputFilter,
+  deserializeComponentFilterDict,
+} from '../../../display/component';
 import { getComponentEditorConfig } from '../../../display/component/editor';
 import { TransformerToggle } from '../controls/TransformerToggle';
 import { ComponentSelect } from './ComponentSelect';
@@ -58,7 +63,7 @@ interface PropsFromDispatch {
     k: T.TextureKind,
   ) => void;
   setDefaultFilter: (
-    id: string,
+    component: T.SerializedComponent,
     modelName: string,
     filterIndex: number,
     kind: T.InputFilterKind,
@@ -110,12 +115,23 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
   },
 
   setDefaultFilter: (
-    id: string,
+    component: T.SerializedComponent,
     modelName: string,
     filterIndex: number,
     kind: T.InputFilterKind,
   ) => {
-    console.log('set default', { id, modelName, filterIndex, kind });
+    const newFilters = setComponentInputFilter(
+      component.filters,
+      modelName,
+      filterIndex,
+      { kind, state: defaultInputFilterState(kind) },
+    );
+    const event = events.setComponentFilters(
+      component.id,
+      deserializeComponentFilterDict(newFilters),
+    );
+    dispatch(setComponentFilters(component.id, newFilters));
+    dispatch(emitDisplayEvents([event]));
   },
 
   updateState: (component: T.SerializedComponent, key: string, value: any) => {

@@ -113,12 +113,21 @@ export interface DistortState {
 
 type DistortKinds = 'dPadDistort' | 'stickDistort';
 
+const defaultDistortState: DistortState = {
+  xc: 0,
+  yc: 0,
+  R: 50,
+  r: 25,
+  debug: true,
+  leash: 0.75,
+};
+
 export const distortStateFields: T.InputFilterField<DistortKinds>[] = [
   {
     label: 'x offset',
     key: 'xc',
     kind: 'number',
-    defaultValue: 0,
+    defaultValue: defaultDistortState.xc,
     props: { precision: 1 },
     getter: (s: DistortState) => s.xc,
     setter: (s: DistortState, xc: number) => ({ ...s, xc }),
@@ -127,7 +136,7 @@ export const distortStateFields: T.InputFilterField<DistortKinds>[] = [
     label: 'y offset',
     key: 'yc',
     kind: 'number',
-    defaultValue: 0,
+    defaultValue: defaultDistortState.yc,
     props: { precision: 1 },
     getter: (s: DistortState) => s.yc,
     setter: (s: DistortState, yc: number) => ({ ...s, yc }),
@@ -136,7 +145,7 @@ export const distortStateFields: T.InputFilterField<DistortKinds>[] = [
     label: 'outer radius',
     key: 'R',
     kind: 'number',
-    defaultValue: 45,
+    defaultValue: defaultDistortState.R,
     props: { precision: 1 },
     getter: (s: DistortState) => s.R,
     setter: (s: DistortState, R: number) => ({ ...s, R }),
@@ -145,7 +154,7 @@ export const distortStateFields: T.InputFilterField<DistortKinds>[] = [
     label: 'inner radius',
     key: 'r',
     kind: 'number',
-    defaultValue: 25,
+    defaultValue: defaultDistortState.r,
     props: { precision: 1 },
     getter: (s: DistortState) => s.r,
     setter: (s: DistortState, r: number) => ({ ...s, r }),
@@ -154,10 +163,19 @@ export const distortStateFields: T.InputFilterField<DistortKinds>[] = [
     label: 'debug',
     key: 'debug',
     kind: 'boolean',
-    defaultValue: true,
+    defaultValue: defaultDistortState.debug,
     props: { precision: 1 },
     getter: (s: DistortState) => s.debug,
     setter: (s: DistortState, debug: boolean) => ({ ...s, debug }),
+  },
+  {
+    label: 'leash',
+    key: 'leash',
+    kind: 'number',
+    defaultValue: defaultDistortState.leash,
+    props: { precision: 2 },
+    getter: (s: DistortState) => s.leash,
+    setter: (s: DistortState, leash: number) => ({ ...s, leash }),
   },
 ];
 
@@ -167,6 +185,8 @@ export const stickDistortInputKinds: Dict<T.InputKind> = {
   yp: 'axis',
   yn: 'axis',
 };
+
+export const defaultStickDistortState = defaultDistortState;
 
 export interface StickDistortInput extends Dict<T.RawInput> {
   xp: number;
@@ -200,6 +220,8 @@ export const dPadDistortInputKinds = {
   d: 'button',
   r: 'button',
 } as const;
+
+export const defaultDPadDistortState = defaultDistortState;
 
 export interface DPadDistortInput {
   u: boolean;
