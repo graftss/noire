@@ -49,8 +49,7 @@ interface DisplayHandlerData {
     id: string;
     modelName: string;
     filterIndex: number;
-    key: string;
-    value: any;
+    filter: T.SerializedComponentFilter;
   };
   requestDefaultFilter: {
     id: string;

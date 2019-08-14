@@ -108,11 +108,10 @@ export const requestFilterUpdate = (
   id: string,
   modelName: string,
   filterIndex: number,
-  key: string,
-  value: any,
+  filter: T.SerializedComponentFilter,
 ): T.DisplayEvent => ({
   kind: 'requestFilterUpdate',
-  data: { id, modelName, filterIndex, key, value },
+  data: { id, modelName, filterIndex, filter },
 });
 
 export const setKonvaTransformerVisibility = (

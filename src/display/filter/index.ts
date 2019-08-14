@@ -17,33 +17,47 @@ export interface InputFilterData {
   stickDistort: T.StickDistortData;
 }
 
+const inputFilterClasses: Record<InputFilterKind, string> = {
+  buttonZoom: 'zoom',
+  dPadDistort: 'distort',
+  stickDistort: 'distort',
+};
+
 export type Filter = (i: ImageData) => void;
 
 export type FilterFactory<S = {}> = (state: S) => (i: ImageData) => void;
 
 export type InputFilterKind = keyof InputFilterData;
 
+export type InputFilterState<
+  K extends InputFilterKind = InputFilterKind
+> = InputFilterData[K]['state'];
+
+export type InputFilterInput<
+  K extends InputFilterKind = InputFilterKind
+> = InputFilterData[K]['input'];
+
 export type InputFilterFactory<K extends InputFilterKind> = FilterFactory<{
-  state: InputFilterData[K]['state'];
-  input: InputFilterData[K]['input'];
+  state: InputFilterState<K>;
+  input: InputFilterInput<K>;
 }>;
 
 export interface SerializedInputFilter<
   K extends InputFilterKind = InputFilterKind
 > {
   kind: K;
-  state: InputFilterData[K]['state'];
+  state: InputFilterState<K>;
 }
 
 export interface InputFilterField<
   K extends InputFilterKind = InputFilterKind,
   FK extends T.EditorFieldKind = T.EditorFieldKind
 > extends T.EditorField<FK> {
-  getter: (s: InputFilterData[K]['state']) => T.EditorFieldType<FK>;
+  getter: (s: InputFilterState<K>) => T.EditorFieldType<FK>;
   setter: (
-    s: InputFilterData[K]['state'],
+    s: InputFilterState<K>,
     v: T.EditorFieldType<FK>,
-  ) => InputFilterData[K]['state'];
+  ) => InputFilterState<K>;
 }
 
 const inputFilters: { [K in InputFilterKind]: InputFilterFactory<K> } = {
@@ -59,7 +73,7 @@ const filterInputKinds: Record<T.InputFilterKind, Dict<T.InputKind>> = {
 } as const;
 
 const defaultInputFilterStates: {
-  [K in InputFilterKind]: InputFilterData[K]['state'];
+  [K in InputFilterKind]: InputFilterState<K>;
 } = {
   stickDistort: defaultStickDistortState,
   dPadDistort: defaultDPadDistortState,
@@ -97,6 +111,13 @@ export const getInputFilterFields = (
   kind: InputFilterKind,
 ): InputFilterField[] => inputFilterFields[kind];
 
-export const defaultInputFilterState = <K extends InputFilterKind>(
-  kind: K,
-): InputFilterData[K]['state'] => defaultInputFilterStates[kind];
+export const defaultInputFilter = (
+  kind: InputFilterKind,
+  oldFilter?: SerializedInputFilter,
+): SerializedInputFilter => ({
+  kind,
+  state:
+    oldFilter && inputFilterClasses[kind] === inputFilterClasses[oldFilter.kind]
+      ? oldFilter.state
+      : { ...defaultInputFilterStates[kind] },
+});

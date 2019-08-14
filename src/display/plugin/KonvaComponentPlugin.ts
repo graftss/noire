@@ -3,7 +3,6 @@ import * as T from '../../types';
 import * as events from '../events';
 import { defaultKonvaModel, updateKonvaModel } from '../model/konva';
 import { defaultTexture } from '../texture';
-import { defaultInputFilterState } from '../filter';
 import { DisplayPlugin } from './DisplayPlugin';
 import { Display } from '..';
 
@@ -108,10 +107,6 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     eventBus.on({
       kind: 'requestFilterUpdate',
       cb: this.onRequestFilterUpdate,
-    });
-    eventBus.on({
-      kind: 'requestDefaultFilter',
-      cb: this.onRequestDefaultFilter,
     });
     eventBus.on({
       kind: 'setKonvaTransformerVisibility',
@@ -319,29 +314,12 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     id,
     modelName,
     filterIndex,
-    key,
-    value,
+    filter,
   }): void => {
     const component: Maybe<T.Component> = this.componentsById[id];
     if (component === undefined) return;
 
-    component.updateFilterState(modelName, filterIndex, key, value);
-    this.display.eventBus.emit(
-      events.setComponentFilters(id, component.filters),
-    );
-  };
-
-  private onRequestDefaultFilter = ({
-    id,
-    modelName,
-    filterIndex,
-    kind,
-  }): void => {
-    const component: Maybe<T.Component> = this.componentsById[id];
-    if (component === undefined) return;
-
-    const newState = defaultInputFilterState(kind);
-    component.setFilterState(modelName, filterIndex, newState);
+    component.setSerializedFilter(modelName, filterIndex, filter);
     this.display.eventBus.emit(
       events.setComponentFilters(id, component.filters),
     );

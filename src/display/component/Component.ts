@@ -3,6 +3,7 @@ import * as T from '../../types';
 import { mapObj, unMaybeList, values } from '../../utils';
 import { defaultInputByKind } from '../../input/input';
 import { Texture } from '../texture/Texture';
+import { deserializeComponentFilter } from '.';
 
 export interface ComponentGraphics<SS extends string, TS extends string> {
   models: Record<SS, Maybe<T.KonvaModel>>;
@@ -30,6 +31,7 @@ const defaultComponentState: Required<ComponentState> = {
 export interface ComponentFilter<
   K extends T.InputFilterKind = T.InputFilterKind
 > {
+  kind: T.InputFilterKind;
   filter: T.InputFilterFactory<K>;
   state: T.InputFilterData[K]['state'];
   inputMap: Dict<T.ControllerKey>;
@@ -122,27 +124,13 @@ export abstract class Component<
     this.filters = filters;
   }
 
-  setFilterState(modelName: string, filterIndex: number, state: any): void {
-    if (!this.filters[modelName]) return;
-
-    const filter = this.filters[modelName as SS][filterIndex];
-    if (!filter) return;
-
-    filter.state = state;
-  }
-
-  updateFilterState(
-    modelName: string,
+  setSerializedFilter(
+    modelName: SS,
     filterIndex: number,
-    key: string,
-    value: any,
+    filter: T.SerializedComponentFilter,
   ): void {
-    if (!this.filters[modelName]) return;
-
-    const filter = this.filters[modelName as SS][filterIndex];
-    if (!filter) return;
-
-    filter.state[key] = value;
+    if (!this.filters[modelName]) this.filters[modelName] = [];
+    this.filters[modelName][filterIndex] = deserializeComponentFilter(filter);
   }
 
   abstract update(input: Partial<T.KindsToRaw<I>>, dt: number): void;

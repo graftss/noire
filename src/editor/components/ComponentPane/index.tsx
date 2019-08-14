@@ -19,11 +19,12 @@ import {
   defaultSerializedTexture,
   updateTexture,
 } from '../../../display/texture';
-import { defaultInputFilterState } from '../../../display/filter';
 import {
+  getFilterInDict,
   updateComponentFilterState,
-  setComponentInputFilter,
   deserializeComponentFilterDict,
+  mapFilterInDict,
+  defaultSerializedComponentFilter,
 } from '../../../display/component';
 import { getComponentEditorConfig } from '../../../display/component/editor';
 import { TransformerToggle } from '../controls/TransformerToggle';
@@ -120,16 +121,18 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     filterIndex: number,
     kind: T.InputFilterKind,
   ) => {
-    const newFilters = setComponentInputFilter(
+    const newFilters = mapFilterInDict(
       component.filters,
       modelName,
       filterIndex,
-      { kind, state: defaultInputFilterState(kind) },
+      oldFilter => defaultSerializedComponentFilter(kind, oldFilter),
     );
+
     const event = events.setComponentFilters(
       component.id,
       deserializeComponentFilterDict(newFilters),
     );
+
     dispatch(setComponentFilters(component.id, newFilters));
     dispatch(emitDisplayEvents([event]));
   },
@@ -185,19 +188,21 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     key: string,
     value: any,
   ) => {
-    const newFilters = updateComponentFilterState(
+    const newFilters = mapFilterInDict(
       component.filters,
       modelName,
       filterIndex,
-      key,
-      value,
+      oldFilter => updateComponentFilterState(oldFilter, key, value),
     );
+
+    const newFilter = getFilterInDict(newFilters, modelName, filterIndex);
+    if (!newFilter) return;
+
     const event = events.requestFilterUpdate(
       component.id,
       modelName,
       filterIndex,
-      key,
-      value,
+      newFilter,
     );
 
     dispatch(setComponentFilters(component.id, newFilters));

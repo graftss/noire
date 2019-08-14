@@ -1,6 +1,10 @@
 import * as T from '../../types';
 import { deserializeTexture, serializeTexture } from '../texture/';
-import { deserializeInputFilter, getFilterInputKind } from '../filter';
+import {
+  deserializeInputFilter,
+  getFilterInputKind,
+  defaultInputFilter,
+} from '../filter';
 import { assoc, mapObj, mapPath } from '../../utils';
 import { serializeKonvaModel, deserializeKonvaModel } from '../model/konva';
 import { Texture } from '../texture/Texture';
@@ -162,13 +166,28 @@ export type SerializedComponentFilterDict = Dict<
   SerializedComponentFilter<T.InputFilterKind>[]
 >;
 
-export const setComponentInputFilter = (
+export const getFilterInDict = (
   filterDict: SerializedComponentFilterDict,
   modelName: string,
   filterIndex: number,
-  filter: T.SerializedInputFilter,
+): Maybe<SerializedComponentFilter> =>
+  filterDict[modelName] && filterDict[modelName][filterIndex];
+
+export const mapFilterInDict = (
+  filterDict: SerializedComponentFilterDict,
+  modelName: string,
+  filterIndex: number,
+  map: (f: SerializedComponentFilter) => SerializedComponentFilter,
 ): SerializedComponentFilterDict =>
-  mapPath([modelName, filterIndex, 'filter'], () => filter, filterDict);
+  mapPath([modelName, filterIndex], map, filterDict);
+
+export const defaultSerializedComponentFilter = (
+  kind: T.InputFilterKind,
+  oldFilter?: SerializedComponentFilter,
+): SerializedComponentFilter => ({
+  filter: defaultInputFilter(kind, oldFilter && oldFilter.filter),
+  inputMap: {},
+});
 
 export const getComponentFilterControllerKey = (
   component: SerializedComponent,
@@ -191,12 +210,13 @@ export const getComponentFilterInputKind = (
       )
     : undefined;
 
-const deserializeComponentFilter = ({
+export const deserializeComponentFilter = ({
   filter,
   inputMap,
 }: SerializedComponentFilter<T.InputFilterKind>): T.ComponentFilter<
   T.InputFilterKind
 > => ({
+  kind: filter.kind,
   filter: deserializeInputFilter(filter),
   inputMap,
   state: filter.state,
@@ -214,17 +234,11 @@ export interface ComponentFilterKeyUpdate {
 }
 
 export const updateComponentFilterState = (
-  filters: SerializedComponentFilterDict,
-  modelName: string,
-  filterIndex: number,
+  filters: SerializedComponentFilter,
   stateKey: string,
   value: any,
-): SerializedComponentFilterDict =>
-  mapPath(
-    [modelName, filterIndex, 'filter', 'state', stateKey],
-    () => value,
-    filters,
-  );
+): SerializedComponentFilter =>
+  mapPath(['filter', 'state', stateKey], () => value, filters);
 
 export const updateComponentFilterKey = (
   filterDict: SerializedComponentFilterDict,
