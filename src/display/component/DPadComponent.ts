@@ -124,7 +124,7 @@ export class DPadComponent extends Component<
     id: string,
     graphics: T.ComponentGraphics<DPadModels, DPadTextures>,
     state: Partial<DPadState>,
-    filters: T.ComponentFilterDict<DPadModels>,
+    filters: T.ComponentFilters<DPadModels>,
   ) {
     super(
       id,

@@ -49,7 +49,7 @@ export class ButtonComponent extends Component<
     id: string,
     graphics: T.ComponentGraphics<ButtonModels, ButtonTextures>,
     state: Partial<ButtonComponentState>,
-    filters: T.ComponentFilterDict<ButtonModels>,
+    filters: T.ComponentFilters<ButtonModels>,
   ) {
     super(
       id,

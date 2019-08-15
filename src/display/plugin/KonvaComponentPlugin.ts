@@ -332,7 +332,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     const component: Maybe<T.Component> = this.componentsById[id];
     if (component === undefined) return;
 
-    component.setSerializedFilter(modelName, filterIndex, filter);
+    component.setInputFilter(modelName, filterIndex, filter);
     this.emit(events.setComponentFilters(id, component.filters));
   };
 

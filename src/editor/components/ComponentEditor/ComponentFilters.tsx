@@ -2,22 +2,22 @@ import * as React from 'react';
 import * as T from '../../../types';
 import { FiltersEditor } from '../FiltersEditor';
 import { toPairs } from '../../../utils';
-import { getComponentFilterControllerKey } from '../../../display/component';
+import { getInputFilterControllerKey } from '../../../display/filter';
+import { getComponentInputFilter } from '../../../display/component';
 
 interface ComponentFiltersProps {
   component: T.SerializedComponent;
   setDefaultFilter: (
     component: T.SerializedComponent,
-    model: string,
+    modelName: string,
     filterIndex: number,
     kind: T.InputFilterKind,
   ) => void;
   updateFilter: (
     component: T.SerializedComponent,
-    model: string,
+    modelName: string,
     filterIndex: number,
-    key: string,
-    value: any,
+    filter: T.InputFilter,
   ) => void;
 }
 
@@ -28,30 +28,41 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
 }) =>
   !component.filters ? null : (
     <div>
-      {toPairs(component.filters).map(([model, componentFilters]) => (
-        <div key={model}>
+      {toPairs(component.filters).map(([modelName, inputFilters = []]) => (
+        <div key={modelName}>
           <div>
-            <div key={model}>
+            <div key={modelName}>
               <FiltersEditor
-                filterList={componentFilters.map(cf => cf.filter)}
+                filterList={inputFilters}
                 getRemapButtonValue={(
-                  filterKey: string,
+                  inputKey: string,
                   filterIndex: number,
-                ) => ({
-                  kind: 'filter',
-                  component,
-                  controllerKey: getComponentFilterControllerKey(component, {
-                    model,
+                ) => {
+                  const filter = getComponentInputFilter(
+                    component,
+                    modelName,
                     filterIndex,
-                    filterKey,
-                  }),
-                  componentFilterKey: { model, filterIndex, filterKey },
-                })}
-                label={model}
+                  ) as T.InputFilter;
+                  const controllerKey = getInputFilterControllerKey(
+                    filter,
+                    inputKey,
+                  );
+                  return {
+                    kind: 'filter',
+                    component,
+                    controllerKey,
+                    modelName,
+                    filterIndex,
+                    inputKey,
+                  };
+                }}
+                label={modelName}
                 setDefaultFilter={(filterIndex, kind) =>
-                  setDefaultFilter(component, model, filterIndex, kind)
+                  setDefaultFilter(component, modelName, filterIndex, kind)
                 }
-                update={(...args) => updateFilter(component, model, ...args)}
+                update={(filterIndex, filter) =>
+                  updateFilter(component, modelName, filterIndex, filter)
+                }
               />
             </div>
           </div>

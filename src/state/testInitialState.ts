@@ -110,16 +110,14 @@ const vert: T.SerializedComponent = {
   filters: {
     model: [
       {
-        filter: {
-          kind: 'stickDistort',
-          state: {
-            xc: 150,
-            yc: 300,
-            r: 39,
-            R: 55,
-            leash: 0.7,
-            debug: true,
-          },
+        kind: 'stickDistort',
+        state: {
+          xc: 150,
+          yc: 300,
+          r: 39,
+          R: 55,
+          leash: 0.7,
+          debug: true,
         },
         inputMap: {
           xn: { controllerId, key: 'lsXN' },
@@ -129,16 +127,14 @@ const vert: T.SerializedComponent = {
         },
       },
       {
-        filter: {
-          kind: 'stickDistort',
-          state: {
-            xc: 240,
-            yc: 298,
-            r: 39,
-            R: 55,
-            leash: 0.7,
-            debug: true,
-          },
+        kind: 'stickDistort',
+        state: {
+          xc: 240,
+          yc: 298,
+          r: 39,
+          R: 55,
+          leash: 0.7,
+          debug: true,
         },
         inputMap: {
           xn: { controllerId, key: 'rsXN' },
@@ -160,8 +156,8 @@ vertProd.graphics.models.model = serializeKonvaModel(
     height: 606,
   }),
 );
-(vertProd.filters as any).model[0].filter.state.debug = false;
-(vertProd.filters as any).model[1].filter.state.debug = false;
+(vertProd.filters as any).model[0].state.debug = false;
+(vertProd.filters as any).model[1].state.debug = false;
 
 const stickGraphics: any = {
   models: {

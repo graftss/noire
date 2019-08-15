@@ -6,10 +6,10 @@ import { FilterKeys } from './FilterKeys';
 import { FilterKindSelect } from './FilterKindSelect';
 
 interface FilterEditorProps {
-  filter: Maybe<T.SerializedInputFilter>;
+  filter: Maybe<T.InputFilter>;
   getRemapButtonValue: (filterKey: string) => T.RemapButtonValue;
   setDefaultFilter: (k: T.InputFilterKind) => void;
-  update: (key: string, value: any) => void;
+  update: (filter: T.InputFilter) => void;
 }
 
 export const FilterEditor: React.SFC<FilterEditorProps> = ({
@@ -28,8 +28,8 @@ export const FilterEditor: React.SFC<FilterEditorProps> = ({
         <div key={field.key}>
           <EditorField
             field={field}
-            initialValue={field.getter(filter.state)}
-            update={value => update(field.key, value)}
+            initialValue={field.getter(filter)}
+            update={value => update(field.setter(filter, value))}
           />
         </div>
       ))}

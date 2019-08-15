@@ -135,7 +135,7 @@ export const setComponentTexture = (
 
 export const setComponentFilters = (
   id: string,
-  filters: T.ComponentFilterDict,
+  filters: T.ComponentFilters,
 ): T.DisplayEvent<'setComponentFilters'> => ({
   kind: 'setComponentFilters',
   data: { id, filters },
@@ -145,7 +145,7 @@ export const requestFilterUpdate = (
   id: string,
   modelName: string,
   filterIndex: number,
-  filter: T.SerializedComponentFilter,
+  filter: T.InputFilter,
 ): T.DisplayEvent<'requestFilterUpdate'> => ({
   kind: 'requestFilterUpdate',
   data: { id, modelName, filterIndex, filter },

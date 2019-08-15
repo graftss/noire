@@ -13,16 +13,12 @@ export type EditorAction =
       data: { id: string; state: T.ComponentState };
     }
   | {
-      type: 'setComponentFilters';
-      data: { id: string; filters: T.SerializedComponentFilterDict };
-    }
-  | {
       type: 'setComponentInputFilter';
       data: {
         id: string;
         modelName: string;
         filterIndex: number;
-        state: T.SerializedInputFilter;
+        filter: T.InputFilter;
       };
     }
   | {
@@ -110,12 +106,14 @@ export const toggleKonvaTransformer = (): EditorAction => ({
   type: 'toggleKonvaTransformer',
 });
 
-export const setComponentFilters = (
+export const setComponentInputFilter = (
   id: string,
-  filters: T.SerializedComponentFilterDict,
+  modelName: string,
+  filterIndex: number,
+  filter: T.InputFilter,
 ): EditorAction => ({
-  type: 'setComponentFilters',
-  data: { id, filters },
+  type: 'setComponentInputFilter',
+  data: { id, modelName, filterIndex, filter },
 });
 
 export const listenNextInput = (remapState: T.RemapState): EditorAction => ({

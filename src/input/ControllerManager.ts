@@ -1,11 +1,6 @@
 import * as T from '../types';
 import * as events from '../display/events';
-import {
-  setComponentState,
-  setComponentFilters,
-  updateControllerBinding,
-  stopListening,
-} from '../state/actions';
+import * as actions from '../state/actions';
 import {
   controllerWithBinding,
   controllers,
@@ -13,10 +8,10 @@ import {
 } from '../state/selectors';
 import { DisplayEventBus } from '../display/events/DisplayEventBus';
 import {
-  deserializeComponentFilterDict,
+  getComponentInputFilter,
   updateComponentKey,
-  updateComponentFilterKey,
 } from '../display/component';
+import { setInputFilterControllerKey } from '../display/filter';
 import { NextInputListener } from './NextInputListener';
 import { GlobalInputSources } from './source/GlobalInputSources';
 import { getGamepads } from './source/gamepad';
@@ -47,9 +42,9 @@ export class ControllerManager {
   private onAwaitedControllerBinding = (controllerId: string, key: string) => (
     binding: T.Binding,
   ): void => {
-    this.store.dispatch(stopListening());
+    this.store.dispatch(actions.stopListening());
     this.store.dispatch(
-      updateControllerBinding({ controllerId, key, binding }),
+      actions.updateControllerBinding({ controllerId, key, binding }),
     );
   };
 
@@ -70,7 +65,7 @@ export class ControllerManager {
       };
       const newState = updateComponentKey(component.state, update);
 
-      this.store.dispatch(setComponentState(componentId, newState));
+      this.store.dispatch(actions.setComponentState(componentId, newState));
       this.eventBus.emit(events.setComponentState(componentId, newState));
     } else {
       // TODO: handle input that's not already mapped to a controller,
@@ -78,43 +73,53 @@ export class ControllerManager {
       // know that their input is unmapped
     }
 
-    this.store.dispatch(stopListening());
+    this.store.dispatch(actions.stopListening());
   };
 
   private onAwaitedFilterBinding = (
     componentId: string,
-    componentFilterKey: T.ComponentFilterKey,
+    modelName: string,
+    filterIndex: number,
+    inputKey: string,
   ) => (binding: T.Binding): void => {
     const state = this.store.getState();
     const c = controllerWithBinding(state)(binding);
     const component = componentById(state)(componentId);
 
     if (c && component) {
+      const filter = getComponentInputFilter(component, modelName, filterIndex);
+      if (!filter) return;
+
       const { controller, key } = c;
-      const update: T.ComponentFilterKeyUpdate = {
+      const controllerKey = { controllerId: controller.id, key };
+      const newFilter = setInputFilterControllerKey(
+        filter,
+        inputKey,
+        controllerKey,
+      );
+
+      const event = events.requestFilterUpdate(
         componentId,
-        componentFilterKey,
-        controllerKey: { controllerId: controller.id, key },
-      };
+        modelName,
+        filterIndex,
+        filter,
+      );
 
-      if (component.filters) {
-        const newFilters = updateComponentFilterKey(component.filters, update);
-
-        this.store.dispatch(setComponentFilters(componentId, newFilters));
-        this.eventBus.emit(
-          events.setComponentFilters(
-            componentId,
-            deserializeComponentFilterDict(newFilters),
-          ),
-        );
-      }
+      this.store.dispatch(
+        actions.setComponentInputFilter(
+          componentId,
+          modelName,
+          filterIndex,
+          newFilter,
+        ),
+      );
+      this.eventBus.emit(event);
     } else {
       // TODO: handle input that's not already mapped to a controller;
       // see above in `onAwaitedComponentBinding`
-      // see above in `onAwaitedComponentBinding`
     }
 
-    this.store.dispatch(stopListening());
+    this.store.dispatch(actions.stopListening());
   };
 
   private onListenNextInput = (remap: T.RemapState): void => {
@@ -134,8 +139,19 @@ export class ControllerManager {
       }
 
       case 'filter': {
-        const { componentId: id, inputKind, componentFilterKey: key } = remap;
-        const handler = this.onAwaitedFilterBinding(id, key);
+        const {
+          componentId: id,
+          inputKind,
+          key,
+          modelName,
+          filterIndex,
+        } = remap;
+        const handler = this.onAwaitedFilterBinding(
+          id,
+          modelName,
+          filterIndex,
+          key,
+        );
         this.nextInputListener.await(inputKind, handler);
         break;
       }

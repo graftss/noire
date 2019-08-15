@@ -1,5 +1,5 @@
 import * as T from '../../types';
-import { keys, toPairs } from '../../utils';
+import { assocPath, keys, path, toPairs } from '../../utils';
 import {
   stickDistort,
   dPadDistort,
@@ -25,7 +25,7 @@ const inputFilterClasses: Record<InputFilterKind, string> = {
 
 export type Filter = (i: ImageData) => void;
 
-export type FilterFactory<S = {}> = (state: S) => (i: ImageData) => void;
+export type FilterFactory<C> = (c: C) => Filter;
 
 export type InputFilterKind = keyof InputFilterData;
 
@@ -42,25 +42,23 @@ export type InputFilterFactory<K extends InputFilterKind> = FilterFactory<{
   input: InputFilterInput<K>;
 }>;
 
-export interface SerializedInputFilter<
-  K extends InputFilterKind = InputFilterKind
-> {
+export interface InputFilter<K extends InputFilterKind = InputFilterKind> {
   kind: K;
   state: InputFilterState<K>;
+  inputMap: Dict<T.ControllerKey>;
 }
 
 export interface InputFilterField<
   K extends InputFilterKind = InputFilterKind,
   FK extends T.EditorFieldKind = T.EditorFieldKind
 > extends T.EditorField<FK> {
-  getter: (s: InputFilterState<K>) => T.EditorFieldType<FK>;
-  setter: (
-    s: InputFilterState<K>,
-    v: T.EditorFieldType<FK>,
-  ) => InputFilterState<K>;
+  getter: (s: InputFilter<K>) => T.EditorFieldType<FK>;
+  setter: (s: InputFilter<K>, v: T.EditorFieldType<FK>) => InputFilter<K>;
 }
 
-const inputFilters: { [K in InputFilterKind]: InputFilterFactory<K> } = {
+const inputFilterFactories: {
+  [K in InputFilterKind]: InputFilterFactory<K>;
+} = {
   buttonZoom,
   dPadDistort,
   stickDistort,
@@ -81,25 +79,13 @@ const defaultInputFilterStates: {
 };
 
 export const getInputFilterKinds = (): InputFilterKind[] => [
-  ...keys(inputFilters),
+  ...keys(inputFilterFactories),
 ];
 
-export const deserializeInputFilter = <K extends InputFilterKind>(
-  filter: SerializedInputFilter<K>,
-): InputFilterFactory<K> => inputFilters[filter.kind];
-
-export const getInputFilterKeyList = (
-  filter: SerializedInputFilter<T.InputFilterKind>,
-): { filterKey: string; inputKind: T.InputKind }[] => {
-  return toPairs(filterInputKinds[filter.kind]).map(
-    ([filterKey, inputKind]) => ({ filterKey, inputKind }),
-  );
-};
-
 export const getFilterInputKind = (
-  filter: SerializedInputFilter<T.InputFilterKind>,
+  filter: InputFilter,
   filterKey: string,
-): T.InputKind => filterInputKinds[filter.kind][filterKey];
+): Maybe<T.InputKind> => filterInputKinds[filter.kind][filterKey];
 
 const inputFilterFields: Record<InputFilterKind, InputFilterField[]> = {
   stickDistort: distortStateFields,
@@ -107,15 +93,44 @@ const inputFilterFields: Record<InputFilterKind, InputFilterField[]> = {
   buttonZoom: [],
 };
 
+export const reifyInputFilter = <K extends InputFilterKind>(
+  filter: InputFilter<K>,
+  input: Dict<T.RawInput>,
+): Filter =>
+  (inputFilterFactories[filter.kind] as InputFilterFactory<K>)({
+    state: filter.state as InputFilterState<K>,
+    input: input as InputFilterInput<K>,
+  });
+
+export const getInputFilterKeyList = (
+  filter: InputFilter,
+): { filterKey: string; inputKind: T.InputKind }[] => {
+  return toPairs(filterInputKinds[filter.kind]).map(
+    ([filterKey, inputKind]) => ({ filterKey, inputKind }),
+  );
+};
+
+export const getInputFilterControllerKey = (
+  filter: InputFilter,
+  inputKey: string,
+): Maybe<T.ControllerKey> => path(['inputMap', inputKey], filter);
+
+export const setInputFilterControllerKey = (
+  filter: InputFilter,
+  inputKey: string,
+  controllerKey: T.ControllerKey,
+): InputFilter => assocPath(['inputMap', inputKey], controllerKey, filter);
+
 export const getInputFilterFields = (
   kind: InputFilterKind,
 ): InputFilterField[] => inputFilterFields[kind];
 
 export const defaultInputFilter = (
   kind: InputFilterKind,
-  oldFilter?: SerializedInputFilter,
-): SerializedInputFilter => ({
+  oldFilter?: InputFilter,
+): InputFilter => ({
   kind,
+  inputMap: {},
   state:
     oldFilter && inputFilterClasses[kind] === inputFilterClasses[oldFilter.kind]
       ? oldFilter.state

@@ -52,14 +52,13 @@ export class ComponentManager {
       return controllerInput && controllerInput[key];
     };
 
-    const getFilterInput = (
-      filter: T.ComponentFilter<T.InputFilterKind>,
-    ): Dict<Maybe<T.Input>> => mapObj(getControllerKeyInput, filter.inputMap);
+    const getFilterInput = (filter: T.InputFilter): Dict<Maybe<T.Input>> =>
+      mapObj(getControllerKeyInput, filter.inputMap);
 
     this.components.forEach((component: Component) => {
       const componentInput: Dict<Maybe<T.Input>> = map(
         getControllerKeyInput,
-        component.state.inputMap || {},
+        component.state.inputMap,
       );
 
       const componentRawInput = compose(
@@ -68,20 +67,19 @@ export class ComponentManager {
         unMaybeObj as (i: Dict<Maybe<T.Input>>) => Dict<T.Input>,
       )(componentInput);
 
-      const filterInput =
-        component.filters &&
-        mapObj(
-          modelFilters =>
-            modelFilters.map(
-              compose(
-                rawifyInputDict,
-                getFilterInput,
-              ),
+      const filterInput = mapObj(
+        modelFilters =>
+          modelFilters &&
+          modelFilters.map(
+            compose(
+              rawifyInputDict,
+              getFilterInput,
             ),
-          component.filters,
-        );
+          ),
+        component.filters,
+      );
 
-      component.applyFilterInput(filterInput);
+      component.updateFilters(filterInput);
       component.update(componentRawInput, dt);
     });
   }

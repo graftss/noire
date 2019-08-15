@@ -20,7 +20,9 @@ export type RemapState =
       kind: 'filter';
       inputKind: T.InputKind;
       componentId: string;
-      componentFilterKey: T.ComponentFilterKey;
+      modelName: string;
+      filterIndex: number;
+      key: string;
     };
 
 export interface InputState {

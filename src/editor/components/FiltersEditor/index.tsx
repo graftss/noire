@@ -5,9 +5,9 @@ import { FilterEditor } from './FilterEditor';
 interface FilterEditorProps<TS extends readonly string[]> {
   getRemapButtonValue: (filterKey: string, index: number) => T.RemapButtonValue;
   setDefaultFilter: (filterIndex: number, k: T.InputFilterKind) => void;
-  filterList: T.SerializedInputFilter[];
+  filterList: T.InputFilter[];
   label: string;
-  update: (filterIndex: number, key: string, value: any) => void;
+  update: (filterIndex: number, filter: T.InputFilter) => void;
 }
 
 export function FiltersEditor<TS extends readonly string[]>({
@@ -20,13 +20,13 @@ export function FiltersEditor<TS extends readonly string[]>({
   return (
     <div>
       <div>{label}</div>
-      {filterList.map((filter, index) => (
+      {filterList.map((filter, filterIndex) => (
         <FilterEditor
-          key={index}
-          getRemapButtonValue={key => getRemapButtonValue(key, index)}
-          setDefaultFilter={kind => setDefaultFilter(index, kind)}
+          key={filterIndex}
+          getRemapButtonValue={key => getRemapButtonValue(key, filterIndex)}
+          setDefaultFilter={kind => setDefaultFilter(filterIndex, kind)}
           filter={filter}
-          update={(key, value) => update(index, key, value)}
+          update={filter => update(filterIndex, filter)}
         />
       ))}
     </div>

@@ -16,10 +16,11 @@ import {
 import { stringifyBinding } from '../../../input/source/bindings';
 import {
   getComponentKeyInputKind,
-  getComponentFilterInputKind,
   mappedControllerKey,
+  getComponentInputFilter,
 } from '../../../display/component';
 import { DEFAULT_AXIS_DEADZONE } from '../../../input/source/gamepad';
+import { getFilterInputKind } from '../../../display/filter';
 import { FloatField } from './FloatField';
 
 export type RemapButtonValue =
@@ -32,8 +33,10 @@ export type RemapButtonValue =
   | {
       kind: 'filter';
       component: T.SerializedComponent;
+      modelName: string;
+      filterIndex: number;
+      inputKey: string;
       controllerKey: Maybe<T.ControllerKey>;
-      componentFilterKey: T.ComponentFilterKey;
     };
 
 interface PropsFromState {
@@ -90,15 +93,21 @@ const computeRemapState = (value: RemapButtonValue): T.RemapState => {
     }
 
     case 'filter':
-      const { component, componentFilterKey } = value;
+      const { component, modelName, filterIndex, inputKey } = value;
+      const filter = getComponentInputFilter(
+        component,
+        modelName,
+        filterIndex,
+      ) as T.InputFilter;
+      const inputKind = getFilterInputKind(filter, inputKey) as T.InputKind;
+
       return {
         kind: 'filter',
-        inputKind: getComponentFilterInputKind(
-          component,
-          componentFilterKey,
-        ) as T.InputKind,
+        inputKind,
         componentId: component.id,
-        componentFilterKey,
+        modelName,
+        filterIndex,
+        key: inputKey,
       };
   }
 };

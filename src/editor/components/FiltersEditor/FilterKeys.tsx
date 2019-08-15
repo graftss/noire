@@ -4,7 +4,7 @@ import { getInputFilterKeyList } from '../../../display/filter';
 import { RemapButton } from '../controls/RemapButton';
 
 interface FilterKeysProps {
-  filter: T.SerializedInputFilter;
+  filter: T.InputFilter;
   getRemapButtonValue: (filterKey: string) => T.RemapButtonValue;
 }
 

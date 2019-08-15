@@ -1,10 +1,9 @@
-import Konva from 'konva';
 import * as T from '../../types';
 import { mapObj, unMaybeList, values } from '../../utils';
 import { defaultInputByKind } from '../../input/input';
 import { Texture } from '../texture/Texture';
 import { deserializeTexture } from '../texture';
-import { deserializeComponentFilter } from '.';
+import { reifyInputFilter } from '../filter';
 
 export interface ComponentGraphics<SS extends string, TS extends string> {
   models: Record<SS, Maybe<T.KonvaModel>>;
@@ -29,18 +28,8 @@ const defaultComponentState: Required<ComponentState> = {
   scale: { x: 1, y: 1 },
 };
 
-export interface ComponentFilter<
-  K extends T.InputFilterKind = T.InputFilterKind
-> {
-  kind: T.InputFilterKind;
-  filter: T.InputFilterFactory<K>;
-  state: T.InputFilterData[K]['state'];
-  inputMap: Dict<T.ControllerKey>;
-}
-
-export type ComponentFilterDict<SS extends string = string> = Record<
-  SS,
-  ComponentFilter<T.InputFilterKind>[]
+export type ComponentFilters<SS extends string = string> = Partial<
+  Record<SS, T.InputFilter[]>
 >;
 
 export abstract class Component<
@@ -53,21 +42,21 @@ export abstract class Component<
   graphics: ComponentGraphics<SS, TS>;
   inputKinds: I;
   state: Required<S>;
-  filters: ComponentFilterDict<SS>;
+  filters: ComponentFilters<SS>;
 
   constructor(
     id: string,
     graphics: ComponentGraphics<SS, TS>,
     inputKinds: I,
     state: S,
-    filters?: ComponentFilterDict<SS>,
+    filters: ComponentFilters<SS> = {},
   ) {
     this.id = id;
     this.graphics = graphics;
     this.graphics.models;
     this.inputKinds = inputKinds;
     this.state = { ...defaultComponentState, ...state } as Required<S>;
-    this.filters = filters || mapObj(() => [], graphics.models);
+    this.filters = filters;
   }
 
   applyDefaultInput = (
@@ -88,23 +77,23 @@ export abstract class Component<
     return allInput as Required<T.KindsToRaw<I>>;
   };
 
-  applyFilterInput(
-    filterInput: Maybe<Record<string, Dict<Maybe<T.RawInput>>[]>>,
+  updateFilters(
+    allFilterInput: Partial<Record<SS, Dict<T.RawInput>[]>> = {},
   ): void {
-    if (!this.filters || !filterInput) return;
+    if (!this.filters) return;
 
-    for (const key in this.graphics.models) {
-      if (this.filters[key]) {
-        const model = this.graphics.models[key] as Konva.Shape;
-        const modelFilterInput = filterInput[key];
+    for (const modelName in this.graphics.models) {
+      const model = this.graphics.models[modelName as SS];
+      const modelInputFilters = this.filters[modelName as SS];
+      const modelInput = allFilterInput[modelName];
 
-        const initFilter = (
-          { filter, state }: ComponentFilter,
-          index: number,
-        ): T.Filter => filter({ state, input: modelFilterInput[index] as any });
+      if (!model || !modelInputFilters || !modelInput) continue;
 
-        model.filters(this.filters[key].map(initFilter));
-      }
+      model.filters(
+        modelInputFilters.map((inputFilter, index) =>
+          reifyInputFilter(inputFilter, modelInput[index]),
+        ),
+      );
     }
   }
 
@@ -121,17 +110,17 @@ export abstract class Component<
     this.state = { ...this.state, ...state };
   }
 
-  setFilters(filters: ComponentFilterDict<SS>): void {
+  setFilters(filters: ComponentFilters<SS>): void {
     this.filters = filters;
   }
 
-  setSerializedFilter(
+  setInputFilter(
     modelName: SS,
     filterIndex: number,
-    filter: T.SerializedComponentFilter,
+    filter: T.InputFilter,
   ): void {
     if (!this.filters[modelName]) this.filters[modelName] = [];
-    this.filters[modelName][filterIndex] = deserializeComponentFilter(filter);
+    this.filters[modelName][filterIndex] = filter;
   }
 
   setSerializedTexture(textureName: TS, texture: T.SerializedTexture): Texture {

@@ -5,15 +5,10 @@ import * as events from '../../../display/events';
 import * as actions from '../../../state/actions';
 import { defaultSerializedKonvaModel } from '../../../display/model/konva';
 import { defaultSerializedTexture } from '../../../display/texture';
-import {
-  getFilterInDict,
-  updateComponentFilterState,
-  deserializeComponentFilterDict,
-  mapFilterInDict,
-  defaultSerializedComponentFilter,
-} from '../../../display/component';
+import { getComponentInputFilter } from '../../../display/component';
 import { getComponentEditorConfig } from '../../../display/component/editor';
 import { TransformerToggle } from '../controls/TransformerToggle';
+import { defaultInputFilter } from '../../../display/filter';
 import { ComponentFilters } from './ComponentFilters';
 import { ComponentTextures } from './ComponentTextures';
 import { ComponentKeys } from './ComponentKeys';
@@ -53,8 +48,7 @@ interface PropsFromDispatch {
     c: T.SerializedComponent,
     modelName: string,
     filterIndex: number,
-    key: string,
-    value: any,
+    filter: T.InputFilter,
   ) => void;
 }
 
@@ -85,20 +79,29 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     filterIndex: number,
     kind: T.InputFilterKind,
   ) => {
-    const newFilters = mapFilterInDict(
-      component.filters,
+    const oldFilter = getComponentInputFilter(
+      component,
       modelName,
       filterIndex,
-      oldFilter => defaultSerializedComponentFilter(kind, oldFilter),
     );
+    const filter = defaultInputFilter(kind, oldFilter);
 
-    const event = events.setComponentFilters(
+    const event = events.requestFilterUpdate(
       component.id,
-      deserializeComponentFilterDict(newFilters),
+      modelName,
+      filterIndex,
+      filter,
     );
 
-    dispatch(actions.setComponentFilters(component.id, newFilters));
     dispatch(actions.emitDisplayEvents([event]));
+    dispatch(
+      actions.setComponentInputFilter(
+        component.id,
+        modelName,
+        filterIndex,
+        filter,
+      ),
+    );
   },
 
   updateState: (
@@ -141,27 +144,23 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     component: T.SerializedComponent,
     modelName: string,
     filterIndex: number,
-    key: string,
-    value: any,
+    filter: T.InputFilter,
   ) => {
-    const newFilters = mapFilterInDict(
-      component.filters,
-      modelName,
-      filterIndex,
-      oldFilter => updateComponentFilterState(oldFilter, key, value),
-    );
-
-    const newFilter = getFilterInDict(newFilters, modelName, filterIndex);
-    if (!newFilter) return;
-
     const event = events.requestFilterUpdate(
       component.id,
       modelName,
       filterIndex,
-      newFilter,
+      filter,
     );
 
-    dispatch(actions.setComponentFilters(component.id, newFilters));
+    dispatch(
+      actions.setComponentInputFilter(
+        component.id,
+        modelName,
+        filterIndex,
+        filter,
+      ),
+    );
     dispatch(actions.emitDisplayEvents([event]));
   },
 });

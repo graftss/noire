@@ -48,12 +48,12 @@ export interface DisplayHandlerData {
     kind: T.TextureKind;
   };
   setComponentTexture: { id: string; textureName: string; texture: Texture };
-  setComponentFilters: { id: string; filters: T.ComponentFilterDict };
+  setComponentFilters: { id: string; filters: T.ComponentFilters };
   requestFilterUpdate: {
     id: string;
     modelName: string;
     filterIndex: number;
-    filter: T.SerializedComponentFilter;
+    filter: T.InputFilter;
   };
   requestDefaultFilter: {
     id: string;

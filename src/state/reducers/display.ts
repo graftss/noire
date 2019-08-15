@@ -1,7 +1,7 @@
 import * as T from '../../types';
 import { testInitialState } from '../testInitialState';
 import { mapComponentWithId } from '../maps';
-import { mapPath } from '../../utils';
+import { assocPath } from '../../utils';
 
 export interface DisplayState {
   components: T.SerializedComponent[];
@@ -46,17 +46,19 @@ export const displayReducer = (
       }));
     }
 
-    case 'setComponentFilters': {
-      const { id, filters } = action.data;
+    case 'setComponentInputFilter': {
+      const { id, modelName, filterIndex, filter } = action.data;
 
-      return mapComponentWithId.proj(state)(id, c => ({ ...c, filters }));
+      return mapComponentWithId.proj(state)(id, c =>
+        assocPath(['filters', modelName, filterIndex], filter, c),
+      );
     }
 
     case 'setComponentModel': {
       const { id, modelName, model } = action.data;
 
       return mapComponentWithId.proj(state)(id, c =>
-        mapPath(['graphics', 'models', modelName], () => model, c),
+        assocPath(['graphics', 'models', modelName], model, c),
       );
     }
 
@@ -64,7 +66,7 @@ export const displayReducer = (
       const { id, textureName, texture } = action.data;
 
       return mapComponentWithId.proj(state)(id, c =>
-        mapPath(['graphics', 'textures', textureName], () => texture, c),
+        assocPath(['graphics', 'textures', textureName], texture, c),
       );
     }
 

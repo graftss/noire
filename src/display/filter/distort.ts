@@ -1,5 +1,5 @@
 import * as T from '../../types';
-import { normalizeAxis } from '../../utils';
+import { assocPath, normalizeAxis } from '../../utils';
 import { copyImageData, createImageData, dist } from './utils';
 
 const { round } = Math;
@@ -129,8 +129,8 @@ export const distortStateFields: T.InputFilterField<DistortKinds>[] = [
     kind: 'number',
     defaultValue: defaultDistortState.xc,
     props: { precision: 1 },
-    getter: (s: DistortState) => s.xc,
-    setter: (s: DistortState, xc: number) => ({ ...s, xc }),
+    getter: filter => filter.state.xc,
+    setter: (filter, xc: number) => assocPath(['state', 'xc'], xc, filter),
   },
   {
     label: 'y offset',
@@ -138,8 +138,8 @@ export const distortStateFields: T.InputFilterField<DistortKinds>[] = [
     kind: 'number',
     defaultValue: defaultDistortState.yc,
     props: { precision: 1 },
-    getter: (s: DistortState) => s.yc,
-    setter: (s: DistortState, yc: number) => ({ ...s, yc }),
+    getter: filter => filter.state.yc,
+    setter: (filter, yc: number) => assocPath(['state', 'yc'], yc, filter),
   },
   {
     label: 'outer radius',
@@ -147,8 +147,8 @@ export const distortStateFields: T.InputFilterField<DistortKinds>[] = [
     kind: 'number',
     defaultValue: defaultDistortState.R,
     props: { precision: 1 },
-    getter: (s: DistortState) => s.R,
-    setter: (s: DistortState, R: number) => ({ ...s, R }),
+    getter: filter => filter.state.R,
+    setter: (filter, R: number) => assocPath(['state', 'R'], R, filter),
   },
   {
     label: 'inner radius',
@@ -156,8 +156,8 @@ export const distortStateFields: T.InputFilterField<DistortKinds>[] = [
     kind: 'number',
     defaultValue: defaultDistortState.r,
     props: { precision: 1 },
-    getter: (s: DistortState) => s.r,
-    setter: (s: DistortState, r: number) => ({ ...s, r }),
+    getter: filter => filter.state.r,
+    setter: (filter, r: number) => assocPath(['state', 'r'], r, filter),
   },
   {
     label: 'debug',
@@ -165,8 +165,9 @@ export const distortStateFields: T.InputFilterField<DistortKinds>[] = [
     kind: 'boolean',
     defaultValue: defaultDistortState.debug,
     props: { precision: 1 },
-    getter: (s: DistortState) => s.debug,
-    setter: (s: DistortState, debug: boolean) => ({ ...s, debug }),
+    getter: filter => filter.state.debug,
+    setter: (filter, debug: boolean) =>
+      assocPath(['state', 'debug'], debug, filter),
   },
   {
     label: 'leash',
@@ -174,8 +175,9 @@ export const distortStateFields: T.InputFilterField<DistortKinds>[] = [
     kind: 'number',
     defaultValue: defaultDistortState.leash,
     props: { precision: 2 },
-    getter: (s: DistortState) => s.leash,
-    setter: (s: DistortState, leash: number) => ({ ...s, leash }),
+    getter: filter => filter.state.leash,
+    setter: (filter, leash: number) =>
+      assocPath(['state', 'leash'], leash, filter),
   },
 ];
 

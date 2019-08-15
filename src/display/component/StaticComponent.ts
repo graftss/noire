@@ -45,7 +45,7 @@ export class StaticComponent extends Component<
     id: string,
     graphics: T.ComponentGraphics<StaticModels, StaticTextures>,
     state: Partial<StaticState>,
-    filters: T.ComponentFilterDict<StaticModels>,
+    filters: T.ComponentFilters<StaticModels>,
   ) {
     super(
       id,

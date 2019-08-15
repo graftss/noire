@@ -64,15 +64,11 @@ export {
 export { KonvaSelectable } from './display/plugin/KonvaComponentPlugin';
 export {
   ComponentData,
-  ComponentFilterKey,
-  ComponentFilterKeyUpdate,
   ComponentKey,
   ComponentKeyUpdate,
   ComponentKind,
   SerializedComponent,
   SerializedComponentStateData,
-  SerializedComponentFilter,
-  SerializedComponentFilterDict,
 } from './display/component/';
 export {
   KonvaModelData,
@@ -99,8 +95,7 @@ export {
   ComponentState,
   Component,
   ComponentGraphics,
-  ComponentFilter,
-  ComponentFilterDict,
+  ComponentFilters,
 } from './display/component/Component';
 export {
   StickState,
@@ -171,7 +166,7 @@ export {
   InputFilterKind,
   InputFilterData,
   InputFilterField,
-  SerializedInputFilter,
+  InputFilter,
 } from './display/filter';
 export { TabKind, TabState } from './state/reducers/tab';
 export { PresentationState } from './state/reducers/presentation';

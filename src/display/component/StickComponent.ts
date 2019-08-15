@@ -86,7 +86,7 @@ export class StickComponent extends Component<
     id: string,
     graphics: T.ComponentGraphics<StickModels, StickTextures>,
     state: Partial<StickState>,
-    filters: T.ComponentFilterDict<StickModels>,
+    filters: T.ComponentFilters<StickModels>,
   ) {
     super(
       id,

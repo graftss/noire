@@ -108,7 +108,7 @@ export const isListening = lift(
         return (
           state.remap.kind === 'filter' &&
           equalAtKeys(
-            ['kind', 'componentId', 'componentFilterKey'],
+            ['kind', 'componentId', 'modelName', 'filterIndex', 'key'],
             state.remap,
             remap,
           )
