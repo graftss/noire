@@ -15,7 +15,7 @@ interface ComponentOption {
 
 const toOption = (b: T.SerializedComponent): ComponentOption => ({
   value: b.id,
-  label: b.state.name,
+  label: b.state.name || 'Unnamed component',
 });
 
 export const ComponentSelect: React.SFC<ComponentSelectProps> = ({

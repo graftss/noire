@@ -20,25 +20,6 @@ export interface ComponentData<I = any> {
   inputKinds: I;
 }
 
-// K: identifying kind of component
-// SS: model keys
-// TS: texture keys
-// I: component input
-// S: component state
-export interface SerializedComponent<
-  K = ComponentKind,
-  SS extends string = string,
-  TS extends string = string,
-  I extends Dict<T.InputKind> = {},
-  S = any
-> {
-  id: string;
-  kind: K;
-  graphics: SerializedComponentGraphics<SS, TS>;
-  state: Required<S & T.ComponentState<I>>;
-  filters: Record<SS, SerializedComponentFilter<T.InputFilterKind>[]>;
-}
-
 export interface SerializedComponentStateData {
   button: T.SerializedButtonComponent['state'];
   stick: T.SerializedStickComponent['state'];
@@ -47,6 +28,25 @@ export interface SerializedComponentStateData {
 }
 
 export type ComponentKind = keyof SerializedComponentStateData;
+
+// K: identifying kind of component
+// SS: model keys
+// TS: texture keys
+// I: component input
+// S: component state
+export interface SerializedComponent<
+  K extends ComponentKind = ComponentKind,
+  SS extends string = string,
+  TS extends string = string,
+  I extends Dict<T.InputKind> = {},
+  S extends SerializedComponentStateData[K] = SerializedComponentStateData[K]
+> {
+  id: string;
+  kind: K;
+  graphics: SerializedComponentGraphics<SS, TS>;
+  state: S;
+  filters: Record<SS, SerializedComponentFilter<T.InputFilterKind>[]>;
+}
 
 const componentData = {
   button: buttonComponentData,
