@@ -2,16 +2,18 @@ import * as T from '../../types';
 import { Component } from './Component';
 
 const inputKinds = { button: 'button' } as const;
+const models = ['model'] as const;
+const textures = ['on', 'off'] as const;
 
 export const buttonComponentData: T.ComponentData<typeof inputKinds> = {
-  models: ['on', 'off'] as const,
-  textures: ['on', 'off'] as const,
+  models,
+  textures,
   inputKinds,
-};
+} as const;
 
-type ButtonModels = typeof buttonComponentData.models[number];
-type ButtonTextures = typeof buttonComponentData.textures[number];
-type ButtonInput = typeof buttonComponentData.inputKinds;
+type ButtonModels = typeof models[number];
+type ButtonTextures = typeof textures[number];
+type ButtonInput = typeof inputKinds;
 export type ButtonComponentState = T.ComponentState<ButtonInput>;
 
 const buttonKeys: T.ComponentKey[] = [
@@ -59,17 +61,13 @@ export class ButtonComponent extends Component<
   }
 
   update(input: T.KindsToRaw<ButtonInput>): void {
-    const { textures, models } = this.graphics;
     const { button } = input;
+    const {
+      textures: { on, off },
+      models: { model },
+    } = this.graphics;
 
-    if (button && models.on && textures.on) {
-      if (models.off) models.off.hide();
-      models.on.show();
-      textures.on.apply(models.on);
-    } else if (models.off && textures.off) {
-      if (models.on) models.on.hide();
-      models.off.show();
-      textures.off.apply(models.off);
-    }
+    if (button && model && on) on.apply(model);
+    else if (!button && model && off) off.apply(model);
   }
 }

@@ -287,10 +287,7 @@ const button: T.SerializedComponent = {
   kind: 'button',
   graphics: {
     models: {
-      on: serializeKonvaModel(
-        new Konva.Rect({ x: 0, y: 0, width: 30, height: 30 }),
-      ),
-      off: serializeKonvaModel(
+      model: serializeKonvaModel(
         new Konva.Rect({ x: 0, y: 0, width: 30, height: 30 }),
       ),
     },
@@ -353,7 +350,7 @@ const components: T.SerializedComponent[] = [
   leftStick,
   rightStick,
   // dPad,
-  // button,
+  button,
 ];
 
 export const testInitialState: T.EditorState = {
