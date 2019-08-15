@@ -3,6 +3,7 @@ import * as T from '../../types';
 import { mapObj, unMaybeList, values } from '../../utils';
 import { defaultInputByKind } from '../../input/input';
 import { Texture } from '../texture/Texture';
+import { deserializeTexture } from '../texture';
 import { deserializeComponentFilter } from '.';
 
 export interface ComponentGraphics<SS extends string, TS extends string> {
@@ -131,6 +132,12 @@ export abstract class Component<
   ): void {
     if (!this.filters[modelName]) this.filters[modelName] = [];
     this.filters[modelName][filterIndex] = deserializeComponentFilter(filter);
+  }
+
+  setSerializedTexture(textureName: TS, texture: T.SerializedTexture): Texture {
+    const cTexture = deserializeTexture(texture);
+    this.graphics.textures[textureName] = cTexture;
+    return cTexture;
   }
 
   abstract update(input: Partial<T.KindsToRaw<I>>, dt: number): void;

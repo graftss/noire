@@ -8,7 +8,7 @@ interface TextureEditorProps {
   name: string;
   setDefaultTexture: (name: string, k: T.TextureKind) => void;
   texture: Maybe<T.SerializedTexture>;
-  update: (key: string, value: any) => void;
+  update: (texture: T.SerializedTexture) => void;
 }
 
 export const TextureEditor: React.SFC<TextureEditorProps> = ({
@@ -31,7 +31,7 @@ export const TextureEditor: React.SFC<TextureEditorProps> = ({
           <EditorField
             field={field}
             initialValue={field.getter(texture)}
-            update={value => update(field.key, value)}
+            update={value => update(field.setter(texture, value))}
           />
         </div>
       ))}

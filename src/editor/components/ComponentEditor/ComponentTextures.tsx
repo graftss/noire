@@ -10,11 +10,10 @@ interface ComponentTexturesProps {
     k: T.TextureKind,
   ) => void;
   textureList: readonly string[];
-  updateTexture: (
+  update: (
     component: T.SerializedComponent,
     textureName: string,
-    key: string,
-    value: any,
+    texture: T.SerializedTexture,
   ) => void;
 }
 
@@ -22,7 +21,7 @@ export const ComponentTextures: React.SFC<ComponentTexturesProps> = ({
   component,
   setDefaultTexture,
   textureList,
-  updateTexture,
+  update,
 }) => {
   return (
     <div>
@@ -34,9 +33,7 @@ export const ComponentTextures: React.SFC<ComponentTexturesProps> = ({
           }
           textureList={textureList}
           textureMap={component.graphics.textures}
-          update={(name, key, value) =>
-            updateTexture(component, name, key, value)
-          }
+          update={(name, texture) => update(component, name, texture)}
         />
       </div>
     </div>

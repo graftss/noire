@@ -82,11 +82,10 @@ export const setComponentState = (
 export const requestModelUpdate = (
   id: string,
   modelName: string,
-  key: string,
-  value: any,
+  serializedModel: T.SerializedKonvaModel,
 ): T.DisplayEvent<'requestModelUpdate'> => ({
   kind: 'requestModelUpdate',
-  data: { id, modelName, key, value },
+  data: { id, modelName, serializedModel },
 });
 
 export const requestDefaultModel = (
@@ -110,11 +109,10 @@ export const setComponentModel = (
 export const requestTextureUpdate = (
   id: string,
   textureName: string,
-  key: string,
-  value: any,
+  texture: T.SerializedTexture,
 ): T.DisplayEvent<'requestTextureUpdate'> => ({
   kind: 'requestTextureUpdate',
-  data: { id, textureName, key, value },
+  data: { id, textureName, texture },
 });
 
 export const requestDefaultTexture = (

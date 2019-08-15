@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import * as T from '../../types';
 import * as events from '../events';
-import { defaultKonvaModel, updateKonvaModel } from '../model/konva';
+import { defaultKonvaModel, deserializeKonvaModel } from '../model/konva';
 import { defaultTexture } from '../texture';
 import { DisplayPlugin } from './DisplayPlugin';
 import { Display } from '..';
@@ -265,17 +265,14 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   private onRequestModelUpdate = ({
     id,
     modelName,
-    key,
-    value,
+    serializedModel,
   }: T.DisplayHandlerData['requestModelUpdate']): void => {
     const component: Maybe<T.Component> = this.componentsById[id];
     if (component === undefined) return;
 
-    const model: Maybe<T.KonvaModel> = component.graphics.models[modelName];
-    if (model === undefined) return;
+    const model = deserializeKonvaModel(serializedModel);
 
     this.updateTransformer();
-    updateKonvaModel(model, key, value);
     this.emit(events.setComponentModel(id, modelName, model));
   };
 
@@ -295,23 +292,21 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     component.graphics.models[modelName] = model;
     this.addModel(id, group)(model);
 
+    this.updateTransformer();
+
     this.emit(events.setComponentModel(id, modelName, model));
   };
 
   private onRequestTextureUpdate = ({
     id,
     textureName,
-    key,
-    value,
+    texture,
   }: T.DisplayHandlerData['requestTextureUpdate']): void => {
     const component: Maybe<T.Component> = this.componentsById[id];
     if (component === undefined) return;
 
-    const texture = component.graphics.textures[textureName];
-    if (texture === undefined) return;
-
-    texture.update({ [key]: value });
-    this.emit(events.setComponentTexture(id, textureName, texture));
+    const cTexture = component.setSerializedTexture(textureName, texture);
+    this.emit(events.setComponentTexture(id, textureName, cTexture));
   };
 
   private onRequestDefaultTexture = ({

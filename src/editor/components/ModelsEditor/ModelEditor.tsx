@@ -8,7 +8,7 @@ interface ModelEditorProps {
   name: string;
   setDefaultModel: (name: string, k: T.KonvaModelKind) => void;
   model: Maybe<T.SerializedKonvaModel>;
-  updateModel: (key: string, value: any) => void;
+  updateModel: (model: T.SerializedKonvaModel) => void;
 }
 
 export const ModelEditor: React.SFC<ModelEditorProps> = ({
@@ -30,7 +30,7 @@ export const ModelEditor: React.SFC<ModelEditorProps> = ({
             <EditorField
               field={field}
               initialValue={field.serialGetter(model)}
-              update={value => updateModel(field.key, value)}
+              update={value => updateModel(field.serialSetter(model, value))}
             />
           </div>
         ))}

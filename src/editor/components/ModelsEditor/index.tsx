@@ -6,7 +6,7 @@ interface ModelEditorProps<M extends readonly string[]> {
   modelList: M;
   modelMap: Record<M[number], T.SerializedKonvaModel>;
   setDefaultModel: (modelName: string, k: T.KonvaModelKind) => void;
-  updateModel: (modelName: string, key: string, value: any) => void;
+  updateModel: (name: string, model: T.SerializedKonvaModel) => void;
 }
 
 export function ModelsEditor<TS extends readonly string[]>({
@@ -23,7 +23,7 @@ export function ModelsEditor<TS extends readonly string[]>({
           name={name}
           setDefaultModel={setDefaultModel}
           model={modelMap[name]}
-          updateModel={(key: string, value) => updateModel(name, key, value)}
+          updateModel={model => updateModel(name, model)}
         />
       ))}
     </div>

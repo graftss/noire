@@ -8,9 +8,8 @@ interface ComponentModelsProps {
   setDefaultModel: (id: string, modelName: string, k: T.KonvaModelKind) => void;
   updateModel: (
     c: T.SerializedComponent,
-    modelName: string,
-    key: string,
-    value: any,
+    name: string,
+    model: T.SerializedKonvaModel,
   ) => void;
 }
 
@@ -27,9 +26,7 @@ export const ComponentModels: React.SFC<ComponentModelsProps> = ({
       setDefaultModel={(modelName, k) =>
         setDefaultModel(component.id, modelName, k)
       }
-      updateModel={(modelName, key, value) =>
-        updateModel(component, modelName, key, value)
-      }
+      updateModel={(name, model) => updateModel(component, name, model)}
     />
   </div>
 );

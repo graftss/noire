@@ -29,8 +29,7 @@ export interface DisplayHandlerData {
   requestModelUpdate: {
     id: string;
     modelName: string;
-    key: string;
-    value: any;
+    serializedModel: T.SerializedKonvaModel;
   };
   requestDefaultModel: {
     id: string;
@@ -41,8 +40,7 @@ export interface DisplayHandlerData {
   requestTextureUpdate: {
     id: string;
     textureName: string;
-    key: string;
-    value: any;
+    texture: T.SerializedTexture;
   };
   requestDefaultTexture: {
     id: string;

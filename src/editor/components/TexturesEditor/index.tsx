@@ -6,7 +6,7 @@ interface TextureEditorProps<TS extends readonly string[]> {
   setDefaultTexture: (textureName: string, k: T.TextureKind) => void;
   textureMap: Record<TS[number], T.SerializedTexture>;
   textureList: TS;
-  update: (textureName: string, key: string, value: any) => void;
+  update: (textureName: string, texture: T.SerializedTexture) => void;
 }
 
 export function TexturesEditor<TS extends readonly string[]>({
@@ -23,7 +23,7 @@ export function TexturesEditor<TS extends readonly string[]>({
           name={name}
           setDefaultTexture={setDefaultTexture}
           texture={textureMap[name]}
-          update={(key: string, value) => update(name, key, value)}
+          update={texture => update(name, texture)}
         />
       ))}
     </div>

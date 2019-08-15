@@ -3,14 +3,8 @@ import { connect } from 'react-redux';
 import * as T from '../../../types';
 import * as events from '../../../display/events';
 import * as actions from '../../../state/actions';
-import {
-  updateSerializedKonvaModel,
-  defaultSerializedKonvaModel,
-} from '../../../display/model/konva';
-import {
-  defaultSerializedTexture,
-  updateTexture,
-} from '../../../display/texture';
+import { defaultSerializedKonvaModel } from '../../../display/model/konva';
+import { defaultSerializedTexture } from '../../../display/texture';
 import {
   getFilterInDict,
   updateComponentFilterState,
@@ -48,14 +42,12 @@ interface PropsFromDispatch {
   updateModel: (
     c: T.SerializedComponent,
     modelName: string,
-    key: string,
-    value: any,
+    model: T.SerializedKonvaModel,
   ) => void;
   updateTexture: (
     c: T.SerializedComponent,
     textureName: string,
-    key: string,
-    value: any,
+    texture: T.SerializedTexture,
   ) => void;
   updateFilter: (
     c: T.SerializedComponent,
@@ -125,36 +117,23 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
   updateModel: (
     component: T.SerializedComponent,
     modelName: string,
-    key: string,
-    value: any,
+    model: T.SerializedKonvaModel,
   ) => {
-    const model = component.graphics.models[modelName];
-    const newModel = updateSerializedKonvaModel(model, key, value);
-    const event = events.requestModelUpdate(
-      component.id,
-      modelName,
-      key,
-      value,
-    );
+    const event = events.requestModelUpdate(component.id, modelName, model);
 
-    dispatch(actions.setComponentModel(component.id, modelName, newModel));
+    dispatch(actions.setComponentModel(component.id, modelName, model));
     dispatch(actions.emitDisplayEvents([event]));
   },
 
   updateTexture: (
     component: T.SerializedComponent,
     textureName: string,
-    key: string,
-    value: any,
+    texture: T.SerializedTexture,
   ) => {
-    const {
-      id,
-      graphics: { textures },
-    } = component;
-    const newTexture = updateTexture(textures[textureName], key, value);
-    const event = events.requestTextureUpdate(id, textureName, key, value);
+    const { id } = component;
+    const event = events.requestTextureUpdate(id, textureName, texture);
 
-    dispatch(actions.setComponentTexture(id, textureName, newTexture));
+    dispatch(actions.setComponentTexture(id, textureName, texture));
     dispatch(actions.emitDisplayEvents([event]));
   },
 
@@ -219,7 +198,7 @@ const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
         component={component}
         setDefaultTexture={setDefaultTexture}
         textureList={config.textures}
-        updateTexture={updateTexture}
+        update={updateTexture}
       />
       <ComponentFilters
         component={component}
