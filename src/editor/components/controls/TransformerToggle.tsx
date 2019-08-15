@@ -51,7 +51,7 @@ const BaseTransformerToggle: React.SFC<TransformerToggleProps> = ({
     update={() => {
       if (!target) return;
       toggleKonvaTransformer();
-      emitDisplayEvents([events.setKonvaTransformerVisibility(!visibility)]);
+      emitDisplayEvents([events.setTransformerVisibility(!visibility)]);
     }}
   />
 );

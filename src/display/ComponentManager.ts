@@ -31,7 +31,7 @@ export class ComponentManager {
     this.components = components;
     components.forEach(component => {
       this.add(component);
-      this.eventBus.emit(events.addComponent(component));
+      this.eventBus.emit(events.requestAddComponent(component));
     });
   }
 

@@ -12,9 +12,11 @@ type TextureName = string;
 type TextureKey = string;
 type TextureValue = any;
 
-interface DisplayHandlerData {
+export interface DisplayHandlerData {
   requestAddComponent: Component;
   addComponent: Component;
+  requestRemoveComponent: string;
+  removeComponent: string;
   listenNextInput: T.RemapState;
   requestDraw: undefined;
   requestSelectComponent: string;
@@ -61,7 +63,7 @@ interface DisplayHandlerData {
     filterIndex: number;
     kind: T.InputFilterKind;
   };
-  setKonvaTransformerVisibility: boolean;
+  setTransformerVisibility: boolean;
 }
 
 export type DisplayEventKind = keyof DisplayHandlerData;
@@ -90,6 +92,8 @@ export class DisplayEventBus {
   private callbacks: AllDisplayEventCallbacks = {
     requestAddComponent: [],
     addComponent: [],
+    requestRemoveComponent: [],
+    removeComponent: [],
     listenNextInput: [],
     requestDraw: [],
     requestSelectComponent: [],
@@ -108,7 +112,7 @@ export class DisplayEventBus {
     requestFilterUpdate: [],
     requestDefaultFilter: [],
     setComponentFilters: [],
-    setKonvaTransformerVisibility: [],
+    setTransformerVisibility: [],
   };
 
   emit = <K extends DisplayEventKind>(event: DisplayEvent<K>): void => {

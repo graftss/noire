@@ -17,6 +17,10 @@ interface TransformerState {
   node: Konva.Node;
 }
 
+interface StageClickEvent {
+  target: Konva.Node;
+}
+
 interface DragEndEvent {
   target: { attrs: Vec2 };
 }
@@ -24,6 +28,10 @@ interface DragEndEvent {
 interface TransformEndEvent {
   target: { attrs: { scaleX: number; scaleY: number } };
 }
+
+type ComponentQueryResult =
+  | { component: T.Component; group: Konva.Group }
+  | { component: undefined; group: undefined };
 
 // TODO: possibly allow transformer config
 const attachTransformer = (
@@ -78,64 +86,39 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     this.layer.add(this.border);
 
     this.stage.on('click', this.onStageClick);
-    eventBus.on({ kind: 'addComponent', cb: this.onAddComponent });
-    eventBus.on({ kind: 'requestDraw', cb: () => this.layer.draw() });
-    eventBus.on({
-      kind: 'requestSelectComponent',
-      cb: this.onRequestSelectComponent,
-    });
-    eventBus.on({
-      kind: 'requestDeselectComponent',
-      cb: this.onRequestDeselectComponent,
-    });
-    eventBus.on({
-      kind: 'selectModel',
-      cb: this.onSelectModel,
-    });
-    eventBus.on({
-      kind: 'setComponentState',
-      cb: this.onUpdateComponentState,
-    });
-    eventBus.on({
-      kind: 'requestModelUpdate',
-      cb: this.onRequestUpdateComponentModel,
-    });
-    eventBus.on({
-      kind: 'requestDefaultModel',
-      cb: this.onRequestDefaultComponentModel,
-    });
-    eventBus.on({
-      kind: 'requestTextureUpdate',
-      cb: this.onRequestUpdateComponentTexture,
-    });
-    eventBus.on({
-      kind: 'requestDefaultTexture',
-      cb: this.onRequestDefaultComponentTexture,
-    });
-    eventBus.on({
-      kind: 'requestFilterUpdate',
-      cb: this.onRequestFilterUpdate,
-    });
-    eventBus.on({
-      kind: 'setKonvaTransformerVisibility',
-      cb: this.onSetTransformerVisibility,
-    });
+
+    [
+      { kind: 'requestAddComponent', cb: this.onRequestAddComponent },
+      { kind: 'requestRemoveComponent', cb: this.onRequestRemoveComponent },
+      { kind: 'requestDraw', cb: () => this.layer.draw() },
+      { kind: 'requestSelectComponent', cb: this.onRequestSelectComponent },
+      { kind: 'requestDeselectComponent', cb: this.onRequestDeselectComponent },
+      { kind: 'selectModel', cb: this.onSelectModel },
+      { kind: 'setComponentState', cb: this.onSetComponentState },
+      { kind: 'requestModelUpdate', cb: this.onRequestModelUpdate },
+      { kind: 'requestDefaultModel', cb: this.onRequestDefaultModel },
+      { kind: 'requestTextureUpdate', cb: this.onRequestTextureUpdate },
+      { kind: 'requestFilterUpdate', cb: this.onRequestFilterUpdate },
+      { kind: 'requestDefaultTexture', cb: this.onRequestDefaultTexture },
+      { kind: 'setTransformerVisibility', cb: this.onSetTransformerVisibility },
+    ].forEach(eventBus.on);
   }
 
-  private onStageClick = ({ target }: { target: Konva.Node }) => {
+  private onStageClick = ({ target }: StageClickEvent) => {
     if (target === this.border) {
       if (this.transformerState) {
         const { selection } = this.transformerState;
+
         switch (selection.kind) {
           case 'component': {
-            this.display.eventBus.emit(
-              events.requestDeselectComponent(selection.id),
-            );
+            const event = events.requestDeselectComponent(selection.id);
+            this.emit(event);
           }
         }
       }
+
       this.destroyTransformer();
-      this.display.eventBus.emit(events.konvaStageClick(this.stage));
+      this.emit(events.konvaStageClick(this.stage));
     }
   };
 
@@ -153,10 +136,23 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   private addModel = (componentId: string, group: Konva.Group) => (
     model: Konva.Shape,
   ) => {
+    const event = events.requestSelectComponent(componentId);
+    model.on('click', () => this.emit(event));
     group.add(model);
-    model.on('click', () => {
-      this.display.eventBus.emit(events.requestSelectComponent(componentId));
-    });
+  };
+
+  private onGroupDragend = (id: string) => (event: DragEndEvent): void => {
+    const { x, y } = event.target.attrs;
+    const update: T.ComponentState = { offset: { x, y } };
+    this.display.emitUpdateComponentState(id, update);
+  };
+
+  private onGroupTransformend = (id: string) => (
+    event: TransformEndEvent,
+  ): void => {
+    const { scaleX: x, scaleY: y } = event.target.attrs;
+    const update: T.ComponentState = { scale: { x, y } };
+    this.display.emitUpdateComponentState(id, update);
   };
 
   // we need to add each model to its group before calling `init`
@@ -164,38 +160,26 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   // component has a parent.
   // in general, the order of the calls made here is very brittle
   // and should be changed carefully.
-  private onAddComponent = (component: T.Component): void => {
+  private onRequestAddComponent = (component: T.Component): void => {
     const { id } = component;
     const offset = component.state.offset;
 
-    this.componentsById[id] = component;
-
     const group = new Konva.Group({ x: offset.x, y: offset.y });
+    group.on('dragend', this.onGroupDragend(id));
+    group.on('transformend', this.onGroupTransformend(id));
     this.groupsById[id] = group;
     this.layer.add(group);
 
     component.modelList().forEach(this.addModel(id, group));
     component.init();
+    this.componentsById[id] = component;
 
-    group.on('dragend', (event: DragEndEvent) => {
-      const { x, y } = event.target.attrs;
-      const update: T.ComponentState = { offset: { x, y } };
-      this.display.emitUpdateComponentState(id, update);
-    });
-
-    group.on('transformend', (event: TransformEndEvent) => {
-      const { scaleX: x, scaleY: y } = event.target.attrs;
-      const update: T.ComponentState = { scale: { x, y } };
-      this.display.emitUpdateComponentState(id, update);
-    });
+    this.emit(events.addComponent(component));
   };
 
-  private findComponentId(
-    id: Maybe<string>,
-  ): Maybe<
-    | { component: T.Component; group: Konva.Group }
-    | { component: undefined; group: undefined }
-  > {
+  private onRequestRemoveComponent = (id: string): void => {};
+
+  private findComponentId(id: Maybe<string>): Maybe<ComponentQueryResult> {
     return id === undefined
       ? undefined
       : { component: this.componentsById[id], group: this.groupsById[id] };
@@ -206,6 +190,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     const { transformer, node } = this.transformerState;
 
     node.draggable(false);
+
     transformer.destroy();
     this.transformerState = undefined;
     this.layer.draw();
@@ -213,13 +198,12 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
   // since both Konva and this app use event handlers to do a lot of
   // things, it appears as though we need to put the transformer update
-  // at the back of the event queue for it to realise anything has
-  // changed
+  // at the back of the event queue for it to realise anything has changed
   private updateTransformer = (): void => {
-    setTimeout(() => {
+    setImmediate(() => {
       if (!this.transformerState) return;
       this.transformerState.transformer.forceUpdate();
-    }, 0);
+    });
   };
 
   private initTransformer = (
@@ -243,14 +227,17 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     if (!ts || ts.node !== newNode) {
       this.initTransformer({ kind: 'component', id }, newNode);
     }
-    this.display.eventBus.emit(events.selectComponent(id));
+    this.emit(events.selectComponent(id));
   };
 
   private onRequestDeselectComponent = (id: string): void => {
-    this.display.eventBus.emit(events.deselectComponent(id));
+    this.emit(events.deselectComponent(id));
   };
 
-  private onSelectModel = ({ id, modelName }): void => {
+  private onSelectModel = ({
+    id,
+    modelName,
+  }: T.DisplayHandlerData['selectModel']): void => {
     if (!id) return;
 
     const selection: KonvaSelectable = { kind: 'model', id, modelName };
@@ -258,7 +245,10 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     if (node) this.initTransformer(selection, node);
   };
 
-  private onUpdateComponentState = ({ id, state }) => {
+  private onSetComponentState = ({
+    id,
+    state,
+  }: T.DisplayHandlerData['setComponentState']) => {
     if (!this.componentsById[id]) return;
 
     const group: Konva.Group = this.groupsById[id];
@@ -272,12 +262,12 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     }
   };
 
-  private onRequestUpdateComponentModel = ({
+  private onRequestModelUpdate = ({
     id,
     modelName,
     key,
     value,
-  }): void => {
+  }: T.DisplayHandlerData['requestModelUpdate']): void => {
     const component: Maybe<T.Component> = this.componentsById[id];
     if (component === undefined) return;
 
@@ -286,10 +276,14 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
     this.updateTransformer();
     updateKonvaModel(model, key, value);
-    this.display.eventBus.emit(events.setComponentModel(id, modelName, model));
+    this.emit(events.setComponentModel(id, modelName, model));
   };
 
-  private onRequestDefaultComponentModel = ({ id, modelName, kind }): void => {
+  private onRequestDefaultModel = ({
+    id,
+    modelName,
+    kind,
+  }: T.DisplayHandlerData['requestDefaultModel']): void => {
     const component: Maybe<T.Component> = this.componentsById[id];
     if (component === undefined) return;
 
@@ -301,15 +295,15 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     component.graphics.models[modelName] = model;
     this.addModel(id, group)(model);
 
-    this.display.eventBus.emit(events.setComponentModel(id, modelName, model));
+    this.emit(events.setComponentModel(id, modelName, model));
   };
 
-  private onRequestUpdateComponentTexture = ({
+  private onRequestTextureUpdate = ({
     id,
     textureName,
     key,
     value,
-  }): void => {
+  }: T.DisplayHandlerData['requestTextureUpdate']): void => {
     const component: Maybe<T.Component> = this.componentsById[id];
     if (component === undefined) return;
 
@@ -317,25 +311,21 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     if (texture === undefined) return;
 
     texture.update({ [key]: value });
-    this.display.eventBus.emit(
-      events.setComponentTexture(id, textureName, texture),
-    );
+    this.emit(events.setComponentTexture(id, textureName, texture));
   };
 
-  private onRequestDefaultComponentTexture = ({
+  private onRequestDefaultTexture = ({
     id,
     textureName,
     kind,
-  }): void => {
+  }: T.DisplayHandlerData['requestDefaultTexture']): void => {
     const component: Maybe<T.Component> = this.componentsById[id];
     if (component === undefined) return;
 
     const texture = defaultTexture(kind);
 
     component.graphics.textures[textureName] = texture;
-    this.display.eventBus.emit(
-      events.setComponentTexture(id, textureName, texture),
-    );
+    this.emit(events.setComponentTexture(id, textureName, texture));
   };
 
   private onRequestFilterUpdate = ({
@@ -343,14 +333,12 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     modelName,
     filterIndex,
     filter,
-  }): void => {
+  }: T.DisplayHandlerData['requestFilterUpdate']): void => {
     const component: Maybe<T.Component> = this.componentsById[id];
     if (component === undefined) return;
 
     component.setSerializedFilter(modelName, filterIndex, filter);
-    this.display.eventBus.emit(
-      events.setComponentFilters(id, component.filters),
-    );
+    this.emit(events.setComponentFilters(id, component.filters));
   };
 
   private onSetTransformerVisibility = (visibility: boolean): void => {

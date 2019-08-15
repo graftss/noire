@@ -153,9 +153,9 @@ export const requestFilterUpdate = (
   data: { id, modelName, filterIndex, filter },
 });
 
-export const setKonvaTransformerVisibility = (
+export const setTransformerVisibility = (
   visibility: boolean,
-): T.DisplayEvent<'setKonvaTransformerVisibility'> => ({
-  kind: 'setKonvaTransformerVisibility',
+): T.DisplayEvent<'setTransformerVisibility'> => ({
+  kind: 'setTransformerVisibility',
   data: visibility,
 });
