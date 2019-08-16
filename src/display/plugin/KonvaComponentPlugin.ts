@@ -325,14 +325,13 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
   private onRequestFilterUpdate = ({
     id,
-    modelName,
-    filterIndex,
+    ref,
     filter,
   }: T.DisplayHandlerData['requestFilterUpdate']): void => {
     const component: Maybe<T.Component> = this.componentsById[id];
     if (component === undefined) return;
 
-    component.setInputFilter(modelName, filterIndex, filter);
+    component.setInputFilter(ref, filter);
     this.emit(events.setComponentFilters(id, component.filters));
   };
 

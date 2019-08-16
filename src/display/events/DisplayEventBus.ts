@@ -51,14 +51,12 @@ export interface DisplayHandlerData {
   setComponentFilters: { id: string; filters: T.ComponentFilters };
   requestFilterUpdate: {
     id: string;
-    modelName: string;
-    filterIndex: number;
+    ref: T.ComponentFilterRef;
     filter: T.InputFilter;
   };
   requestDefaultFilter: {
     id: string;
-    modelName: string;
-    filterIndex: number;
+    ref: T.ComponentFilterRef;
     kind: T.InputFilterKind;
   };
   setTransformerVisibility: boolean;

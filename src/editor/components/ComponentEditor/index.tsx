@@ -25,8 +25,7 @@ interface PropsFromDispatch {
   ) => void;
   setDefaultFilter: (
     component: T.SerializedComponent,
-    modelName: string,
-    filterIndex: number,
+    ref: T.ComponentFilterRef,
     kind: T.InputFilterKind,
   ) => void;
   updateState: (
@@ -46,8 +45,7 @@ interface PropsFromDispatch {
   ) => void;
   updateFilter: (
     c: T.SerializedComponent,
-    modelName: string,
-    filterIndex: number,
+    ref: T.ComponentFilterRef,
     filter: T.InputFilter,
   ) => void;
 }
@@ -75,33 +73,16 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
 
   setDefaultFilter: (
     component: T.SerializedComponent,
-    modelName: string,
-    filterIndex: number,
+    ref: T.ComponentFilterRef,
     kind: T.InputFilterKind,
   ) => {
-    const oldFilter = getComponentInputFilter(
-      component,
-      modelName,
-      filterIndex,
-    );
+    const oldFilter = getComponentInputFilter(component, ref);
     const filter = defaultInputFilter(kind, oldFilter);
 
-    const event = events.requestFilterUpdate(
-      component.id,
-      modelName,
-      filterIndex,
-      filter,
-    );
+    const event = events.requestFilterUpdate(component.id, ref, filter);
 
     dispatch(actions.emitDisplayEvents([event]));
-    dispatch(
-      actions.setComponentInputFilter(
-        component.id,
-        modelName,
-        filterIndex,
-        filter,
-      ),
-    );
+    dispatch(actions.setComponentInputFilter(component.id, ref, filter));
   },
 
   updateState: (
@@ -142,25 +123,12 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
 
   updateFilter: (
     component: T.SerializedComponent,
-    modelName: string,
-    filterIndex: number,
+    ref: T.ComponentFilterRef,
     filter: T.InputFilter,
   ) => {
-    const event = events.requestFilterUpdate(
-      component.id,
-      modelName,
-      filterIndex,
-      filter,
-    );
+    const event = events.requestFilterUpdate(component.id, ref, filter);
 
-    dispatch(
-      actions.setComponentInputFilter(
-        component.id,
-        modelName,
-        filterIndex,
-        filter,
-      ),
-    );
+    dispatch(actions.setComponentInputFilter(component.id, ref, filter));
     dispatch(actions.emitDisplayEvents([event]));
   },
 });

@@ -33,8 +33,7 @@ export type RemapButtonValue =
   | {
       kind: 'filter';
       component: T.SerializedComponent;
-      modelName: string;
-      filterIndex: number;
+      ref: T.ComponentFilterRef;
       inputKey: string;
       controllerKey: Maybe<T.ControllerKey>;
     };
@@ -93,20 +92,15 @@ const computeRemapState = (value: RemapButtonValue): T.RemapState => {
     }
 
     case 'filter':
-      const { component, modelName, filterIndex, inputKey } = value;
-      const filter = getComponentInputFilter(
-        component,
-        modelName,
-        filterIndex,
-      ) as T.InputFilter;
+      const { component, ref, inputKey } = value;
+      const filter = getComponentInputFilter(component, ref) as T.InputFilter;
       const inputKind = getFilterInputKind(filter, inputKey) as T.InputKind;
 
       return {
         kind: 'filter',
         inputKind,
         componentId: component.id,
-        modelName,
-        filterIndex,
+        ref,
         key: inputKey,
       };
   }

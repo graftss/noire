@@ -2,6 +2,7 @@ import * as T from '../../types';
 import { testInitialState } from '../testInitialState';
 import { mapComponentWithId } from '../maps';
 import { assocPath } from '../../utils';
+import { setComponentInputFilter } from '../../display/component';
 
 export interface DisplayState {
   components: T.SerializedComponent[];
@@ -47,10 +48,10 @@ export const displayReducer = (
     }
 
     case 'setComponentInputFilter': {
-      const { id, modelName, filterIndex, filter } = action.data;
+      const { id, ref, filter } = action.data;
 
-      return mapComponentWithId.proj(state)(id, c =>
-        assocPath(['filters', modelName, filterIndex], filter, c),
+      return mapComponentWithId.proj(state)(id, component =>
+        setComponentInputFilter(component, ref, filter),
       );
     }
 

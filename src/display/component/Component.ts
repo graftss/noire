@@ -115,8 +115,7 @@ export abstract class Component<
   }
 
   setInputFilter(
-    modelName: SS,
-    filterIndex: number,
+    { modelName, filterIndex }: T.ComponentFilterRef,
     filter: T.InputFilter,
   ): void {
     if (!this.filters[modelName]) this.filters[modelName] = [];

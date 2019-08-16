@@ -129,3 +129,6 @@ export const blurOnEnterKeyDown = (
 
 export const defaultTo = <T>(value: Maybe<T>, defaultValue: T): T =>
   value === undefined ? defaultValue : value;
+
+export const flatMap = <T, U>(map: (t: T) => U[], list: T[]): U[] =>
+  list.reduce((result, t) => result.concat(map(t)), [] as U[]);

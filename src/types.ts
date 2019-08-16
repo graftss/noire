@@ -64,6 +64,7 @@ export {
 export { KonvaSelectable } from './display/plugin/KonvaComponentPlugin';
 export {
   ComponentData,
+  ComponentFilterRef,
   ComponentKey,
   ComponentKeyUpdate,
   ComponentKind,

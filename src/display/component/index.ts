@@ -1,6 +1,6 @@
 import * as T from '../../types';
 import { deserializeTexture, serializeTexture } from '../texture/';
-import { assoc, path } from '../../utils';
+import { assoc, assocPath, flatMap, path, toPairs } from '../../utils';
 import { serializeKonvaModel, deserializeKonvaModel } from '../model/konva';
 import { Texture } from '../texture/Texture';
 import { ButtonComponent, buttonComponentData } from './ButtonComponent';
@@ -144,20 +144,41 @@ export const deserializeGraphics = <SS extends string, TS extends string>(
   return result;
 };
 
+export interface ComponentFilterRef {
+  modelName: string;
+  filterIndex: number;
+}
+
+export const getComponentFilterRef = (
+  modelName: string,
+  filterIndex: number,
+): ComponentFilterRef => ({
+  modelName,
+  filterIndex,
+});
+
 export const getComponentInputFilter = (
   component: SerializedComponent,
-  modelName: string,
-  filterIndex: number,
+  { modelName, filterIndex }: ComponentFilterRef,
 ): Maybe<T.InputFilter> => path(['filters', modelName, filterIndex], component);
 
-export const mapComponentInputFilter = (
-  map: (f: T.InputFilter) => T.InputFilter,
+export const setComponentInputFilter = (
   component: SerializedComponent,
-  modelName: string,
-  filterIndex: number,
-): Maybe<T.InputFilter> => {
-  const filter = getComponentInputFilter(component, modelName, filterIndex);
-  return filter && map(filter);
+  { modelName, filterIndex }: ComponentFilterRef,
+  filter: T.InputFilter,
+): SerializedComponent =>
+  assocPath(['filters', modelName, filterIndex], filter, component);
+
+export const mapComponentFilters = <T>(
+  f: (inputFilter: T.InputFilter, ref: ComponentFilterRef, index: number) => T,
+  component: SerializedComponent,
+): T[] => {
+  let i = 0;
+  return flatMap(([modelName, inputFilters = []]) => {
+    return inputFilters.map((inputFilter, filterIndex) =>
+      f(inputFilter, { modelName, filterIndex }, i++),
+    );
+  }, toPairs(component.filters));
 };
 
 export const deserializeComponent = (s: T.SerializedComponent): Component => {

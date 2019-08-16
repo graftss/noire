@@ -16,8 +16,7 @@ export type EditorAction =
       type: 'setComponentInputFilter';
       data: {
         id: string;
-        modelName: string;
-        filterIndex: number;
+        ref: T.ComponentFilterRef;
         filter: T.InputFilter;
       };
     }
@@ -108,12 +107,11 @@ export const toggleKonvaTransformer = (): EditorAction => ({
 
 export const setComponentInputFilter = (
   id: string,
-  modelName: string,
-  filterIndex: number,
+  ref: T.ComponentFilterRef,
   filter: T.InputFilter,
 ): EditorAction => ({
   type: 'setComponentInputFilter',
-  data: { id, modelName, filterIndex, filter },
+  data: { id, ref, filter },
 });
 
 export const listenNextInput = (remapState: T.RemapState): EditorAction => ({

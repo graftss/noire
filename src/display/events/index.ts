@@ -143,12 +143,11 @@ export const setComponentFilters = (
 
 export const requestFilterUpdate = (
   id: string,
-  modelName: string,
-  filterIndex: number,
+  ref: T.ComponentFilterRef,
   filter: T.InputFilter,
 ): T.DisplayEvent<'requestFilterUpdate'> => ({
   kind: 'requestFilterUpdate',
-  data: { id, modelName, filterIndex, filter },
+  data: { id, ref, filter },
 });
 
 export const setTransformerVisibility = (
