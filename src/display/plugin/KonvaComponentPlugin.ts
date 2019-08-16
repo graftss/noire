@@ -270,9 +270,13 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     const component: Maybe<T.Component> = this.componentsById[id];
     if (component === undefined) return;
 
+    const group = this.groupsById[id];
     const model = deserializeKonvaModel(serializedModel);
 
+    component.setModel(modelName, model);
+    this.addModel(id, group)(model);
     this.updateTransformer();
+
     this.emit(events.setComponentModel(id, modelName, model));
   };
 
@@ -286,12 +290,9 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
     const group = this.groupsById[id];
     const model = defaultKonvaModel(kind);
-    const oldModel = component.graphics.models[modelName];
 
-    if (oldModel) oldModel.destroy();
-    component.graphics.models[modelName] = model;
+    component.setModel(modelName, model);
     this.addModel(id, group)(model);
-
     this.updateTransformer();
 
     this.emit(events.setComponentModel(id, modelName, model));

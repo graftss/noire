@@ -101,6 +101,13 @@ export abstract class Component<
 
   getModel = (name: string): Maybe<T.KonvaModel> => this.graphics.models[name];
 
+  setModel = (name: SS, model: T.KonvaModel): void => {
+    const oldModel = this.graphics.models[name];
+    if (oldModel) oldModel.destroy();
+
+    this.graphics.models[name] = model;
+  };
+
   // `init` is called after the component is added to the
   // `KonvaComponentPlugin`, and has been added to its
   // parent stage.
