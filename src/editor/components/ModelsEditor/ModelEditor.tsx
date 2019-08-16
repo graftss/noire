@@ -29,8 +29,8 @@ export const ModelEditor: React.SFC<ModelEditorProps> = ({
           <div key={field.key}>
             <EditorField
               field={field}
-              initialValue={field.serialGetter(model)}
-              update={value => updateModel(field.serialSetter(model, value))}
+              initialValue={field.getter(model)}
+              update={value => updateModel(field.setter(model, value))}
             />
           </div>
         ))}

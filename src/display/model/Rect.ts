@@ -27,17 +27,11 @@ export const rectModelFields: readonly T.KonvaModelField<'Rect'>[] = [
     kind: 'Vec2',
     defaultValue: { x: defaultRectAttrs.height, y: defaultRectAttrs.width },
     props: { precision: 1 },
-    getter: (model: Konva.Rect) => ({
-      x: model.width() || defaultRectAttrs.height,
-      y: model.height() || defaultRectAttrs.width,
-    }),
-    serialGetter: (model: T.SerializedKonvaModel<'Rect'>) => ({
+    getter: (model: T.SerializedKonvaModel<'Rect'>) => ({
       x: model.attrs.width || defaultRectAttrs.height,
       y: model.attrs.height || defaultRectAttrs.width,
     }),
-    setter: (model: Konva.Rect, offset: Vec2) =>
-      model.width(offset.x).height(offset.y),
-    serialSetter: (model: T.SerializedKonvaModel<'Rect'>, offset: Vec2) =>
+    setter: (model: T.SerializedKonvaModel<'Rect'>, offset: Vec2) =>
       mapPath(
         ['attrs'],
         attrs => ({ ...attrs, width: offset.x, height: offset.y }),

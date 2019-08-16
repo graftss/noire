@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { find, keys } from '../../utils';
+import { keys } from '../../utils';
 import { Texture } from '../texture/Texture';
 import { rectModelFields, defaultRectAttrs } from './Rect';
 import {
@@ -38,13 +38,8 @@ export interface KonvaModelField<
   K extends KonvaModelKind = KonvaModelKind,
   FK extends T.EditorFieldKind = T.EditorFieldKind
 > extends T.EditorField<FK> {
-  getter: (model: KonvaModelData[K]['class']) => T.EditorFieldType<FK>;
-  serialGetter: (model: SerializedKonvaModel<K>) => T.EditorFieldType<FK>;
+  getter: (model: SerializedKonvaModel<K>) => T.EditorFieldType<FK>;
   setter: (
-    model: KonvaModelData[K]['class'],
-    value: T.EditorFieldType<FK>,
-  ) => KonvaModelData[K]['class'];
-  serialSetter: (
     model: SerializedKonvaModel<K>,
     value: T.EditorFieldType<FK>,
   ) => SerializedKonvaModel<K>;
@@ -79,34 +74,6 @@ export const getKonvaModelFields = <K extends KonvaModelKind>(
 
 export const getKonvaModelKinds = (): KonvaModelKind[] => [...konvaModelKinds];
 
-export const findKonvaFieldByKey = <K extends KonvaModelKind>(
-  kind: K,
-  key: string,
-): Maybe<KonvaModelField<K>> =>
-  find(field => field.key === key, getKonvaModelFields(kind));
-
-export const updateSerializedKonvaModel = <K extends KonvaModelKind>(
-  model: SerializedKonvaModel<K>,
-  key: string,
-  value: any,
-): SerializedKonvaModel<K> => {
-  const field = findKonvaFieldByKey(model.kind, key);
-  return field ? field.serialSetter(model, value) : model;
-};
-
-export const updateKonvaModel = <K extends KonvaModelKind>(
-  model: KonvaModel<K>,
-  key: string,
-  value: any,
-): KonvaModel<K> => {
-  const field = findKonvaFieldByKey(model.className as KonvaModelKind, key);
-  if (!field) return model;
-
-  field.setter(model, value);
-  model.dirty = true;
-  return model;
-};
-
 export const serializeKonvaModel = <K extends KonvaModelKind>(
   node: KonvaModel<K>,
 ): SerializedKonvaModel<K> => {
@@ -129,6 +96,3 @@ export const defaultSerializedKonvaModel = <K extends KonvaModelKind>(
 export const defaultKonvaModel = <K extends KonvaModelKind>(
   kind: K,
 ): KonvaModel<K> => deserializeKonvaModel(defaultSerializedKonvaModel(kind));
-
-export const isKonvaModelCached = (node: Konva.Node): boolean =>
-  node._isUnderCache;
