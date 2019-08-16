@@ -1,10 +1,5 @@
 import * as T from '../types';
-import {
-  deselectComponent,
-  selectComponent,
-  setComponentModel,
-  setComponentState,
-} from '../state/actions';
+import * as actions from '../state/actions';
 import * as events from './events';
 import { deserializeComponent } from './component';
 import { ComponentManager } from './ComponentManager';
@@ -37,12 +32,12 @@ export class Display {
 
     this.eventBus.on({
       kind: 'selectComponent',
-      cb: (id: string) => dispatch(selectComponent(id)),
+      cb: (id: string) => dispatch(actions.selectComponent(id)),
     });
 
     this.eventBus.on({
       kind: 'deselectComponent',
-      cb: (id: string) => dispatch(deselectComponent(id)),
+      cb: (id: string) => dispatch(actions.deselectComponent(id)),
     });
   }
 
@@ -51,7 +46,7 @@ export class Display {
   }
 
   emitUpdateComponentState(id: string, state: T.ComponentState): void {
-    this.store.dispatch(setComponentState(id, state));
+    this.store.dispatch(actions.setComponentState(id, state));
     this.eventBus.emit(events.setComponentState(id, state));
   }
 
@@ -61,7 +56,7 @@ export class Display {
     serialModel: T.SerializedKonvaModel,
     model: T.KonvaModel,
   ): void {
-    this.store.dispatch(setComponentModel(id, modelName, serialModel));
+    this.store.dispatch(actions.setComponentModel(id, modelName, serialModel));
     this.eventBus.emit(events.setComponentModel(id, modelName, model));
   }
 

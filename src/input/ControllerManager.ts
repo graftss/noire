@@ -1,11 +1,7 @@
 import * as T from '../types';
 import * as events from '../display/events';
 import * as actions from '../state/actions';
-import {
-  controllerWithBinding,
-  controllers,
-  componentById,
-} from '../state/selectors';
+import * as selectors from '../state/selectors';
 import { DisplayEventBus } from '../display/events/DisplayEventBus';
 import {
   getComponentInputFilter,
@@ -53,8 +49,8 @@ export class ControllerManager {
     inputKey: string,
   ) => (binding: T.Binding): void => {
     const state = this.store.getState();
-    const bindingLocation = controllerWithBinding(state)(binding);
-    const component = componentById(state)(componentId);
+    const bindingLocation = selectors.controllerWithBinding(state)(binding);
+    const component = selectors.componentById(state)(componentId);
 
     if (bindingLocation && component) {
       const { controller, key } = bindingLocation;
@@ -82,8 +78,8 @@ export class ControllerManager {
     inputKey: string,
   ) => (binding: T.Binding): void => {
     const state = this.store.getState();
-    const c = controllerWithBinding(state)(binding);
-    const component = componentById(state)(id);
+    const c = selectors.controllerWithBinding(state)(binding);
+    const component = selectors.componentById(state)(id);
 
     if (c && component) {
       const filter = getComponentInputFilter(component, ref);
@@ -137,7 +133,7 @@ export class ControllerManager {
 
   getInput(): GlobalControllerInput {
     const result: GlobalControllerInput = {};
-    const cs = controllers(this.store.getState());
+    const cs = selectors.controllers(this.store.getState());
 
     cs.forEach((controller: T.Controller) => {
       const controllerInput: Dict<T.Input> = {};

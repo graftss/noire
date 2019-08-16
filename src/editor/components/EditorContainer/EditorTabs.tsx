@@ -3,11 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Tabs, Tab, AppBar } from '@material-ui/core';
 import * as T from '../../../types';
-import {
-  closePresentationSnackbar,
-  enterPresentationMode,
-  setTab,
-} from '../../../state/actions';
+import * as actions from '../../../state/actions';
 import { tabOrder } from '../../../state/reducers/tab';
 
 interface PropsFromState {
@@ -27,9 +23,9 @@ interface PropsFromDispatch {
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(
     {
-      closePresentationSnackbar,
-      enterPresentationMode,
-      setTab,
+      closePresentationSnackbar: actions.closePresentationSnackbar,
+      enterPresentationMode: actions.enterPresentationMode,
+      setTab: actions.setTab,
     },
     dispatch,
   );

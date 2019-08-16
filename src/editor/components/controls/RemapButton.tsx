@@ -3,12 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
 import * as events from '../../../display/events';
-import { controllersById, isListening } from '../../../state/selectors';
-import {
-  emitDisplayEvents,
-  listenNextInput,
-  updateControllerBinding,
-} from '../../../state/actions';
+import * as selectors from '../../../state/selectors';
+import * as actions from '../../../state/actions';
 import {
   stringifyControllerKey,
   getKeyInputKind,
@@ -44,8 +40,8 @@ interface PropsFromState {
 }
 
 const mapStateToProps = (state: T.EditorState): PropsFromState => ({
-  controllersById: controllersById(state),
-  isListening: isListening(state),
+  controllersById: selectors.controllersById(state),
+  isListening: selectors.isListening(state),
 });
 
 interface PropsFromDispatch {
@@ -61,9 +57,9 @@ interface RemapButtonProps extends PropsFromState, PropsFromDispatch {
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(
     {
-      emitDisplayEvents,
-      listenNextInput,
-      updateControllerBinding,
+      emitDisplayEvents: actions.emitDisplayEvents,
+      listenNextInput: actions.listenNextInput,
+      updateControllerBinding: actions.updateControllerBinding,
     },
     dispatch,
   );

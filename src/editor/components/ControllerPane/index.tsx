@@ -2,8 +2,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
-import { selectedController, controllers } from '../../../state/selectors';
-import { selectController, updateControllerName } from '../../../state/actions';
+import * as selectors from '../../../state/selectors';
+import * as actions from '../../../state/actions';
 import { ControllerSelect } from './ControllerSelect';
 import { ControllerEditor } from './ControllerEditor';
 
@@ -13,8 +13,8 @@ interface PropsFromState {
 }
 
 const mapStateToProps = (state: T.EditorState): PropsFromState => ({
-  controllers: controllers(state),
-  selectedController: selectedController(state),
+  controllers: selectors.controllers(state),
+  selectedController: selectors.selectedController(state),
 });
 
 interface PropsFromDispatch {
@@ -27,8 +27,8 @@ interface ControllerEditorProps extends PropsFromState, PropsFromDispatch {}
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(
     {
-      selectController,
-      updateControllerName,
+      selectController: actions.selectController,
+      updateControllerName: actions.updateControllerName,
     },
     dispatch,
   );

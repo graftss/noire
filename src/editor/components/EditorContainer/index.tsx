@@ -2,11 +2,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
-import { closePresentationSnackbar } from '../../../state/actions';
-import {
-  inPresentationMode,
-  isPresentationSnackbarOpen,
-} from '../../../state/selectors';
+import * as actions from '../../../state/actions';
+import * as selectors from '../../../state/selectors';
 import { Editor } from './Editor';
 import { PresentationSnackbar } from './PresentationSnackbar';
 
@@ -22,14 +19,14 @@ interface PropsFromDispatch {
 interface EditorContainerProps extends PropsFromState, PropsFromDispatch {}
 
 const mapStateToProps = (state: T.EditorState): PropsFromState => ({
-  inPresentationMode: inPresentationMode(state),
-  isPresentationSnackbarOpen: isPresentationSnackbarOpen(state),
+  inPresentationMode: selectors.inPresentationMode(state),
+  isPresentationSnackbarOpen: selectors.isPresentationSnackbarOpen(state),
 });
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(
     {
-      closePresentationSnackbar,
+      closePresentationSnackbar: actions.closePresentationSnackbar,
     },
     dispatch,
   );

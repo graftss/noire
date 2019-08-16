@@ -3,14 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
 import * as events from '../../../display/events';
-import {
-  emitDisplayEvents,
-  toggleKonvaTransformer,
-} from '../../../state/actions';
-import {
-  transformerTarget,
-  transformerVisibility,
-} from '../../../state/selectors';
+import * as actions from '../../../state/actions';
+import * as selectors from '../../../state/selectors';
 import { BooleanField } from './BooleanField';
 
 interface PropsFromState {
@@ -26,15 +20,15 @@ interface PropsFromDispatch {
 interface TransformerToggleProps extends PropsFromState, PropsFromDispatch {}
 
 const mapStateToProps = (state: T.EditorState): PropsFromState => ({
-  visibility: transformerVisibility(state),
-  target: transformerTarget(state),
+  visibility: selectors.transformerVisibility(state),
+  target: selectors.transformerTarget(state),
 });
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(
     {
-      emitDisplayEvents,
-      toggleKonvaTransformer,
+      emitDisplayEvents: actions.emitDisplayEvents,
+      toggleKonvaTransformer: actions.toggleKonvaTransformer,
     },
     dispatch,
   );
