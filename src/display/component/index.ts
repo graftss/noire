@@ -5,6 +5,7 @@ import {
   assocPath,
   flatMap,
   keys,
+  mapPath,
   path,
   toPairs,
   uuid,
@@ -204,6 +205,17 @@ export const setComponentInputFilter = (
   filter: T.InputFilter,
 ): SerializedComponent =>
   assocPath(['filters', modelName, filterIndex], filter, component);
+
+export const removeComponentInputFilter = (
+  component: SerializedComponent,
+  { modelName, filterIndex }: ComponentFilterRef,
+): SerializedComponent =>
+  mapPath(
+    ['filters', modelName],
+    (filters: any[] = []) =>
+      filters && filters.filter((_, i) => i !== filterIndex),
+    component,
+  );
 
 export const mapComponentFilters = <T>(
   f: (inputFilter: T.InputFilter, ref: ComponentFilterRef, index: number) => T,

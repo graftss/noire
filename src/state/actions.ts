@@ -23,6 +23,10 @@ export type EditorAction =
       };
     }
   | {
+      type: 'removeComponentInputFilter';
+      data: { id: string; ref: T.ComponentFilterRef };
+    }
+  | {
       type: 'setComponentModel';
       data: { id: string; modelName: string; model: T.SerializedKonvaModel };
     }
@@ -126,6 +130,14 @@ export const setComponentInputFilter = (
 ): EditorAction => ({
   type: 'setComponentInputFilter',
   data: { id, ref, filter },
+});
+
+export const removeComponentInputFilter = (
+  id: string,
+  ref: T.ComponentFilterRef,
+): EditorAction => ({
+  type: 'removeComponentInputFilter',
+  data: { id, ref },
 });
 
 export const listenNextInput = (remapState: T.RemapState): EditorAction => ({

@@ -99,6 +99,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
       { kind: 'requestDefaultModel', cb: this.onRequestDefaultModel },
       { kind: 'requestTextureUpdate', cb: this.onRequestTextureUpdate },
       { kind: 'requestFilterUpdate', cb: this.onRequestFilterUpdate },
+      { kind: 'requestRemoveFilter', cb: this.onRequestRemoveFilter },
       { kind: 'requestDefaultTexture', cb: this.onRequestDefaultTexture },
       { kind: 'setTransformerVisibility', cb: this.onSetTransformerVisibility },
     ].forEach(eventBus.on);
@@ -346,6 +347,17 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
     component.setInputFilter(ref, filter);
     this.emit(events.setComponentFilters(id, component.filters));
+  };
+
+  private onRequestRemoveFilter = ({
+    id,
+    ref,
+  }: T.DisplayHandlerData['requestRemoveFilter']): void => {
+    const component: Maybe<T.Component> = this.componentsById[id];
+    if (component === undefined) return;
+
+    component.removeInputFilter(ref);
+    // this.emit(events.setComponentFilters(id, component.filters));
   };
 
   private onSetTransformerVisibility = (visibility: boolean): void => {

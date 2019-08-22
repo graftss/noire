@@ -32,6 +32,7 @@ interface PropsFromDispatch {
     modelName: string,
     kind: T.InputFilterKind,
   ) => void;
+  removeFilter: (id: string, ref: T.ComponentFilterRef) => void;
   setDefaultFilter: (
     component: T.SerializedComponent,
     ref: T.ComponentFilterRef,
@@ -92,6 +93,11 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
 
     dispatch(actions.emitDisplayEvents([event]));
     dispatch(actions.setComponentInputFilter(component.id, ref, filter));
+  },
+
+  removeFilter: (id: string, ref: T.ComponentFilterRef) => {
+    dispatch(actions.emitDisplayEvents([events.requestRemoveFilter(id, ref)]));
+    dispatch(actions.removeComponentInputFilter(id, ref));
   },
 
   setDefaultFilter: (
@@ -166,6 +172,7 @@ const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
   addFilter,
   component,
   removeComponent,
+  removeFilter,
   setDefaultModel,
   setDefaultTexture,
   setDefaultFilter,
@@ -187,7 +194,7 @@ const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
       <ComponentState
         component={component}
         stateConfig={config.state}
-        update={(key, value) => updateState(component, key, value)}
+        update={updateState}
       />
       <ComponentKeys component={component} keys={config.keys} />
       <ComponentModels
@@ -205,6 +212,7 @@ const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
       />
       <ComponentFilters
         component={component}
+        removeFilter={removeFilter}
         setDefaultFilter={setDefaultFilter}
         updateFilter={updateFilter}
       />

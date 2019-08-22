@@ -81,8 +81,6 @@ export class ControllerManager {
     const c = selectors.controllerWithBinding(state)(binding);
     const component = selectors.componentById(state)(id);
 
-    console.log('hello!!!', { c, component });
-
     if (c && component) {
       const filter = getComponentInputFilter(component, ref);
       if (!filter) return;
@@ -126,7 +124,6 @@ export class ControllerManager {
 
       case 'filter': {
         const { componentId: id, inputKind, key, ref } = remap;
-        console.log('helloooo???', remap);
         const handler = this.onAwaitedFilterBinding(id, ref, key);
         this.nextInputListener.await(inputKind, handler);
         break;

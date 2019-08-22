@@ -51,6 +51,7 @@ export interface DisplayHandlerData {
     ref: T.ComponentFilterRef;
     kind: T.InputFilterKind;
   };
+  requestRemoveFilter: { id: string; ref: T.ComponentFilterRef };
   setTransformerVisibility: boolean;
 }
 
@@ -99,6 +100,7 @@ export class DisplayEventBus {
     setComponentTexture: [],
     requestFilterUpdate: [],
     requestDefaultFilter: [],
+    requestRemoveFilter: [],
     setComponentFilters: [],
     setTransformerVisibility: [],
   };

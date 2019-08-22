@@ -164,6 +164,14 @@ export const requestFilterUpdate = (
   data: { id, ref, filter },
 });
 
+export const requestRemoveFilter = (
+  id: string,
+  ref: T.ComponentFilterRef,
+): T.DisplayEvent<'requestRemoveFilter'> => ({
+  kind: 'requestRemoveFilter',
+  data: { id, ref },
+});
+
 export const setTransformerVisibility = (
   visibility: boolean,
 ): T.DisplayEvent<'setTransformerVisibility'> => ({

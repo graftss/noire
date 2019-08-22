@@ -9,6 +9,7 @@ interface FilterEditorProps {
   filter: Maybe<T.InputFilter>;
   getRemapButtonValue: (filterKey: string) => T.RemapButtonValue;
   setDefaultFilter: (k: T.InputFilterKind) => void;
+  remove: () => void;
   update: (filter: T.InputFilter) => void;
 }
 
@@ -16,6 +17,7 @@ export const FilterEditor: React.SFC<FilterEditorProps> = ({
   getRemapButtonValue,
   setDefaultFilter,
   filter,
+  remove,
   update,
 }) =>
   filter === undefined ? null : (
@@ -34,5 +36,6 @@ export const FilterEditor: React.SFC<FilterEditorProps> = ({
         </div>
       ))}
       <FilterKeys filter={filter} getRemapButtonValue={getRemapButtonValue} />
+      <button onClick={remove}>remove filter</button>
     </div>
   );

@@ -9,6 +9,7 @@ import {
 
 interface ComponentFiltersProps {
   component: T.SerializedComponent;
+  removeFilter: (id: string, ref: T.ComponentFilterRef) => void;
   setDefaultFilter: (
     component: T.SerializedComponent,
     ref: T.ComponentFilterRef,
@@ -23,6 +24,7 @@ interface ComponentFiltersProps {
 
 export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
   component,
+  removeFilter,
   setDefaultFilter,
   updateFilter,
 }) => (
@@ -50,6 +52,7 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
                   inputKey,
                 };
               }}
+              remove={() => removeFilter(component.id, ref)}
               setDefaultFilter={kind => setDefaultFilter(component, ref, kind)}
               update={filter => updateFilter(component, ref, filter)}
             />

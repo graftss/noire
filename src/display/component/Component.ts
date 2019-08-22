@@ -56,7 +56,7 @@ export abstract class Component<
     this.graphics.models;
     this.inputKinds = inputKinds;
     this.state = { ...defaultComponentState, ...state } as Required<S>;
-    this.filters = filters;
+    this.filters = { ...filters };
   }
 
   applyDefaultInput = (
@@ -119,6 +119,13 @@ export abstract class Component<
 
   setFilters(filters: ComponentFilters<SS>): void {
     this.filters = filters;
+  }
+
+  removeInputFilter({ modelName, filterIndex }: T.ComponentFilterRef): void {
+    if (!this.filters[modelName]) this.filters[modelName] = [];
+    this.filters[modelName] = this.filters[modelName].filter(
+      (_, i) => i !== filterIndex,
+    );
   }
 
   setInputFilter(

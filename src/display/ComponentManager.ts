@@ -18,14 +18,6 @@ export class ComponentManager {
       },
     });
 
-    eventBus.on({
-      kind: 'setComponentFilters',
-      cb: ({ id, filters }) => {
-        const component = this.findById(id);
-        if (component) component.setFilters(filters);
-      },
-    });
-
     eventBus.on({ kind: 'requestAddComponent', cb: this.add });
     eventBus.on({ kind: 'requestRemoveComponent', cb: this.remove });
   }
