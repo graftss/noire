@@ -16,6 +16,20 @@ export const addComponent = (
   data: component,
 });
 
+export const requestRemoveComponent = (
+  id: string,
+): T.DisplayEvent<'requestRemoveComponent'> => ({
+  kind: 'requestRemoveComponent',
+  data: id,
+});
+
+export const removeComponent = (
+  component: T.Component,
+): T.DisplayEvent<'removeComponent'> => ({
+  kind: 'removeComponent',
+  data: component,
+});
+
 export const listenNextInput = (
   remapState: T.RemapState,
 ): T.DisplayEvent<'listenNextInput'> => ({

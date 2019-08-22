@@ -23,6 +23,17 @@ export const displayReducer = (
       };
     }
 
+    case 'removeComponent': {
+      return {
+        ...state,
+        components: state.components.filter(c => c.id !== action.data),
+        selectedComponentId:
+          state.selectedComponentId === action.data
+            ? undefined
+            : state.selectedComponentId,
+      };
+    }
+
     case 'selectComponent': {
       const id = action.data;
       if (id !== state.selectedComponentId) {

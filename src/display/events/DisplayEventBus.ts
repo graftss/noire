@@ -4,19 +4,11 @@ import { without } from '../../utils';
 import { Component } from '../component/Component';
 import { Texture } from '../texture/Texture';
 
-type ComponentId = string;
-type ModelName = string;
-type ModelKey = string;
-type ModelValue = any;
-type TextureName = string;
-type TextureKey = string;
-type TextureValue = any;
-
 export interface DisplayHandlerData {
-  requestAddComponent: T.Component;
+  requestAddComponent: Component;
   addComponent: Component;
   requestRemoveComponent: string;
-  removeComponent: string;
+  removeComponent: Component;
   listenNextInput: T.RemapState;
   requestDraw: undefined;
   requestSelectComponent: string;

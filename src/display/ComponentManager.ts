@@ -26,15 +26,23 @@ export class ComponentManager {
       },
     });
 
-    eventBus.on({
-      kind: 'requestAddComponent',
-      cb: this.add,
-    });
+    eventBus.on({ kind: 'requestAddComponent', cb: this.add });
+    eventBus.on({ kind: 'requestRemoveComponent', cb: this.remove });
   }
 
-  add = (component: Component) => {
+  add = (component: Component): void => {
     this.components.push(component);
     this.eventBus.emit(events.addComponent(component));
+  };
+
+  remove = (id: string): void => {
+    for (let i = 0; i < this.components.length; i++) {
+      if (this.components[i].id === id) {
+        this.components.splice(i, 1);
+        this.eventBus.emit(events.removeComponent(this.components[i]));
+        return;
+      }
+    }
   };
 
   update(globalInput: T.GlobalControllerInput, dt: number): void {

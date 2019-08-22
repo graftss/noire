@@ -10,6 +10,7 @@ import { getComponentEditorConfig } from '../../../display/component/editor';
 import { TransformerToggle } from '../controls/TransformerToggle';
 import { defaultInputFilter } from '../../../display/filter';
 import { ComponentFilters } from './ComponentFilters';
+import { ComponentRemove } from './ComponentRemove';
 import { ComponentTextures } from './ComponentTextures';
 import { ComponentKeys } from './ComponentKeys';
 import { ComponentState } from './ComponentState';
@@ -48,6 +49,7 @@ interface PropsFromDispatch {
     ref: T.ComponentFilterRef,
     filter: T.InputFilter,
   ) => void;
+  removeComponent: (id: string) => void;
 }
 
 interface ComponentEditorProps extends PropsFromDispatch {
@@ -131,10 +133,18 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     dispatch(actions.setComponentInputFilter(component.id, ref, filter));
     dispatch(actions.emitDisplayEvents([event]));
   },
+
+  removeComponent: (id: string) => {
+    const event = events.requestRemoveComponent(id);
+
+    dispatch(actions.removeComponent(id));
+    dispatch(actions.emitDisplayEvents([event]));
+  },
 });
 
 const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
   component,
+  removeComponent,
   setDefaultModel,
   setDefaultTexture,
   setDefaultFilter,
@@ -149,6 +159,10 @@ const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
     <div>
       <ComponentTitle label={config.title} />
       <TransformerToggle />
+      <ComponentRemove
+        component={component}
+        removeComponent={removeComponent}
+      />
       <ComponentState
         component={component}
         stateConfig={config.state}

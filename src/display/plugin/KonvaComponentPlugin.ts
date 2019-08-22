@@ -175,9 +175,23 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     this.componentsById[id] = component;
   };
 
-  private onRequestRemoveComponent = (id: string): void => {};
+  private onRequestRemoveComponent = (id: string): void => {
+    const queryResult = this.findComponentById(id);
+    if (queryResult) {
+      const { component, group } = queryResult;
+      if (component && group) {
+        group.destroy();
+        if (
+          this.transformerState &&
+          this.transformerState.selection.id === id
+        ) {
+          this.destroyTransformer();
+        }
+      }
+    }
+  };
 
-  private findComponentId(id: Maybe<string>): Maybe<ComponentQueryResult> {
+  private findComponentById(id: Maybe<string>): Maybe<ComponentQueryResult> {
     return id === undefined
       ? undefined
       : { component: this.componentsById[id], group: this.groupsById[id] };
