@@ -1,5 +1,4 @@
 import * as T from '../../types';
-import { testInitialState } from '../testInitialState';
 import { mapComponentWithId } from '../maps';
 import { assocPath } from '../../utils';
 import {
@@ -14,8 +13,12 @@ export interface DisplayState {
   transformerVisibility?: boolean;
 }
 
+export const initialDisplayState: DisplayState = {
+  components: [],
+};
+
 export const displayReducer = (
-  state: DisplayState = testInitialState.display,
+  state: DisplayState = initialDisplayState,
   action: T.EditorAction,
 ): DisplayState => {
   switch (action.type) {

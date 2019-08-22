@@ -1,6 +1,5 @@
 import * as T from '../../types';
 import { mapPath } from '../../utils';
-import { testInitialState } from '../testInitialState';
 import { mapControllerWithId } from '../maps';
 
 export type RemapState =
@@ -25,13 +24,14 @@ export type RemapState =
     };
 
 export interface InputState {
-  remap: Maybe<RemapState>;
   controllers: T.Controller[];
+  remap?: RemapState;
   selectedControllerId?: string;
 }
 
-// const defaultInputState: InputState = {};
-const defaultInputState = testInitialState.input;
+export const initialInputState: InputState = {
+  controllers: [],
+};
 
 export interface ControllerBindingUpdate {
   controllerId: string;
@@ -43,14 +43,10 @@ const setControllerBinding = (key: string, binding: Maybe<T.Binding>) => (
   c: T.Controller,
 ): T.Controller => mapPath(['bindings', key], () => binding, c);
 
-export const inputReducer = (
-  state: InputState = defaultInputState,
-  action: T.EditorAction,
-): InputState => {
-  switch (action.type) {
-    case 'selectController': {
-      return { ...state, selectedControllerId: action.data };
-    }
+export const inputReducer = ( state: InputState = initialInputState,
+action: T.EditorAction, ): InputState => { switch (action.type) { case
+'selectController': { return { ...state, selectedControllerId:
+action.data }; }
 
     case 'listenNextInput': {
       return { ...state, remap: action.data };

@@ -1,14 +1,17 @@
 import {
   applyMiddleware,
+  compose,
   createStore as baseCreateStore,
   Dispatch,
   Store,
   Middleware,
 } from 'redux';
+import persistState from 'redux-localstorage';
 import { createLogger } from 'redux-logger';
 import * as T from '../types';
 import { DisplayEventBus } from '../display/events/DisplayEventBus';
 import { rootReducer } from './reducers/root';
+import { serializeEditorState, deserializePersistentString } from './persist';
 
 export type EditorStore = Store<T.EditorState, T.EditorAction>;
 
@@ -27,6 +30,15 @@ const createDisplayEmitter = (
 export const createStore = (eventBus: DisplayEventBus): EditorStore => {
   const logger = createLogger();
   const displayEmitter = createDisplayEmitter(eventBus);
+  const middleware = applyMiddleware(displayEmitter, logger);
+  const persist = persistState(undefined, {
+    serialize: serializeEditorState,
+    deserialize: deserializePersistentString,
+  });
 
-  return baseCreateStore(rootReducer, applyMiddleware(displayEmitter, logger));
+  const enhancer = compose(
+    middleware,
+    persist,
+  );
+  return baseCreateStore(rootReducer, enhancer);
 };

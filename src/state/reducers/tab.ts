@@ -12,7 +12,7 @@ export interface TabState {
   kind: TabKind;
 }
 
-const initialTabState: TabState = {
+export const initialTabState: TabState = {
   kind: 'components',
 };
 

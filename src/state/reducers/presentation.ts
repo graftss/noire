@@ -5,13 +5,13 @@ export interface PresentationState {
   showSnackbar: boolean;
 }
 
-const initialState: PresentationState = {
+export const initialPresentationState: PresentationState = {
   inPresentationMode: false,
   showSnackbar: false,
 };
 
 export const presentationReducer = (
-  state: PresentationState = initialState,
+  state: PresentationState = initialPresentationState,
   action: T.EditorAction,
 ): PresentationState => {
   switch (action.type) {
