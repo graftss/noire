@@ -1,12 +1,8 @@
 import * as T from '../../types';
 
-export type TabKind = 'components' | 'controllers' | 'presentation';
+export const tabOrder = ['components', 'controllers', 'config'] as const;
 
-export const tabOrder: TabKind[] = [
-  'components',
-  'controllers',
-  'presentation',
-];
+export type TabKind = typeof tabOrder[number];
 
 export interface TabState {
   kind: TabKind;

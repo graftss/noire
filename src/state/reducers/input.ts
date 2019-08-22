@@ -43,10 +43,14 @@ const setControllerBinding = (key: string, binding: Maybe<T.Binding>) => (
   c: T.Controller,
 ): T.Controller => mapPath(['bindings', key], () => binding, c);
 
-export const inputReducer = ( state: InputState = initialInputState,
-action: T.EditorAction, ): InputState => { switch (action.type) { case
-'selectController': { return { ...state, selectedControllerId:
-action.data }; }
+export const inputReducer = (
+  state: InputState = initialInputState,
+  action: T.EditorAction,
+): InputState => {
+  switch (action.type) {
+    case 'selectController': {
+      return { ...state, selectedControllerId: action.data };
+    }
 
     case 'listenNextInput': {
       return { ...state, remap: action.data };

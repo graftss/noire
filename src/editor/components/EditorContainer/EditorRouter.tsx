@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import * as T from '../../../types';
 import { ControllerPane } from '../ControllerPane';
 import { ComponentPane } from '../ComponentPane';
+import { ConfigPane } from '../ConfigPane';
 
 interface PropsFromState {
   currentTab: T.TabKind;
@@ -20,6 +21,8 @@ const tabSwitch = (kind: T.TabKind): React.ReactNode => {
       return <ComponentPane />;
     case 'controllers':
       return <ControllerPane />;
+    case 'config':
+      return <ConfigPane />;
   }
 };
 
