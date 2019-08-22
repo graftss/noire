@@ -13,7 +13,7 @@ type TextureKey = string;
 type TextureValue = any;
 
 export interface DisplayHandlerData {
-  requestAddComponent: Component;
+  requestAddComponent: T.Component;
   addComponent: Component;
   requestRemoveComponent: string;
   removeComponent: string;

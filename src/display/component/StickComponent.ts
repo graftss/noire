@@ -10,15 +10,19 @@ const inputKinds = {
   button: 'button',
 } as const;
 
-export const stickComponentData: T.ComponentData<typeof inputKinds> = {
-  models: ['boundary', 'stick', 'center'] as const,
-  textures: ['boundary', 'stick', 'stickDown', 'center'] as const,
-  inputKinds,
+const models = ['boundary', 'stick', 'center'] as const;
+
+const textures = ['boundary', 'stick', 'stickDown', 'center'] as const;
+
+const defaultState: StickState = {
+  name: 'Stick Component',
+  boundaryRadius: 26,
+  useDepthScaling: false,
 };
 
-type StickModels = typeof stickComponentData.models[number];
-type StickTextures = typeof stickComponentData.textures[number];
-type StickInput = typeof stickComponentData.inputKinds;
+type StickModels = typeof models[number];
+type StickTextures = typeof textures[number];
+type StickInput = typeof inputKinds;
 
 export type StickState = T.ComponentState<StickInput> & {
   boundaryRadius: number;
@@ -32,12 +36,6 @@ const stickKeys: T.ComponentKey[] = [
   { key: 'yn', label: 'Up', inputKind: 'axis' },
   { key: 'button', label: 'Trigger', inputKind: 'button' },
 ];
-
-export const defaultState: StickState = {
-  name: 'Stick Component',
-  boundaryRadius: 26,
-  useDepthScaling: false,
-};
 
 export type SerializedStickComponent = T.SerializedComponent<
   'stick',
@@ -69,8 +67,8 @@ export const stickEditorConfig: T.ComponentEditorConfig = {
   title: 'Stick',
   state: stickEditorState,
   keys: stickKeys,
-  models: stickComponentData.models,
-  textures: stickComponentData.textures,
+  models,
+  textures,
 };
 
 const depthFactor = (t: number): number =>
@@ -88,13 +86,7 @@ export class StickComponent extends Component<
     state: Partial<StickState>,
     filters: T.ComponentFilters<StickModels>,
   ) {
-    super(
-      id,
-      graphics,
-      stickComponentData.inputKinds,
-      { ...defaultState, ...state },
-      filters,
-    );
+    super(id, graphics, inputKinds, { ...defaultState, ...state }, filters);
   }
 
   init(): void {
@@ -163,3 +155,10 @@ export class StickComponent extends Component<
     this.updateStick(x, y, button);
   }
 }
+
+export const stickComponentData: T.ComponentData<typeof inputKinds> = {
+  models,
+  textures,
+  inputKinds,
+  defaultState,
+};

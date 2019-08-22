@@ -1,7 +1,16 @@
 import * as T from '../../types';
 import { deserializeTexture, serializeTexture } from '../texture/';
-import { assoc, assocPath, flatMap, path, toPairs } from '../../utils';
+import {
+  assoc,
+  assocPath,
+  flatMap,
+  keys,
+  path,
+  toPairs,
+  uuid,
+} from '../../utils';
 import { serializeKonvaModel, deserializeKonvaModel } from '../model/konva';
+import { defaultSerializedTexture } from '../texture';
 import { Texture } from '../texture/Texture';
 import { ButtonComponent, buttonComponentData } from './ButtonComponent';
 import { DPadComponent, dPadComponentData } from './DPadComponent';
@@ -13,6 +22,7 @@ export interface ComponentData<I = any> {
   models: readonly string[];
   textures: readonly string[];
   inputKinds: I;
+  defaultState: object;
 }
 
 export interface SerializedComponentStateData {
@@ -43,12 +53,16 @@ export interface SerializedComponent<
   filters: T.ComponentFilters<SS>;
 }
 
-const componentData = {
+const componentData: Record<ComponentKind, ComponentData> = {
   button: buttonComponentData,
   dPad: dPadComponentData,
   static: staticComponentData,
   stick: stickComponentData,
 } as const;
+
+const componentKinds: ComponentKind[] = keys(componentData);
+
+export const getComponentKinds = (): ComponentKind[] => [...componentKinds];
 
 export interface ComponentKey {
   key: string;
@@ -114,14 +128,13 @@ export const serializeGraphics = <SS extends string, TS extends string>(
   const { models, textures } = graphics;
 
   for (const k in models) {
-    if (models[k]) {
-      result.models[k] = serializeKonvaModel(models[k] as T.KonvaModel);
-    }
+    result.models[k] =
+      models[k] && serializeKonvaModel(models[k] as T.KonvaModel);
   }
 
   for (const k in textures) {
-    const texture = textures[k];
-    if (texture) result.textures[k] = serializeTexture(texture as Texture);
+    result.textures[k] =
+      textures[k] && serializeTexture(textures[k] as Texture);
   }
 
   return result;
@@ -134,14 +147,28 @@ export const deserializeGraphics = <SS extends string, TS extends string>(
   const { models, textures } = serialized;
 
   for (const k in models) {
-    result.models[k] = deserializeKonvaModel(models[k]);
+    result.models[k] = models[k] && deserializeKonvaModel(models[k]);
   }
 
   for (const k in textures) {
-    result.textures[k] = deserializeTexture(textures[k]);
+    result.textures[k] = textures[k] && deserializeTexture(textures[k]);
   }
 
   return result;
+};
+
+export const defaultSerializedComponentGraphics = <
+  SS extends readonly string[],
+  TS extends readonly string[]
+>(
+  models: SS,
+  textures: TS,
+): SerializedComponentGraphics<SS[number], TS[number]> => {
+  const result = { models: {}, textures: {} };
+  for (const model of models) result.models[model] = undefined;
+  for (const texture of textures)
+    result.textures[texture] = defaultSerializedTexture('hidden');
+  return deserializeGraphics(result) as any;
 };
 
 export interface ComponentFilterRef {
@@ -205,4 +232,17 @@ export const deserializeComponent = (s: T.SerializedComponent): Component => {
     s.state,
     s.filters,
   );
+};
+
+export const defaultSerializedComponent = (
+  kind: ComponentKind,
+): SerializedComponent => {
+  const { models, textures, defaultState } = componentData[kind];
+  return {
+    id: uuid(),
+    kind,
+    graphics: defaultSerializedComponentGraphics(models, textures) as any,
+    state: defaultState,
+    filters: {},
+  };
 };

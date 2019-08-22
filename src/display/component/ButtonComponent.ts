@@ -2,14 +2,14 @@ import * as T from '../../types';
 import { Component } from './Component';
 
 const inputKinds = { button: 'button' } as const;
+
 const models = ['model'] as const;
+
 const textures = ['on', 'off'] as const;
 
-export const buttonComponentData: T.ComponentData<typeof inputKinds> = {
-  models,
-  textures,
-  inputKinds,
-} as const;
+const defaultState: ButtonComponentState = {
+  name: 'Button Component',
+};
 
 type ButtonModels = typeof models[number];
 type ButtonTextures = typeof textures[number];
@@ -19,10 +19,6 @@ export type ButtonComponentState = T.ComponentState<ButtonInput>;
 const buttonKeys: T.ComponentKey[] = [
   { key: 'button', label: 'Pressed', inputKind: 'button' },
 ];
-
-export const defaultState: ButtonComponentState = {
-  name: 'Button Component',
-};
 
 export type SerializedButtonComponent = T.SerializedComponent<
   'button',
@@ -35,8 +31,8 @@ export type SerializedButtonComponent = T.SerializedComponent<
 export const buttonEditorConfig: T.ComponentEditorConfig = {
   title: 'Button',
   keys: buttonKeys,
-  models: buttonComponentData.models,
-  textures: buttonComponentData.textures,
+  models,
+  textures,
 };
 
 export class ButtonComponent extends Component<
@@ -51,13 +47,7 @@ export class ButtonComponent extends Component<
     state: Partial<ButtonComponentState>,
     filters: T.ComponentFilters<ButtonModels>,
   ) {
-    super(
-      id,
-      graphics,
-      buttonComponentData.inputKinds,
-      { ...defaultState, ...state },
-      filters,
-    );
+    super(id, graphics, inputKinds, { ...defaultState, ...state }, filters);
   }
 
   update(input: T.KindsToRaw<ButtonInput>): void {
@@ -71,3 +61,10 @@ export class ButtonComponent extends Component<
     else if (!button && model && off) off.apply(model);
   }
 }
+
+export const buttonComponentData: T.ComponentData<typeof inputKinds> = {
+  models,
+  textures,
+  inputKinds,
+  defaultState,
+} as const;

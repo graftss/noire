@@ -3,20 +3,17 @@ import { Component } from './Component';
 
 const inputKinds = {} as const;
 
-export const staticComponentData: T.ComponentData<typeof inputKinds> = {
-  models: ['model'] as const,
-  textures: ['texture'] as const,
-  inputKinds,
-};
+const models = ['model'] as const;
 
-type StaticModels = typeof staticComponentData.models[number];
-type StaticTextures = typeof staticComponentData.textures[number];
-type StaticInput = typeof staticComponentData.inputKinds;
-export type StaticState = T.ComponentState<StaticInput>;
+const textures = ['texture'] as const;
 
-export const defaultState: StaticState = {
+const defaultState: StaticState = {
   name: 'Static Component',
 };
+type StaticModels = typeof models[number];
+type StaticTextures = typeof textures[number];
+type StaticInput = typeof inputKinds;
+export type StaticState = T.ComponentState<StaticInput>;
 
 const staticKeys: T.ComponentKey[] = [];
 
@@ -31,8 +28,8 @@ export type SerializedStaticComponent = T.SerializedComponent<
 export const staticEditorConfig: T.ComponentEditorConfig = {
   title: 'Static',
   keys: staticKeys,
-  models: staticComponentData.models,
-  textures: staticComponentData.textures,
+  models,
+  textures,
 };
 
 export class StaticComponent extends Component<
@@ -47,13 +44,7 @@ export class StaticComponent extends Component<
     state: Partial<StaticState>,
     filters: T.ComponentFilters<StaticModels>,
   ) {
-    super(
-      id,
-      graphics,
-      staticComponentData.inputKinds,
-      { ...defaultState, ...state },
-      filters,
-    );
+    super(id, graphics, inputKinds, { ...defaultState, ...state }, filters);
   }
 
   update(): void {
@@ -65,3 +56,10 @@ export class StaticComponent extends Component<
     if (texture && model) texture.apply(model);
   }
 }
+
+export const staticComponentData: T.ComponentData<typeof inputKinds> = {
+  models,
+  textures,
+  inputKinds,
+  defaultState,
+};

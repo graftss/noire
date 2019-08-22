@@ -173,8 +173,6 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     component.modelList().forEach(this.addModel(id, group));
     component.init();
     this.componentsById[id] = component;
-
-    this.emit(events.addComponent(component));
   };
 
   private onRequestRemoveComponent = (id: string): void => {};

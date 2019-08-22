@@ -1,5 +1,6 @@
 import * as T from '../../types';
 import { mapObj } from '../../utils';
+import { defaultComponentState } from './Component';
 import { buttonEditorConfig } from './ButtonComponent';
 import { stickEditorConfig } from './StickComponent';
 import { dPadEditorConfig } from './DPadComponent';
@@ -40,7 +41,7 @@ const baseStateEditorFields: ComponentStateEditorField[] = [
     label: 'Position',
     kind: 'Vec2',
     key: 'position',
-    defaultValue: { x: 0, y: 0 },
+    defaultValue: defaultComponentState.offset,
     props: { precision: 1 },
     getter: c => c.offset,
     setter: (c, offset) => ({ ...c, offset }),
@@ -49,7 +50,7 @@ const baseStateEditorFields: ComponentStateEditorField[] = [
     label: 'Scale',
     kind: 'Vec2',
     key: 'scale',
-    defaultValue: { x: 1, y: 1 },
+    defaultValue: defaultComponentState.scale,
     props: { precision: 2 },
     getter: c => c.scale,
     setter: (c, scale) => ({ ...c, scale }),

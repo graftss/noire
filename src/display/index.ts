@@ -42,7 +42,11 @@ export class Display {
   }
 
   private syncWithState(state: T.EditorState): void {
-    this.cm.sync(state.display.components.map(deserializeComponent));
+    state.display.components
+      .map(deserializeComponent)
+      .forEach(component =>
+        this.eventBus.emit(events.requestAddComponent(component)),
+      );
   }
 
   emitUpdateComponentState(id: string, state: T.ComponentState): void {

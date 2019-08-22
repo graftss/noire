@@ -7,6 +7,8 @@ import { Component } from './Component';
 const dirs = ['u', 'l', 'd', 'r'] as const;
 type Dir = typeof dirs[number];
 
+const models = dirs;
+
 const inputKinds = {
   u: 'button',
   l: 'button',
@@ -14,29 +16,25 @@ const inputKinds = {
   r: 'button',
 } as const;
 
-export const dPadComponentData: T.ComponentData<typeof inputKinds> = {
-  models: dirs,
-  textures: [
-    'uOn',
-    'uOff',
-    'lOn',
-    'lOff',
-    'dOn',
-    'dOff',
-    'rOn',
-    'rOff',
-  ] as const,
-  inputKinds,
-};
+const textures = [
+  'uOn',
+  'uOff',
+  'lOn',
+  'lOff',
+  'dOn',
+  'dOff',
+  'rOn',
+  'rOff',
+] as const;
 
-type DPadModels = typeof dPadComponentData.models[number];
-type DPadTextures = typeof dPadComponentData.textures[number];
-type DPadInput = typeof dPadComponentData.inputKinds;
-export type DPadState = T.ComponentState<DPadInput>;
-
-export const defaultState: DPadState = {
+const defaultState: DPadState = {
   name: 'DPad Component',
 };
+
+type DPadModels = typeof models[number];
+type DPadTextures = typeof textures[number];
+type DPadInput = typeof inputKinds;
+export type DPadState = T.ComponentState<DPadInput>;
 
 const dPadKeys: T.ComponentKey[] = [
   { key: 'u', label: 'Up', inputKind: 'button' },
@@ -56,8 +54,8 @@ export type SerializedDPadComponent = T.SerializedComponent<
 export const dPadEditorConfig: T.ComponentEditorConfig = {
   title: 'D-Pad',
   keys: dPadKeys,
-  models: dPadComponentData.models,
-  textures: dPadComponentData.textures,
+  models,
+  textures,
 };
 
 export const simpleDPadRects = (
@@ -126,13 +124,7 @@ export class DPadComponent extends Component<
     state: Partial<DPadState>,
     filters: T.ComponentFilters<DPadModels>,
   ) {
-    super(
-      id,
-      graphics,
-      dPadComponentData.inputKinds,
-      { ...defaultState, ...state },
-      filters,
-    );
+    super(id, graphics, inputKinds, { ...defaultState, ...state }, filters);
   }
 
   private updateDirection(
@@ -155,3 +147,10 @@ export class DPadComponent extends Component<
     this.updateDirection(r, models.r, textures.rOn, textures.rOff);
   }
 }
+
+export const dPadComponentData: T.ComponentData<typeof inputKinds> = {
+  models,
+  textures,
+  inputKinds,
+  defaultState,
+};

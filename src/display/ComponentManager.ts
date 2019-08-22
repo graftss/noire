@@ -25,18 +25,16 @@ export class ComponentManager {
         if (component) component.setFilters(filters);
       },
     });
-  }
 
-  sync(components: Component[] = []): void {
-    this.components = components;
-    components.forEach(component => {
-      this.add(component);
-      this.eventBus.emit(events.requestAddComponent(component));
+    eventBus.on({
+      kind: 'requestAddComponent',
+      cb: this.add,
     });
   }
 
   add = (component: Component) => {
     this.components.push(component);
+    this.eventBus.emit(events.addComponent(component));
   };
 
   update(globalInput: T.GlobalControllerInput, dt: number): void {

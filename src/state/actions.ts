@@ -2,6 +2,7 @@ import * as T from '../types';
 
 export type EditorAction =
   | { type: 'emitDisplayEvents'; data: T.DisplayEvent[] }
+  | { type: 'addComponent'; data: T.SerializedComponent }
   | { type: 'selectComponent'; data: string }
   | { type: 'deselectComponent'; data: string }
   | { type: 'selectController'; data: Maybe<string> }
@@ -39,6 +40,13 @@ export type EditorAction =
 export const emitDisplayEvents = (events: T.DisplayEvent[]): EditorAction => ({
   type: 'emitDisplayEvents',
   data: events,
+});
+
+export const addComponent = (
+  component: T.SerializedComponent,
+): EditorAction => ({
+  type: 'addComponent',
+  data: component,
 });
 
 export const selectController = (id?: string): EditorAction => ({

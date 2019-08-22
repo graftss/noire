@@ -20,7 +20,7 @@ export type ComponentState<
   scale: Vec2;
 }>;
 
-const defaultComponentState: Required<ComponentState> = {
+export const defaultComponentState: Required<ComponentState> = {
   defaultInput: {},
   inputMap: {},
   name: 'Untitled component',
