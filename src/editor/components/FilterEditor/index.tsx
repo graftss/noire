@@ -22,7 +22,7 @@ export const FilterEditor: React.SFC<FilterEditorProps> = ({
     <div style={{ border: '1px solid green' }}>
       <FilterKindSelect
         initialValue={filter.kind}
-        setDefaultFilter={setDefaultFilter}
+        handleSelection={setDefaultFilter}
       />
       {getInputFilterFields(filter.kind).map(field => (
         <div key={field.key}>

@@ -3,6 +3,11 @@ import * as T from '../../../types';
 import { ModelsEditor } from '../ModelsEditor';
 
 interface ComponentModelsProps {
+  addFilter: (
+    component: T.SerializedComponent,
+    modelName: string,
+    k: T.InputFilterKind,
+  ) => void;
   component: T.SerializedComponent;
   modelList: readonly string[];
   setDefaultModel: (id: string, modelName: string, k: T.KonvaModelKind) => void;
@@ -14,6 +19,7 @@ interface ComponentModelsProps {
 }
 
 export const ComponentModels: React.SFC<ComponentModelsProps> = ({
+  addFilter,
   component,
   modelList,
   setDefaultModel,
@@ -21,6 +27,7 @@ export const ComponentModels: React.SFC<ComponentModelsProps> = ({
 }) => (
   <div>
     <ModelsEditor
+      addFilter={(modelName, k) => addFilter(component, modelName, k)}
       modelList={modelList}
       modelMap={component.graphics.models}
       setDefaultModel={(modelName, k) =>

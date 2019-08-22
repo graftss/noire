@@ -184,6 +184,15 @@ export const getComponentFilterRef = (
   filterIndex,
 });
 
+export const getNewComponentFilterRef = (
+  component: SerializedComponent,
+  modelName: string,
+): ComponentFilterRef => {
+  const filters = component.filters[modelName];
+  const filterIndex = filters ? filters.length : 0;
+  return { modelName, filterIndex };
+};
+
 export const getComponentInputFilter = (
   component: SerializedComponent,
   { modelName, filterIndex }: ComponentFilterRef,

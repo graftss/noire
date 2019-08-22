@@ -3,15 +3,18 @@ import * as T from '../../../types';
 import { EditorField } from '../controls/EditorField';
 import { getKonvaModelFields } from '../../../display/model/konva';
 import { ModelKindSelect } from './ModelKindSelect';
+import { ModelAddFilter } from './ModelAddFilter';
 
 interface ModelEditorProps {
+  addFilter: (k: T.InputFilterKind) => void;
   name: string;
-  setDefaultModel: (name: string, k: T.KonvaModelKind) => void;
+  setDefaultModel: (k: T.KonvaModelKind) => void;
   model: Maybe<T.SerializedKonvaModel>;
   updateModel: (model: T.SerializedKonvaModel) => void;
 }
 
 export const ModelEditor: React.SFC<ModelEditorProps> = ({
+  addFilter,
   name,
   setDefaultModel,
   model,
@@ -21,7 +24,7 @@ export const ModelEditor: React.SFC<ModelEditorProps> = ({
     <div>{name}</div>
     <ModelKindSelect
       initialValue={model && model.kind}
-      setDefaultModel={kind => setDefaultModel(name, kind)}
+      setDefaultModel={setDefaultModel}
     />
     {model === undefined ? null : (
       <div>
@@ -34,6 +37,7 @@ export const ModelEditor: React.SFC<ModelEditorProps> = ({
             />
           </div>
         ))}
+        <ModelAddFilter addFilter={addFilter} />
       </div>
     )}
   </div>

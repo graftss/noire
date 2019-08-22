@@ -5,7 +5,10 @@ import * as events from '../../../display/events';
 import * as actions from '../../../state/actions';
 import { defaultSerializedKonvaModel } from '../../../display/model/konva';
 import { defaultSerializedTexture } from '../../../display/texture';
-import { getComponentInputFilter } from '../../../display/component';
+import {
+  getComponentInputFilter,
+  getNewComponentFilterRef,
+} from '../../../display/component';
 import { getComponentEditorConfig } from '../../../display/component/editor';
 import { TransformerToggle } from '../controls/TransformerToggle';
 import { defaultInputFilter } from '../../../display/filter';
@@ -23,6 +26,11 @@ interface PropsFromDispatch {
     id: string,
     textureName: string,
     k: T.TextureKind,
+  ) => void;
+  addFilter: (
+    component: T.SerializedComponent,
+    modelName: string,
+    kind: T.InputFilterKind,
   ) => void;
   setDefaultFilter: (
     component: T.SerializedComponent,
@@ -73,6 +81,19 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     dispatch(actions.emitDisplayEvents([event]));
   },
 
+  addFilter: (
+    component: T.SerializedComponent,
+    modelName: string,
+    kind: T.InputFilterKind,
+  ) => {
+    const ref = getNewComponentFilterRef(component, modelName);
+    const filter = defaultInputFilter(kind);
+    const event = events.requestFilterUpdate(component.id, ref, filter);
+
+    dispatch(actions.emitDisplayEvents([event]));
+    dispatch(actions.setComponentInputFilter(component.id, ref, filter));
+  },
+
   setDefaultFilter: (
     component: T.SerializedComponent,
     ref: T.ComponentFilterRef,
@@ -80,7 +101,6 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
   ) => {
     const oldFilter = getComponentInputFilter(component, ref);
     const filter = defaultInputFilter(kind, oldFilter);
-
     const event = events.requestFilterUpdate(component.id, ref, filter);
 
     dispatch(actions.emitDisplayEvents([event]));
@@ -143,6 +163,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
 });
 
 const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
+  addFilter,
   component,
   removeComponent,
   setDefaultModel,
@@ -170,6 +191,7 @@ const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
       />
       <ComponentKeys component={component} keys={config.keys} />
       <ComponentModels
+        addFilter={addFilter}
         component={component}
         modelList={config.models}
         setDefaultModel={setDefaultModel}
