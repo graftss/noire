@@ -55,7 +55,7 @@ export function SelectField<T, O extends BaseOption>({
               toOption={indexedToOption}
             />
           </div>
-          <button onClick={() => onConfirm(dataAtIndex(index))}>confirm</button>
+          <button onClick={() => onConfirm(dataAtIndex(index))}>select</button>
         </div>
       )}
     />

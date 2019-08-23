@@ -1,10 +1,11 @@
 import * as T from '../../types';
 import { mapActiveComponents, mapActiveComponentWithId } from '../maps';
-import { assocPath, uuid } from '../../utils';
+import { assocPath } from '../../utils';
 import {
   setComponentInputFilter,
   removeComponentInputFilter,
 } from '../../display/component';
+import { newDisplay } from './savedDisplays';
 
 export interface DisplayState {
   active: T.SerializedDisplay;
@@ -14,11 +15,7 @@ export interface DisplayState {
 }
 
 export const initialDisplayState: DisplayState = {
-  active: {
-    id: uuid(),
-    components: [],
-    name: 'Untitled display',
-  },
+  active: newDisplay(),
 };
 
 export const displayReducer = (

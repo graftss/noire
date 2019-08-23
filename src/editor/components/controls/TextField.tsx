@@ -4,7 +4,7 @@ import { WithDefault } from './WithDefault';
 
 interface TextFieldProps {
   defaultValue: string;
-  initialValue: Maybe<string>;
+  initialValue?: string;
   update: (value: string) => void;
 }
 

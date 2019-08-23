@@ -134,6 +134,11 @@ export const isPresentationSnackbarOpen = lift(
   (state: T.PresentationState): boolean => state.showSnackbar,
 );
 
+export const savedDisplaysState = lift(
+  'savedDisplays',
+  (state: T.SavedDisplaysState): T.SavedDisplaysState => state,
+);
+
 export const savedDisplays = lift(
   'savedDisplays',
   (state: T.SavedDisplaysState): T.SerializedDisplay[] => state.displays,

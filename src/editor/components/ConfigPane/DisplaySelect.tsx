@@ -4,6 +4,7 @@ import { SelectField } from '../controls/SelectField';
 
 interface DisplaySelectProps {
   displays: T.SerializedDisplay[];
+  selectDisplay: (display: T.SerializedDisplay) => void;
   selectedDisplay: Maybe<T.SerializedDisplay>;
 }
 
@@ -19,13 +20,14 @@ const toOption = (d: T.SerializedDisplay): SavedDisplayOption => ({
 
 export const DisplaySelect: React.SFC<DisplaySelectProps> = ({
   displays,
+  selectDisplay,
   selectedDisplay,
 }) => (
   <div>
     <SelectField
       data={displays}
       initialValue={selectedDisplay}
-      onConfirm={d => console.log('selected display', d)}
+      onConfirm={selectDisplay}
       placeholder="saved displays"
       toOption={toOption}
     />

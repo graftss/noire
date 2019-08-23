@@ -55,3 +55,11 @@ export const upsertDisplay = lift(
     };
   },
 );
+
+export const removeDisplay = lift(
+  'savedDisplays',
+  (state: T.SavedDisplaysState) => (id: string): T.SavedDisplaysState => ({
+    ...state,
+    displays: state.displays.filter(d => d.id !== id),
+  }),
+);
