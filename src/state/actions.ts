@@ -40,7 +40,9 @@ export type EditorAction =
   | { type: 'setTab'; data: T.TabKind }
   | { type: 'enterPresentationMode' }
   | { type: 'closePresentationSnackbar' }
-  | { type: 'exitPresentationMode' };
+  | { type: 'exitPresentationMode' }
+  | { type: 'saveDisplay'; data: T.SerializedDisplay }
+  | { type: 'selectDisplay'; data: string };
 
 export const emitDisplayEvents = (events: T.DisplayEvent[]): EditorAction => ({
   type: 'emitDisplayEvents',
@@ -164,4 +166,14 @@ export const closePresentationSnackbar = (): EditorAction => ({
 
 export const exitPresentationMode = (): EditorAction => ({
   type: 'exitPresentationMode',
+});
+
+export const saveDisplay = (display: T.SerializedDisplay): EditorAction => ({
+  type: 'saveDisplay',
+  data: display,
+});
+
+export const selectDisplay = (id: string): EditorAction => ({
+  type: 'selectDisplay',
+  data: id,
 });

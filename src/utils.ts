@@ -26,6 +26,15 @@ export const find = <T>(pred: (t: T) => boolean, list: T[]): Maybe<T> => {
   }
 };
 
+export const findIndex = <T>(
+  pred: (t: T) => boolean,
+  list: T[],
+): Maybe<number> => {
+  for (let i = 0; i < list.length; i++) {
+    if (pred(list[i])) return i;
+  }
+};
+
 export const values = <T>(map: Dict<T>): T[] => {
   const result: T[] = [];
   for (const k in map) result.push(map[k]);

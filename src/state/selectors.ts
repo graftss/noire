@@ -23,23 +23,29 @@ export const lift = <S extends keyof T.EditorState, V>(
   return lifted;
 };
 
-export const componentById = lift(
+export const activeDisplay = lift(
   'display',
-  (state: Maybe<T.DisplayState>) => (
-    id: string,
-  ): Maybe<T.SerializedComponent> =>
-    state && find(c => c.id === id, state.components),
+  (state: T.DisplayState): T.SerializedDisplay => state.active,
 );
 
 export const components = lift(
   'display',
-  (state: T.DisplayState): T.SerializedComponent[] => state.components,
+  (state: T.DisplayState): T.SerializedComponent[] =>
+    state && activeDisplay.proj(state).components,
+);
+
+export const componentById = lift(
+  'display',
+  (state: T.DisplayState) => (id: string): Maybe<T.SerializedComponent> =>
+    find(c => c.id === id, components.proj(state)),
 );
 
 export const selectedComponent = lift(
   'display',
   (state: T.DisplayState): Maybe<T.SerializedComponent> =>
-    find(c => c.id === state.selectedComponentId, state.components),
+    find(c => c.id === state.selectedComponentId, components.proj(
+      state,
+    ) as T.SerializedComponent[]),
 );
 
 export const transformerTarget = lift(
@@ -126,4 +132,15 @@ export const inPresentationMode = lift(
 export const isPresentationSnackbarOpen = lift(
   'presentation',
   (state: T.PresentationState): boolean => state.showSnackbar,
+);
+
+export const savedDisplays = lift(
+  'savedDisplays',
+  (state: T.SavedDisplaysState): T.SerializedDisplay[] => state.displays,
+);
+
+export const selectedDisplay = lift(
+  'savedDisplays',
+  (state: T.SavedDisplaysState): Maybe<T.SerializedDisplay> =>
+    find(d => d.id === state.selectedDisplayId, state.displays),
 );

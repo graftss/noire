@@ -171,4 +171,8 @@ export {
 } from './display/filter';
 export { TabKind, TabState } from './state/reducers/tab';
 export { PresentationState } from './state/reducers/presentation';
+export {
+  SerializedDisplay,
+  SavedDisplaysState,
+} from './state/reducers/savedDisplays';
 export { RemapButtonValue } from './editor/components/controls/RemapButton';

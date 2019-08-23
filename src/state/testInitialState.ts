@@ -351,7 +351,11 @@ const components: T.SerializedComponent[] = [
 
 export const testInitialState: T.EditorState = {
   display: {
-    components,
+    active: {
+      name: 'test display',
+      id: 'aasdfasdf',
+      components,
+    },
   },
   input: {
     controllers: [ps2Controller1, ps2Controller2, defaultKeyboardController],
@@ -359,4 +363,5 @@ export const testInitialState: T.EditorState = {
   },
   presentation: { inPresentationMode: false, showSnackbar: false },
   tab: { kind: 'controllers' },
+  savedDisplays: { displays: [] },
 };

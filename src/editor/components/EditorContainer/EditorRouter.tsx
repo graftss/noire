@@ -17,7 +17,7 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 
 const tabSwitch = (kind: T.TabKind): React.ReactNode => {
   switch (kind) {
-    case 'components':
+    case 'display':
       return <ComponentPane />;
     case 'controllers':
       return <ControllerPane />;

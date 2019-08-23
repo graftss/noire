@@ -29,7 +29,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
 interface EditorTabsProps extends PropsFromState, PropsFromDispatch {}
 
 const kindToLabel: Record<T.TabKind, string> = {
-  components: 'Components',
+  display: 'Display',
   controllers: 'Controllers',
   config: 'Config',
 };

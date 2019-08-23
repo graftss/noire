@@ -1,6 +1,6 @@
 import * as T from '../../types';
 
-export const tabOrder = ['components', 'controllers', 'config'] as const;
+export const tabOrder = ['display', 'controllers', 'config'] as const;
 
 export type TabKind = typeof tabOrder[number];
 
@@ -9,7 +9,7 @@ export interface TabState {
 }
 
 export const initialTabState: TabState = {
-  kind: 'components',
+  kind: 'display',
 };
 
 export const tabReducer = (
@@ -22,7 +22,7 @@ export const tabReducer = (
     }
 
     case 'selectComponent': {
-      return { ...state, kind: 'components' };
+      return { ...state, kind: 'display' };
     }
 
     case 'selectController': {

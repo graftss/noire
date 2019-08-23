@@ -4,25 +4,40 @@ import { initialDisplayState } from './reducers/display';
 import { initialInputState } from './reducers/input';
 
 export interface PersistentState {
-  components: T.SerializedComponent[];
+  activeDisplay: T.SerializedDisplay;
   controllers: T.Controller[];
+  savedDisplays: T.SerializedDisplay[];
 }
 
+export const defaultPersistentState: PersistentState = {
+  activeDisplay: initialDisplayState.active,
+  controllers: [],
+  savedDisplays: [],
+};
+
 const projectToPersistentState = (state: T.EditorState): PersistentState => ({
-  components: selectors.components(state),
+  activeDisplay: selectors.activeDisplay(state),
+  savedDisplays: selectors.savedDisplays(state),
   controllers: selectors.controllers(state),
 });
 
 export const serializeEditorState = (state: T.EditorState): string =>
   JSON.stringify(projectToPersistentState(state));
 
-const recoverEditorState = ({
-  components,
-  controllers,
-}: PersistentState): Partial<T.EditorState> => ({
-  display: { ...initialDisplayState, components },
-  input: { ...initialInputState, controllers },
-});
+const recoverEditorState = (
+  pState: PersistentState,
+): Partial<T.EditorState> => {
+  const { activeDisplay, controllers, savedDisplays } = {
+    ...defaultPersistentState,
+    ...pState,
+  };
+
+  return {
+    display: activeDisplay && { ...initialDisplayState, active: activeDisplay },
+    input: { ...initialInputState, controllers },
+    savedDisplays: { displays: savedDisplays || [] },
+  };
+};
 
 export const deserializePersistentString = (
   str: string,

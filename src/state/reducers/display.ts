@@ -1,20 +1,24 @@
 import * as T from '../../types';
-import { mapComponentWithId } from '../maps';
-import { assocPath } from '../../utils';
+import { mapActiveComponents, mapActiveComponentWithId } from '../maps';
+import { assocPath, uuid } from '../../utils';
 import {
   setComponentInputFilter,
   removeComponentInputFilter,
 } from '../../display/component';
 
 export interface DisplayState {
-  components: T.SerializedComponent[];
+  active: T.SerializedDisplay;
   selectedComponentId?: string;
   transformerTarget?: T.KonvaSelectable;
   transformerVisibility?: boolean;
 }
 
 export const initialDisplayState: DisplayState = {
-  components: [],
+  active: {
+    id: uuid(),
+    components: [],
+    name: 'Untitled display',
+  },
 };
 
 export const displayReducer = (
@@ -23,20 +27,24 @@ export const displayReducer = (
 ): DisplayState => {
   switch (action.type) {
     case 'addComponent': {
-      return {
-        ...state,
-        components: [...state.components, action.data],
-      };
+      return mapActiveComponents.proj(state)(components => [
+        ...components,
+        action.data,
+      ]);
     }
 
     case 'removeComponent': {
+      const remove: Auto<T.SerializedComponent[]> = cs =>
+        cs.filter(c => c.id !== action.data);
+
+      const selectedComponentId =
+        state.selectedComponentId === action.data
+          ? undefined
+          : state.selectedComponentId;
+
       return {
-        ...state,
-        components: state.components.filter(c => c.id !== action.data),
-        selectedComponentId:
-          state.selectedComponentId === action.data
-            ? undefined
-            : state.selectedComponentId,
+        ...mapActiveComponents.proj(state)(remove),
+        selectedComponentId,
       };
     }
 
@@ -65,7 +73,7 @@ export const displayReducer = (
     case 'setComponentState': {
       const { data } = action;
 
-      return mapComponentWithId.proj(state)(data.id, c => ({
+      return mapActiveComponentWithId.proj(state)(data.id, c => ({
         ...c,
         state: { ...c.state, ...data.state },
       }));
@@ -74,7 +82,7 @@ export const displayReducer = (
     case 'setComponentInputFilter': {
       const { id, ref, filter } = action.data;
 
-      return mapComponentWithId.proj(state)(id, component =>
+      return mapActiveComponentWithId.proj(state)(id, component =>
         setComponentInputFilter(component, ref, filter),
       );
     }
@@ -82,7 +90,7 @@ export const displayReducer = (
     case 'removeComponentInputFilter': {
       const { id, ref } = action.data;
 
-      return mapComponentWithId.proj(state)(id, component =>
+      return mapActiveComponentWithId.proj(state)(id, component =>
         removeComponentInputFilter(component, ref),
       );
     }
@@ -90,7 +98,7 @@ export const displayReducer = (
     case 'setComponentModel': {
       const { id, modelName, model } = action.data;
 
-      return mapComponentWithId.proj(state)(id, c =>
+      return mapActiveComponentWithId.proj(state)(id, c =>
         assocPath(['graphics', 'models', modelName], model, c),
       );
     }
@@ -98,7 +106,7 @@ export const displayReducer = (
     case 'setComponentTexture': {
       const { id, textureName, texture } = action.data;
 
-      return mapComponentWithId.proj(state)(id, c =>
+      return mapActiveComponentWithId.proj(state)(id, c =>
         assocPath(['graphics', 'textures', textureName], texture, c),
       );
     }

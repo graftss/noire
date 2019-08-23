@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { createStore } from '../state/createStore';
 import * as T from '../types';
+import { createStore } from '../state/createStore';
 import { DisplayEventBus } from '../display/events/DisplayEventBus';
 import { EditorContainer } from './components/EditorContainer';
 

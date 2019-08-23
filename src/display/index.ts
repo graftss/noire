@@ -1,5 +1,6 @@
 import * as T from '../types';
 import * as actions from '../state/actions';
+import * as selectors from '../state/selectors';
 import * as events from './events';
 import { deserializeComponent } from './component';
 import { ComponentManager } from './ComponentManager';
@@ -42,7 +43,8 @@ export class Display {
   }
 
   private syncWithState(state: T.EditorState): void {
-    state.display.components
+    selectors
+      .components(state)
       .map(deserializeComponent)
       .forEach(component =>
         this.eventBus.emit(events.requestAddComponent(component)),
