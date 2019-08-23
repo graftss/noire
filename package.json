@@ -5,7 +5,7 @@
   "description": "flexible and programmable input display in the browser",
   "main": "src/index.ts",
   "scripts": {
-    "build": "node node_modules/webpack/bin/webpack.js -o bundle.js",
+    "build": "node node_modules/webpack/bin/webpack.js -o bundle.js --mode production",
     "start": "node node_modules/webpack-dev-server/bin/webpack-dev-server.js --mode development --open --hot",
     "lint": "node node_modules/eslint/bin/eslint.js --ext .ts,.tsx --fix src/**/* || exit 0"
   },

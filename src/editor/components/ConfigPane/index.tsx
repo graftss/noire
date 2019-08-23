@@ -83,7 +83,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => {
     },
 
     saveDisplay: (display: T.SerializedDisplay) => {
-      dispatch(actions.saveDisplay(display));
+      selectDisplay(display, true);
     },
 
     saveDisplayAsNew: (display: T.SerializedDisplay) => {
@@ -127,7 +127,9 @@ const BaseConfigPane: React.SFC<ConfigPaneProps> = ({
     />
     <div>
       <button onClick={() => createNewDisplay()}>create new display</button>
-      <button onClick={() => saveDisplay(activeDisplay)}>save display</button>
+      <button onClick={() => saveDisplay(activeDisplay)}>
+        {selectedDisplay === undefined ? 'save display as new' : 'save display'}
+      </button>
       <button onClick={() => saveDisplayAsNew(activeDisplay)}>
         clone display
       </button>

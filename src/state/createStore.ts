@@ -28,9 +28,10 @@ const createDisplayEmitter = (
 };
 
 export const createStore = (eventBus: DisplayEventBus): EditorStore => {
-  const logger = createLogger();
   const displayEmitter = createDisplayEmitter(eventBus);
-  const middleware = applyMiddleware(displayEmitter, logger);
+  const middleware = process.env.NODE_ENV === 'production'
+    ? applyMiddleware(displayEmitter)
+    : applyMiddleware(displayEmitter, createLogger());
   const persist = persistState(undefined, {
     serialize: serializeEditorState,
     deserialize: deserializePersistentString,

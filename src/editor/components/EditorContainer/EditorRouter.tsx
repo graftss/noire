@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as T from '../../../types';
 import { ControllerPane } from '../ControllerPane';
-import { ComponentPane } from '../ComponentPane';
+import { DisplayPane } from '../DisplayPane';
 import { ConfigPane } from '../ConfigPane';
 import { AboutPane } from '../AboutPane';
 
@@ -19,7 +19,7 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 const tabSwitch = (kind: T.TabKind): React.ReactNode => {
   switch (kind) {
     case 'display':
-      return <ComponentPane />;
+      return <DisplayPane />;
     case 'controllers':
       return <ControllerPane />;
     case 'config':

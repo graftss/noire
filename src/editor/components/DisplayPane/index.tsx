@@ -13,19 +13,22 @@ import { ComponentSelect } from './ComponentSelect';
 import { ComponentAdd } from './ComponentAdd';
 
 interface PropsFromState {
+  display: T.SerializedDisplay;
   components: T.SerializedComponent[];
   selectedComponent: Maybe<T.SerializedComponent>;
 }
 
 interface PropsFromDispatch {
   addComponent: (kind: T.ComponentKind) => void;
+  saveDisplay: (display: T.SerializedDisplay) => void;
   selectComponent: (id: string) => void;
 }
 
-interface ComponentPaneProps extends PropsFromState, PropsFromDispatch {}
+interface DisplayPaneProps extends PropsFromState, PropsFromDispatch {}
 
 const mapStateToProps = (state): PropsFromState => ({
   components: selectors.components(state),
+  display: selectors.activeDisplay(state),
   selectedComponent: selectors.selectedComponent(state),
 });
 
@@ -38,19 +41,28 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     dispatch(actions.emitDisplayEvents([event]));
   },
 
+  saveDisplay: (display: T.SerializedDisplay) => {
+    dispatch(actions.saveDisplay(display));
+  },
+
   selectComponent(id: string) {
     dispatch(actions.selectComponent(id));
     dispatch(actions.emitDisplayEvents([events.requestSelectComponent(id)]));
   },
 });
 
-const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
+const BaseDisplayPane: React.SFC<DisplayPaneProps> = ({
   addComponent,
   components,
+  display,
+  saveDisplay,
   selectComponent,
   selectedComponent,
 }) => (
   <div>
+    <div>
+      <button onClick={() => saveDisplay(display)}>save display</button>
+    </div>
     <ComponentAdd addComponent={addComponent} />
     <ComponentSelect
       components={components}
@@ -63,7 +75,7 @@ const BaseComponentPane: React.SFC<ComponentPaneProps> = ({
   </div>
 );
 
-export const ComponentPane = connect(
+export const DisplayPane = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(BaseComponentPane);
+)(BaseDisplayPane);
