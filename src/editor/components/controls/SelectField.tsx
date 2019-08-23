@@ -11,6 +11,7 @@ interface BaseOption {
 }
 
 interface SelectFieldProps<T, O extends BaseOption> {
+  buttonText: string;
   data: T[];
   initialValue?: Maybe<T>;
   onConfirm: (o: Maybe<T>) => void;
@@ -23,6 +24,7 @@ type IndexedOption<O extends BaseOption> = O & {
 };
 
 export function SelectField<T, O extends BaseOption>({
+  buttonText,
   data,
   initialValue,
   placeholder,
@@ -55,7 +57,9 @@ export function SelectField<T, O extends BaseOption>({
               toOption={indexedToOption}
             />
           </div>
-          <button onClick={() => onConfirm(dataAtIndex(index))}>confirm</button>
+          <button onClick={() => onConfirm(dataAtIndex(index))}>
+            {buttonText}
+          </button>
         </div>
       )}
     />

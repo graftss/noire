@@ -11,6 +11,7 @@ export const ComponentAdd: React.SFC<ComponentAddProps> = ({
 }) => (
   <div>
     <ComponentKindSelect
+      buttonText="add new component"
       initialValue={undefined}
       handleSelection={addComponent}
     />

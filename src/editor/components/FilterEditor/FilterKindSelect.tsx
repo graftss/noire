@@ -4,6 +4,7 @@ import { getInputFilterKinds } from '../../../display/filter';
 import { SelectField } from '../controls/SelectField';
 
 interface FilterKindSelectProps {
+  buttonText: string;
   handleSelection: (k: T.InputFilterKind) => void;
   initialValue?: Maybe<T.InputFilterKind>;
 }
@@ -16,11 +17,13 @@ interface FilterKindOption {
 const toOption = (k: string): FilterKindOption => ({ value: k, label: k });
 
 export const FilterKindSelect: React.SFC<FilterKindSelectProps> = ({
+  buttonText,
   handleSelection,
   initialValue,
 }) => (
   <div>
     <SelectField
+      buttonText={buttonText}
       data={getInputFilterKinds()}
       initialValue={initialValue}
       onConfirm={(c: Maybe<T.InputFilterKind>) => c && handleSelection(c)}

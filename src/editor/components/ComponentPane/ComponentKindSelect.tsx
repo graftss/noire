@@ -4,6 +4,7 @@ import { getComponentKinds } from '../../../display/component';
 import { SelectField } from '../controls/SelectField';
 
 interface ComponentKindSelectProps {
+  buttonText: string;
   initialValue?: Maybe<T.ComponentKind>;
   handleSelection: (kind: T.ComponentKind) => void;
 }
@@ -18,15 +19,17 @@ const componentKinds = getComponentKinds();
 const toOption = (k: string): ComponentKindOption => ({ value: k, label: k });
 
 export const ComponentKindSelect: React.SFC<ComponentKindSelectProps> = ({
+  buttonText,
   handleSelection,
   initialValue,
 }) => (
   <div>
     <SelectField
+      buttonText={buttonText}
       data={componentKinds}
       initialValue={initialValue}
       onConfirm={(c: Maybe<T.ComponentKind>) => c && handleSelection(c)}
-      placeholder="add new component"
+      placeholder="component type"
       toOption={toOption}
     />
   </div>

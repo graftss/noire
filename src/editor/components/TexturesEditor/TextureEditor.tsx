@@ -23,6 +23,7 @@ export const TextureEditor: React.SFC<TextureEditorProps> = ({
     <div style={{ border: '1px solid blue' }}>
       <div>{name}</div>
       <TextureKindSelect
+        buttonText="set texture type"
         initialValue={texture.kind}
         setDefaultTexture={kind => setDefaultTexture(name, kind)}
       />

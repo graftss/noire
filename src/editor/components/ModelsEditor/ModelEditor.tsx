@@ -23,6 +23,7 @@ export const ModelEditor: React.SFC<ModelEditorProps> = ({
   <div style={{ border: '1px solid red' }}>
     <div>{name}</div>
     <ModelKindSelect
+      buttonText="set model type"
       initialValue={model && model.kind}
       setDefaultModel={setDefaultModel}
     />

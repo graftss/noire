@@ -21,9 +21,10 @@ export const ControllerAdd: React.SFC<ControllerAddProps> = ({
 }) => (
   <div>
     <SelectField
+      buttonText="add new controller"
       data={controllerKinds}
       onConfirm={(kind: Maybe<T.ControllerKind>) => kind && addController(kind)}
-      placeholder="add new controller"
+      placeholder="controller type"
       toOption={toOption}
     />
   </div>

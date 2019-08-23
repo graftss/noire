@@ -25,6 +25,7 @@ export const DisplaySelect: React.SFC<DisplaySelectProps> = ({
 }) => (
   <div>
     <SelectField
+      buttonText="select display"
       data={displays}
       initialValue={selectedDisplay}
       onConfirm={selectDisplay}

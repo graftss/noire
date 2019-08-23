@@ -10,7 +10,11 @@ export const ModelAddFilter: React.SFC<ModelAddFilterProps> = ({
   addFilter,
 }) => (
   <div>
-    add filter:
-    <FilterKindSelect initialValue={undefined} handleSelection={addFilter} />
+    new filter:
+    <FilterKindSelect
+      buttonText="add filter"
+      handleSelection={addFilter}
+      initialValue={undefined}
+    />
   </div>
 );
