@@ -1,5 +1,6 @@
 import * as T from '../../types';
 import { areBindingsEqual } from '../source/bindings';
+import { keys, uuid } from '../../utils';
 import { ps2Config } from './ps2';
 import { keyboardConfig } from './keyboard';
 
@@ -13,12 +14,12 @@ export interface ControllerKeyData {
   key: string;
 }
 
-export interface ControllerClassConfig<CK extends string> {
+export interface ControllerClassConfig<CK extends string = string> {
   keyOrder: readonly CK[];
   map: Readonly<Record<CK, ControllerKeyData>>;
 }
 
-export interface BaseControllerClass<CK extends string> {
+export interface BaseControllerClass<CK extends string = string> {
   kind: string;
   map: Record<CK, ControllerKeyData>;
 }
@@ -49,10 +50,12 @@ export interface ControllerKey {
   key: string;
 }
 
-const configs = {
+const configs: Record<ControllerKind, ControllerClassConfig> = {
   ps2: ps2Config,
   keyboard: keyboardConfig,
-};
+} as const;
+
+export const getControllerKinds = (): ControllerKind[] => keys(configs);
 
 export const getControllerKeyOrder = (
   kind: ControllerKind,
@@ -62,10 +65,21 @@ export const getControllerMap = (
   kind: ControllerKind,
 ): Readonly<Dict<ControllerKeyData>> => configs[kind].map;
 
+export const getNewController = (kind: ControllerKind): Controller =>
+  ({
+    id: uuid(),
+    name: `New ${kind} controller`,
+    kind,
+    bindings: {},
+  } as Controller);
+
 export const getKeyInputKind = (
   kind: ControllerKind,
   key: string,
 ): T.InputKind => getControllerMap(kind)[key].inputKind;
+
+export const getKeyName = (kind: ControllerKind, key: string): string =>
+  getControllerMap(kind)[key].name;
 
 export const stringifyKeyInController = (
   controller: Maybe<Controller>,

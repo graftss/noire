@@ -48,17 +48,31 @@ export const inputReducer = (
   action: T.EditorAction,
 ): InputState => {
   switch (action.type) {
-    case 'selectController': {
+    case 'addController':
+      return {
+        ...state,
+        controllers: [...state.controllers, action.data],
+        selectedControllerId: action.data.id,
+      };
+
+    case 'removeController':
+      return {
+        ...state,
+        controllers: state.controllers.filter(c => c.id !== action.data),
+        selectedControllerId:
+          state.selectedControllerId === action.data
+            ? undefined
+            : state.selectedControllerId,
+      };
+
+    case 'selectController':
       return { ...state, selectedControllerId: action.data };
-    }
 
-    case 'listenNextInput': {
+    case 'listenNextInput':
       return { ...state, remap: action.data };
-    }
 
-    case 'stopListening': {
+    case 'stopListening':
       return { ...state, remap: undefined };
-    }
 
     case 'updateControllerBinding': {
       const { controllerId, key, binding } = action.data;

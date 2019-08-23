@@ -112,19 +112,22 @@ const renderDeadzoneField = (
   const { controller, key } = value;
   const binding: T.Binding = controller.bindings[key];
 
-  return binding.inputKind === 'axis' ? (
-    <FloatField
-      defaultValue={DEFAULT_AXIS_DEADZONE}
-      initialValue={binding.deadzone}
-      precision={3}
-      update={(deadzone: number) =>
-        updateControllerBinding({
-          controllerId: controller.id,
-          key,
-          binding: { ...binding, deadzone },
-        })
-      }
-    />
+  return binding && binding.inputKind === 'axis' ? (
+    <span>
+      <FloatField
+        defaultValue={DEFAULT_AXIS_DEADZONE}
+        initialValue={binding.deadzone}
+        precision={3}
+        update={(deadzone: number) =>
+          updateControllerBinding({
+            controllerId: controller.id,
+            key,
+            binding: { ...binding, deadzone },
+          })
+        }
+      />{' '}
+      (deadzone)
+    </span>
   ) : null;
 };
 

@@ -7,6 +7,8 @@ export type EditorAction =
   | { type: 'selectComponent'; data: string }
   | { type: 'deselectComponent'; data: string }
   | { type: 'selectController'; data: Maybe<string> }
+  | { type: 'addController'; data: T.Controller }
+  | { type: 'removeController'; data: string }
   | { type: 'startFullControllerUpdate' }
   | { type: 'updateControllerBinding'; data: T.ControllerBindingUpdate }
   | { type: 'updateControllerName'; data: { id: string; name: string } }
@@ -64,6 +66,16 @@ export const removeComponent = (id: string): EditorAction => ({
 
 export const selectController = (id?: string): EditorAction => ({
   type: 'selectController',
+  data: id,
+});
+
+export const addController = (controller: T.Controller): EditorAction => ({
+  type: 'addController',
+  data: controller,
+});
+
+export const removeController = (id: string): EditorAction => ({
+  type: 'removeController',
   data: id,
 });
 
