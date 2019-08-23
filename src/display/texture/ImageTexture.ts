@@ -46,6 +46,7 @@ export class ImageTexture extends Texture<'image'> {
 
   private loadImage(src: string): void {
     this.image = new Image();
+    this.image.crossOrigin = "Anonymous";
     this.image.src = src;
     this.image.onload = () => (this.loadState = 'loaded');
     this.image.onerror = () => (this.loadState = 'error');
