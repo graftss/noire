@@ -32,6 +32,7 @@ const kindToLabel: Record<T.TabKind, string> = {
   display: 'Display',
   controllers: 'Controllers',
   config: 'Config',
+  about: 'About',
 };
 
 const BaseEditorTabs: React.SFC<EditorTabsProps> = ({ currentTab, setTab }) => (

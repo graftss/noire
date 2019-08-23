@@ -4,6 +4,7 @@ import * as T from '../../../types';
 import { ControllerPane } from '../ControllerPane';
 import { ComponentPane } from '../ComponentPane';
 import { ConfigPane } from '../ConfigPane';
+import { AboutPane } from '../AboutPane';
 
 interface PropsFromState {
   currentTab: T.TabKind;
@@ -23,6 +24,8 @@ const tabSwitch = (kind: T.TabKind): React.ReactNode => {
       return <ControllerPane />;
     case 'config':
       return <ConfigPane />;
+    case 'about':
+      return <AboutPane />;
   }
 };
 
