@@ -40,9 +40,11 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
   createNewDisplay: () => {
     const display = newDisplay();
+    const event = events.requestLoadDisplay(display);
 
     dispatch(actions.saveDisplay(display));
     dispatch(actions.selectDisplay(display.id));
+    dispatch(actions.emitDisplayEvents([event]));
   },
 
   enterPresentationMode: () => {

@@ -13,6 +13,7 @@ export const DisplayEditor: React.SFC<DisplayEditorProps> = ({
 }) =>
   display === undefined ? null : (
     <div>
+      display name:{' '}
       <TextField
         defaultValue={display.name}
         update={name => updateDisplayName(display, name)}
