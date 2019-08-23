@@ -87,7 +87,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
     this.stage.on('click', this.onStageClick);
 
-    [
+    const handlers = [
       { kind: 'requestAddComponent', cb: this.onRequestAddComponent },
       { kind: 'requestRemoveComponent', cb: this.onRequestRemoveComponent },
       { kind: 'requestDraw', cb: () => this.layer.draw() },
@@ -102,7 +102,9 @@ export class KonvaComponentPlugin extends DisplayPlugin {
       { kind: 'requestRemoveFilter', cb: this.onRequestRemoveFilter },
       { kind: 'requestDefaultTexture', cb: this.onRequestDefaultTexture },
       { kind: 'setTransformerVisibility', cb: this.onSetTransformerVisibility },
-    ].forEach(eventBus.on);
+    ];
+
+    handlers.forEach(eventBus.on);
   }
 
   private onStageClick = ({ target }: StageClickEvent) => {

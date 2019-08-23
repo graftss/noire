@@ -2,12 +2,13 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as T from '../../../types';
 import * as actions from '../../../state/actions';
+import * as events from '../../../display/events';
 import * as selectors from '../../../state/selectors';
 import {
   cloneDisplay,
   newDisplay,
   setDisplayName,
-} from '../../../state/reducers/savedDisplays';
+} from '../../../display/serialize';
 import { DisplaySelect } from './DisplaySelect';
 import { DisplayEditor } from './DisplayEditor';
 
@@ -20,6 +21,7 @@ interface PropsFromState {
 interface PropsFromDispatch {
   createNewDisplay: () => void;
   enterPresentationMode: () => void;
+  importDisplayFromString: (displayString: string) => void;
   removeDisplay: (display: T.SerializedDisplay) => void;
   saveDisplay: (display: T.SerializedDisplay) => void;
   saveDisplayAsNew: (display: T.SerializedDisplay) => void;
@@ -48,6 +50,8 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     setTimeout(() => dispatch(actions.closePresentationSnackbar()), 1000);
   },
 
+  importDisplayFromString: (displayString: string) => {},
+
   removeDisplay: (display: T.SerializedDisplay) => {
     dispatch(actions.removeDisplay(display.id));
   },
@@ -65,7 +69,10 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
   },
 
   selectDisplay: (display: T.SerializedDisplay) => {
+    const event = events.requestLoadDisplay(display);
+
     dispatch(actions.selectDisplay(display.id));
+    dispatch(actions.emitDisplayEvents([event]));
   },
 
   setDisplayName: (display: T.SerializedDisplay, name: string) => {

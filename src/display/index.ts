@@ -29,7 +29,7 @@ export class Display {
     this.plugins = [new KonvaComponentPlugin(config, this)];
 
     // sync display with the store's initial state
-    this.syncWithState(getState());
+    this.loadDisplay(selectors.activeDisplay(getState()));
 
     this.eventBus.on({
       kind: 'selectComponent',
@@ -40,16 +40,20 @@ export class Display {
       kind: 'deselectComponent',
       cb: (id: string) => dispatch(actions.deselectComponent(id)),
     });
+
+    this.eventBus.on({
+      kind: 'requestLoadDisplay',
+      cb: this.loadDisplay,
+    });
   }
 
-  private syncWithState(state: T.EditorState): void {
-    selectors
-      .components(state)
+  private loadDisplay = (display: T.SerializedDisplay): void => {
+    this.cm.requestRemoveAll();
+
+    display.components
       .map(deserializeComponent)
-      .forEach(component =>
-        this.eventBus.emit(events.requestAddComponent(component)),
-      );
-  }
+      .forEach(c => this.eventBus.emit(events.requestAddComponent(c)));
+  };
 
   emitUpdateComponentState(id: string, state: T.ComponentState): void {
     this.store.dispatch(actions.setComponentState(id, state));

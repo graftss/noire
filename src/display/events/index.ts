@@ -2,6 +2,13 @@ import Konva from 'konva';
 import * as T from '../../types';
 import { Texture } from '../texture/Texture';
 
+export const requestLoadDisplay = (
+  display: T.SerializedDisplay,
+): T.DisplayEvent<'requestLoadDisplay'> => ({
+  kind: 'requestLoadDisplay',
+  data: display,
+});
+
 export const requestAddComponent = (
   component: T.Component,
 ): T.DisplayEvent<'requestAddComponent'> => ({

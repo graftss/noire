@@ -5,7 +5,7 @@ import {
   setComponentInputFilter,
   removeComponentInputFilter,
 } from '../../display/component';
-import { newDisplay } from './savedDisplays';
+import { newDisplay } from '../../display/serialize';
 
 export interface DisplayState {
   active: T.SerializedDisplay;
