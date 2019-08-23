@@ -23,6 +23,9 @@ export const displayReducer = (
   action: T.EditorAction,
 ): DisplayState => {
   switch (action.type) {
+    case 'selectDisplay':
+      return { ...state, active: action.data };
+
     case 'addComponent': {
       return {
         ...mapActiveComponents.proj(state)(components => [

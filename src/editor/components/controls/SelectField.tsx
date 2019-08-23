@@ -11,6 +11,7 @@ interface BaseOption {
 }
 
 interface SelectFieldProps<T, O extends BaseOption> {
+  autoConfirm?: boolean;
   buttonText: string;
   data: T[];
   initialValue?: Maybe<T>;
@@ -24,6 +25,7 @@ type IndexedOption<O extends BaseOption> = O & {
 };
 
 export function SelectField<T, O extends BaseOption>({
+  autoConfirm = false,
   buttonText,
   data,
   initialValue,
@@ -52,14 +54,19 @@ export function SelectField<T, O extends BaseOption>({
             <EditorSelect
               data={data}
               selected={dataAtIndex(index)}
-              onChange={option => setIndex(option[indexSymbol])}
+              onChange={option => {
+                setIndex(option[indexSymbol]);
+                if (autoConfirm) onConfirm(dataAtIndex(option[indexSymbol]));
+              }}
               placeholder={placeholder}
               toOption={indexedToOption}
             />
           </div>
-          <button onClick={() => onConfirm(dataAtIndex(index))}>
-            {buttonText}
-          </button>
+          {autoConfirm ? null : (
+            <button onClick={() => onConfirm(dataAtIndex(index))}>
+              {buttonText}
+            </button>
+          )}
         </div>
       )}
     />

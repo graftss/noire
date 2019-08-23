@@ -19,7 +19,7 @@ export const savedDisplaysReducer = (
       return maps.upsertDisplay.proj(state)(action.data);
 
     case 'selectDisplay':
-      return { ...state, selectedDisplayId: action.data };
+      return { ...state, selectedDisplayId: action.data.id };
 
     case 'removeDisplay':
       return maps.removeDisplay.proj(state)(action.data);

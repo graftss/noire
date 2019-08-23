@@ -47,7 +47,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => {
     saveToState: boolean = false,
     loadIntoCanvas: boolean = false,
   ): void => {
-    dispatch(actions.selectDisplay(display.id));
+    dispatch(actions.selectDisplay(display));
     if (saveToState) dispatch(actions.saveDisplay(display));
     if (loadIntoCanvas) {
       const event = events.requestLoadDisplay(display);
@@ -82,7 +82,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => {
     },
 
     saveDisplay: (display: T.SerializedDisplay) => {
-      selectDisplay(display, true);
+      dispatch(actions.saveDisplay(display));
     },
 
     saveDisplayAsNew: (display: T.SerializedDisplay) => {

@@ -44,7 +44,7 @@ export type EditorAction =
   | { type: 'closePresentationSnackbar' }
   | { type: 'exitPresentationMode' }
   | { type: 'saveDisplay'; data: T.SerializedDisplay }
-  | { type: 'selectDisplay'; data: string }
+  | { type: 'selectDisplay'; data: T.SerializedDisplay }
   | { type: 'removeDisplay'; data: string };
 
 export const emitDisplayEvents = (events: T.DisplayEvent[]): EditorAction => ({
@@ -186,9 +186,9 @@ export const saveDisplay = (display: T.SerializedDisplay): EditorAction => ({
   data: display,
 });
 
-export const selectDisplay = (id: string): EditorAction => ({
+export const selectDisplay = (display: T.SerializedDisplay): EditorAction => ({
   type: 'selectDisplay',
-  data: id,
+  data: display,
 });
 
 export const removeDisplay = (id: string): EditorAction => ({
