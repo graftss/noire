@@ -27,10 +27,13 @@ export const displayReducer = (
 ): DisplayState => {
   switch (action.type) {
     case 'addComponent': {
-      return mapActiveComponents.proj(state)(components => [
-        ...components,
-        action.data,
-      ]);
+      return {
+        ...mapActiveComponents.proj(state)(components => [
+          ...components,
+          action.data,
+        ]),
+        selectedComponentId: action.data.id,
+      };
     }
 
     case 'removeComponent': {

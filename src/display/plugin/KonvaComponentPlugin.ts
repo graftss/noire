@@ -163,9 +163,13 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   // and should be changed carefully.
   private onRequestAddComponent = (component: T.Component): void => {
     const { id } = component;
-    const offset = component.state.offset;
+    const { offset, scale } = component.state;
 
-    const group = new Konva.Group({ x: offset.x, y: offset.y });
+    const group = new Konva.Group({
+      x: offset.x,
+      y: offset.y,
+      scale: scale,
+    });
     group.on('dragend', this.onGroupDragend(id));
     group.on('transformend', this.onGroupTransformend(id));
     this.groupsById[id] = group;
