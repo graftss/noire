@@ -14,17 +14,22 @@ export interface DisplayState {
   transformerVisibility?: boolean;
 }
 
-export const initialDisplayState: DisplayState = {
+export const getInitialDisplayState = (): DisplayState => ({
   active: newDisplay(),
-};
+});
 
 export const displayReducer = (
-  state: DisplayState = initialDisplayState,
+  state: DisplayState,
   action: T.EditorAction,
 ): DisplayState => {
+  if (state === undefined) state = getInitialDisplayState();
+
   switch (action.type) {
     case 'selectDisplay':
       return { ...state, active: action.data };
+
+    case 'removeDisplay':
+      return getInitialDisplayState();
 
     case 'addComponent': {
       return {

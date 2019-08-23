@@ -5,6 +5,7 @@ import { Component } from '../component/Component';
 import { Texture } from '../texture/Texture';
 
 export interface DisplayHandlerData {
+  requestClearDisplay: undefined;
   requestLoadDisplay: T.SerializedDisplay;
   requestAddComponent: Component;
   addComponent: Component;
@@ -80,6 +81,7 @@ type AllDisplayEventCallbacks = {
 
 export class DisplayEventBus {
   private callbacks: AllDisplayEventCallbacks = {
+    requestClearDisplay: [],
     requestLoadDisplay: [],
     requestAddComponent: [],
     addComponent: [],

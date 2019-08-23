@@ -11,12 +11,12 @@ const CONFIRM_AXIS_VALUE_FRAME_COUNT = 7;
 
 export class NextInputListener {
   private state?: ListeningState<T.InputKind>;
-  private pollingBaselineInput: boolean = false;
+  private pollingBaselineInput = false;
 
   // to dintinguish axis values from buttons, we make sure a
   // consistent axis value is held for multiple frames before
   // accepting it as a binding
-  private axisValueFrameCount: number = 0;
+  private axisValueFrameCount = 0;
   private potentialAxisValueBinding: Maybe<T.GamepadAxisValueBinding>;
 
   constructor(

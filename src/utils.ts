@@ -61,7 +61,7 @@ export const mapObj = <K extends string, T, U>(
   ts: Record<K, T>,
 ): Record<K, U> => {
   const result: Partial<Record<K, U>> = {};
-  for (let k in ts) result[k] = f(ts[k]);
+  for (const k in ts) result[k] = f(ts[k]);
   return result as Record<K, U>;
 };
 

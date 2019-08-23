@@ -18,7 +18,7 @@ export interface NoireConfig {
 }
 
 export class Noire {
-  private tLast: number = 0;
+  private tLast = 0;
   private editorApp: T.EditorApp;
   private display: Display;
   private controllerManager: ControllerManager;

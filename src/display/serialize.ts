@@ -10,7 +10,7 @@ export interface SerializedDisplay {
 
 export const cloneDisplay = (
   display: SerializedDisplay,
-  useClonedName: boolean = true,
+  useClonedName = true,
 ): SerializedDisplay => ({
   ...display,
   name: useClonedName ? `Clone of ${display.name}` : display.name,

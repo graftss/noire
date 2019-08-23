@@ -44,8 +44,8 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 const mapDispatchToProps = (dispatch): PropsFromDispatch => {
   const selectDisplay = (
     display: T.SerializedDisplay,
-    saveToState: boolean = false,
-    loadIntoCanvas: boolean = false,
+    saveToState = false,
+    loadIntoCanvas = false,
   ): void => {
     dispatch(actions.selectDisplay(display));
     if (saveToState) dispatch(actions.saveDisplay(display));
@@ -79,6 +79,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => {
 
     removeDisplay: (display: T.SerializedDisplay) => {
       dispatch(actions.removeDisplay(display.id));
+      dispatch(actions.emitDisplayEvents([events.requestClearDisplay()]));
     },
 
     saveDisplay: (display: T.SerializedDisplay) => {

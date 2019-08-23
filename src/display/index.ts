@@ -41,15 +41,16 @@ export class Display {
       cb: (id: string) => dispatch(actions.deselectComponent(id)),
     });
 
-    this.eventBus.on({
-      kind: 'requestLoadDisplay',
-      cb: this.loadDisplay,
-    });
+    this.eventBus.on({ kind: 'requestClearDisplay', cb: this.clearDisplay });
+    this.eventBus.on({ kind: 'requestLoadDisplay', cb: this.loadDisplay });
   }
 
-  private loadDisplay = (display: T.SerializedDisplay): void => {
+  private clearDisplay = (): void => {
     this.cm.requestRemoveAll();
+  };
 
+  private loadDisplay = (display: T.SerializedDisplay): void => {
+    this.clearDisplay();
     display.components
       .map(deserializeComponent)
       .forEach(c => this.eventBus.emit(events.requestAddComponent(c)));

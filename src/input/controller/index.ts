@@ -84,7 +84,7 @@ export const getKeyName = (kind: ControllerKind, key: string): string =>
 export const stringifyKeyInController = (
   controller: Maybe<Controller>,
   key: Maybe<string>,
-  showControllerName: boolean = false,
+  showControllerName = false,
 ): string => {
   if (!controller || !key || !controller.bindings[key]) return 'NONE';
 
@@ -97,7 +97,7 @@ export const stringifyKeyInController = (
 export const stringifyControllerKey = (
   controllerKey: Maybe<ControllerKey>,
   controllersById: Dict<Controller>,
-  showControllerName: boolean = false,
+  showControllerName = false,
 ): string =>
   stringifyKeyInController(
     controllerKey !== undefined
