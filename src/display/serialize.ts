@@ -1,5 +1,6 @@
 import * as T from '../types';
-import { uuid } from '../utils';
+import { every, uuid } from '../utils';
+import { validateSerializedComponent } from './component';
 
 export interface SerializedDisplay {
   id: string;
@@ -9,9 +10,10 @@ export interface SerializedDisplay {
 
 export const cloneDisplay = (
   display: SerializedDisplay,
+  useClonedName: boolean = true,
 ): SerializedDisplay => ({
   ...display,
-  name: `Clone of ${display.name}`,
+  name: useClonedName ? `Clone of ${display.name}` : display.name,
   id: uuid(),
 });
 
@@ -31,3 +33,19 @@ export const setDisplayName = (
 
 export const displayToString = (display: T.SerializedDisplay): string =>
   JSON.stringify(display);
+
+const validateDisplay = (o: any): boolean =>
+  o !== undefined &&
+  typeof o.id === 'string' &&
+  typeof o.name === 'string' &&
+  Array.isArray(o.components) &&
+  every(validateSerializedComponent, o.components);
+
+export const stringToDisplay = (str: string): Maybe<T.SerializedDisplay> => {
+  try {
+    const display = JSON.parse(str);
+    if (validateDisplay(display)) return display;
+  } catch (e) {}
+
+  return;
+};

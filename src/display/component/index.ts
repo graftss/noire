@@ -267,3 +267,10 @@ export const defaultSerializedComponent = (
     filters: {},
   };
 };
+
+export const validateSerializedComponent = (o: any): boolean =>
+  typeof o.id === 'string' &&
+  componentKinds.includes(o.kind) &&
+  typeof o.graphics === 'object' &&
+  typeof o.state === 'object' &&
+  typeof o.filters === 'object';

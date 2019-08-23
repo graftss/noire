@@ -20,6 +20,9 @@ export const keyBy = <T>(map: (t: T) => string, ts: T[]): Dict<T> => {
   return (ts || []).reduce((result, t) => ({ ...result, [map(t)]: t }), {});
 };
 
+export const every = <T>(pred: (t: T) => boolean, list: T[]): boolean =>
+  list.reduce((result, t) => result && pred(t), true);
+
 export const find = <T>(pred: (t: T) => boolean, list: T[]): Maybe<T> => {
   for (let i = 0; i < list.length; i++) {
     if (pred(list[i])) return list[i];
@@ -141,3 +144,8 @@ export const defaultTo = <T>(value: Maybe<T>, defaultValue: T): T =>
 
 export const flatMap = <T, U>(map: (t: T) => U[], list: T[]): U[] =>
   list.reduce((result, t) => result.concat(map(t)), [] as U[]);
+
+export const clipboard = {
+  read: (): Promise<string> => navigator.clipboard.readText(),
+  write: (s: string): Promise<void> => navigator.clipboard.writeText(s),
+};
