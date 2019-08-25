@@ -43,7 +43,6 @@ const attachTransformer = (
     borderDash: [4, 4],
     borderStroke: 'red',
     borderStrokeWidth: 2,
-    rotateEnabled: false,
   });
 
   transformer.attachTo(model);
