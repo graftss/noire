@@ -6,6 +6,8 @@ import * as actions from '../../../state/actions';
 import { defaultSerializedKonvaModel } from '../../../display/model/konva';
 import { defaultSerializedTexture } from '../../../display/texture';
 import {
+  cloneSerializedComponent,
+  deserializeComponent,
   getComponentInputFilter,
   getNewComponentFilterRef,
 } from '../../../display/component';
@@ -13,7 +15,6 @@ import { getComponentEditorConfig } from '../../../display/component/editor';
 import { TransformerToggle } from '../controls/TransformerToggle';
 import { defaultInputFilter } from '../../../display/filter';
 import { ComponentFilters } from './ComponentFilters';
-import { ComponentRemove } from './ComponentRemove';
 import { ComponentTextures } from './ComponentTextures';
 import { ComponentKeys } from './ComponentKeys';
 import { ComponentState } from './ComponentState';
@@ -58,6 +59,7 @@ interface PropsFromDispatch {
     ref: T.ComponentFilterRef,
     filter: T.InputFilter,
   ) => void;
+  cloneComponent: (component: T.SerializedComponent) => void;
   removeComponent: (id: string) => void;
 }
 
@@ -160,6 +162,18 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     dispatch(actions.emitDisplayEvents([event]));
   },
 
+  cloneComponent: (component: T.SerializedComponent) => {
+    const cloned = cloneSerializedComponent(component);
+    const es = [
+      events.requestAddComponent(deserializeComponent(cloned)),
+      events.requestSelectComponent(cloned.id),
+    ];
+
+    dispatch(actions.addComponent(cloned));
+    dispatch(actions.selectComponent(cloned.id));
+    dispatch(actions.emitDisplayEvents(es));
+  },
+
   removeComponent: (id: string) => {
     const event = events.requestRemoveComponent(id);
 
@@ -170,6 +184,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
 
 const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
   addFilter,
+  cloneComponent,
   component,
   removeComponent,
   removeFilter,
@@ -187,10 +202,14 @@ const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
     <div>
       <ComponentTitle label={config.title} />
       <TransformerToggle />
-      <ComponentRemove
-        component={component}
-        removeComponent={removeComponent}
-      />
+      <div>
+        <button onClick={() => removeComponent(component.id)}>
+          remove component
+        </button>
+        <button onClick={() => cloneComponent(component)}>
+          clone component
+        </button>
+      </div>
       <ComponentState
         component={component}
         stateConfig={config.state}

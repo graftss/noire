@@ -274,3 +274,11 @@ export const validateSerializedComponent = (o: any): boolean =>
   typeof o.graphics === 'object' &&
   typeof o.state === 'object' &&
   typeof o.filters === 'object';
+
+export const cloneSerializedComponent = (
+  c: SerializedComponent,
+): SerializedComponent => ({
+  ...c,
+  id: uuid(),
+  state: { ...c.state, name: `Clone of ${c.state.name}` },
+});

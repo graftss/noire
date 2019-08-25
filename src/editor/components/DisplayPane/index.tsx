@@ -20,7 +20,7 @@ interface PropsFromState {
 }
 
 interface PropsFromDispatch {
-  addComponent: (kind: T.ComponentKind) => void;
+  addDefaultComponent: (kind: T.ComponentKind) => void;
   saveDisplay: (display: T.SerializedDisplay) => void;
   selectComponent: (id: string) => void;
   setCanvasDimensions: (width: number, height: number) => void;
@@ -35,7 +35,7 @@ const mapStateToProps = (state): PropsFromState => ({
 });
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
-  addComponent: (kind: T.ComponentKind) => {
+  addDefaultComponent: (kind: T.ComponentKind) => {
     const component = defaultSerializedComponent(kind);
     const event = events.requestAddComponent(deserializeComponent(component));
 
@@ -61,7 +61,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
 });
 
 const BaseDisplayPane: React.SFC<DisplayPaneProps> = ({
-  addComponent,
+  addDefaultComponent,
   components,
   display,
   saveDisplay,
@@ -74,7 +74,7 @@ const BaseDisplayPane: React.SFC<DisplayPaneProps> = ({
     <div>
       <button onClick={() => saveDisplay(display)}>save display</button>
     </div>
-    <ComponentAdd addComponent={addComponent} />
+    <ComponentAdd addComponent={addDefaultComponent} />
     <ComponentSelect
       components={components}
       selected={selectedComponent}
