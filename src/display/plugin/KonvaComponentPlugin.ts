@@ -88,6 +88,10 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     this.stage.on('click', this.onStageClick);
 
     const handlers = [
+      {
+        kind: 'requestSetCanvasDimensions',
+        cb: this.onRequestSetCanvasDimensions,
+      },
       { kind: 'requestAddComponent', cb: this.onRequestAddComponent },
       { kind: 'requestRemoveComponent', cb: this.onRequestRemoveComponent },
       { kind: 'requestDraw', cb: () => this.layer.draw() },
@@ -156,6 +160,14 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     const { scaleX: x, scaleY: y } = event.target.attrs;
     const update: T.ComponentState = { scale: { x, y } };
     this.display.emitUpdateComponentState(id, update);
+  };
+
+  private onRequestSetCanvasDimensions = ({
+    width,
+    height,
+  }: T.DisplayHandlerData['requestSetCanvasDimensions']): void => {
+    this.stage.size({ width, height });
+    this.border.size({ width, height });
   };
 
   // we need to add each model to its group before calling `init`

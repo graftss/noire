@@ -25,6 +25,11 @@ export const displayReducer = (
   if (state === undefined) state = getInitialDisplayState();
 
   switch (action.type) {
+    case 'setCanvasDimensions': {
+      const { width, height } = action.data;
+      return { ...state, active: { ...state.active, width, height } };
+    }
+
     case 'selectDisplay':
       return { ...state, active: action.data };
 

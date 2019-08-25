@@ -51,6 +51,9 @@ export class Display {
 
   private loadDisplay = (display: T.SerializedDisplay): void => {
     this.clearDisplay();
+    this.eventBus.emit(
+      events.requestSetCanvasDimensions(display.width, display.height),
+    );
     display.components
       .map(deserializeComponent)
       .forEach(c => this.eventBus.emit(events.requestAddComponent(c)));

@@ -2,6 +2,14 @@ import Konva from 'konva';
 import * as T from '../../types';
 import { Texture } from '../texture/Texture';
 
+export const requestSetCanvasDimensions = (
+  width: number,
+  height: number,
+): T.DisplayEvent<'requestSetCanvasDimensions'> => ({
+  kind: 'requestSetCanvasDimensions',
+  data: { width, height },
+});
+
 export const requestClearDisplay = (): T.DisplayEvent<
   'requestClearDisplay'
 > => ({

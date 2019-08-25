@@ -58,7 +58,7 @@ export class Noire {
 }
 
 const test = new Noire({
-  width: 500,
+  width: 400,
   height: 700,
   editorTarget: document.getElementById('editor') as HTMLElement,
   canvasTarget: document.getElementById('canvas') as HTMLDivElement,

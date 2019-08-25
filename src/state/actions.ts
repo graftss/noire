@@ -2,6 +2,7 @@ import * as T from '../types';
 
 export type EditorAction =
   | { type: 'emitDisplayEvents'; data: T.DisplayEvent[] }
+  | { type: 'setCanvasDimensions'; data: { width: number; height: number } }
   | { type: 'addComponent'; data: T.SerializedComponent }
   | { type: 'removeComponent'; data: string }
   | { type: 'selectComponent'; data: string }
@@ -46,6 +47,14 @@ export type EditorAction =
   | { type: 'saveDisplay'; data: T.SerializedDisplay }
   | { type: 'selectDisplay'; data: T.SerializedDisplay }
   | { type: 'removeDisplay'; data: string };
+
+export const setCanvasDimensions = (
+  width: number,
+  height: number,
+): EditorAction => ({
+  type: 'setCanvasDimensions',
+  data: { width, height },
+});
 
 export const emitDisplayEvents = (events: T.DisplayEvent[]): EditorAction => ({
   type: 'emitDisplayEvents',

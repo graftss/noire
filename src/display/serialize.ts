@@ -5,6 +5,8 @@ import { validateSerializedComponent } from './component';
 export interface SerializedDisplay {
   id: string;
   name: string;
+  width: number;
+  height: number;
   components: T.SerializedComponent[];
 }
 
@@ -20,6 +22,8 @@ export const cloneDisplay = (
 export const newDisplay = (): SerializedDisplay => ({
   id: uuid(),
   name: 'Untitled display',
+  width: 500,
+  height: 700,
   components: [],
 });
 

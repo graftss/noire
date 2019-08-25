@@ -9,6 +9,7 @@ import {
   defaultSerializedComponent,
   deserializeComponent,
 } from '../../../display/component';
+import { CanvasEditor } from './CanvasEditor';
 import { ComponentSelect } from './ComponentSelect';
 import { ComponentAdd } from './ComponentAdd';
 
@@ -22,6 +23,7 @@ interface PropsFromDispatch {
   addComponent: (kind: T.ComponentKind) => void;
   saveDisplay: (display: T.SerializedDisplay) => void;
   selectComponent: (id: string) => void;
+  setCanvasDimensions: (width: number, height: number) => void;
 }
 
 interface DisplayPaneProps extends PropsFromState, PropsFromDispatch {}
@@ -49,6 +51,13 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch => ({
     dispatch(actions.selectComponent(id));
     dispatch(actions.emitDisplayEvents([events.requestSelectComponent(id)]));
   },
+
+  setCanvasDimensions: (width: number, height: number) => {
+    const event = events.requestSetCanvasDimensions(width, height);
+
+    dispatch(actions.setCanvasDimensions(width, height));
+    dispatch(actions.emitDisplayEvents([event]));
+  },
 });
 
 const BaseDisplayPane: React.SFC<DisplayPaneProps> = ({
@@ -58,8 +67,10 @@ const BaseDisplayPane: React.SFC<DisplayPaneProps> = ({
   saveDisplay,
   selectComponent,
   selectedComponent,
+  setCanvasDimensions,
 }) => (
   <div>
+    <CanvasEditor display={display} setCanvasDimensions={setCanvasDimensions} />
     <div>
       <button onClick={() => saveDisplay(display)}>save display</button>
     </div>
