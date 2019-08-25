@@ -26,7 +26,7 @@ interface DragEndEvent {
 }
 
 interface TransformEndEvent {
-  target: { attrs: { scaleX: number; scaleY: number } };
+  target: { attrs: { scaleX: number; scaleY: number; rotation: number } };
 }
 
 type ComponentQueryResult =
@@ -149,15 +149,15 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
   private onGroupDragend = (id: string) => (event: DragEndEvent): void => {
     const { x, y } = event.target.attrs;
-    const update: T.ComponentState = { offset: { x, y } };
+    const update: T.ComponentState = { position: { x, y } };
     this.display.emitUpdateComponentState(id, update);
   };
 
   private onGroupTransformend = (id: string) => (
     event: TransformEndEvent,
   ): void => {
-    const { scaleX: x, scaleY: y } = event.target.attrs;
-    const update: T.ComponentState = { scale: { x, y } };
+    const { scaleX: x, scaleY: y, rotation } = event.target.attrs;
+    const update: T.ComponentState = { scale: { x, y }, rotation };
     this.display.emitUpdateComponentState(id, update);
   };
 
@@ -176,12 +176,12 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   // and should be changed carefully.
   private onRequestAddComponent = (component: T.Component): void => {
     const { id } = component;
-    const { offset, scale } = component.state;
+    const { position, scale, rotation } = component.state;
 
     const group = new Konva.Group({
-      x: offset.x,
-      y: offset.y,
-      scale: scale,
+      position,
+      scale,
+      rotation,
     });
     group.on('dragend', this.onGroupDragend(id));
     group.on('transformend', this.onGroupTransformend(id));
@@ -280,16 +280,11 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     state,
   }: T.DisplayHandlerData['setComponentState']) => {
     if (!this.componentsById[id]) return;
-
     const group: Konva.Group = this.groupsById[id];
 
-    if (state.offset !== undefined) {
-      group.setPosition({ x: state.offset.x, y: state.offset.y });
-    }
-
-    if (state.scale !== undefined) {
-      group.scale({ x: state.scale.x, y: state.scale.y });
-    }
+    if (state.position !== undefined) group.setPosition(state.position);
+    if (state.scale !== undefined) group.scale(state.scale);
+    if (state.rotation !== undefined) group.rotation(state.rotation);
   };
 
   private onRequestModelUpdate = ({

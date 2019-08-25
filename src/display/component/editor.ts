@@ -41,10 +41,10 @@ const baseStateEditorFields: ComponentStateEditorField[] = [
     label: 'Position',
     kind: 'Vec2',
     key: 'position',
-    defaultValue: defaultComponentState.offset,
+    defaultValue: defaultComponentState.position,
     props: { precision: 1 },
-    getter: c => c.offset,
-    setter: (c, offset) => ({ ...c, offset }),
+    getter: c => c.position,
+    setter: (c, position) => ({ ...c, position }),
   } as ComponentStateEditorField<'Vec2'>,
   {
     label: 'Scale',
@@ -55,6 +55,15 @@ const baseStateEditorFields: ComponentStateEditorField[] = [
     getter: c => c.scale,
     setter: (c, scale) => ({ ...c, scale }),
   } as ComponentStateEditorField<'Vec2'>,
+  {
+    label: 'Rotation',
+    kind: 'number',
+    key: 'rotation',
+    defaultValue: defaultComponentState.rotation,
+    props: { precision: 2 },
+    getter: c => c.rotation,
+    setter: (c, rotation) => ({ ...c, rotation }),
+  } as ComponentStateEditorField<'number'>,
 ];
 
 const baseComponentEditorConfigs: Record<

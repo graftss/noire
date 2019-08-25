@@ -13,8 +13,8 @@ export const defaultBaseAttrs: KonvaBaseAttrs = {
 
 export const baseModelFields = [
   {
-    label: 'Offset',
-    key: 'offset',
+    label: 'Position',
+    key: 'position',
     kind: 'Vec2',
     defaultValue: { x: 0, y: 0 },
     props: { precision: 1 },
@@ -22,7 +22,7 @@ export const baseModelFields = [
       x: model.attrs.x || 0,
       y: model.attrs.y || 0,
     }),
-    setter: (model: T.SerializedKonvaModel<any>, offset: Vec2) =>
-      mapPath(['attrs'], attrs => ({ ...attrs, ...offset }), model),
+    setter: (model: T.SerializedKonvaModel<any>, { x, y }: Vec2) =>
+      mapPath(['attrs'], attrs => ({ ...attrs, x, y }), model),
   } as T.KonvaModelField<any, 'Vec2'>,
 ];

@@ -16,16 +16,18 @@ export type ComponentState<
   defaultInput: Partial<T.KindsToRaw<I>>;
   inputMap: Partial<Record<keyof I, Maybe<T.ControllerKey>>>;
   name: string;
-  offset: Vec2;
+  position: Vec2;
   scale: Vec2;
+  rotation: number;
 }>;
 
 export const defaultComponentState: Required<ComponentState> = {
   defaultInput: {},
   inputMap: {},
   name: 'Untitled component',
-  offset: { x: 0, y: 0 },
+  position: { x: 0, y: 0 },
   scale: { x: 1, y: 1 },
+  rotation: 0,
 };
 
 export type ComponentFilters<SS extends string = string> = Partial<

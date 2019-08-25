@@ -31,10 +31,10 @@ export const rectModelFields: readonly T.KonvaModelField<'Rect'>[] = [
       x: model.attrs.width || defaultRectAttrs.height,
       y: model.attrs.height || defaultRectAttrs.width,
     }),
-    setter: (model: T.SerializedKonvaModel<'Rect'>, offset: Vec2) =>
+    setter: (model: T.SerializedKonvaModel<'Rect'>, dims: Vec2) =>
       mapPath(
         ['attrs'],
-        attrs => ({ ...attrs, width: offset.x, height: offset.y }),
+        attrs => ({ ...attrs, width: dims.x, height: dims.y }),
         model,
       ),
   } as T.KonvaModelField<'Rect', 'Vec2'>,
