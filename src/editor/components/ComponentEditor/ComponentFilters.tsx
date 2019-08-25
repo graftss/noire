@@ -35,21 +35,18 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
           <div>
             <FilterEditor
               filter={filter}
-              getRemapButtonValue={inputKey => {
-                const filter = getComponentInputFilter(
-                  component,
-                  ref,
-                ) as T.InputFilter;
+              getRemapButtonValue={field => {
                 const controllerKey = getInputFilterControllerKey(
-                  filter,
-                  inputKey,
+                  getComponentInputFilter(component, ref) as T.InputFilter,
+                  field.key,
                 );
+
                 return {
                   kind: 'filter',
                   component,
                   controllerKey,
                   ref,
-                  inputKey,
+                  field,
                 };
               }}
               remove={() => removeFilter(component.id, ref)}

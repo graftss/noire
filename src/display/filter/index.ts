@@ -1,10 +1,10 @@
 import * as T from '../../types';
-import { assocPath, keys, path, toPairs } from '../../utils';
+import { assocPath, keys, path } from '../../utils';
 import {
   stickDistort,
   dPadDistort,
-  stickDistortInputKinds,
-  dPadDistortInputKinds,
+  stickDistortInputFields,
+  dPadDistortInputFields,
   distortStateFields,
   defaultDPadDistortState,
   defaultStickDistortState,
@@ -42,6 +42,12 @@ export type InputFilterFactory<K extends InputFilterKind> = FilterFactory<{
   input: InputFilterInput<K>;
 }>;
 
+export interface InputFilterInputField {
+  key: string;
+  label: string;
+  inputKind: T.InputKind;
+}
+
 export interface InputFilter<K extends InputFilterKind = InputFilterKind> {
   kind: K;
   state: InputFilterState<K>;
@@ -64,10 +70,13 @@ const inputFilterFactories: {
   stickDistort,
 } as const;
 
-const filterInputKinds: Record<T.InputFilterKind, Dict<T.InputKind>> = {
-  stickDistort: stickDistortInputKinds,
-  dPadDistort: dPadDistortInputKinds,
-  buttonZoom: {},
+const filterInputFields: Record<
+  T.InputFilterKind,
+  Readonly<InputFilterInputField[]>
+> = {
+  stickDistort: stickDistortInputFields,
+  dPadDistort: dPadDistortInputFields,
+  buttonZoom: [],
 } as const;
 
 const defaultInputFilterStates: {
@@ -81,11 +90,6 @@ const defaultInputFilterStates: {
 export const getInputFilterKinds = (): InputFilterKind[] => [
   ...keys(inputFilterFactories),
 ];
-
-export const getFilterInputKind = (
-  filter: InputFilter,
-  filterKey: string,
-): Maybe<T.InputKind> => filterInputKinds[filter.kind][filterKey];
 
 const inputFilterFields: Record<InputFilterKind, InputFilterField[]> = {
   stickDistort: distortStateFields,
@@ -102,13 +106,9 @@ export const reifyInputFilter = <K extends InputFilterKind>(
     input: input as InputFilterInput<K>,
   });
 
-export const getInputFilterKeyList = (
-  filter: InputFilter,
-): { filterKey: string; inputKind: T.InputKind }[] => {
-  return toPairs(filterInputKinds[filter.kind]).map(
-    ([filterKey, inputKind]) => ({ filterKey, inputKind }),
-  );
-};
+export const getInputFilterInputFields = (
+  kind: T.InputFilterKind,
+): T.InputFilterInputField[] => [...filterInputFields[kind]];
 
 export const getInputFilterControllerKey = (
   filter: InputFilter,

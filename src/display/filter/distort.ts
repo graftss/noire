@@ -181,12 +181,12 @@ export const distortStateFields: T.InputFilterField<DistortKinds>[] = [
   },
 ];
 
-export const stickDistortInputKinds: Dict<T.InputKind> = {
-  xp: 'axis',
-  xn: 'axis',
-  yp: 'axis',
-  yn: 'axis',
-};
+export const stickDistortInputFields: Readonly<T.InputFilterInputField[]> = [
+  { key: 'xp', inputKind: 'axis', label: 'Right' },
+  { key: 'xn', inputKind: 'axis', label: 'Left' },
+  { key: 'yp', inputKind: 'axis', label: 'Down' },
+  { key: 'yn', inputKind: 'axis', label: 'Up' },
+] as const;
 
 export const defaultStickDistortState = defaultDistortState;
 
@@ -216,12 +216,12 @@ export const stickDistort: T.InputFilterFactory<'stickDistort'> = ({
     yd: Math.round(leash * (R - r) * normalizeAxis(yp, yn)),
   });
 
-export const dPadDistortInputKinds = {
-  u: 'button',
-  l: 'button',
-  d: 'button',
-  r: 'button',
-} as const;
+export const dPadDistortInputFields: Readonly<T.InputFilterInputField[]> = [
+  { key: 'r', inputKind: 'axis', label: 'Right' },
+  { key: 'l', inputKind: 'axis', label: 'Left' },
+  { key: 'd', inputKind: 'axis', label: 'Down' },
+  { key: 'u', inputKind: 'axis', label: 'Up' },
+] as const;
 
 export const defaultDPadDistortState = defaultDistortState;
 

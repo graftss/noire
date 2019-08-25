@@ -7,7 +7,7 @@ import { FilterKindSelect } from './FilterKindSelect';
 
 interface FilterEditorProps {
   filter: Maybe<T.InputFilter>;
-  getRemapButtonValue: (filterKey: string) => T.RemapButtonValue;
+  getRemapButtonValue: (field: T.InputFilterInputField) => T.RemapButtonValue;
   setDefaultFilter: (k: T.InputFilterKind) => void;
   remove: () => void;
   update: (filter: T.InputFilter) => void;
