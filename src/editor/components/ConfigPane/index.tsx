@@ -1,17 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
 import * as actions from '../../../state/actions';
-import * as events from '../../../display/events';
 import * as selectors from '../../../state/selectors';
-import {
-  cloneDisplay,
-  newDisplay,
-  setDisplayName,
-  displayToString,
-  stringToDisplay,
-} from '../../../display/serialize';
 import { clipboard } from '../../../utils';
+import { displayToString } from '../../../display/serialize';
 import { DisplaySelect } from './DisplaySelect';
 import { DisplayEditor } from './DisplayEditor';
 
@@ -22,15 +16,14 @@ interface PropsFromState {
 }
 
 interface PropsFromDispatch {
-  createNewDisplay: () => void;
-  enterPresentationMode: () => void;
-  exportDisplay: (display: T.SerializedDisplay) => void;
-  importDisplay: () => void;
-  removeDisplay: (display: T.SerializedDisplay) => void;
-  saveDisplay: (display: T.SerializedDisplay) => void;
-  saveDisplayAsNew: (display: T.SerializedDisplay) => void;
-  selectDisplay: (display: T.SerializedDisplay) => void;
-  setDisplayName: (display: T.SerializedDisplay, name: string) => void;
+  createNewDisplay: CB0;
+  enterPresentationMode: CB0;
+  importDisplay: CB0;
+  removeDisplay: CB1<T.SerializedDisplay>;
+  saveDisplay: CB1<T.SerializedDisplay>;
+  saveDisplayAsNew: CB1<T.SerializedDisplay>;
+  selectExistingDisplay: CB1<T.SerializedDisplay>;
+  setDisplayName: CB1<{ display: T.SerializedDisplay; name: string }>;
 }
 
 interface ConfigPaneProps extends PropsFromState, PropsFromDispatch {}
@@ -41,77 +34,22 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
   selectedDisplay: selectors.selectedDisplay(state),
 });
 
-const mapDispatchToProps = (dispatch): PropsFromDispatch => {
-  const selectDisplay = (
-    display: T.SerializedDisplay,
-    saveToState = false,
-    loadIntoCanvas = false,
-  ): void => {
-    dispatch(actions.selectDisplay(display));
-    if (saveToState) dispatch(actions.saveDisplay(display));
-    if (loadIntoCanvas) {
-      const event = events.requestLoadDisplay(display);
-      dispatch(actions.emitDisplayEvents([event]));
-    }
-  };
+const mapDispatchToProps = (dispatch): PropsFromDispatch =>
+  bindActionCreators(actions, dispatch);
 
-  return {
-    createNewDisplay: () => selectDisplay(newDisplay(), true, true),
-
-    enterPresentationMode: () => {
-      dispatch(actions.enterPresentationMode());
-      setTimeout(() => dispatch(actions.closePresentationSnackbar()), 1000);
-    },
-
-    exportDisplay: (display: T.SerializedDisplay) => {
-      clipboard.write(displayToString(display));
-    },
-
-    importDisplay: () => {
-      clipboard
-        .read()
-        .then(stringToDisplay)
-        .then(
-          display =>
-            display && selectDisplay(cloneDisplay(display, false), true, true),
-        );
-    },
-
-    removeDisplay: (display: T.SerializedDisplay) => {
-      dispatch(actions.removeDisplay(display.id));
-      dispatch(actions.emitDisplayEvents([events.requestClearDisplay()]));
-    },
-
-    saveDisplay: (display: T.SerializedDisplay) => {
-      selectDisplay(display, true);
-    },
-
-    saveDisplayAsNew: (display: T.SerializedDisplay) => {
-      selectDisplay(cloneDisplay(display), true);
-    },
-
-    selectDisplay: (display: T.SerializedDisplay) => {
-      selectDisplay(display, false, true);
-    },
-
-    setDisplayName: (display: T.SerializedDisplay, name: string) => {
-      const newDisplay = setDisplayName(display, name);
-      dispatch(actions.saveDisplay(newDisplay));
-    },
-  };
-};
+const exportDisplay = (display: T.SerializedDisplay): Promise<void> =>
+  clipboard.write(displayToString(display));
 
 const BaseConfigPane: React.SFC<ConfigPaneProps> = ({
   activeDisplay,
   createNewDisplay,
   enterPresentationMode,
-  exportDisplay,
   importDisplay,
   removeDisplay,
   saveDisplay,
   saveDisplayAsNew,
   savedDisplays,
-  selectDisplay,
+  selectExistingDisplay,
   selectedDisplay,
   setDisplayName,
 }) => (
@@ -122,11 +60,11 @@ const BaseConfigPane: React.SFC<ConfigPaneProps> = ({
     </div>
     <DisplaySelect
       displays={savedDisplays}
-      selectDisplay={selectDisplay}
+      selectDisplay={selectExistingDisplay}
       selectedDisplay={selectedDisplay}
     />
     <div>
-      <button onClick={() => createNewDisplay()}>create new display</button>
+      <button onClick={createNewDisplay}>create new display</button>
       <button onClick={() => saveDisplay(activeDisplay)}>
         {selectedDisplay === undefined ? 'save display as new' : 'save display'}
       </button>

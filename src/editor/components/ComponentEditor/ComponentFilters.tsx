@@ -9,17 +9,17 @@ import {
 
 interface ComponentFiltersProps {
   component: T.SerializedComponent;
-  removeFilter: (id: string, ref: T.ComponentFilterRef) => void;
-  setDefaultFilter: (
-    component: T.SerializedComponent,
-    ref: T.ComponentFilterRef,
-    kind: T.InputFilterKind,
-  ) => void;
-  updateFilter: (
-    component: T.SerializedComponent,
-    ref: T.ComponentFilterRef,
-    filter: T.InputFilter,
-  ) => void;
+  removeFilter: CB1<{ id: string; ref: T.ComponentFilterRef }>;
+  setDefaultFilter: CB1<{
+    component: T.SerializedComponent;
+    ref: T.ComponentFilterRef;
+    kind: T.InputFilterKind;
+  }>;
+  updateFilter: CB1<{
+    component: T.SerializedComponent;
+    ref: T.ComponentFilterRef;
+    filter: T.InputFilter;
+  }>;
 }
 
 export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
@@ -49,9 +49,11 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
                   field,
                 };
               }}
-              remove={() => removeFilter(component.id, ref)}
-              setDefaultFilter={kind => setDefaultFilter(component, ref, kind)}
-              update={filter => updateFilter(component, ref, filter)}
+              remove={() => removeFilter({ id: component.id, ref })}
+              setDefaultFilter={kind =>
+                setDefaultFilter({ component, ref, kind })
+              }
+              update={filter => updateFilter({ component, ref, filter })}
             />
           </div>
         </div>

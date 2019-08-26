@@ -4,8 +4,8 @@ import { TextField } from '../controls/TextField';
 
 interface DisplayEditorProps {
   display: Maybe<T.SerializedDisplay>;
-  exportDisplay: (display: T.SerializedDisplay) => void;
-  updateDisplayName: (display: T.SerializedDisplay, name: string) => void;
+  exportDisplay: CB1<T.SerializedDisplay>;
+  updateDisplayName: CB1<{ display: T.SerializedDisplay; name: string }>;
 }
 
 export const DisplayEditor: React.SFC<DisplayEditorProps> = ({
@@ -19,7 +19,7 @@ export const DisplayEditor: React.SFC<DisplayEditorProps> = ({
       <div>
         <TextField
           defaultValue={display.name}
-          update={name => updateDisplayName(display, name)}
+          update={name => updateDisplayName({ display, name })}
         />
       </div>
       <div>

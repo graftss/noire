@@ -10,6 +10,7 @@ import persistState from 'redux-localstorage';
 import { createLogger } from 'redux-logger';
 import * as T from '../types';
 import { DisplayEventBus } from '../display/events/DisplayEventBus';
+import { inProduction } from '../utils';
 import { rootReducer } from './reducers/root';
 import { serializeEditorState, deserializePersistentString } from './persist';
 
@@ -27,12 +28,21 @@ const createDisplayEmitter = (
   return next(action);
 };
 
+const allowFunctionDispatching: EditorMiddleware = ({ dispatch }) => next => (
+  action: (d: T.Dispatch) => void,
+) => (typeof action === 'function' ? action(dispatch) : next(action));
+
 export const createStore = (eventBus: DisplayEventBus): EditorStore => {
   const displayEmitter = createDisplayEmitter(eventBus);
-  const middleware =
-    process.env.NODE_ENV === 'production'
-      ? applyMiddleware(displayEmitter)
-      : applyMiddleware(displayEmitter, createLogger());
+
+  const middleware = applyMiddleware(
+    ...[
+      displayEmitter,
+      allowFunctionDispatching,
+      ...(inProduction() ? [] : [createLogger()]),
+    ],
+  );
+
   const persist = persistState(undefined, {
     serialize: serializeEditorState,
     deserialize: deserializePersistentString,

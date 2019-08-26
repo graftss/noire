@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import * as T from '../../types';
 import * as events from '../events';
+import * as actions from '../../state/actions';
 import { defaultKonvaModel, deserializeKonvaModel } from '../model/konva';
 import { defaultTexture } from '../texture';
 import { DisplayPlugin } from './DisplayPlugin';
@@ -116,10 +117,8 @@ export class KonvaComponentPlugin extends DisplayPlugin {
         const { selection } = this.transformerState;
 
         switch (selection.kind) {
-          case 'component': {
-            const event = events.requestDeselectComponent(selection.id);
-            this.emit(event);
-          }
+          case 'component':
+            actions.deselectComponent(selection.id)(this.dispatch);
         }
       }
 
@@ -142,8 +141,9 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   private addModel = (componentId: string, group: Konva.Group) => (
     model: Konva.Shape,
   ) => {
-    const event = events.requestSelectComponent(componentId);
-    model.on('click', () => this.emit(event));
+    model.on('click', () => {
+      actions.selectComponent(componentId)(this.dispatch);
+    });
     group.add(model);
   };
 
@@ -178,11 +178,7 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     const { id } = component;
     const { position, scale, rotation } = component.state;
 
-    const group = new Konva.Group({
-      position,
-      scale,
-      rotation,
-    });
+    const group = new Konva.Group({ position, scale, rotation });
     group.on('dragend', this.onGroupDragend(id));
     group.on('transformend', this.onGroupTransformend(id));
     this.groupsById[id] = group;

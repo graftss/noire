@@ -24,22 +24,11 @@ export class Display {
     this.store = store;
     this.eventBus = eventBus;
 
-    const { getState, dispatch } = store;
     this.cm = new ComponentManager(this.eventBus);
     this.plugins = [new KonvaComponentPlugin(config, this)];
 
     // sync display with the store's initial state
-    this.loadDisplay(selectors.activeDisplay(getState()));
-
-    this.eventBus.on({
-      kind: 'selectComponent',
-      cb: (id: string) => dispatch(actions.selectComponent(id)),
-    });
-
-    this.eventBus.on({
-      kind: 'deselectComponent',
-      cb: (id: string) => dispatch(actions.deselectComponent(id)),
-    });
+    this.loadDisplay(selectors.activeDisplay(store.getState()));
 
     this.eventBus.on({ kind: 'requestClearDisplay', cb: this.clearDisplay });
     this.eventBus.on({ kind: 'requestLoadDisplay', cb: this.loadDisplay });

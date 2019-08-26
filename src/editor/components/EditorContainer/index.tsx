@@ -13,7 +13,7 @@ interface PropsFromState {
 }
 
 interface PropsFromDispatch {
-  closePresentationSnackbar: () => void;
+  closePresentationSnackbar: CB0;
 }
 
 interface EditorContainerProps extends PropsFromState, PropsFromDispatch {}
@@ -24,12 +24,7 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 });
 
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
-  bindActionCreators(
-    {
-      closePresentationSnackbar: actions.closePresentationSnackbar,
-    },
-    dispatch,
-  );
+  bindActionCreators(actions, dispatch);
 
 const BaseEditorContainer: React.SFC<EditorContainerProps> = ({
   inPresentationMode,

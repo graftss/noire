@@ -4,17 +4,17 @@ import { TexturesEditor } from '../TexturesEditor';
 
 interface ComponentTexturesProps {
   component: T.SerializedComponent;
-  setDefaultTexture: (
-    id: string,
-    textureName: string,
-    k: T.TextureKind,
-  ) => void;
+  setDefaultTexture: CB1<{
+    id: string;
+    textureName: string;
+    kind: T.TextureKind;
+  }>;
   textureList: readonly string[];
-  update: (
-    component: T.SerializedComponent,
-    textureName: string,
-    texture: T.SerializedTexture,
-  ) => void;
+  update: CB1<{
+    component: T.SerializedComponent;
+    textureName: string;
+    texture: T.SerializedTexture;
+  }>;
 }
 
 export const ComponentTextures: React.SFC<ComponentTexturesProps> = ({
@@ -28,12 +28,14 @@ export const ComponentTextures: React.SFC<ComponentTexturesProps> = ({
       <div>Textures!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</div>
       <div>
         <TexturesEditor
-          setDefaultTexture={(name: string, kind: T.TextureKind) =>
-            setDefaultTexture(component.id, name, kind)
+          setDefaultTexture={(textureName, kind) =>
+            setDefaultTexture({ id: component.id, textureName, kind })
           }
           textureList={textureList}
           textureMap={component.graphics.textures}
-          update={(name, texture) => update(component, name, texture)}
+          update={(textureName, texture) =>
+            update({ component, textureName, texture })
+          }
         />
       </div>
     </div>

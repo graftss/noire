@@ -116,6 +116,7 @@ export {
 } from './display/component/ButtonComponent';
 export { EditorApp } from './editor';
 export { EditorAction } from './state/actions';
+export { Dispatch } from './state/actions';
 export { DisplayState } from './state/reducers/display';
 export { EditorState } from './state/reducers/root';
 export {

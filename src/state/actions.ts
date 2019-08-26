@@ -1,4 +1,22 @@
 import * as T from '../types';
+import * as events from '../display/events';
+import { clipboard } from '../utils';
+import { defaultSerializedKonvaModel } from '../display/model/konva';
+import { defaultSerializedTexture } from '../display/texture';
+import {
+  cloneSerializedComponent,
+  defaultSerializedComponent,
+  deserializeComponent,
+  getComponentInputFilter,
+  getNewComponentFilterRef,
+} from '../display/component';
+import { defaultInputFilter } from '../display/filter';
+import {
+  cloneDisplay,
+  newDisplay,
+  setDisplayName as setSerializedDisplayName,
+  stringToDisplay,
+} from '../display/serialize';
 
 export type EditorAction =
   | { type: 'emitDisplayEvents'; data: T.DisplayEvent[] }
@@ -48,29 +66,14 @@ export type EditorAction =
   | { type: 'selectDisplay'; data: T.SerializedDisplay }
   | { type: 'removeDisplay'; data: string };
 
-export const setCanvasDimensions = (
-  width: number,
-  height: number,
-): EditorAction => ({
-  type: 'setCanvasDimensions',
-  data: { width, height },
-});
+export type Dispatch = ((a: T.EditorAction) => void) | (() => void);
+
+export type FuncCreator<T> = (t: T) => (d: Dispatch) => void;
+export type FuncCreator0 = () => (d: Dispatch) => void;
 
 export const emitDisplayEvents = (events: T.DisplayEvent[]): EditorAction => ({
   type: 'emitDisplayEvents',
   data: events,
-});
-
-export const addComponent = (
-  component: T.SerializedComponent,
-): EditorAction => ({
-  type: 'addComponent',
-  data: component,
-});
-
-export const removeComponent = (id: string): EditorAction => ({
-  type: 'removeComponent',
-  data: id,
 });
 
 export const selectController = (id?: string): EditorAction => ({
@@ -85,16 +88,6 @@ export const addController = (controller: T.Controller): EditorAction => ({
 
 export const removeController = (id: string): EditorAction => ({
   type: 'removeController',
-  data: id,
-});
-
-export const selectComponent = (id: string): EditorAction => ({
-  type: 'selectComponent',
-  data: id,
-});
-
-export const deselectComponent = (id: string): EditorAction => ({
-  type: 'deselectComponent',
   data: id,
 });
 
@@ -178,29 +171,247 @@ export const setTab = (kind: T.TabKind): EditorAction => ({
   data: kind,
 });
 
-export const enterPresentationMode = (): EditorAction => ({
-  type: 'enterPresentationMode',
-});
+export const setDefaultModel: FuncCreator<{
+  id: string;
+  modelName: string;
+  kind: T.KonvaModelKind;
+}> = ({ id, modelName, kind }) => dispatch => {
+  const model = defaultSerializedKonvaModel(kind);
+  const event = events.requestDefaultModel(id, modelName, kind);
 
-export const closePresentationSnackbar = (): EditorAction => ({
-  type: 'closePresentationSnackbar',
-});
+  dispatch(setComponentModel(id, modelName, model));
+  dispatch(emitDisplayEvents([event]));
+};
+
+export const setDefaultTexture: FuncCreator<{
+  id: string;
+  textureName: string;
+  kind: T.TextureKind;
+}> = ({ id, textureName, kind }) => dispatch => {
+  const texture = defaultSerializedTexture(kind);
+  const event = events.requestDefaultTexture(id, textureName, kind);
+
+  dispatch(setComponentTexture(id, textureName, texture));
+  dispatch(emitDisplayEvents([event]));
+};
+
+export const addFilter: FuncCreator<{
+  component: T.SerializedComponent;
+  modelName: string;
+  kind: T.InputFilterKind;
+}> = ({ component, modelName, kind }) => dispatch => {
+  const ref = getNewComponentFilterRef(component, modelName);
+  const filter = defaultInputFilter(kind);
+  const event = events.requestFilterUpdate(component.id, ref, filter);
+
+  dispatch(emitDisplayEvents([event]));
+  dispatch(setComponentInputFilter(component.id, ref, filter));
+};
+
+export const removeFilter: FuncCreator<{
+  id: string;
+  ref: T.ComponentFilterRef;
+}> = ({ id, ref }) => dispatch => {
+  dispatch(emitDisplayEvents([events.requestRemoveFilter(id, ref)]));
+  dispatch(removeComponentInputFilter(id, ref));
+};
+
+export const setDefaultFilter: FuncCreator<{
+  component: T.SerializedComponent;
+  ref: T.ComponentFilterRef;
+  kind: T.InputFilterKind;
+}> = ({ component, ref, kind }) => dispatch => {
+  const oldFilter = getComponentInputFilter(component, ref);
+  const filter = defaultInputFilter(kind, oldFilter);
+  const event = events.requestFilterUpdate(component.id, ref, filter);
+
+  dispatch(emitDisplayEvents([event]));
+  dispatch(setComponentInputFilter(component.id, ref, filter));
+};
+
+export const updateState: FuncCreator<{
+  component: T.SerializedComponent;
+  field: T.ComponentStateEditorField;
+  value: any;
+}> = ({ component, field, value }) => dispatch => {
+  const { id, state } = component;
+  const newState = field.setter(state, value);
+  const event = events.setComponentState(id, newState);
+
+  dispatch(setComponentState(id, newState));
+  dispatch(emitDisplayEvents([event]));
+};
+
+export const updateModel: FuncCreator<{
+  component: T.SerializedComponent;
+  modelName: string;
+  model: T.SerializedKonvaModel;
+}> = ({ component, modelName, model }) => dispatch => {
+  const event = events.requestModelUpdate(component.id, modelName, model);
+
+  dispatch(setComponentModel(component.id, modelName, model));
+  dispatch(emitDisplayEvents([event]));
+};
+
+export const updateTexture: FuncCreator<{
+  component: T.SerializedComponent;
+  textureName: string;
+  texture: T.SerializedTexture;
+}> = ({ component, textureName, texture }) => dispatch => {
+  const { id } = component;
+  const event = events.requestTextureUpdate(id, textureName, texture);
+
+  dispatch(setComponentTexture(id, textureName, texture));
+  dispatch(emitDisplayEvents([event]));
+};
+
+export const updateFilter: FuncCreator<{
+  component: T.SerializedComponent;
+  ref: T.ComponentFilterRef;
+  filter: T.InputFilter;
+}> = ({ component, ref, filter }) => dispatch => {
+  const event = events.requestFilterUpdate(component.id, ref, filter);
+
+  dispatch(setComponentInputFilter(component.id, ref, filter));
+  dispatch(emitDisplayEvents([event]));
+};
+
+export const addComponent: FuncCreator<
+  T.SerializedComponent
+> = component => dispatch => {
+  const event = events.requestAddComponent(deserializeComponent(component));
+  dispatch({ type: 'addComponent', data: component });
+  dispatch(emitDisplayEvents([event]));
+};
+
+export const selectComponent: FuncCreator<string> = id => dispatch => {
+  dispatch({ type: 'selectComponent', data: id });
+  dispatch(emitDisplayEvents([events.requestSelectComponent(id)]));
+};
+
+export const deselectComponent: FuncCreator<string> = id => dispatch => {
+  dispatch({ type: 'deselectComponent', data: id });
+  dispatch(emitDisplayEvents([events.requestDeselectComponent(id)]));
+};
+
+export const cloneComponent: FuncCreator<
+  T.SerializedComponent
+> = component => dispatch => {
+  const cloned = cloneSerializedComponent(component);
+  addComponent(cloned)(dispatch);
+  selectComponent(cloned.id)(dispatch);
+};
+
+export const removeComponent: FuncCreator<string> = id => dispatch => {
+  const event = events.requestRemoveComponent(id);
+  dispatch({ type: 'removeComponent', data: id });
+  dispatch(emitDisplayEvents([event]));
+};
+
+export const selectDisplay: FuncCreator<{
+  display: T.SerializedDisplay;
+  saveToState?: boolean;
+  loadIntoCanvas?: boolean;
+}> = ({ display, saveToState = false, loadIntoCanvas = false }) => dispatch => {
+  dispatch({ type: 'selectDisplay', data: display });
+  if (saveToState) {
+    dispatch({ type: 'saveDisplay', data: display });
+  }
+  if (loadIntoCanvas) {
+    const event = events.requestLoadDisplay(display);
+    dispatch(emitDisplayEvents([event]));
+    // ?? should set active display here i think
+  }
+};
+
+export const createNewDisplay: FuncCreator0 = () => dispatch =>
+  selectDisplay({
+    display: newDisplay(),
+    saveToState: true,
+    loadIntoCanvas: true,
+  })(dispatch);
+
+export const enterPresentationMode: FuncCreator0 = () => dispatch => {
+  dispatch({ type: 'enterPresentationMode' });
+  setTimeout(() => dispatch({ type: 'closePresentationSnackbar' }), 1000);
+};
+
+export const importDisplay: FuncCreator0 = () => dispatch => {
+  clipboard
+    .read()
+    .then(stringToDisplay)
+    .then(display => {
+      if (display) {
+        selectDisplay({
+          display: cloneDisplay(display),
+          saveToState: true,
+          loadIntoCanvas: true,
+        })(dispatch);
+      } else {
+        // TODO: handle invalid imported display
+      }
+    });
+};
+
+export const removeDisplay: FuncCreator<
+  T.SerializedDisplay
+> = display => dispatch => {
+  dispatch({ type: 'removeDisplay', data: display.id });
+  dispatch(emitDisplayEvents([events.requestClearDisplay()]));
+};
+
+export const saveDisplay: FuncCreator<
+  T.SerializedDisplay
+> = display => dispatch => {
+  selectDisplay({ display, saveToState: true })(dispatch);
+};
+
+export const saveDisplayAsNew: FuncCreator<
+  T.SerializedDisplay
+> = display => dispatch => {
+  selectDisplay({
+    display: cloneDisplay(display),
+    saveToState: true,
+  })(dispatch);
+};
+
+export const selectExistingDisplay: FuncCreator<
+  T.SerializedDisplay
+> = display => dispatch => {
+  selectDisplay({ display, loadIntoCanvas: true })(dispatch);
+};
+
+export const setDisplayName: FuncCreator<{
+  display: T.SerializedDisplay;
+  name: string;
+}> = ({ display, name }) => dispatch => {
+  const newDisplay = setSerializedDisplayName(display, name);
+  dispatch({ type: 'saveDisplay', data: newDisplay });
+};
+
+export const closePresentationSnackbar: FuncCreator0 = () => dispatch =>
+  dispatch({ type: 'closePresentationSnackbar' });
+
+export const addDefaultComponent: FuncCreator<
+  T.ComponentKind
+> = kind => dispatch => {
+  const component = defaultSerializedComponent(kind);
+  const event = events.requestAddComponent(deserializeComponent(component));
+
+  dispatch({ type: 'addComponent', data: component });
+  dispatch(emitDisplayEvents([event]));
+};
+
+export const setCanvasDimensions: FuncCreator<{
+  width: number;
+  height: number;
+}> = ({ width, height }) => dispatch => {
+  const event = events.requestSetCanvasDimensions(width, height);
+
+  dispatch({ type: 'setCanvasDimensions', data: { width, height } });
+  dispatch(emitDisplayEvents([event]));
+};
 
 export const exitPresentationMode = (): EditorAction => ({
   type: 'exitPresentationMode',
-});
-
-export const saveDisplay = (display: T.SerializedDisplay): EditorAction => ({
-  type: 'saveDisplay',
-  data: display,
-});
-
-export const selectDisplay = (display: T.SerializedDisplay): EditorAction => ({
-  type: 'selectDisplay',
-  data: display,
-});
-
-export const removeDisplay = (id: string): EditorAction => ({
-  type: 'removeDisplay',
-  data: id,
 });

@@ -4,6 +4,9 @@ import { equals } from 'ramda';
 
 export { assocPath, equals, path, range } from 'ramda';
 
+export const inProduction = (): boolean =>
+  process.env.NODE_ENV === 'production';
+
 export const without = <T>(t: T, ts: T[]): T[] => {
   const idx = ts.indexOf(t);
   if (idx > -1) ts.splice(idx, 1);

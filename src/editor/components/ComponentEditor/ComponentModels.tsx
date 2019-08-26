@@ -3,19 +3,23 @@ import * as T from '../../../types';
 import { ModelsEditor } from '../ModelsEditor';
 
 interface ComponentModelsProps {
-  addFilter: (
-    component: T.SerializedComponent,
-    modelName: string,
-    k: T.InputFilterKind,
-  ) => void;
   component: T.SerializedComponent;
   modelList: readonly string[];
-  setDefaultModel: (id: string, modelName: string, k: T.KonvaModelKind) => void;
-  updateModel: (
-    c: T.SerializedComponent,
-    name: string,
-    model: T.SerializedKonvaModel,
-  ) => void;
+  setDefaultModel: CB1<{
+    id: string;
+    modelName: string;
+    kind: T.KonvaModelKind;
+  }>;
+  addFilter: CB1<{
+    component: T.SerializedComponent;
+    modelName: string;
+    kind: T.InputFilterKind;
+  }>;
+  updateModel: CB1<{
+    component: T.SerializedComponent;
+    modelName: string;
+    model: T.SerializedKonvaModel;
+  }>;
 }
 
 export const ComponentModels: React.SFC<ComponentModelsProps> = ({
@@ -27,13 +31,15 @@ export const ComponentModels: React.SFC<ComponentModelsProps> = ({
 }) => (
   <div>
     <ModelsEditor
-      addFilter={(modelName, k) => addFilter(component, modelName, k)}
+      addFilter={(modelName, kind) => addFilter({ component, modelName, kind })}
       modelList={modelList}
       modelMap={component.graphics.models}
-      setDefaultModel={(modelName, k) =>
-        setDefaultModel(component.id, modelName, k)
+      setDefaultModel={(modelName, kind) =>
+        setDefaultModel({ id: component.id, modelName, kind })
       }
-      updateModel={(name, model) => updateModel(component, name, model)}
+      updateModel={(modelName, model) =>
+        updateModel({ component, modelName, model })
+      }
     />
   </div>
 );

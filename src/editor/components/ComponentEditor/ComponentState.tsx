@@ -5,11 +5,11 @@ import { EditorField } from '../controls/EditorField';
 interface ComponentStateProps {
   component: T.SerializedComponent;
   stateConfig: Maybe<T.ComponentStateEditorField[]>;
-  update: (
-    component: T.SerializedComponent,
-    field: T.ComponentStateEditorField,
-    value: any,
-  ) => void;
+  update: CB1<{
+    component: T.SerializedComponent;
+    field: T.ComponentStateEditorField;
+    value: any;
+  }>;
 }
 export const ComponentState: React.SFC<ComponentStateProps> = ({
   component,
@@ -23,7 +23,7 @@ export const ComponentState: React.SFC<ComponentStateProps> = ({
           <EditorField
             initialValue={field.getter(component.state)}
             field={field}
-            update={v => update(component, field, v)}
+            update={value => update({ component, field, value })}
           />
         </div>
       ))}
