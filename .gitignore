@@ -2,5 +2,3 @@
 
 # for NPM
 node_modules/
-
-bundle.js*
