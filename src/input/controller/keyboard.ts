@@ -66,16 +66,9 @@ const letterToBinding = (l: string): T.KeyboardKeyBinding => ({
   keyCode: keycode(l),
 });
 
-const defaultKeyBindingDict: Dict<T.KeyboardKeyBinding> = keyOrder
+const defaultBindings: Dict<T.KeyboardKeyBinding> = keyOrder
   .map(letterToBinding)
   .reduce((result, b) => ({ ...result, [keycode(b.keyCode)]: b }), {});
-
-export const defaultKeyboardController: T.KeyboardController = {
-  id: 'test keyboard',
-  name: 'test keyboard',
-  kind: 'keyboard',
-  bindings: defaultKeyBindingDict,
-};
 
 export type KeyboardControllerClass = T.BaseControllerClass<KeyboardKey> & {
   kind: 'keyboard';
@@ -91,4 +84,5 @@ export const defaultListenedKeyCodes: number[] = keyOrder.map(keycode);
 export const keyboardConfig: T.ControllerClassConfig<KeyboardKey> = {
   keyOrder,
   map,
+  defaultBindings,
 };

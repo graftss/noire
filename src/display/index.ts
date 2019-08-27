@@ -35,7 +35,9 @@ export class Display {
   }
 
   private clearDisplay = (): void => {
-    this.cm.requestRemoveAll();
+    this.cm.forEachComponent(c => {
+      this.eventBus.emit(events.requestRemoveComponent(c.id));
+    });
   };
 
   private loadDisplay = (display: T.SerializedDisplay): void => {

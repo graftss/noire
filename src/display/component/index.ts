@@ -282,3 +282,17 @@ export const cloneSerializedComponent = (
   id: uuid(),
   state: { ...c.state, name: `Clone of ${c.state.name}` },
 });
+
+export const portOutdatedComponent = (
+  c: SerializedComponent,
+): SerializedComponent => {
+  const state: any = c.state;
+
+  // replace `offset` with `position` in state
+  if (state.offset) {
+    state.position = state.offset;
+    delete state.offset;
+  }
+
+  return c;
+};

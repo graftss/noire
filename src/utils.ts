@@ -136,10 +136,10 @@ export const equalAtKeys = <KS extends string, O extends Record<KS, any>>(
   return true;
 };
 
-export const blurOnEnterKeyDown = (
-  e: React.KeyboardEvent<HTMLInputElement>,
-): void => {
-  if (e.keyCode === 13) (e.target as HTMLInputElement).blur();
+export const runOnEnterKeydown = (
+  f: (e: React.KeyboardEvent<HTMLInputElement>) => void,
+) => (e: React.KeyboardEvent<HTMLInputElement>): void => {
+  if (e.keyCode === 13) f(e);
 };
 
 export const defaultTo = <T>(value: Maybe<T>, defaultValue: T): T =>

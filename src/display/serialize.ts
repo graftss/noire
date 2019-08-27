@@ -1,6 +1,9 @@
 import * as T from '../types';
 import { every, uuid } from '../utils';
-import { validateSerializedComponent } from './component';
+import {
+  validateSerializedComponent,
+  portOutdatedComponent,
+} from './component';
 
 export interface SerializedDisplay {
   id: string;
@@ -35,21 +38,32 @@ export const setDisplayName = (
   name,
 });
 
-export const displayToString = (display: T.SerializedDisplay): string =>
-  JSON.stringify(display);
+export const portOutdatedDisplay = (
+  display: T.SerializedDisplay,
+): T.SerializedDisplay => {
+  display.components = display.components.map(portOutdatedComponent);
+  return display;
+};
 
-const validateDisplay = (o: any): boolean =>
-  o !== undefined &&
-  typeof o.id === 'string' &&
-  typeof o.name === 'string' &&
-  Array.isArray(o.components) &&
-  every(validateSerializedComponent, o.components);
+// decides if an arbitrary object can be cast as a `SerializedDisplay`
+export const validateDisplay = (o: any): Maybe<SerializedDisplay> => {
+  const valid =
+    o !== undefined &&
+    typeof o.id === 'string' &&
+    typeof o.name === 'string' &&
+    Array.isArray(o.components) &&
+    every(validateSerializedComponent, o.components);
 
-export const stringToDisplay = (str: string): Maybe<T.SerializedDisplay> => {
+  return valid ? portOutdatedDisplay(o) : undefined;
+};
+
+export const displayToString = (display: SerializedDisplay): string =>
+  JSON.stringify({ ...display, v: '1' });
+
+export const stringToDisplay = (str: string): Maybe<SerializedDisplay> => {
   try {
-    const display = JSON.parse(str);
-    if (validateDisplay(display)) return display;
+    const display = validateDisplay(JSON.parse(str));
+    if (display) return display;
   } catch (e) {}
-
   return;
 };

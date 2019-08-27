@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { blurOnEnterKeyDown, defaultTo, toPrecision } from '../../../utils';
+import { runOnEnterKeydown, defaultTo, toPrecision } from '../../../utils';
 import { WithDefault } from './WithDefault';
 
 interface FloatFieldProps {
@@ -23,14 +23,18 @@ export const FloatField: React.SFC<FloatFieldProps> = ({
       defaultTo(initialValue, defaultValue),
       precision,
     ).toString()}
-    render={(value, setValue) => (
-      <input
-        value={value.toString()}
-        onChange={e => setValue(e.target.value)}
-        onBlur={() => update(parseNumber(value, precision))}
-        onKeyDown={blurOnEnterKeyDown}
-        type="text"
-      />
-    )}
+    render={(value, setValue) => {
+      const runUpdate = (): void => update(parseNumber(value, precision));
+
+      return (
+        <input
+          value={value.toString()}
+          onChange={e => setValue(e.target.value)}
+          onBlur={runUpdate}
+          onKeyDown={runOnEnterKeydown(runUpdate)}
+          type="text"
+        />
+      );
+    }}
   />
 );
