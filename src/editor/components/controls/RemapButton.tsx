@@ -45,7 +45,7 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 interface PropsFromDispatch {
   emitDisplayEvents: (e: T.DisplayEvent[]) => void;
   listenNextInput: (s: T.RemapState) => void;
-  updateControllerBinding: (u: T.ControllerBindingUpdate) => void;
+  setControllerBinding: (u: T.ControllerBindingUpdate) => void;
 }
 
 interface RemapButtonProps extends PropsFromState, PropsFromDispatch {
@@ -57,7 +57,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
     {
       emitDisplayEvents: actions.emitDisplayEvents,
       listenNextInput: actions.listenNextInput,
-      updateControllerBinding: actions.updateControllerBinding,
+      setControllerBinding: actions.setControllerBinding,
     },
     dispatch,
   );
@@ -105,7 +105,7 @@ const computeRemapState = (value: RemapButtonValue): T.RemapState => {
 // TODO: find a better place for this
 const renderDeadzoneField = (
   value: RemapButtonValue,
-  updateControllerBinding: (u: T.ControllerBindingUpdate) => void,
+  setControllerBinding: (u: T.ControllerBindingUpdate) => void,
 ): React.ReactNode => {
   if (value.kind !== 'controller') return null;
 
@@ -119,7 +119,7 @@ const renderDeadzoneField = (
         initialValue={binding.deadzone}
         precision={3}
         update={(deadzone: number) =>
-          updateControllerBinding({
+          setControllerBinding({
             controllerId: controller.id,
             key,
             binding: { ...binding, deadzone },
@@ -163,7 +163,7 @@ const stringifyValue = (
 const BaseRemapButton: React.SFC<RemapButtonProps> = ({
   emitDisplayEvents,
   listenNextInput,
-  updateControllerBinding,
+  setControllerBinding,
   value,
   ...propsFromState
 }) => {
@@ -179,7 +179,7 @@ const BaseRemapButton: React.SFC<RemapButtonProps> = ({
       >
         {stringifyValue(value, remapTo, propsFromState)}
       </button>
-      {renderDeadzoneField(value, updateControllerBinding)}
+      {renderDeadzoneField(value, setControllerBinding)}
     </span>
   );
 };

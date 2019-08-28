@@ -296,3 +296,16 @@ export const portOutdatedComponent = (
 
   return c;
 };
+
+export const stringToComponent = (str: string): Maybe<SerializedComponent> => {
+  try {
+    const component = JSON.parse(str);
+    if (validateSerializedComponent(component)) {
+      return portOutdatedComponent(component);
+    }
+  } catch (e) {}
+  return;
+};
+
+export const componentToString = (component: SerializedComponent): string =>
+  JSON.stringify(component);

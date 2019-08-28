@@ -16,8 +16,8 @@ interface ComponentFiltersProps {
     ref: T.ComponentFilterRef;
     kind: T.InputFilterKind;
   }>;
-  updateFilter: CB1<{
-    component: T.SerializedComponent;
+  setFilter: CB1<{
+    id: string;
     ref: T.ComponentFilterRef;
     filter: T.InputFilter;
   }>;
@@ -27,11 +27,11 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
   component,
   removeFilter,
   setDefaultFilter,
-  updateFilter,
+  setFilter,
 }) => (
   <Section>
-    {mapComponentFilters((filter, ref, key) => {
-      return (
+    {mapComponentFilters(
+      (filter, ref, key) => (
         <div key={key}>
           <div>
             <FilterEditor
@@ -54,11 +54,12 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
               setDefaultFilter={kind =>
                 setDefaultFilter({ component, ref, kind })
               }
-              update={filter => updateFilter({ component, ref, filter })}
+              update={filter => setFilter({ id: component.id, ref, filter })}
             />
           </div>
         </div>
-      );
-    }, component)}
+      ),
+      component,
+    )}
   </Section>
 );

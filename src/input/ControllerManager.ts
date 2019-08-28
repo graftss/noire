@@ -40,7 +40,7 @@ export class ControllerManager {
   ): void => {
     this.store.dispatch(actions.stopListening());
     this.store.dispatch(
-      actions.updateControllerBinding({ controllerId, key, binding }),
+      actions.setControllerBinding({ controllerId, key, binding }),
     );
   };
 

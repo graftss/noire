@@ -33,7 +33,7 @@ export const displayReducer = (
         ? { ...state, active: action.data }
         : state;
 
-    case 'setCanvasDimensions': {
+    case 'setActiveDisplayDimensions': {
       const { width, height } = action.data;
       return { ...state, active: { ...state.active, width, height } };
     }

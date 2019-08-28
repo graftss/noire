@@ -96,3 +96,17 @@ export const defaultSerializedKonvaModel = <K extends KonvaModelKind>(
 export const defaultKonvaModel = <K extends KonvaModelKind>(
   kind: K,
 ): KonvaModel<K> => deserializeKonvaModel(defaultSerializedKonvaModel(kind));
+
+const validateModel = (o: any): boolean =>
+  konvaModelKinds.includes(o.kind) && typeof o.attrs === 'object';
+
+export const stringToModel = (str: string): Maybe<SerializedKonvaModel> => {
+  try {
+    const model = JSON.parse(str);
+    if (validateModel(model)) return model;
+  } catch (e) {}
+  return;
+};
+
+export const modelToString = (model: SerializedKonvaModel): string =>
+  JSON.stringify(model);

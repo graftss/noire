@@ -74,7 +74,7 @@ export const inputReducer = (
     case 'stopListening':
       return { ...state, remap: undefined };
 
-    case 'updateControllerBinding': {
+    case 'setControllerBinding': {
       const { controllerId, key, binding } = action.data;
 
       return mapControllerWithId.proj(state)(
@@ -83,7 +83,7 @@ export const inputReducer = (
       );
     }
 
-    case 'updateControllerName': {
+    case 'setControllerName': {
       const input = action.data.name;
       const name = input.length === 0 ? 'Unnamed controller' : input;
 

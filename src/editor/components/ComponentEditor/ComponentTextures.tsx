@@ -12,28 +12,27 @@ interface ComponentTexturesProps {
   }>;
   textureList: readonly string[];
   update: CB1<{
-    component: T.SerializedComponent;
+    id: string;
     textureName: string;
     texture: T.SerializedTexture;
   }>;
 }
 
 export const ComponentTextures: React.SFC<ComponentTexturesProps> = ({
-  component,
+  component: { id, graphics },
   setDefaultTexture,
   textureList,
   update,
-}) => textureList.length === 0 ? null : (
-  <Section>
-    <TexturesEditor
-      setDefaultTexture={(textureName, kind) =>
-        setDefaultTexture({ id: component.id, textureName, kind })
-      }
-      textureList={textureList}
-      textureMap={component.graphics.textures}
-      update={(textureName, texture) =>
-        update({ component, textureName, texture })
-      }
-    />
-  </Section>
-);
+}) =>
+  textureList.length === 0 ? null : (
+    <Section>
+      <TexturesEditor
+        setDefaultTexture={(textureName, kind) =>
+          setDefaultTexture({ id, textureName, kind })
+        }
+        textureList={textureList}
+        textureMap={graphics.textures}
+        update={(textureName, texture) => update({ id, textureName, texture })}
+      />
+    </Section>
+  );

@@ -87,7 +87,7 @@ export const findTextureFieldByKey = <K extends TextureKind>(
 ): Maybe<TextureField<K>> =>
   find(field => field.key === key, getTextureFields(kind));
 
-export const updateTexture = <K extends TextureKind>(
+export const setTexture = <K extends TextureKind>(
   texture: SerializedTexture<K>,
   key: string,
   value: any,

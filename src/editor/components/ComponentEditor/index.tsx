@@ -5,13 +5,13 @@ import * as T from '../../../types';
 import * as actions from '../../../state/actions';
 import { getComponentEditorConfig } from '../../../display/component/editor';
 import { TransformerToggle } from '../controls/TransformerToggle';
+import { Section } from '../layout/Section';
 import { ComponentFilters } from './ComponentFilters';
 import { ComponentTextures } from './ComponentTextures';
 import { ComponentKeys } from './ComponentKeys';
 import { ComponentState } from './ComponentState';
 import { ComponentModels } from './ComponentModels';
 import { ComponentTitle } from './ComponentTitle';
-import { Section } from '../layout/Section';
 
 interface PropsFromDispatch {
   setDefaultModel: CB1<{
@@ -35,23 +35,24 @@ interface PropsFromDispatch {
     ref: T.ComponentFilterRef;
     kind: T.InputFilterKind;
   }>;
-  updateState: CB1<{
+  setState: CB1<{
     component: T.SerializedComponent;
     field: T.ComponentStateEditorField;
     value: any;
   }>;
-  updateModel: CB1<{
-    component: T.SerializedComponent;
+  setModel: CB1<{
+    id: string;
     modelName: string;
     model: T.SerializedKonvaModel;
   }>;
-  updateTexture: CB1<{
-    component: T.SerializedComponent;
+  importModel: CB1<{ id: string; modelName: string }>;
+  setTexture: CB1<{
+    id: string;
     textureName: string;
     texture: T.SerializedTexture;
   }>;
-  updateFilter: CB1<{
-    component: T.SerializedComponent;
+  setFilter: CB1<{
+    id: string;
     ref: T.ComponentFilterRef;
     filter: T.InputFilter;
   }>;
@@ -70,15 +71,16 @@ const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
   addFilter,
   cloneComponent,
   component,
+  importModel,
   removeComponent,
   removeFilter,
   setDefaultModel,
   setDefaultTexture,
   setDefaultFilter,
-  updateState,
-  updateModel,
-  updateTexture,
-  updateFilter,
+  setState,
+  setModel,
+  setTexture,
+  setFilter,
 }) => {
   const config = getComponentEditorConfig(component.kind);
 
@@ -98,28 +100,29 @@ const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
         <ComponentState
           component={component}
           stateConfig={config.state}
-          update={updateState}
+          update={setState}
         />
       </Section>
       <ComponentKeys component={component} keys={config.keys} />
       <ComponentModels
         addFilter={addFilter}
         component={component}
+        importModel={importModel}
         modelList={config.models}
         setDefaultModel={setDefaultModel}
-        updateModel={updateModel}
+        setModel={setModel}
       />
       <ComponentTextures
         component={component}
         setDefaultTexture={setDefaultTexture}
         textureList={config.textures}
-        update={updateTexture}
+        update={setTexture}
       />
       <ComponentFilters
         component={component}
         removeFilter={removeFilter}
         setDefaultFilter={setDefaultFilter}
-        updateFilter={updateFilter}
+        setFilter={setFilter}
       />
     </div>
   );

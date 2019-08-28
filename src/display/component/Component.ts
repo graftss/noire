@@ -79,26 +79,6 @@ export abstract class Component<
     return allInput as Required<T.KindsToRaw<I>>;
   };
 
-  updateFilters(
-    allFilterInput: Partial<Record<SS, Dict<T.RawInput>[]>> = {},
-  ): void {
-    if (!this.filters) return;
-
-    for (const modelName in this.graphics.models) {
-      const model = this.graphics.models[modelName as SS];
-      const modelInputFilters = this.filters[modelName as SS];
-      const modelInput = allFilterInput[modelName];
-
-      if (!model || !modelInputFilters || !modelInput) continue;
-
-      model.filters(
-        modelInputFilters.map((inputFilter, index) =>
-          reifyInputFilter(inputFilter, modelInput[index]),
-        ),
-      );
-    }
-  }
-
   modelList = (): T.KonvaModel[] => unMaybeList(values(this.graphics.models));
 
   getModel = (name: string): Maybe<T.KonvaModel> => this.graphics.models[name];
@@ -145,4 +125,24 @@ export abstract class Component<
   }
 
   abstract update(input: Partial<T.KindsToRaw<I>>, dt: number): void;
+
+  updateFilters(
+    allFilterInput: Partial<Record<SS, Dict<T.RawInput>[]>> = {},
+  ): void {
+    if (!this.filters) return;
+
+    for (const modelName in this.graphics.models) {
+      const model = this.graphics.models[modelName as SS];
+      const modelInputFilters = this.filters[modelName as SS];
+      const modelInput = allFilterInput[modelName];
+
+      if (!model || !modelInputFilters || !modelInput) continue;
+
+      model.filters(
+        modelInputFilters.map((inputFilter, index) =>
+          reifyInputFilter(inputFilter, modelInput[index]),
+        ),
+      );
+    }
+  }
 }

@@ -9,7 +9,7 @@ interface DisplayEditorProps {
   display: Maybe<T.SerializedDisplay>;
   exportDisplay: CB1<T.SerializedDisplay>;
   saveDisplay: CB1<T.SerializedDisplay>;
-  setCanvasDimensions: CB1<{ width: number; height: number }>;
+  setActiveDisplayDimensions: CB1<{ width: number; height: number }>;
   setDisplayName: CB1<string>;
 }
 
@@ -28,7 +28,7 @@ export const DisplayEditor: React.SFC<DisplayEditorProps> = ({
   display,
   exportDisplay,
   saveDisplay,
-  setCanvasDimensions,
+  setActiveDisplayDimensions,
   setDisplayName,
 }) =>
   display === undefined ? null : (
@@ -49,7 +49,9 @@ export const DisplayEditor: React.SFC<DisplayEditorProps> = ({
         <Vec2Field
           defaultValue={{ x: 0, y: 0 }}
           initialValue={{ x: display.width, y: display.height }}
-          update={({ x, y }) => setCanvasDimensions({ width: x, height: y })}
+          update={({ x, y }) =>
+            setActiveDisplayDimensions({ width: x, height: y })
+          }
         />
       </div>
       <div className="flex-container">

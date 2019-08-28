@@ -7,9 +7,9 @@ import * as actions from '../../../state/actions';
 import { ComponentEditor } from '../ComponentEditor';
 import { clipboard } from '../../../utils';
 import { displayToString } from '../../../display/serialize';
+import { Section } from '../layout/Section';
 import { ComponentSelect } from './ComponentSelect';
 import { DisplayEditor } from './DisplayEditor';
-import { Section } from '../layout/Section';
 
 interface PropsFromState {
   display: T.SerializedDisplay;
@@ -21,7 +21,7 @@ interface PropsFromDispatch {
   addDefaultComponent: CB1<T.ComponentKind>;
   saveDisplay: CB1<T.SerializedDisplay>;
   selectComponent: CB1<string>;
-  setCanvasDimensions: CB1<{ width: number; height: number }>;
+  setActiveDisplayDimensions: CB1<{ width: number; height: number }>;
   setActiveDisplayName: CB1<string>;
 }
 
@@ -47,7 +47,7 @@ const BaseDisplayPane: React.SFC<DisplayPaneProps> = ({
   selectComponent,
   selectedComponent,
   setActiveDisplayName,
-  setCanvasDimensions,
+  setActiveDisplayDimensions,
 }) => (
   <div>
     <Section>
@@ -56,7 +56,7 @@ const BaseDisplayPane: React.SFC<DisplayPaneProps> = ({
         display={display}
         exportDisplay={exportDisplay}
         saveDisplay={saveDisplay}
-        setCanvasDimensions={setCanvasDimensions}
+        setActiveDisplayDimensions={setActiveDisplayDimensions}
         setDisplayName={setActiveDisplayName}
       />
     </Section>

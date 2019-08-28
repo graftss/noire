@@ -1,7 +1,10 @@
 import * as T from '../types';
 import * as events from '../display/events';
 import { clipboard } from '../utils';
-import { defaultSerializedKonvaModel } from '../display/model/konva';
+import {
+  defaultSerializedKonvaModel,
+  stringToModel,
+} from '../display/model/konva';
 import { defaultSerializedTexture } from '../display/texture';
 import {
   cloneSerializedComponent,
@@ -14,13 +17,15 @@ import { defaultInputFilter } from '../display/filter';
 import {
   cloneDisplay,
   newDisplay,
-  setDisplayName as setSerializedDisplayName,
   stringToDisplay,
 } from '../display/serialize';
 
 export type EditorAction =
   | { type: 'emitDisplayEvents'; data: T.DisplayEvent[] }
-  | { type: 'setCanvasDimensions'; data: { width: number; height: number } }
+  | {
+      type: 'setActiveDisplayDimensions';
+      data: { width: number; height: number };
+    }
   | { type: 'addComponent'; data: T.SerializedComponent }
   | { type: 'removeComponent'; data: string }
   | { type: 'selectComponent'; data: string }
@@ -29,8 +34,8 @@ export type EditorAction =
   | { type: 'addController'; data: T.Controller }
   | { type: 'removeController'; data: string }
   | { type: 'startFullControllerUpdate' }
-  | { type: 'updateControllerBinding'; data: T.ControllerBindingUpdate }
-  | { type: 'updateControllerName'; data: { id: string; name: string } }
+  | { type: 'setControllerBinding'; data: T.ControllerBindingUpdate }
+  | { type: 'setControllerName'; data: { id: string; name: string } }
   | {
       type: 'setComponentState';
       data: { id: string; state: T.ComponentState };
@@ -92,22 +97,15 @@ export const removeController = (id: string): EditorAction => ({
   data: id,
 });
 
-export const startFullControllerUpdate = (): EditorAction => ({
-  type: 'startFullControllerUpdate',
-});
-
-export const updateControllerBinding = (
+export const setControllerBinding = (
   update: T.ControllerBindingUpdate,
 ): EditorAction => ({
-  type: 'updateControllerBinding',
+  type: 'setControllerBinding',
   data: update,
 });
 
-export const updateControllerName = (
-  id: string,
-  name: string,
-): EditorAction => ({
-  type: 'updateControllerName',
+export const setControllerName = (id: string, name: string): EditorAction => ({
+  type: 'setControllerName',
   data: { id, name },
 });
 
@@ -117,15 +115,6 @@ export const setComponentState = (
 ): EditorAction => ({
   type: 'setComponentState',
   data: { id, state },
-});
-
-export const setComponentModel = (
-  id: string,
-  modelName: string,
-  model: T.SerializedKonvaModel,
-): EditorAction => ({
-  type: 'setComponentModel',
-  data: { id, modelName, model },
 });
 
 export const setComponentTexture = (
@@ -172,10 +161,16 @@ export const setTab = (kind: T.TabKind): EditorAction => ({
   data: kind,
 });
 
-export const setActiveDisplayName = (name: string): EditorAction => ({
-  type: 'setActiveDisplayName',
-  data: name,
-});
+export const setModel: FuncCreator<{
+  id: string;
+  modelName: string;
+  model: T.SerializedKonvaModel;
+}> = ({ id, modelName, model }) => dispatch => {
+  const event = events.requestModelUpdate(id, modelName, model);
+
+  dispatch({ type: 'setComponentModel', data: { id, modelName, model } });
+  dispatch(emitDisplayEvents([event]));
+};
 
 export const setDefaultModel: FuncCreator<{
   id: string;
@@ -183,9 +178,33 @@ export const setDefaultModel: FuncCreator<{
   kind: T.KonvaModelKind;
 }> = ({ id, modelName, kind }) => dispatch => {
   const model = defaultSerializedKonvaModel(kind);
-  const event = events.requestDefaultModel(id, modelName, kind);
+  setModel({ id, modelName, model })(dispatch);
+};
 
-  dispatch(setComponentModel(id, modelName, model));
+export const importModel: FuncCreator<{
+  id: string;
+  modelName: string;
+}> = ({ id, modelName }) => dispatch => {
+  clipboard
+    .read()
+    .then(stringToModel)
+    .then(model => {
+      if (model) {
+        setModel({ id, modelName, model })(dispatch);
+      } else {
+        // TODO; handle invalid imported model
+      }
+    });
+};
+
+export const setTexture: FuncCreator<{
+  id: string;
+  textureName: string;
+  texture: T.SerializedTexture;
+}> = ({ id, textureName, texture }) => dispatch => {
+  const event = events.requestTextureUpdate(id, textureName, texture);
+
+  dispatch(setComponentTexture(id, textureName, texture));
   dispatch(emitDisplayEvents([event]));
 };
 
@@ -195,10 +214,7 @@ export const setDefaultTexture: FuncCreator<{
   kind: T.TextureKind;
 }> = ({ id, textureName, kind }) => dispatch => {
   const texture = defaultSerializedTexture(kind);
-  const event = events.requestDefaultTexture(id, textureName, kind);
-
-  dispatch(setComponentTexture(id, textureName, texture));
-  dispatch(emitDisplayEvents([event]));
+  setTexture({ id, textureName, texture })(dispatch);
 };
 
 export const addFilter: FuncCreator<{
@@ -222,6 +238,17 @@ export const removeFilter: FuncCreator<{
   dispatch(removeComponentInputFilter(id, ref));
 };
 
+export const setFilter: FuncCreator<{
+  id: string;
+  ref: T.ComponentFilterRef;
+  filter: T.InputFilter;
+}> = ({ id, ref, filter }) => dispatch => {
+  const event = events.requestFilterUpdate(id, ref, filter);
+
+  dispatch(setComponentInputFilter(id, ref, filter));
+  dispatch(emitDisplayEvents([event]));
+};
+
 export const setDefaultFilter: FuncCreator<{
   component: T.SerializedComponent;
   ref: T.ComponentFilterRef;
@@ -229,13 +256,11 @@ export const setDefaultFilter: FuncCreator<{
 }> = ({ component, ref, kind }) => dispatch => {
   const oldFilter = getComponentInputFilter(component, ref);
   const filter = defaultInputFilter(kind, oldFilter);
-  const event = events.requestFilterUpdate(component.id, ref, filter);
 
-  dispatch(emitDisplayEvents([event]));
-  dispatch(setComponentInputFilter(component.id, ref, filter));
+  setFilter({ id: component.id, ref, filter })(dispatch);
 };
 
-export const updateState: FuncCreator<{
+export const setState: FuncCreator<{
   component: T.SerializedComponent;
   field: T.ComponentStateEditorField;
   value: any;
@@ -248,40 +273,6 @@ export const updateState: FuncCreator<{
   dispatch(emitDisplayEvents([event]));
 };
 
-export const updateModel: FuncCreator<{
-  component: T.SerializedComponent;
-  modelName: string;
-  model: T.SerializedKonvaModel;
-}> = ({ component, modelName, model }) => dispatch => {
-  const event = events.requestModelUpdate(component.id, modelName, model);
-
-  dispatch(setComponentModel(component.id, modelName, model));
-  dispatch(emitDisplayEvents([event]));
-};
-
-export const updateTexture: FuncCreator<{
-  component: T.SerializedComponent;
-  textureName: string;
-  texture: T.SerializedTexture;
-}> = ({ component, textureName, texture }) => dispatch => {
-  const { id } = component;
-  const event = events.requestTextureUpdate(id, textureName, texture);
-
-  dispatch(setComponentTexture(id, textureName, texture));
-  dispatch(emitDisplayEvents([event]));
-};
-
-export const updateFilter: FuncCreator<{
-  component: T.SerializedComponent;
-  ref: T.ComponentFilterRef;
-  filter: T.InputFilter;
-}> = ({ component, ref, filter }) => dispatch => {
-  const event = events.requestFilterUpdate(component.id, ref, filter);
-
-  dispatch(setComponentInputFilter(component.id, ref, filter));
-  dispatch(emitDisplayEvents([event]));
-};
-
 export const addComponent: FuncCreator<
   T.SerializedComponent
 > = component => dispatch => {
@@ -289,6 +280,11 @@ export const addComponent: FuncCreator<
   dispatch({ type: 'addComponent', data: component });
   dispatch(emitDisplayEvents([event]));
 };
+
+export const addDefaultComponent: FuncCreator<
+  T.ComponentKind
+> = kind => dispatch =>
+  addComponent(defaultSerializedComponent(kind))(dispatch);
 
 export const selectComponent: FuncCreator<string> = id => dispatch => {
   dispatch({ type: 'selectComponent', data: id });
@@ -387,36 +383,23 @@ export const selectExistingDisplay: FuncCreator<
   selectDisplay({ display, loadIntoCanvas: true })(dispatch);
 };
 
-export const setDisplayName: FuncCreator<{
-  display: T.SerializedDisplay;
-  name: string;
-}> = ({ display, name }) => dispatch => {
-  const newDisplay = setSerializedDisplayName(display, name);
-  dispatch({ type: 'saveDisplay', data: newDisplay });
-};
+export const setActiveDisplayName = (name: string): EditorAction => ({
+  type: 'setActiveDisplayName',
+  data: name,
+});
 
-export const closePresentationSnackbar: FuncCreator0 = () => dispatch =>
-  dispatch({ type: 'closePresentationSnackbar' });
-
-export const addDefaultComponent: FuncCreator<
-  T.ComponentKind
-> = kind => dispatch => {
-  const component = defaultSerializedComponent(kind);
-  const event = events.requestAddComponent(deserializeComponent(component));
-
-  dispatch({ type: 'addComponent', data: component });
-  dispatch(emitDisplayEvents([event]));
-};
-
-export const setCanvasDimensions: FuncCreator<{
+export const setActiveDisplayDimensions: FuncCreator<{
   width: number;
   height: number;
 }> = ({ width, height }) => dispatch => {
   const event = events.requestSetCanvasDimensions(width, height);
 
-  dispatch({ type: 'setCanvasDimensions', data: { width, height } });
+  dispatch({ type: 'setActiveDisplayDimensions', data: { width, height } });
   dispatch(emitDisplayEvents([event]));
 };
+
+export const closePresentationSnackbar: FuncCreator0 = () => dispatch =>
+  dispatch({ type: 'closePresentationSnackbar' });
 
 export const exitPresentationMode = (): EditorAction => ({
   type: 'exitPresentationMode',

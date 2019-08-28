@@ -7,22 +7,30 @@ import { ModelAddFilter } from './ModelAddFilter';
 
 interface ModelEditorProps {
   addFilter: (k: T.InputFilterKind) => void;
+  exportModel: (model: T.SerializedKonvaModel) => void;
+  importModel: (modelName: string) => void;
   name: string;
   setDefaultModel: (k: T.KonvaModelKind) => void;
   model: Maybe<T.SerializedKonvaModel>;
-  updateModel: (model: T.SerializedKonvaModel) => void;
+  setModel: (model: T.SerializedKonvaModel) => void;
 }
 
 export const ModelEditor: React.SFC<ModelEditorProps> = ({
   addFilter,
+  exportModel,
+  importModel,
   name,
   setDefaultModel,
   model,
-  updateModel,
+  setModel,
 }) => (
   <div>
     <div>
       Model: <b>{name}</b>
+      <button onClick={() => importModel(name)}> import model </button>
+      {model && (
+        <button onClick={() => exportModel(model)}> export model </button>
+      )}
     </div>
     <ModelKindSelect
       buttonText="set model type"
@@ -36,7 +44,7 @@ export const ModelEditor: React.SFC<ModelEditorProps> = ({
             <EditorField
               field={field}
               initialValue={field.getter(model)}
-              update={value => updateModel(field.setter(model, value))}
+              update={value => setModel(field.setter(model, value))}
             />
           </div>
         ))}

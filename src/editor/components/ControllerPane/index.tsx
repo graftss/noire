@@ -23,7 +23,7 @@ interface PropsFromDispatch {
   addController: (kind: T.ControllerKind) => void;
   removeController: (id: string) => void;
   selectController: (id: string) => void;
-  updateControllerName: (id: string, name: string) => void;
+  setControllerName: (id: string, name: string) => void;
 }
 
 interface ControllerEditorProps extends PropsFromState, PropsFromDispatch {}
@@ -34,7 +34,7 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
       addController: kind => actions.addController(getNewController(kind)),
       removeController: actions.removeController,
       selectController: actions.selectController,
-      updateControllerName: actions.updateControllerName,
+      setControllerName: actions.setControllerName,
     },
     dispatch,
   );
@@ -45,7 +45,7 @@ const BaseControllerPane: React.SFC<ControllerEditorProps> = ({
   removeController,
   selectedController,
   selectController,
-  updateControllerName,
+  setControllerName,
 }) => (
   <div>
     <ControllerAdd addController={addController} />
@@ -57,7 +57,7 @@ const BaseControllerPane: React.SFC<ControllerEditorProps> = ({
     <ControllerEditor
       controller={selectedController}
       removeController={removeController}
-      updateControllerName={updateControllerName}
+      setControllerName={setControllerName}
     />
   </div>
 );
