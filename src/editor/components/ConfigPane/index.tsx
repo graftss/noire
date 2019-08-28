@@ -48,7 +48,7 @@ const BaseConfigPane: React.SFC<ConfigPaneProps> = ({
   <div>
     <div>
       <button onClick={enterPresentationMode}>hide editor</button>
-      <button onClick={importDisplay}>import display from clipboard</button>
+      <button onClick={importDisplay}>import display</button>
     </div>
     <DisplaySelect
       displays={savedDisplays}

@@ -3,6 +3,7 @@ import * as T from '../../../types';
 import { FilterEditor } from '../FilterEditor';
 import { getInputFilterControllerKey } from '../../../display/filter';
 import {
+  componentFilterRefName,
   getComponentInputFilter,
   mapComponentFilters,
 } from '../../../display/component';
@@ -10,6 +11,8 @@ import { Section } from '../layout/Section';
 
 interface ComponentFiltersProps {
   component: T.SerializedComponent;
+  exportFilter: CB1<T.InputFilter>;
+  importFilter: CB1<{ id: string; ref: T.ComponentFilterRef }>;
   removeFilter: CB1<{ id: string; ref: T.ComponentFilterRef }>;
   setDefaultFilter: CB1<{
     component: T.SerializedComponent;
@@ -25,6 +28,8 @@ interface ComponentFiltersProps {
 
 export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
   component,
+  exportFilter,
+  importFilter,
   removeFilter,
   setDefaultFilter,
   setFilter,
@@ -35,6 +40,7 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
         <div key={key}>
           <div>
             <FilterEditor
+              exportFilter={exportFilter}
               filter={filter}
               getRemapButtonValue={field => {
                 const controllerKey = getInputFilterControllerKey(
@@ -50,6 +56,8 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
                   field,
                 };
               }}
+              name={componentFilterRefName(ref)}
+              importFilter={() => importFilter({ id: component.id, ref })}
               remove={() => removeFilter({ id: component.id, ref })}
               setDefaultFilter={kind =>
                 setDefaultFilter({ component, ref, kind })

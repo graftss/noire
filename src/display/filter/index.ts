@@ -1,5 +1,5 @@
 import * as T from '../../types';
-import { assocPath, keys, path } from '../../utils';
+import { assocPath, keys, path, validateJSONString } from '../../utils';
 import {
   stickDistort,
   dPadDistort,
@@ -70,6 +70,8 @@ const inputFilterFactories: {
   stickDistort,
 } as const;
 
+const inputFilterKinds: InputFilterKind[] = keys(inputFilterFactories);
+
 const filterInputFields: Record<
   T.InputFilterKind,
   Readonly<InputFilterInputField[]>
@@ -88,7 +90,7 @@ const defaultInputFilterStates: {
 };
 
 export const getInputFilterKinds = (): InputFilterKind[] => [
-  ...keys(inputFilterFactories),
+  ...inputFilterKinds,
 ];
 
 const inputFilterFields: Record<InputFilterKind, InputFilterField[]> = {
@@ -136,3 +138,16 @@ export const defaultInputFilter = (
       ? oldFilter.state
       : { ...defaultInputFilterStates[kind] },
 });
+
+export const validateFilter = (o: any): boolean =>
+  typeof o === 'object' &&
+  inputFilterKinds.includes(o.kind) &&
+  typeof o.state === 'object' &&
+  typeof o.inputMap === 'object';
+
+export const stringToFilter: (
+  str: string,
+) => Maybe<InputFilter> = validateJSONString(validateFilter);
+
+export const filterToString = (filter: InputFilter): string =>
+  JSON.stringify(filter);

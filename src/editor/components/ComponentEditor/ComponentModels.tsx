@@ -5,7 +5,9 @@ import { Section } from '../layout/Section';
 
 interface ComponentModelsProps {
   component: T.SerializedComponent;
+  exportModel: CB1<T.SerializedKonvaModel>;
   importModel: CB1<{ id: string; modelName: string }>;
+  importNewFilter: CB1<{ component: T.SerializedComponent; modelName: string }>;
   modelList: readonly string[];
   setDefaultModel: CB1<{
     id: string;
@@ -27,7 +29,9 @@ interface ComponentModelsProps {
 export const ComponentModels: React.SFC<ComponentModelsProps> = ({
   addFilter,
   component,
+  exportModel,
   importModel,
+  importNewFilter,
   modelList,
   setDefaultModel,
   setModel,
@@ -38,6 +42,8 @@ export const ComponentModels: React.SFC<ComponentModelsProps> = ({
         addFilter={(modelName, kind) =>
           addFilter({ component, modelName, kind })
         }
+        exportModel={exportModel}
+        importNewFilter={modelName => importNewFilter({ component, modelName })}
         importModel={modelName => importModel({ id: component.id, modelName })}
         modelList={modelList}
         modelMap={component.graphics.models}

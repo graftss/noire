@@ -30,6 +30,9 @@ interface PropsFromDispatch {
     kind: T.InputFilterKind;
   }>;
   removeFilter: CB1<{ id: string; ref: T.ComponentFilterRef }>;
+  exportFilter: CB1<T.InputFilter>;
+  importFilter: CB1<{ id: string; ref: T.ComponentFilterRef }>;
+  importNewFilter: CB1<{ component: T.SerializedComponent; modelName: string }>;
   setDefaultFilter: CB1<{
     component: T.SerializedComponent;
     ref: T.ComponentFilterRef;
@@ -45,12 +48,15 @@ interface PropsFromDispatch {
     modelName: string;
     model: T.SerializedKonvaModel;
   }>;
+  exportModel: CB1<T.SerializedKonvaModel>;
   importModel: CB1<{ id: string; modelName: string }>;
   setTexture: CB1<{
     id: string;
     textureName: string;
     texture: T.SerializedTexture;
   }>;
+  exportTexture: CB1<T.SerializedTexture>;
+  importTexture: CB1<{ id: string; textureName: string }>;
   setFilter: CB1<{
     id: string;
     ref: T.ComponentFilterRef;
@@ -58,6 +64,7 @@ interface PropsFromDispatch {
   }>;
   cloneComponent: CB1<T.SerializedComponent>;
   removeComponent: CB1<string>;
+  exportComponent: CB1<T.SerializedComponent>;
 }
 
 interface ComponentEditorProps extends PropsFromDispatch {
@@ -71,7 +78,14 @@ const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
   addFilter,
   cloneComponent,
   component,
+  exportComponent,
+  exportFilter,
+  exportModel,
+  exportTexture,
+  importFilter,
   importModel,
+  importNewFilter,
+  importTexture,
   removeComponent,
   removeFilter,
   setDefaultModel,
@@ -96,6 +110,9 @@ const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
           <button onClick={() => cloneComponent(component)}>
             clone component
           </button>
+          <button onClick={() => exportComponent(component)}>
+            export component
+          </button>
         </div>
         <ComponentState
           component={component}
@@ -107,19 +124,25 @@ const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
       <ComponentModels
         addFilter={addFilter}
         component={component}
+        exportModel={exportModel}
         importModel={importModel}
+        importNewFilter={importNewFilter}
         modelList={config.models}
         setDefaultModel={setDefaultModel}
         setModel={setModel}
       />
       <ComponentTextures
         component={component}
+        exportTexture={exportTexture}
+        importTexture={importTexture}
         setDefaultTexture={setDefaultTexture}
         textureList={config.textures}
         update={setTexture}
       />
       <ComponentFilters
         component={component}
+        exportFilter={exportFilter}
+        importFilter={importFilter}
         removeFilter={removeFilter}
         setDefaultFilter={setDefaultFilter}
         setFilter={setFilter}

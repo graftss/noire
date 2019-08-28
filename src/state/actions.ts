@@ -1,21 +1,33 @@
 import * as T from '../types';
 import * as events from '../display/events';
-import { clipboard } from '../utils';
+import { clipboard, tryClipboardParse } from '../utils';
 import {
   defaultSerializedKonvaModel,
   stringToModel,
+  modelToString,
 } from '../display/model/konva';
-import { defaultSerializedTexture } from '../display/texture';
+import {
+  defaultSerializedTexture,
+  stringToTexture,
+  textureToString,
+} from '../display/texture';
 import {
   cloneSerializedComponent,
   defaultSerializedComponent,
   deserializeComponent,
   getComponentInputFilter,
   getNewComponentFilterRef,
+  stringToComponent,
+  componentToString,
 } from '../display/component';
-import { defaultInputFilter } from '../display/filter';
+import {
+  defaultInputFilter,
+  stringToFilter,
+  filterToString,
+} from '../display/filter';
 import {
   cloneDisplay,
+  displayToString,
   newDisplay,
   stringToDisplay,
 } from '../display/serialize';
@@ -185,16 +197,15 @@ export const importModel: FuncCreator<{
   id: string;
   modelName: string;
 }> = ({ id, modelName }) => dispatch => {
-  clipboard
-    .read()
-    .then(stringToModel)
-    .then(model => {
-      if (model) {
-        setModel({ id, modelName, model })(dispatch);
-      } else {
-        // TODO; handle invalid imported model
-      }
-    });
+  tryClipboardParse(
+    stringToModel,
+    model => setModel({ id, modelName, model })(dispatch),
+    () => {},
+  );
+};
+
+export const exportModel: FuncCreator<T.SerializedKonvaModel> = model => () => {
+  clipboard.write(modelToString(model));
 };
 
 export const setTexture: FuncCreator<{
@@ -215,6 +226,23 @@ export const setDefaultTexture: FuncCreator<{
 }> = ({ id, textureName, kind }) => dispatch => {
   const texture = defaultSerializedTexture(kind);
   setTexture({ id, textureName, texture })(dispatch);
+};
+
+export const importTexture: FuncCreator<{
+  id: string;
+  textureName: string;
+}> = ({ id, textureName }) => dispatch => {
+  tryClipboardParse(
+    stringToTexture,
+    texture => setTexture({ id, textureName, texture })(dispatch),
+    () => {},
+  );
+};
+
+export const exportTexture: FuncCreator<
+  T.SerializedTexture
+> = texture => () => {
+  clipboard.write(textureToString(texture));
 };
 
 export const addFilter: FuncCreator<{
@@ -260,6 +288,31 @@ export const setDefaultFilter: FuncCreator<{
   setFilter({ id: component.id, ref, filter })(dispatch);
 };
 
+export const importFilter: FuncCreator<{
+  id: string;
+  ref: T.ComponentFilterRef;
+}> = ({ id, ref }) => dispatch => {
+  tryClipboardParse(
+    stringToFilter,
+    filter => setFilter({ id, ref, filter })(dispatch),
+    () => {},
+  );
+};
+
+export const importNewFilter: FuncCreator<{
+  component: T.SerializedComponent;
+  modelName: string;
+}> = ({ component, modelName }) => dispatch => {
+  importFilter({
+    id: component.id,
+    ref: getNewComponentFilterRef(component, modelName),
+  })(dispatch);
+};
+
+export const exportFilter: FuncCreator<T.InputFilter> = filter => () => {
+  clipboard.write(filterToString(filter));
+};
+
 export const setState: FuncCreator<{
   component: T.SerializedComponent;
   field: T.ComponentStateEditorField;
@@ -289,6 +342,20 @@ export const addDefaultComponent: FuncCreator<
 export const selectComponent: FuncCreator<string> = id => dispatch => {
   dispatch({ type: 'selectComponent', data: id });
   dispatch(emitDisplayEvents([events.requestSelectComponent(id)]));
+};
+
+export const importComponent: FuncCreator0 = () => dispatch => {
+  tryClipboardParse(
+    stringToComponent,
+    component => addComponent(component)(dispatch),
+    () => {},
+  );
+};
+
+export const exportComponent: FuncCreator<
+  T.SerializedComponent
+> = component => () => {
+  clipboard.write(componentToString(component));
 };
 
 export const deselectComponent: FuncCreator<string> = id => dispatch => {
@@ -339,20 +406,22 @@ export const enterPresentationMode: FuncCreator0 = () => dispatch => {
 };
 
 export const importDisplay: FuncCreator0 = () => dispatch => {
-  clipboard
-    .read()
-    .then(stringToDisplay)
-    .then(display => {
-      if (display) {
-        selectDisplay({
-          display: cloneDisplay(display),
-          saveToState: true,
-          loadIntoCanvas: true,
-        })(dispatch);
-      } else {
-        // TODO: handle invalid imported display
-      }
-    });
+  tryClipboardParse(
+    stringToDisplay,
+    display =>
+      selectDisplay({
+        display: cloneDisplay(display),
+        saveToState: true,
+        loadIntoCanvas: true,
+      })(dispatch),
+    () => {},
+  );
+};
+
+export const exportDisplay: FuncCreator<
+  T.SerializedDisplay
+> = display => () => {
+  clipboard.write(displayToString(display));
 };
 
 export const removeDisplay: FuncCreator<

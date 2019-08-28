@@ -8,6 +8,7 @@ interface DisplayEditorProps {
   addComponent: CB1<T.ComponentKind>;
   display: Maybe<T.SerializedDisplay>;
   exportDisplay: CB1<T.SerializedDisplay>;
+  importComponent: CB0;
   saveDisplay: CB1<T.SerializedDisplay>;
   setActiveDisplayDimensions: CB1<{ width: number; height: number }>;
   setDisplayName: CB1<string>;
@@ -27,6 +28,7 @@ export const DisplayEditor: React.SFC<DisplayEditorProps> = ({
   addComponent,
   display,
   exportDisplay,
+  importComponent,
   saveDisplay,
   setActiveDisplayDimensions,
   setDisplayName,
@@ -34,10 +36,9 @@ export const DisplayEditor: React.SFC<DisplayEditorProps> = ({
   display === undefined ? null : (
     <div>
       <div>
-        <button onClick={() => exportDisplay(display)}>
-          export to clipboard
-        </button>
+        <button onClick={() => exportDisplay(display)}>export display</button>
         <button onClick={() => saveDisplay(display)}>save display</button>
+        <button onClick={importComponent}>import component</button>
       </div>{' '}
       <div>
         display name:
@@ -55,7 +56,7 @@ export const DisplayEditor: React.SFC<DisplayEditorProps> = ({
         />
       </div>
       <div className="flex-container">
-        <span className="center">add component:</span>
+        <span className="center">add new component:</span>
         <span className="flex-rest">
           <ComponentKindSelect
             buttonText="add new component"

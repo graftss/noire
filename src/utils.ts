@@ -152,3 +152,23 @@ export const clipboard = {
   read: (): Promise<string> => navigator.clipboard.readText(),
   write: (s: string): Promise<void> => navigator.clipboard.writeText(s),
 };
+
+// returns the parsed JSON object if valid, and undefined if invalid.
+export const validateJSONString = (validate: (o: any) => boolean) => (
+  str: string,
+): any => {
+  try {
+    const o = JSON.parse(str);
+    if (o && validate(o)) return o;
+  } catch (e) {}
+};
+
+export const tryClipboardParse = <T>(
+  parse: (s: string) => Maybe<T>,
+  onSuccess: (t: T) => void,
+  onFail: () => void,
+): Promise<void> =>
+  clipboard
+    .read()
+    .then(parse)
+    .then(maybeT => (maybeT ? onSuccess(maybeT) : onFail()));

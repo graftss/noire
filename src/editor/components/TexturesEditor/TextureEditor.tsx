@@ -5,6 +5,8 @@ import { EditorField } from '../controls/EditorField';
 import { TextureKindSelect } from './TextureKindSelect';
 
 interface TextureEditorProps {
+  exportTexture: CB1<T.SerializedTexture>;
+  importTexture: CB1<string>;
   name: string;
   setDefaultTexture: (name: string, k: T.TextureKind) => void;
   texture: Maybe<T.SerializedTexture>;
@@ -12,6 +14,8 @@ interface TextureEditorProps {
 }
 
 export const TextureEditor: React.SFC<TextureEditorProps> = ({
+  exportTexture,
+  importTexture,
   name,
   setDefaultTexture,
   texture,
@@ -21,6 +25,8 @@ export const TextureEditor: React.SFC<TextureEditorProps> = ({
     <div>
       <div>
         Texture: <b>{name}</b>
+        <button onClick={() => exportTexture(texture)}>export texture</button>
+        <button onClick={() => importTexture(name)}>import texture</button>
       </div>
       <TextureKindSelect
         buttonText="set texture type"

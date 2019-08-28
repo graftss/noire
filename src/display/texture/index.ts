@@ -1,5 +1,5 @@
 import * as T from '../../types';
-import { find, keys } from '../../utils';
+import { find, keys, validateJSONString } from '../../utils';
 import { FillTexture, fillTextureFields } from './FillTexture';
 import { ImageTexture, imageTextureFields } from './ImageTexture';
 import { HiddenTexture, hiddenTextureFields } from './HiddenTexture';
@@ -95,3 +95,13 @@ export const setTexture = <K extends TextureKind>(
   const field = findTextureFieldByKey(texture.kind, key);
   return field ? field.setter(texture, value) : texture;
 };
+
+export const validateTexture = (o: any): boolean =>
+  textureKinds.includes(o.kind) && typeof o.state === 'object';
+
+export const stringToTexture: (
+  s: string,
+) => Maybe<SerializedTexture> = validateJSONString(validateTexture);
+
+export const textureToString = (texture: SerializedTexture): string =>
+  JSON.stringify(texture);

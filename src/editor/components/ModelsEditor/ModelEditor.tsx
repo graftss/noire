@@ -8,7 +8,8 @@ import { ModelAddFilter } from './ModelAddFilter';
 interface ModelEditorProps {
   addFilter: (k: T.InputFilterKind) => void;
   exportModel: (model: T.SerializedKonvaModel) => void;
-  importModel: (modelName: string) => void;
+  importNewFilter: () => void;
+  importModel: CB1<string>;
   name: string;
   setDefaultModel: (k: T.KonvaModelKind) => void;
   model: Maybe<T.SerializedKonvaModel>;
@@ -18,6 +19,7 @@ interface ModelEditorProps {
 export const ModelEditor: React.SFC<ModelEditorProps> = ({
   addFilter,
   exportModel,
+  importNewFilter,
   importModel,
   name,
   setDefaultModel,
@@ -48,7 +50,10 @@ export const ModelEditor: React.SFC<ModelEditorProps> = ({
             />
           </div>
         ))}
-        <ModelAddFilter addFilter={addFilter} />
+        <ModelAddFilter
+          addFilter={addFilter}
+          importNewFilter={importNewFilter}
+        />
       </div>
     )}
   </div>

@@ -1,5 +1,5 @@
 import * as T from '../types';
-import { every, uuid } from '../utils';
+import { every, uuid, validateJSONString } from '../utils';
 import {
   validateSerializedComponent,
   portOutdatedComponent,
@@ -46,24 +46,16 @@ export const portOutdatedDisplay = (
 };
 
 // decides if an arbitrary object can be cast as a `SerializedDisplay`
-export const validateDisplay = (o: any): Maybe<SerializedDisplay> => {
-  const valid =
-    o !== undefined &&
-    typeof o.id === 'string' &&
-    typeof o.name === 'string' &&
-    Array.isArray(o.components) &&
-    every(validateSerializedComponent, o.components);
-
-  return valid ? portOutdatedDisplay(o) : undefined;
-};
+export const validateDisplay = (o: any): boolean =>
+  o !== undefined &&
+  typeof o.id === 'string' &&
+  typeof o.name === 'string' &&
+  Array.isArray(o.components) &&
+  every(validateSerializedComponent, o.components);
 
 export const displayToString = (display: SerializedDisplay): string =>
   JSON.stringify({ ...display, v: '1' });
 
-export const stringToDisplay = (str: string): Maybe<SerializedDisplay> => {
-  try {
-    const display = validateDisplay(JSON.parse(str));
-    if (display) return display;
-  } catch (e) {}
-  return;
-};
+export const stringToDisplay: (
+  str: string,
+) => Maybe<SerializedDisplay> = validateJSONString(validateDisplay);

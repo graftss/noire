@@ -5,8 +5,6 @@ import * as T from '../../../types';
 import * as selectors from '../../../state/selectors';
 import * as actions from '../../../state/actions';
 import { ComponentEditor } from '../ComponentEditor';
-import { clipboard } from '../../../utils';
-import { displayToString } from '../../../display/serialize';
 import { Section } from '../layout/Section';
 import { ComponentSelect } from './ComponentSelect';
 import { DisplayEditor } from './DisplayEditor';
@@ -19,6 +17,8 @@ interface PropsFromState {
 
 interface PropsFromDispatch {
   addDefaultComponent: CB1<T.ComponentKind>;
+  exportDisplay: CB1<T.SerializedDisplay>;
+  importComponent: CB0;
   saveDisplay: CB1<T.SerializedDisplay>;
   selectComponent: CB1<string>;
   setActiveDisplayDimensions: CB1<{ width: number; height: number }>;
@@ -36,13 +36,12 @@ const mapStateToProps = (state): PropsFromState => ({
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(actions, dispatch);
 
-const exportDisplay = (display: T.SerializedDisplay): Promise<void> =>
-  clipboard.write(displayToString(display));
-
 const BaseDisplayPane: React.SFC<DisplayPaneProps> = ({
   addDefaultComponent,
   components,
   display,
+  exportDisplay,
+  importComponent,
   saveDisplay,
   selectComponent,
   selectedComponent,
@@ -55,6 +54,7 @@ const BaseDisplayPane: React.SFC<DisplayPaneProps> = ({
         addComponent={addDefaultComponent}
         display={display}
         exportDisplay={exportDisplay}
+        importComponent={importComponent}
         saveDisplay={saveDisplay}
         setActiveDisplayDimensions={setActiveDisplayDimensions}
         setDisplayName={setActiveDisplayName}

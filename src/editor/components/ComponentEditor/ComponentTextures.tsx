@@ -5,6 +5,8 @@ import { Section } from '../layout/Section';
 
 interface ComponentTexturesProps {
   component: T.SerializedComponent;
+  exportTexture: CB1<T.SerializedTexture>;
+  importTexture: CB1<{ id: string; textureName: string }>;
   setDefaultTexture: CB1<{
     id: string;
     textureName: string;
@@ -20,6 +22,8 @@ interface ComponentTexturesProps {
 
 export const ComponentTextures: React.SFC<ComponentTexturesProps> = ({
   component: { id, graphics },
+  exportTexture,
+  importTexture,
   setDefaultTexture,
   textureList,
   update,
@@ -27,6 +31,8 @@ export const ComponentTextures: React.SFC<ComponentTexturesProps> = ({
   textureList.length === 0 ? null : (
     <Section>
       <TexturesEditor
+        exportTexture={exportTexture}
+        importTexture={textureName => importTexture({ id, textureName })}
         setDefaultTexture={(textureName, kind) =>
           setDefaultTexture({ id, textureName, kind })
         }

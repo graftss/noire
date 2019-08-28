@@ -9,6 +9,7 @@ import {
   path,
   toPairs,
   uuid,
+  validateJSONString,
 } from '../../utils';
 import { serializeKonvaModel, deserializeKonvaModel } from '../model/konva';
 import { defaultSerializedTexture } from '../texture';
@@ -194,6 +195,9 @@ export const getNewComponentFilterRef = (
   return { modelName, filterIndex };
 };
 
+export const componentFilterRefName = (ref: ComponentFilterRef): string =>
+  `(${ref.modelName}, #${ref.filterIndex})`;
+
 export const getComponentInputFilter = (
   component: SerializedComponent,
   { modelName, filterIndex }: ComponentFilterRef,
@@ -269,6 +273,7 @@ export const defaultSerializedComponent = (
 };
 
 export const validateSerializedComponent = (o: any): boolean =>
+  typeof o === 'object' &&
   typeof o.id === 'string' &&
   componentKinds.includes(o.kind) &&
   typeof o.graphics === 'object' &&
@@ -297,14 +302,15 @@ export const portOutdatedComponent = (
   return c;
 };
 
+const stringToRawComponent: (
+  str: string,
+) => Maybe<SerializedComponent> = validateJSONString(
+  validateSerializedComponent,
+);
+
 export const stringToComponent = (str: string): Maybe<SerializedComponent> => {
-  try {
-    const component = JSON.parse(str);
-    if (validateSerializedComponent(component)) {
-      return portOutdatedComponent(component);
-    }
-  } catch (e) {}
-  return;
+  const component = stringToRawComponent(str);
+  return component && portOutdatedComponent(component);
 };
 
 export const componentToString = (component: SerializedComponent): string =>

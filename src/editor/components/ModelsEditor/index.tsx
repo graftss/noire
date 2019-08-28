@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as T from '../../../types';
-import { clipboard } from '../../../utils';
-import { modelToString } from '../../../display/model/konva';
 import { ModelEditor } from './ModelEditor';
 
 interface ModelEditorProps<M extends readonly string[]> {
   addFilter: (modelName: string, kind: T.InputFilterKind) => void;
+  exportModel: CB1<T.SerializedKonvaModel>;
+  importNewFilter: CB1<string>;
   importModel: (modelName: string) => void;
   modelList: M;
   modelMap: Record<M[number], T.SerializedKonvaModel>;
@@ -13,11 +13,10 @@ interface ModelEditorProps<M extends readonly string[]> {
   setModel: (name: string, model: T.SerializedKonvaModel) => void;
 }
 
-const exportModel = (model: T.SerializedKonvaModel): Promise<void> =>
-  clipboard.write(modelToString(model));
-
 export function ModelsEditor<TS extends readonly string[]>({
   addFilter,
+  exportModel,
+  importNewFilter,
   importModel,
   modelList,
   modelMap,
@@ -31,6 +30,7 @@ export function ModelsEditor<TS extends readonly string[]>({
           addFilter={kind => addFilter(name, kind)}
           key={name}
           exportModel={exportModel}
+          importNewFilter={() => importNewFilter(name)}
           importModel={importModel}
           name={name}
           setDefaultModel={kind => setDefaultModel(name, kind)}
