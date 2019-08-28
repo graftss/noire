@@ -5,9 +5,10 @@ import * as T from '../../../types';
 import * as selectors from '../../../state/selectors';
 import * as actions from '../../../state/actions';
 import { ComponentEditor } from '../ComponentEditor';
-import { CanvasEditor } from './CanvasEditor';
+import { clipboard } from '../../../utils';
+import { displayToString } from '../../../display/serialize';
 import { ComponentSelect } from './ComponentSelect';
-import { ComponentAdd } from './ComponentAdd';
+import { DisplayEditor } from './DisplayEditor';
 
 interface PropsFromState {
   display: T.SerializedDisplay;
@@ -20,6 +21,7 @@ interface PropsFromDispatch {
   saveDisplay: CB1<T.SerializedDisplay>;
   selectComponent: CB1<string>;
   setCanvasDimensions: CB1<{ width: number; height: number }>;
+  setDisplayName: CB1<{ display: T.SerializedDisplay; name: string }>;
 }
 
 interface DisplayPaneProps extends PropsFromState, PropsFromDispatch {}
@@ -33,6 +35,9 @@ const mapStateToProps = (state): PropsFromState => ({
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(actions, dispatch);
 
+const exportDisplay = (display: T.SerializedDisplay): Promise<void> =>
+  clipboard.write(displayToString(display));
+
 const BaseDisplayPane: React.SFC<DisplayPaneProps> = ({
   addDefaultComponent,
   components,
@@ -41,13 +46,17 @@ const BaseDisplayPane: React.SFC<DisplayPaneProps> = ({
   selectComponent,
   selectedComponent,
   setCanvasDimensions,
+  setDisplayName,
 }) => (
   <div>
-    <CanvasEditor display={display} setCanvasDimensions={setCanvasDimensions} />
-    <div>
-      <button onClick={() => saveDisplay(display)}>save display</button>
-    </div>
-    <ComponentAdd addComponent={addDefaultComponent} />
+    <DisplayEditor
+      addComponent={addDefaultComponent}
+      display={display}
+      exportDisplay={exportDisplay}
+      saveDisplay={saveDisplay}
+      setCanvasDimensions={setCanvasDimensions}
+      setDisplayName={setDisplayName}
+    />
     <ComponentSelect
       components={components}
       selected={selectedComponent}

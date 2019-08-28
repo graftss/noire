@@ -4,10 +4,7 @@ import { bindActionCreators } from 'redux';
 import * as T from '../../../types';
 import * as actions from '../../../state/actions';
 import * as selectors from '../../../state/selectors';
-import { clipboard } from '../../../utils';
-import { displayToString } from '../../../display/serialize';
 import { DisplaySelect } from './DisplaySelect';
-import { DisplayEditor } from './DisplayEditor';
 
 interface PropsFromState {
   activeDisplay: T.SerializedDisplay;
@@ -23,7 +20,6 @@ interface PropsFromDispatch {
   saveDisplay: CB1<T.SerializedDisplay>;
   saveDisplayAsNew: CB1<T.SerializedDisplay>;
   selectExistingDisplay: CB1<T.SerializedDisplay>;
-  setDisplayName: CB1<{ display: T.SerializedDisplay; name: string }>;
 }
 
 interface ConfigPaneProps extends PropsFromState, PropsFromDispatch {}
@@ -37,9 +33,6 @@ const mapStateToProps = (state: T.EditorState): PropsFromState => ({
 const mapDispatchToProps = (dispatch): PropsFromDispatch =>
   bindActionCreators(actions, dispatch);
 
-const exportDisplay = (display: T.SerializedDisplay): Promise<void> =>
-  clipboard.write(displayToString(display));
-
 const BaseConfigPane: React.SFC<ConfigPaneProps> = ({
   activeDisplay,
   createNewDisplay,
@@ -51,7 +44,6 @@ const BaseConfigPane: React.SFC<ConfigPaneProps> = ({
   savedDisplays,
   selectExistingDisplay,
   selectedDisplay,
-  setDisplayName,
 }) => (
   <div>
     <div>
@@ -77,11 +69,6 @@ const BaseConfigPane: React.SFC<ConfigPaneProps> = ({
         </button>
       )}
     </div>
-    <DisplayEditor
-      display={selectedDisplay}
-      exportDisplay={exportDisplay}
-      updateDisplayName={setDisplayName}
-    />
   </div>
 );
 
