@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 104);
+/******/ 	return __webpack_require__(__webpack_require__.s = 105);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -169,7 +169,7 @@ function _assertThisInitialized(self) {
 if (false) { var throwOnDirectAccess, ReactIs; } else {
   // By explicitly using `prop-types` you are opting into new production behavior.
   // http://fb.me/prop-types-in-prod
-  module.exports = __webpack_require__(166)();
+  module.exports = __webpack_require__(167)();
 }
 
 
@@ -1295,10 +1295,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ramda_1 = __webpack_require__(53);
-const v4_1 = __importDefault(__webpack_require__(106));
-const ramda_2 = __webpack_require__(53);
-var ramda_3 = __webpack_require__(53);
+const ramda_1 = __webpack_require__(54);
+const v4_1 = __importDefault(__webpack_require__(107));
+const ramda_2 = __webpack_require__(54);
+var ramda_3 = __webpack_require__(54);
 exports.assocPath = ramda_3.assocPath;
 exports.equals = ramda_3.equals;
 exports.path = ramda_3.path;
@@ -1386,9 +1386,9 @@ exports.equalAtKeys = (keys, o1, o2) => {
     }
     return true;
 };
-exports.blurOnEnterKeyDown = (e) => {
+exports.runOnEnterKeydown = (f) => (e) => {
     if (e.keyCode === 13)
-        e.target.blur();
+        f(e);
 };
 exports.defaultTo = (value, defaultValue) => value === undefined ? defaultValue : value;
 exports.flatMap = (map, list) => list.reduce((result, t) => result.concat(map(t)), []);
@@ -1396,6 +1396,19 @@ exports.clipboard = {
     read: () => navigator.clipboard.readText(),
     write: (s) => navigator.clipboard.writeText(s),
 };
+// returns the parsed JSON object if valid, and undefined if invalid.
+exports.validateJSONString = (validate) => (str) => {
+    try {
+        const o = JSON.parse(str);
+        if (o && validate(o))
+            return o;
+    }
+    catch (e) { }
+};
+exports.tryClipboardParse = (parse, onSuccess, onFail) => exports.clipboard
+    .read()
+    .then(parse)
+    .then(maybeT => (maybeT ? onSuccess(maybeT) : onFail()));
 
 
 /***/ }),
@@ -1484,7 +1497,7 @@ function _arrayWithoutHoles(arr) {
   }
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArray.js
-var iterableToArray = __webpack_require__(54);
+var iterableToArray = __webpack_require__(55);
 
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableSpread.js
 function _nonIterableSpread() {
@@ -1543,9 +1556,9 @@ function _classCallCheck(instance, Constructor) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Util_1 = __webpack_require__(10);
 var Factory_1 = __webpack_require__(7);
-var Canvas_1 = __webpack_require__(45);
+var Canvas_1 = __webpack_require__(46);
 var Global_1 = __webpack_require__(9);
-var DragAndDrop_1 = __webpack_require__(48);
+var DragAndDrop_1 = __webpack_require__(49);
 var Validators_1 = __webpack_require__(8);
 exports.ids = {};
 exports.names = {};
@@ -3448,7 +3461,7 @@ const konva_1 = __webpack_require__(39);
 const texture_1 = __webpack_require__(36);
 const component_1 = __webpack_require__(31);
 const filter_1 = __webpack_require__(37);
-const serialize_1 = __webpack_require__(59);
+const serialize_1 = __webpack_require__(60);
 exports.emitDisplayEvents = (events) => ({
     type: 'emitDisplayEvents',
     data: events,
@@ -3465,24 +3478,17 @@ exports.removeController = (id) => ({
     type: 'removeController',
     data: id,
 });
-exports.startFullControllerUpdate = () => ({
-    type: 'startFullControllerUpdate',
-});
-exports.updateControllerBinding = (update) => ({
-    type: 'updateControllerBinding',
+exports.setControllerBinding = (update) => ({
+    type: 'setControllerBinding',
     data: update,
 });
-exports.updateControllerName = (id, name) => ({
-    type: 'updateControllerName',
+exports.setControllerName = (id, name) => ({
+    type: 'setControllerName',
     data: { id, name },
 });
 exports.setComponentState = (id, state) => ({
     type: 'setComponentState',
     data: { id, state },
-});
-exports.setComponentModel = (id, modelName, model) => ({
-    type: 'setComponentModel',
-    data: { id, modelName, model },
 });
 exports.setComponentTexture = (id, textureName, texture) => ({
     type: 'setComponentTexture',
@@ -3510,17 +3516,35 @@ exports.setTab = (kind) => ({
     type: 'setTab',
     data: kind,
 });
+exports.setModel = ({ id, modelName, model }) => dispatch => {
+    const event = events.requestModelUpdate(id, modelName, model);
+    dispatch({ type: 'setComponentModel', data: { id, modelName, model } });
+    dispatch(exports.emitDisplayEvents([event]));
+};
 exports.setDefaultModel = ({ id, modelName, kind }) => dispatch => {
     const model = konva_1.defaultSerializedKonvaModel(kind);
-    const event = events.requestDefaultModel(id, modelName, kind);
-    dispatch(exports.setComponentModel(id, modelName, model));
+    exports.setModel({ id, modelName, model })(dispatch);
+};
+exports.importModel = ({ id, modelName }) => dispatch => {
+    utils_1.tryClipboardParse(konva_1.stringToModel, model => exports.setModel({ id, modelName, model })(dispatch), () => { });
+};
+exports.exportModel = model => () => {
+    utils_1.clipboard.write(konva_1.modelToString(model));
+};
+exports.setTexture = ({ id, textureName, texture }) => dispatch => {
+    const event = events.requestTextureUpdate(id, textureName, texture);
+    dispatch(exports.setComponentTexture(id, textureName, texture));
     dispatch(exports.emitDisplayEvents([event]));
 };
 exports.setDefaultTexture = ({ id, textureName, kind }) => dispatch => {
     const texture = texture_1.defaultSerializedTexture(kind);
-    const event = events.requestDefaultTexture(id, textureName, kind);
-    dispatch(exports.setComponentTexture(id, textureName, texture));
-    dispatch(exports.emitDisplayEvents([event]));
+    exports.setTexture({ id, textureName, texture })(dispatch);
+};
+exports.importTexture = ({ id, textureName }) => dispatch => {
+    utils_1.tryClipboardParse(texture_1.stringToTexture, texture => exports.setTexture({ id, textureName, texture })(dispatch), () => { });
+};
+exports.exportTexture = texture => () => {
+    utils_1.clipboard.write(texture_1.textureToString(texture));
 };
 exports.addFilter = ({ component, modelName, kind }) => dispatch => {
     const ref = component_1.getNewComponentFilterRef(component, modelName);
@@ -3533,34 +3557,33 @@ exports.removeFilter = ({ id, ref }) => dispatch => {
     dispatch(exports.emitDisplayEvents([events.requestRemoveFilter(id, ref)]));
     dispatch(exports.removeComponentInputFilter(id, ref));
 };
+exports.setFilter = ({ id, ref, filter }) => dispatch => {
+    const event = events.requestFilterUpdate(id, ref, filter);
+    dispatch(exports.setComponentInputFilter(id, ref, filter));
+    dispatch(exports.emitDisplayEvents([event]));
+};
 exports.setDefaultFilter = ({ component, ref, kind }) => dispatch => {
     const oldFilter = component_1.getComponentInputFilter(component, ref);
     const filter = filter_1.defaultInputFilter(kind, oldFilter);
-    const event = events.requestFilterUpdate(component.id, ref, filter);
-    dispatch(exports.emitDisplayEvents([event]));
-    dispatch(exports.setComponentInputFilter(component.id, ref, filter));
+    exports.setFilter({ id: component.id, ref, filter })(dispatch);
 };
-exports.updateState = ({ component, field, value }) => dispatch => {
+exports.importFilter = ({ id, ref }) => dispatch => {
+    utils_1.tryClipboardParse(filter_1.stringToFilter, filter => exports.setFilter({ id, ref, filter })(dispatch), () => { });
+};
+exports.importNewFilter = ({ component, modelName }) => dispatch => {
+    exports.importFilter({
+        id: component.id,
+        ref: component_1.getNewComponentFilterRef(component, modelName),
+    })(dispatch);
+};
+exports.exportFilter = filter => () => {
+    utils_1.clipboard.write(filter_1.filterToString(filter));
+};
+exports.setState = ({ component, field, value }) => dispatch => {
     const { id, state } = component;
     const newState = field.setter(state, value);
     const event = events.setComponentState(id, newState);
     dispatch(exports.setComponentState(id, newState));
-    dispatch(exports.emitDisplayEvents([event]));
-};
-exports.updateModel = ({ component, modelName, model }) => dispatch => {
-    const event = events.requestModelUpdate(component.id, modelName, model);
-    dispatch(exports.setComponentModel(component.id, modelName, model));
-    dispatch(exports.emitDisplayEvents([event]));
-};
-exports.updateTexture = ({ component, textureName, texture }) => dispatch => {
-    const { id } = component;
-    const event = events.requestTextureUpdate(id, textureName, texture);
-    dispatch(exports.setComponentTexture(id, textureName, texture));
-    dispatch(exports.emitDisplayEvents([event]));
-};
-exports.updateFilter = ({ component, ref, filter }) => dispatch => {
-    const event = events.requestFilterUpdate(component.id, ref, filter);
-    dispatch(exports.setComponentInputFilter(component.id, ref, filter));
     dispatch(exports.emitDisplayEvents([event]));
 };
 exports.addComponent = component => dispatch => {
@@ -3568,9 +3591,16 @@ exports.addComponent = component => dispatch => {
     dispatch({ type: 'addComponent', data: component });
     dispatch(exports.emitDisplayEvents([event]));
 };
+exports.addDefaultComponent = kind => dispatch => exports.addComponent(component_1.defaultSerializedComponent(kind))(dispatch);
 exports.selectComponent = id => dispatch => {
     dispatch({ type: 'selectComponent', data: id });
     dispatch(exports.emitDisplayEvents([events.requestSelectComponent(id)]));
+};
+exports.importComponent = () => dispatch => {
+    utils_1.tryClipboardParse(component_1.stringToComponent, component => exports.addComponent(component)(dispatch), () => { });
+};
+exports.exportComponent = component => () => {
+    utils_1.clipboard.write(component_1.componentToString(component));
 };
 exports.deselectComponent = id => dispatch => {
     dispatch({ type: 'deselectComponent', data: id });
@@ -3607,21 +3637,14 @@ exports.enterPresentationMode = () => dispatch => {
     setTimeout(() => dispatch({ type: 'closePresentationSnackbar' }), 1000);
 };
 exports.importDisplay = () => dispatch => {
-    utils_1.clipboard
-        .read()
-        .then(serialize_1.stringToDisplay)
-        .then(display => {
-        if (display) {
-            exports.selectDisplay({
-                display: serialize_1.cloneDisplay(display),
-                saveToState: true,
-                loadIntoCanvas: true,
-            })(dispatch);
-        }
-        else {
-            // TODO: handle invalid imported display
-        }
-    });
+    utils_1.tryClipboardParse(serialize_1.stringToDisplay, display => exports.selectDisplay({
+        display: serialize_1.cloneDisplay(display),
+        saveToState: true,
+        loadIntoCanvas: true,
+    })(dispatch), () => { });
+};
+exports.exportDisplay = display => () => {
+    utils_1.clipboard.write(serialize_1.displayToString(display));
 };
 exports.removeDisplay = display => dispatch => {
     dispatch({ type: 'removeDisplay', data: display.id });
@@ -3639,22 +3662,16 @@ exports.saveDisplayAsNew = display => dispatch => {
 exports.selectExistingDisplay = display => dispatch => {
     exports.selectDisplay({ display, loadIntoCanvas: true })(dispatch);
 };
-exports.setDisplayName = ({ display, name }) => dispatch => {
-    const newDisplay = serialize_1.setDisplayName(display, name);
-    dispatch({ type: 'saveDisplay', data: newDisplay });
+exports.setActiveDisplayName = (name) => ({
+    type: 'setActiveDisplayName',
+    data: name,
+});
+exports.setActiveDisplayDimensions = ({ width, height }) => dispatch => {
+    const event = events.requestSetCanvasDimensions(width, height);
+    dispatch({ type: 'setActiveDisplayDimensions', data: { width, height } });
+    dispatch(exports.emitDisplayEvents([event]));
 };
 exports.closePresentationSnackbar = () => dispatch => dispatch({ type: 'closePresentationSnackbar' });
-exports.addDefaultComponent = kind => dispatch => {
-    const component = component_1.defaultSerializedComponent(kind);
-    const event = events.requestAddComponent(component_1.deserializeComponent(component));
-    dispatch({ type: 'addComponent', data: component });
-    dispatch(exports.emitDisplayEvents([event]));
-};
-exports.setCanvasDimensions = ({ width, height }) => dispatch => {
-    const event = events.requestSetCanvasDimensions(width, height);
-    dispatch({ type: 'setCanvasDimensions', data: { width, height } });
-    dispatch(exports.emitDisplayEvents([event]));
-};
 exports.exitPresentationMode = () => ({
     type: 'exitPresentationMode',
 });
@@ -3672,7 +3689,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "applyMiddleware", function() { return applyMiddleware; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compose", function() { return compose; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__DO_NOT_USE__ActionTypes", function() { return ActionTypes; });
-/* harmony import */ var symbol_observable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(70);
+/* harmony import */ var symbol_observable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(71);
 
 
 /**
@@ -4330,7 +4347,7 @@ function _typeof(obj) {
  * Copyright 2015, Yahoo! Inc.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
  */
-var ReactIs = __webpack_require__(67);
+var ReactIs = __webpack_require__(68);
 var REACT_STATICS = {
     childContextTypes: true,
     contextType: true,
@@ -4438,7 +4455,7 @@ module.exports = hoistNonReactStatics;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = __webpack_require__(11);
-const controller_1 = __webpack_require__(46);
+const controller_1 = __webpack_require__(47);
 exports.lift = (substateKey, substateSelector) => {
     const lifted = (state) => substateSelector(state[substateKey]);
     lifted.proj = substateSelector;
@@ -4719,7 +4736,7 @@ var browser = __webpack_require__(33);
 var browser_default = /*#__PURE__*/__webpack_require__.n(browser);
 
 // EXTERNAL MODULE: ./node_modules/react-is/index.js
-var react_is = __webpack_require__(67);
+var react_is = __webpack_require__(68);
 
 // CONCATENATED MODULE: ./node_modules/react-redux/es/components/connectAdvanced.js
 
@@ -5840,10 +5857,10 @@ const texture_1 = __webpack_require__(36);
 const utils_1 = __webpack_require__(11);
 const konva_1 = __webpack_require__(39);
 const texture_2 = __webpack_require__(36);
-const ButtonComponent_1 = __webpack_require__(79);
-const DPadComponent_1 = __webpack_require__(82);
-const StaticComponent_1 = __webpack_require__(83);
-const StickComponent_1 = __webpack_require__(84);
+const ButtonComponent_1 = __webpack_require__(80);
+const DPadComponent_1 = __webpack_require__(83);
+const StaticComponent_1 = __webpack_require__(84);
+const StickComponent_1 = __webpack_require__(85);
 const componentData = {
     button: ButtonComponent_1.buttonComponentData,
     dPad: DPadComponent_1.dPadComponentData,
@@ -5904,6 +5921,7 @@ exports.getNewComponentFilterRef = (component, modelName) => {
     const filterIndex = filters ? filters.length : 0;
     return { modelName, filterIndex };
 };
+exports.componentFilterRefName = (ref) => `(${ref.modelName}, #${ref.filterIndex})`;
 exports.getComponentInputFilter = (component, { modelName, filterIndex }) => utils_1.path(['filters', modelName, filterIndex], component);
 exports.setComponentInputFilter = (component, { modelName, filterIndex }, filter) => utils_1.assocPath(['filters', modelName, filterIndex], filter, component);
 exports.removeComponentInputFilter = (component, { modelName, filterIndex }) => utils_1.mapPath(['filters', modelName], (filters = []) => filters && filters.filter((_, i) => i !== filterIndex), component);
@@ -5941,12 +5959,28 @@ exports.defaultSerializedComponent = (kind) => {
         filters: {},
     };
 };
-exports.validateSerializedComponent = (o) => typeof o.id === 'string' &&
+exports.validateSerializedComponent = (o) => typeof o === 'object' &&
+    typeof o.id === 'string' &&
     componentKinds.includes(o.kind) &&
     typeof o.graphics === 'object' &&
     typeof o.state === 'object' &&
     typeof o.filters === 'object';
 exports.cloneSerializedComponent = (c) => (Object.assign({}, c, { id: utils_1.uuid(), state: Object.assign({}, c.state, { name: `Clone of ${c.state.name}` }) }));
+exports.portOutdatedComponent = (c) => {
+    const state = c.state;
+    // replace `offset` with `position` in state
+    if (state.offset) {
+        state.position = state.offset;
+        delete state.offset;
+    }
+    return c;
+};
+const stringToRawComponent = utils_1.validateJSONString(exports.validateSerializedComponent);
+exports.stringToComponent = (str) => {
+    const component = stringToRawComponent(str);
+    return component && exports.portOutdatedComponent(component);
+};
+exports.componentToString = (component) => JSON.stringify(component);
 
 
 /***/ }),
@@ -6160,9 +6194,9 @@ module.exports = g;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = __webpack_require__(11);
-const FillTexture_1 = __webpack_require__(149);
-const ImageTexture_1 = __webpack_require__(150);
-const HiddenTexture_1 = __webpack_require__(151);
+const FillTexture_1 = __webpack_require__(150);
+const ImageTexture_1 = __webpack_require__(151);
+const HiddenTexture_1 = __webpack_require__(152);
 const textureConstructors = {
     fill: s => new FillTexture_1.FillTexture(s),
     hidden: () => new HiddenTexture_1.HiddenTexture(),
@@ -6181,10 +6215,13 @@ exports.defaultSerializedTexture = (kind) => exports.serializeTexture(textureCon
 exports.getTextureFields = (kind) => textureFields[kind];
 exports.getTextureKinds = () => [...textureKinds];
 exports.findTextureFieldByKey = (kind, key) => utils_1.find(field => field.key === key, exports.getTextureFields(kind));
-exports.updateTexture = (texture, key, value) => {
+exports.setTexture = (texture, key, value) => {
     const field = exports.findTextureFieldByKey(texture.kind, key);
     return field ? field.setter(texture, value) : texture;
 };
+exports.validateTexture = (o) => textureKinds.includes(o.kind) && typeof o.state === 'object';
+exports.stringToTexture = utils_1.validateJSONString(exports.validateTexture);
+exports.textureToString = (texture) => JSON.stringify(texture);
 
 
 /***/ }),
@@ -6195,8 +6232,8 @@ exports.updateTexture = (texture, key, value) => {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = __webpack_require__(11);
-const distort_1 = __webpack_require__(152);
-const zoom_1 = __webpack_require__(153);
+const distort_1 = __webpack_require__(153);
+const zoom_1 = __webpack_require__(154);
 const inputFilterClasses = {
     buttonZoom: 'zoom',
     dPadDistort: 'distort',
@@ -6207,6 +6244,7 @@ const inputFilterFactories = {
     dPadDistort: distort_1.dPadDistort,
     stickDistort: distort_1.stickDistort,
 };
+const inputFilterKinds = utils_1.keys(inputFilterFactories);
 const filterInputFields = {
     stickDistort: distort_1.stickDistortInputFields,
     dPadDistort: distort_1.dPadDistortInputFields,
@@ -6218,7 +6256,7 @@ const defaultInputFilterStates = {
     buttonZoom: zoom_1.defaultButtonZoomState,
 };
 exports.getInputFilterKinds = () => [
-    ...utils_1.keys(inputFilterFactories),
+    ...inputFilterKinds,
 ];
 const inputFilterFields = {
     stickDistort: distort_1.distortStateFields,
@@ -6240,6 +6278,12 @@ exports.defaultInputFilter = (kind, oldFilter) => ({
         ? oldFilter.state
         : Object.assign({}, defaultInputFilterStates[kind]),
 });
+exports.validateFilter = (o) => typeof o === 'object' &&
+    inputFilterKinds.includes(o.kind) &&
+    typeof o.state === 'object' &&
+    typeof o.inputMap === 'object';
+exports.stringToFilter = utils_1.validateJSONString(exports.validateFilter);
+exports.filterToString = (filter) => JSON.stringify(filter);
 
 
 /***/ }),
@@ -6321,10 +6365,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const konva_1 = __importDefault(__webpack_require__(47));
+const konva_1 = __importDefault(__webpack_require__(48));
 const utils_1 = __webpack_require__(11);
-const Rect_1 = __webpack_require__(147);
-const Circle_1 = __webpack_require__(148);
+const Rect_1 = __webpack_require__(148);
+const Circle_1 = __webpack_require__(149);
 const konvaModelFields = {
     Rect: Rect_1.rectModelFields,
     Circle: Circle_1.circleModelFields,
@@ -6350,6 +6394,11 @@ exports.defaultSerializedKonvaModel = (kind, attrs) => ({
     attrs: Object.assign({}, defaultKonvaModelAttrs[kind], attrs),
 });
 exports.defaultKonvaModel = (kind) => exports.deserializeKonvaModel(exports.defaultSerializedKonvaModel(kind));
+const validateModel = (o) => typeof o === 'object' &&
+    konvaModelKinds.includes(o.kind) &&
+    typeof o.attrs === 'object';
+exports.stringToModel = utils_1.validateJSONString(validateModel);
+exports.modelToString = (model) => JSON.stringify(model);
 
 
 /***/ }),
@@ -6375,7 +6424,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Util_1 = __webpack_require__(10);
 var Factory_1 = __webpack_require__(7);
 var Node_1 = __webpack_require__(17);
-var DragAndDrop_1 = __webpack_require__(48);
+var DragAndDrop_1 = __webpack_require__(49);
 var Validators_1 = __webpack_require__(8);
 var Container = (function (_super) {
     __extends(Container, _super);
@@ -6714,7 +6763,7 @@ Util_1.Collection.mapMethods(Container);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = __webpack_require__(11);
-const input_1 = __webpack_require__(80);
+const input_1 = __webpack_require__(81);
 const texture_1 = __webpack_require__(36);
 const filter_1 = __webpack_require__(37);
 exports.defaultComponentState = {
@@ -6756,18 +6805,6 @@ class Component {
         this.state = Object.assign({}, exports.defaultComponentState, state);
         this.filters = Object.assign({}, filters);
     }
-    updateFilters(allFilterInput = {}) {
-        if (!this.filters)
-            return;
-        for (const modelName in this.graphics.models) {
-            const model = this.graphics.models[modelName];
-            const modelInputFilters = this.filters[modelName];
-            const modelInput = allFilterInput[modelName];
-            if (!model || !modelInputFilters || !modelInput)
-                continue;
-            model.filters(modelInputFilters.map((inputFilter, index) => filter_1.reifyInputFilter(inputFilter, modelInput[index])));
-        }
-    }
     // `init` is called after the component is added to the
     // `KonvaComponentPlugin`, and has been added to its
     // parent stage.
@@ -6793,6 +6830,18 @@ class Component {
         this.graphics.textures[textureName] = cTexture;
         return cTexture;
     }
+    updateFilters(allFilterInput = {}) {
+        if (!this.filters)
+            return;
+        for (const modelName in this.graphics.models) {
+            const model = this.graphics.models[modelName];
+            const modelInputFilters = this.filters[modelName];
+            const modelInput = allFilterInput[modelName];
+            if (!model || !modelInputFilters || !modelInput)
+                continue;
+            model.filters(modelInputFilters.map((inputFilter, index) => filter_1.reifyInputFilter(inputFilter, modelInput[index])));
+        }
+    }
 }
 exports.Component = Component;
 
@@ -6812,8 +6861,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const WithDefault_1 = __webpack_require__(51);
-const EditorSelect_1 = __webpack_require__(63);
+const WithDefault_1 = __webpack_require__(52);
+const EditorSelect_1 = __webpack_require__(64);
 const indexSymbol = Symbol('index');
 const nullIndex = -1;
 function SelectField({ autoConfirm = false, buttonText, data, initialValue, placeholder, toOption, onConfirm, }) {
@@ -6821,8 +6870,8 @@ function SelectField({ autoConfirm = false, buttonText, data, initialValue, plac
     const indexedToOption = (t, index) => (Object.assign({}, toOption(t), { [indexSymbol]: index }));
     const initialDataIndex = initialValue === undefined ? -1 : data.indexOf(initialValue);
     const initialIndex = initialDataIndex === -1 ? nullIndex : initialDataIndex;
-    return (React.createElement(WithDefault_1.WithDefault, { initialValue: initialIndex, render: (index, setIndex) => (React.createElement("div", { style: { display: 'flex' } },
-            React.createElement("div", { style: { flexGrow: 100 } },
+    return (React.createElement(WithDefault_1.WithDefault, { initialValue: initialIndex, render: (index, setIndex) => (React.createElement("span", { style: { display: 'flex' } },
+            React.createElement("span", { style: { flexGrow: 100 } },
                 React.createElement(EditorSelect_1.EditorSelect, { data: data, selected: dataAtIndex(index), onChange: option => {
                         setIndex(option[indexSymbol]);
                         if (autoConfirm)
@@ -6835,6 +6884,24 @@ exports.SelectField = SelectField;
 
 /***/ }),
 /* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = __importStar(__webpack_require__(0));
+exports.Section = ({ children }) => (React.createElement("div", { className: "editor-section" }, children));
+
+
+/***/ }),
+/* 44 */
 /***/ (function(module, exports) {
 
 function _extends() {
@@ -6858,8 +6925,8 @@ function _extends() {
 module.exports = _extends;
 
 /***/ }),
-/* 44 */,
-/* 45 */
+/* 45 */,
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6879,7 +6946,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Util_1 = __webpack_require__(10);
-var Context_1 = __webpack_require__(72);
+var Context_1 = __webpack_require__(73);
 var Global_1 = __webpack_require__(9);
 var Factory_1 = __webpack_require__(7);
 var Validators_1 = __webpack_require__(8);
@@ -6998,16 +7065,16 @@ exports.HitCanvas = HitCanvas;
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const bindings_1 = __webpack_require__(60);
+const bindings_1 = __webpack_require__(61);
 const utils_1 = __webpack_require__(11);
-const ps2_1 = __webpack_require__(155);
-const keyboard_1 = __webpack_require__(86);
+const ps2_1 = __webpack_require__(156);
+const keyboard_1 = __webpack_require__(87);
 const configs = {
     ps2: ps2_1.ps2Config,
     keyboard: keyboard_1.keyboardConfig,
@@ -7019,7 +7086,7 @@ exports.getNewController = (kind) => ({
     id: utils_1.uuid(),
     name: `New ${kind} controller`,
     kind,
-    bindings: {},
+    bindings: configs[kind].defaultBindings || {},
 });
 exports.getKeyInputKind = (kind, key) => exports.getControllerMap(kind)[key].inputKind;
 exports.getKeyName = (kind, key) => exports.getControllerMap(kind)[key].name;
@@ -7045,23 +7112,23 @@ exports.hasKeyBoundTo = ({ bindings }, binding) => {
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Konva = __webpack_require__(109).Konva;
+var Konva = __webpack_require__(110).Konva;
 Konva._injectGlobal(Konva);
 exports['default'] = Konva;
 module.exports = exports['default'];
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Animation_1 = __webpack_require__(49);
+var Animation_1 = __webpack_require__(50);
 var Global_1 = __webpack_require__(9);
 exports.DD = {
     startPointerPos: {
@@ -7157,7 +7224,7 @@ if (Global_1.Konva.isBrowser) {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7308,7 +7375,7 @@ exports.Animation = Animation;
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7474,7 +7541,7 @@ exports.gamepadSourceFactory = (getGamepads) => {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7507,7 +7574,7 @@ exports.WithDefault = WithDefault;
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7521,10 +7588,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const TextField_1 = __webpack_require__(66);
-const BooleanField_1 = __webpack_require__(92);
-const FloatField_1 = __webpack_require__(65);
-const Vec2Field_1 = __webpack_require__(93);
+const TextField_1 = __webpack_require__(67);
+const BooleanField_1 = __webpack_require__(93);
+const FloatField_1 = __webpack_require__(66);
+const Vec2Field_1 = __webpack_require__(94);
 function renderFieldInput({ field, initialValue, update, }) {
     const props = Object.assign({ defaultValue: field.defaultValue, initialValue,
         update }, field.props);
@@ -7550,7 +7617,7 @@ exports.EditorField = EditorField;
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18829,7 +18896,7 @@ var thunkify_thunkify = /*#__PURE__*/_curry1(function thunkify(fn) {
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18839,14 +18906,14 @@ function _iterableToArray(iter) {
 }
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var arrayWithoutHoles = __webpack_require__(184);
+var arrayWithoutHoles = __webpack_require__(185);
 
-var iterableToArray = __webpack_require__(185);
+var iterableToArray = __webpack_require__(186);
 
-var nonIterableSpread = __webpack_require__(186);
+var nonIterableSpread = __webpack_require__(187);
 
 function _toConsumableArray(arr) {
   return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
@@ -18855,8 +18922,8 @@ function _toConsumableArray(arr) {
 module.exports = _toConsumableArray;
 
 /***/ }),
-/* 56 */,
-/* 57 */
+/* 57 */,
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18898,7 +18965,7 @@ Util_1.Collection.mapMethods(Group);
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18931,7 +18998,7 @@ exports.Texture = Texture;
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18948,32 +19015,29 @@ exports.newDisplay = () => ({
     components: [],
 });
 exports.setDisplayName = (display, name) => (Object.assign({}, display, { name }));
-exports.displayToString = (display) => JSON.stringify(display);
-const validateDisplay = (o) => o !== undefined &&
+exports.portOutdatedDisplay = (display) => {
+    display.components = display.components.map(component_1.portOutdatedComponent);
+    return display;
+};
+// decides if an arbitrary object can be cast as a `SerializedDisplay`
+exports.validateDisplay = (o) => o !== undefined &&
     typeof o.id === 'string' &&
     typeof o.name === 'string' &&
     Array.isArray(o.components) &&
     utils_1.every(component_1.validateSerializedComponent, o.components);
-exports.stringToDisplay = (str) => {
-    try {
-        const display = JSON.parse(str);
-        if (validateDisplay(display))
-            return display;
-    }
-    catch (e) { }
-    return;
-};
+exports.displayToString = (display) => JSON.stringify(Object.assign({}, display, { v: '1' }));
+exports.stringToDisplay = utils_1.validateJSONString(exports.validateDisplay);
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const gamepad_1 = __webpack_require__(50);
-const keyboard_1 = __webpack_require__(61);
+const gamepad_1 = __webpack_require__(51);
+const keyboard_1 = __webpack_require__(62);
 const bindingAPIs = {
     gamepad: gamepad_1.gamepadBindingAPI,
     keyboard: keyboard_1.keyboardBindingAPI,
@@ -18987,7 +19051,7 @@ exports.stringifyBinding = (b) => !b || !bindingAPIs[b.sourceKind]
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18996,9 +19060,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const keycode_1 = __importDefault(__webpack_require__(85));
+const keycode_1 = __importDefault(__webpack_require__(86));
 const utils_1 = __webpack_require__(11);
-const Keyboard_1 = __webpack_require__(154);
+const Keyboard_1 = __webpack_require__(155);
 exports.getLocalKeyboard = (document, listenedKeyCodes) => {
     const keyboard = new Keyboard_1.Keyboard(listenedKeyCodes);
     document.addEventListener('keydown', keyboard.onKeyDown);
@@ -19077,7 +19141,7 @@ exports.keyboardSourceFactory = (getKeyboard) => {
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19104,7 +19168,7 @@ exports.removeDisplay = selectors_1.lift('savedDisplays', (state) => (id) => (Ob
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19121,7 +19185,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const react_select_1 = __importDefault(__webpack_require__(227));
+const react_select_1 = __importDefault(__webpack_require__(226));
 function EditorSelect({ data, onChange, placeholder, selected, toOption, }) {
     return (React.createElement(react_select_1.default, { menuPlacement: "top", onChange: onChange, options: data.map(toOption), value: selected ? toOption(selected) : null, placeholder: placeholder }));
 }
@@ -19129,7 +19193,7 @@ exports.EditorSelect = EditorSelect;
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19157,11 +19221,11 @@ const redux_1 = __webpack_require__(24);
 const events = __importStar(__webpack_require__(34));
 const selectors = __importStar(__webpack_require__(28));
 const actions = __importStar(__webpack_require__(23));
-const controller_1 = __webpack_require__(46);
-const bindings_1 = __webpack_require__(60);
+const controller_1 = __webpack_require__(47);
+const bindings_1 = __webpack_require__(61);
 const component_1 = __webpack_require__(31);
-const gamepad_1 = __webpack_require__(50);
-const FloatField_1 = __webpack_require__(65);
+const gamepad_1 = __webpack_require__(51);
+const FloatField_1 = __webpack_require__(66);
 const mapStateToProps = (state) => ({
     controllersById: selectors.controllersById(state),
     isListening: selectors.isListening(state),
@@ -19169,7 +19233,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => redux_1.bindActionCreators({
     emitDisplayEvents: actions.emitDisplayEvents,
     listenNextInput: actions.listenNextInput,
-    updateControllerBinding: actions.updateControllerBinding,
+    setControllerBinding: actions.setControllerBinding,
 }, dispatch);
 const computeRemapState = (value) => {
     switch (value.kind) {
@@ -19203,13 +19267,13 @@ const computeRemapState = (value) => {
     }
 };
 // TODO: find a better place for this
-const renderDeadzoneField = (value, updateControllerBinding) => {
+const renderDeadzoneField = (value, setControllerBinding) => {
     if (value.kind !== 'controller')
         return null;
     const { controller, key } = value;
     const binding = controller.bindings[key];
     return binding && binding.inputKind === 'axis' ? (React.createElement("span", null,
-        React.createElement(FloatField_1.FloatField, { defaultValue: gamepad_1.DEFAULT_AXIS_DEADZONE, initialValue: binding.deadzone, precision: 3, update: (deadzone) => updateControllerBinding({
+        React.createElement(FloatField_1.FloatField, { defaultValue: gamepad_1.DEFAULT_AXIS_DEADZONE, initialValue: binding.deadzone, precision: 3, update: (deadzone) => setControllerBinding({
                 controllerId: controller.id,
                 key,
                 binding: Object.assign({}, binding, { deadzone }),
@@ -19236,37 +19300,16 @@ const stringifyValue = (value, remapTo, { controllersById, isListening }) => {
     }
 };
 const BaseRemapButton = (_a) => {
-    var { emitDisplayEvents, listenNextInput, updateControllerBinding, value } = _a, propsFromState = __rest(_a, ["emitDisplayEvents", "listenNextInput", "updateControllerBinding", "value"]);
+    var { emitDisplayEvents, listenNextInput, setControllerBinding, value } = _a, propsFromState = __rest(_a, ["emitDisplayEvents", "listenNextInput", "setControllerBinding", "value"]);
     const remapTo = computeRemapState(value);
     return (React.createElement("span", null,
         React.createElement("button", { onClick: () => {
                 listenNextInput(remapTo);
                 emitDisplayEvents([events.listenNextInput(remapTo)]);
             } }, stringifyValue(value, remapTo, propsFromState)),
-        renderDeadzoneField(value, updateControllerBinding)));
+        renderDeadzoneField(value, setControllerBinding)));
 };
 exports.RemapButton = react_redux_1.connect(mapStateToProps, mapDispatchToProps)(BaseRemapButton);
-
-
-/***/ }),
-/* 65 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = __importStar(__webpack_require__(0));
-const utils_1 = __webpack_require__(11);
-const WithDefault_1 = __webpack_require__(51);
-const parseNumber = (value, precision) => (precision === 1 ? parseInt : parseFloat)(value);
-exports.FloatField = ({ defaultValue, initialValue, precision = 1, update, }) => (React.createElement(WithDefault_1.WithDefault, { initialValue: utils_1.toPrecision(utils_1.defaultTo(initialValue, defaultValue), precision).toString(), render: (value, setValue) => (React.createElement("input", { value: value.toString(), onChange: e => setValue(e.target.value), onBlur: () => update(parseNumber(value, precision)), onKeyDown: utils_1.blurOnEnterKeyDown, type: "text" })) }));
 
 
 /***/ }),
@@ -19285,8 +19328,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
 const utils_1 = __webpack_require__(11);
-const WithDefault_1 = __webpack_require__(51);
-exports.TextField = ({ defaultValue, initialValue, update, }) => (React.createElement(WithDefault_1.WithDefault, { initialValue: utils_1.defaultTo(initialValue, defaultValue), render: (value, setValue) => (React.createElement("input", { value: value, onChange: e => setValue(e.target.value), onBlur: () => update(value), onKeyDown: utils_1.blurOnEnterKeyDown, type: "text" })) }));
+const WithDefault_1 = __webpack_require__(52);
+const parseNumber = (value, precision) => (precision === 1 ? parseInt : parseFloat)(value);
+exports.FloatField = ({ defaultValue, initialValue, precision = 1, update, }) => (React.createElement(WithDefault_1.WithDefault, { initialValue: utils_1.toPrecision(utils_1.defaultTo(initialValue, defaultValue), precision).toString(), render: (value, setValue) => {
+        const runUpdate = () => update(parseNumber(value, precision));
+        return (React.createElement("input", { value: value.toString(), onChange: e => setValue(e.target.value), onBlur: runUpdate, onKeyDown: utils_1.runOnEnterKeydown(runUpdate), type: "text" }));
+    } }));
 
 
 /***/ }),
@@ -19295,17 +19342,40 @@ exports.TextField = ({ defaultValue, initialValue, update, }) => (React.createEl
 
 "use strict";
 
-
-if (true) {
-  module.exports = __webpack_require__(168);
-} else {}
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = __importStar(__webpack_require__(0));
+const utils_1 = __webpack_require__(11);
+const WithDefault_1 = __webpack_require__(52);
+exports.TextField = ({ defaultValue, initialValue, update, }) => (React.createElement(WithDefault_1.WithDefault, { initialValue: utils_1.defaultTo(initialValue, defaultValue), render: (value, setValue) => {
+        const runUpdate = () => update(value);
+        return (React.createElement("input", { value: value, onChange: e => setValue(e.target.value), onBlur: runUpdate, onKeyDown: utils_1.runOnEnterKeydown(runUpdate), type: "text" }));
+    } }));
 
 
 /***/ }),
 /* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(193)
+"use strict";
+
+
+if (true) {
+  module.exports = __webpack_require__(169);
+} else {}
+
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(194)
   , root = typeof window === 'undefined' ? global : window
   , vendors = ['moz', 'webkit']
   , suffix = 'AnimationFrame'
@@ -19384,7 +19454,7 @@ module.exports.polyfill = function(object) {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35)))
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19658,11 +19728,11 @@ AutosizeInput.defaultProps = {
 exports.default = AutosizeInput;
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(global, module) {/* harmony import */ var _ponyfill_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(96);
+/* WEBPACK VAR INJECTION */(function(global, module) {/* harmony import */ var _ponyfill_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(97);
 /* global window */
 
 
@@ -19681,11 +19751,11 @@ if (typeof self !== 'undefined') {
 var result = Object(_ponyfill_js__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])(root);
 /* harmony default export */ __webpack_exports__["a"] = (result);
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35), __webpack_require__(169)(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35), __webpack_require__(170)(module)))
 
 /***/ }),
-/* 71 */,
-/* 72 */
+/* 72 */,
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20208,7 +20278,7 @@ exports.HitContext = HitContext;
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20231,7 +20301,7 @@ var Util_1 = __webpack_require__(10);
 var Container_1 = __webpack_require__(40);
 var Node_1 = __webpack_require__(17);
 var Factory_1 = __webpack_require__(7);
-var Canvas_1 = __webpack_require__(45);
+var Canvas_1 = __webpack_require__(46);
 var BaseLayer = (function (_super) {
     __extends(BaseLayer, _super);
     function BaseLayer(config) {
@@ -20403,7 +20473,7 @@ Util_1.Collection.mapMethods(BaseLayer);
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20552,7 +20622,7 @@ Util_1.Collection.mapMethods(Line);
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21170,7 +21240,7 @@ Util_1.Collection.mapMethods(Path);
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21230,7 +21300,7 @@ Util_1.Collection.mapMethods(Rect);
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21576,7 +21646,7 @@ Util_1.Collection.mapMethods(Text);
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21604,7 +21674,7 @@ exports.baseModelFields = [
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21649,7 +21719,7 @@ exports.buttonComponentData = {
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21669,7 +21739,7 @@ exports.defaultInputByKind = defaultInputByKind;
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21693,7 +21763,7 @@ exports.dist = (x0, y0, x1, y1) => sqrt(pow(x1 - x0, 2) + pow(y1 - y0, 2));
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21702,7 +21772,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const konva_1 = __importDefault(__webpack_require__(47));
+const konva_1 = __importDefault(__webpack_require__(48));
 const konva_2 = __webpack_require__(39);
 const Component_1 = __webpack_require__(41);
 const dirs = ['u', 'l', 'd', 'r'];
@@ -21803,7 +21873,7 @@ exports.dPadComponentData = {
 
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21843,7 +21913,7 @@ exports.staticComponentData = {
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21967,7 +22037,7 @@ exports.stickComponentData = {
 
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports) {
 
 // Source: http://jsfiddle.net/vWx8V/
@@ -22148,7 +22218,7 @@ for (var alias in aliases) {
 
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22157,7 +22227,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const keycode_1 = __importDefault(__webpack_require__(85));
+const keycode_1 = __importDefault(__webpack_require__(86));
 const keyOrder = [
     'a',
     'b',
@@ -22215,24 +22285,19 @@ const letterToBinding = (l) => ({
     inputKind: 'button',
     keyCode: keycode_1.default(l),
 });
-const defaultKeyBindingDict = keyOrder
+const defaultBindings = keyOrder
     .map(letterToBinding)
     .reduce((result, b) => (Object.assign({}, result, { [keycode_1.default(b.keyCode)]: b })), {});
-exports.defaultKeyboardController = {
-    id: 'test keyboard',
-    name: 'test keyboard',
-    kind: 'keyboard',
-    bindings: defaultKeyBindingDict,
-};
 exports.defaultListenedKeyCodes = keyOrder.map(keycode_1.default);
 exports.keyboardConfig = {
     keyOrder,
     map,
+    defaultBindings,
 };
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -22422,14 +22487,14 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = __webpack_require__(11);
-const maps_1 = __webpack_require__(62);
+const maps_1 = __webpack_require__(63);
 exports.initialInputState = {
     controllers: [],
 };
@@ -22448,11 +22513,11 @@ exports.inputReducer = (state = exports.initialInputState, action) => {
             return Object.assign({}, state, { remap: action.data });
         case 'stopListening':
             return Object.assign({}, state, { remap: undefined });
-        case 'updateControllerBinding': {
+        case 'setControllerBinding': {
             const { controllerId, key, binding } = action.data;
             return maps_1.mapControllerWithId.proj(state)(controllerId, setControllerBinding(key, binding));
         }
-        case 'updateControllerName': {
+        case 'setControllerName': {
             const input = action.data.name;
             const name = input.length === 0 ? 'Unnamed controller' : input;
             return maps_1.mapControllerWithId.proj(state)(action.data.id, c => (Object.assign({}, c, { name })));
@@ -22470,7 +22535,7 @@ exports.inputReducer = (state = exports.initialInputState, action) => {
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22483,7 +22548,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const maps = __importStar(__webpack_require__(62));
+const maps = __importStar(__webpack_require__(63));
 exports.initialSavedDisplaysState = {
     displays: [],
 };
@@ -22501,7 +22566,7 @@ exports.savedDisplaysReducer = (state = exports.initialSavedDisplaysState, actio
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22528,7 +22593,7 @@ exports.tabReducer = (state = exports.initialTabState, action) => {
 
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22597,26 +22662,6 @@ module.exports = warning;
 
 
 /***/ }),
-/* 92 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = __importStar(__webpack_require__(0));
-const utils_1 = __webpack_require__(11);
-const WithDefault_1 = __webpack_require__(51);
-exports.BooleanField = ({ defaultValue, initialValue, update, }) => (React.createElement(WithDefault_1.WithDefault, { initialValue: utils_1.defaultTo(initialValue, defaultValue), render: value => (React.createElement("input", { type: "checkbox", checked: value, onChange: () => update(!value) })) }));
-
-
-/***/ }),
 /* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -22631,14 +22676,34 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const FloatField_1 = __webpack_require__(65);
+const utils_1 = __webpack_require__(11);
+const WithDefault_1 = __webpack_require__(52);
+exports.BooleanField = ({ defaultValue, initialValue, update, }) => (React.createElement(WithDefault_1.WithDefault, { initialValue: utils_1.defaultTo(initialValue, defaultValue), render: value => (React.createElement("input", { type: "checkbox", checked: value, onChange: () => update(!value) })) }));
+
+
+/***/ }),
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = __importStar(__webpack_require__(0));
+const FloatField_1 = __webpack_require__(66);
 exports.Vec2Field = ({ defaultValue: { x: dx, y: dy }, initialValue, precision, update, }) => (React.createElement("span", null,
     React.createElement(FloatField_1.FloatField, { defaultValue: dx, initialValue: initialValue && initialValue.x, precision: precision, update: newX => update({ x: newX, y: initialValue ? initialValue.y : dx }) }),
     React.createElement(FloatField_1.FloatField, { defaultValue: dy, initialValue: initialValue && initialValue.y, precision: precision, update: newY => update({ x: initialValue ? initialValue.x : dx, y: newY }) })));
 
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22660,7 +22725,7 @@ exports.FilterKindSelect = ({ buttonText, handleSelection, initialValue, }) => (
 
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -31084,11 +31149,11 @@ var BottomNavigationAction_BottomNavigationAction = external_React_default.a.for
 // CONCATENATED MODULE: ./node_modules/@material-ui/core/esm/BottomNavigationAction/index.js
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/toConsumableArray.js
-var helpers_toConsumableArray = __webpack_require__(55);
+var helpers_toConsumableArray = __webpack_require__(56);
 var toConsumableArray_default = /*#__PURE__*/__webpack_require__.n(helpers_toConsumableArray);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/extends.js
-var helpers_extends = __webpack_require__(43);
+var helpers_extends = __webpack_require__(44);
 var extends_default = /*#__PURE__*/__webpack_require__.n(helpers_extends);
 
 // CONCATENATED MODULE: ./node_modules/@material-ui/system/esm/merge.js
@@ -31186,15 +31251,15 @@ function compose() {
 
 /* harmony default export */ var esm_compose = (compose);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/defineProperty.js
-var helpers_defineProperty = __webpack_require__(97);
+var helpers_defineProperty = __webpack_require__(98);
 var defineProperty_default = /*#__PURE__*/__webpack_require__.n(helpers_defineProperty);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/typeof.js
-var helpers_typeof = __webpack_require__(98);
+var helpers_typeof = __webpack_require__(99);
 var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
 
 // EXTERNAL MODULE: ./node_modules/@material-ui/system/node_modules/warning/warning.js
-var node_modules_warning_warning = __webpack_require__(91);
+var node_modules_warning_warning = __webpack_require__(92);
 
 // CONCATENATED MODULE: ./node_modules/@material-ui/system/esm/breakpoints.js
 
@@ -31542,7 +31607,7 @@ var sizeHeight = esm_style({
 var sizing = esm_compose(sizing_width, sizing_maxWidth, minWidth, sizing_height, maxHeight, minHeight);
 /* harmony default export */ var esm_sizing = (sizing);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/slicedToArray.js
-var slicedToArray = __webpack_require__(99);
+var slicedToArray = __webpack_require__(100);
 var slicedToArray_default = /*#__PURE__*/__webpack_require__.n(slicedToArray);
 
 // CONCATENATED MODULE: ./node_modules/@material-ui/system/esm/memoize.js
@@ -36193,7 +36258,7 @@ var Drawer_Drawer = external_React_default.a.forwardRef(function Drawer(props, r
 // CONCATENATED MODULE: ./node_modules/@material-ui/core/esm/Drawer/index.js
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArray.js
-var iterableToArray = __webpack_require__(54);
+var iterableToArray = __webpack_require__(55);
 
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toArray.js
 
@@ -41971,7 +42036,7 @@ OutlinedInput_OutlinedInput.muiName = 'Input';
 // CONCATENATED MODULE: ./node_modules/@material-ui/core/esm/Popover/index.js
 
 // EXTERNAL MODULE: ./node_modules/popper.js/dist/esm/popper.js
-var esm_popper = __webpack_require__(100);
+var esm_popper = __webpack_require__(101);
 
 // CONCATENATED MODULE: ./node_modules/@material-ui/core/esm/Popper/Popper.js
 
@@ -48218,7 +48283,7 @@ var Zoom_Zoom = external_React_default.a.forwardRef(function Zoom(props, ref) {
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -48243,7 +48308,7 @@ function symbolObservablePonyfill(root) {
 
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports) {
 
 function _defineProperty(obj, key, value) {
@@ -48264,7 +48329,7 @@ function _defineProperty(obj, key, value) {
 module.exports = _defineProperty;
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports) {
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
@@ -48286,14 +48351,14 @@ function _typeof(obj) {
 module.exports = _typeof;
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var arrayWithHoles = __webpack_require__(187);
+var arrayWithHoles = __webpack_require__(188);
 
-var iterableToArrayLimit = __webpack_require__(188);
+var iterableToArrayLimit = __webpack_require__(189);
 
-var nonIterableRest = __webpack_require__(189);
+var nonIterableRest = __webpack_require__(190);
 
 function _slicedToArray(arr, i) {
   return arrayWithHoles(arr) || iterableToArrayLimit(arr, i) || nonIterableRest();
@@ -48302,7 +48367,7 @@ function _slicedToArray(arr, i) {
 module.exports = _slicedToArray;
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -50913,7 +50978,7 @@ Popper.Defaults = Defaults;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35)))
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports) {
 
 function _inheritsLoose(subClass, superClass) {
@@ -50925,9 +50990,9 @@ function _inheritsLoose(subClass, superClass) {
 module.exports = _inheritsLoose;
 
 /***/ }),
-/* 102 */,
 /* 103 */,
-/* 104 */
+/* 104 */,
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -50940,15 +51005,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ControllerManager_1 = __webpack_require__(105);
-const display_1 = __webpack_require__(158);
-const DisplayEventBus_1 = __webpack_require__(164);
-const editor_1 = __webpack_require__(165);
+const ControllerManager_1 = __webpack_require__(106);
+const display_1 = __webpack_require__(159);
+const DisplayEventBus_1 = __webpack_require__(165);
+const editor_1 = __webpack_require__(166);
 const actions = __importStar(__webpack_require__(23));
 // TODO: figure out how to not need this to recompile types.ts when the
 // watcher notices that it has changed. googling suggests that to do
 // so is more of a hassle than it's worth, so whatever. low priority.
-__webpack_require__(226);
+__webpack_require__(225);
 class Noire {
     constructor(config) {
         this.config = config;
@@ -50985,7 +51050,7 @@ test.init();
 
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51003,18 +51068,18 @@ const actions = __importStar(__webpack_require__(23));
 const selectors = __importStar(__webpack_require__(28));
 const component_1 = __webpack_require__(31);
 const filter_1 = __webpack_require__(37);
-const NextInputListener_1 = __webpack_require__(156);
-const GlobalInputSources_1 = __webpack_require__(157);
-const gamepad_1 = __webpack_require__(50);
-const keyboard_1 = __webpack_require__(61);
-const keyboard_2 = __webpack_require__(86);
+const NextInputListener_1 = __webpack_require__(157);
+const GlobalInputSources_1 = __webpack_require__(158);
+const gamepad_1 = __webpack_require__(51);
+const keyboard_1 = __webpack_require__(62);
+const keyboard_2 = __webpack_require__(87);
 class ControllerManager {
     constructor(store, eventBus) {
         this.store = store;
         this.eventBus = eventBus;
         this.onAwaitedControllerBinding = (controllerId, key) => (binding) => {
             this.store.dispatch(actions.stopListening());
-            this.store.dispatch(actions.updateControllerBinding({ controllerId, key, binding }));
+            this.store.dispatch(actions.setControllerBinding({ controllerId, key, binding }));
         };
         this.onAwaitedComponentBinding = (componentId, inputKey) => (binding) => {
             const state = this.store.getState();
@@ -51114,11 +51179,11 @@ exports.ControllerManager = ControllerManager;
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var rng = __webpack_require__(107);
-var bytesToUuid = __webpack_require__(108);
+var rng = __webpack_require__(108);
+var bytesToUuid = __webpack_require__(109);
 
 function v4(options, buf, offset) {
   var i = buf && offset || 0;
@@ -51149,7 +51214,7 @@ module.exports = v4;
 
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports) {
 
 // Unique ID creation requires a high quality random # generator.  In the
@@ -51189,7 +51254,7 @@ if (getRandomValues) {
 
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports) {
 
 /**
@@ -51219,49 +51284,49 @@ module.exports = bytesToUuid;
 
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var _CoreInternals_1 = __webpack_require__(110);
-var Arc_1 = __webpack_require__(115);
-var Arrow_1 = __webpack_require__(116);
-var Circle_1 = __webpack_require__(117);
-var Ellipse_1 = __webpack_require__(118);
-var Image_1 = __webpack_require__(119);
-var Label_1 = __webpack_require__(120);
-var Line_1 = __webpack_require__(74);
-var Path_1 = __webpack_require__(75);
-var Rect_1 = __webpack_require__(76);
-var RegularPolygon_1 = __webpack_require__(121);
-var Ring_1 = __webpack_require__(122);
-var Sprite_1 = __webpack_require__(123);
-var Star_1 = __webpack_require__(124);
-var Text_1 = __webpack_require__(77);
-var TextPath_1 = __webpack_require__(125);
-var Transformer_1 = __webpack_require__(126);
-var Wedge_1 = __webpack_require__(127);
-var Blur_1 = __webpack_require__(128);
-var Brighten_1 = __webpack_require__(129);
-var Contrast_1 = __webpack_require__(130);
-var Emboss_1 = __webpack_require__(131);
-var Enhance_1 = __webpack_require__(132);
-var Grayscale_1 = __webpack_require__(133);
-var HSL_1 = __webpack_require__(134);
-var HSV_1 = __webpack_require__(135);
-var Invert_1 = __webpack_require__(136);
-var Kaleidoscope_1 = __webpack_require__(137);
-var Mask_1 = __webpack_require__(138);
-var Noise_1 = __webpack_require__(139);
-var Pixelate_1 = __webpack_require__(140);
-var Posterize_1 = __webpack_require__(141);
-var RGB_1 = __webpack_require__(142);
-var RGBA_1 = __webpack_require__(143);
-var Sepia_1 = __webpack_require__(144);
-var Solarize_1 = __webpack_require__(145);
-var Threshold_1 = __webpack_require__(146);
+var _CoreInternals_1 = __webpack_require__(111);
+var Arc_1 = __webpack_require__(116);
+var Arrow_1 = __webpack_require__(117);
+var Circle_1 = __webpack_require__(118);
+var Ellipse_1 = __webpack_require__(119);
+var Image_1 = __webpack_require__(120);
+var Label_1 = __webpack_require__(121);
+var Line_1 = __webpack_require__(75);
+var Path_1 = __webpack_require__(76);
+var Rect_1 = __webpack_require__(77);
+var RegularPolygon_1 = __webpack_require__(122);
+var Ring_1 = __webpack_require__(123);
+var Sprite_1 = __webpack_require__(124);
+var Star_1 = __webpack_require__(125);
+var Text_1 = __webpack_require__(78);
+var TextPath_1 = __webpack_require__(126);
+var Transformer_1 = __webpack_require__(127);
+var Wedge_1 = __webpack_require__(128);
+var Blur_1 = __webpack_require__(129);
+var Brighten_1 = __webpack_require__(130);
+var Contrast_1 = __webpack_require__(131);
+var Emboss_1 = __webpack_require__(132);
+var Enhance_1 = __webpack_require__(133);
+var Grayscale_1 = __webpack_require__(134);
+var HSL_1 = __webpack_require__(135);
+var HSV_1 = __webpack_require__(136);
+var Invert_1 = __webpack_require__(137);
+var Kaleidoscope_1 = __webpack_require__(138);
+var Mask_1 = __webpack_require__(139);
+var Noise_1 = __webpack_require__(140);
+var Pixelate_1 = __webpack_require__(141);
+var Posterize_1 = __webpack_require__(142);
+var RGB_1 = __webpack_require__(143);
+var RGBA_1 = __webpack_require__(144);
+var Sepia_1 = __webpack_require__(145);
+var Solarize_1 = __webpack_require__(146);
+var Threshold_1 = __webpack_require__(147);
 exports.Konva = _CoreInternals_1.Konva.Util._assign(_CoreInternals_1.Konva, {
     Arc: Arc_1.Arc,
     Arrow: Arrow_1.Arrow,
@@ -51306,7 +51371,7 @@ exports.Konva = _CoreInternals_1.Konva.Util._assign(_CoreInternals_1.Konva, {
 
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51316,16 +51381,16 @@ var Global_1 = __webpack_require__(9);
 var Util_1 = __webpack_require__(10);
 var Node_1 = __webpack_require__(17);
 var Container_1 = __webpack_require__(40);
-var Stage_1 = __webpack_require__(111);
-var Layer_1 = __webpack_require__(112);
-var FastLayer_1 = __webpack_require__(113);
-var Group_1 = __webpack_require__(57);
-var DragAndDrop_1 = __webpack_require__(48);
+var Stage_1 = __webpack_require__(112);
+var Layer_1 = __webpack_require__(113);
+var FastLayer_1 = __webpack_require__(114);
+var Group_1 = __webpack_require__(58);
+var DragAndDrop_1 = __webpack_require__(49);
 var Shape_1 = __webpack_require__(21);
-var Animation_1 = __webpack_require__(49);
-var Tween_1 = __webpack_require__(114);
-var Context_1 = __webpack_require__(72);
-var Canvas_1 = __webpack_require__(45);
+var Animation_1 = __webpack_require__(50);
+var Tween_1 = __webpack_require__(115);
+var Context_1 = __webpack_require__(73);
+var Canvas_1 = __webpack_require__(46);
 exports.Konva = Util_1.Util._assign(Global_1.Konva, {
     Collection: Util_1.Collection,
     Util: Util_1.Util,
@@ -51350,7 +51415,7 @@ exports.Konva = Util_1.Util._assign(Global_1.Konva, {
 
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51373,8 +51438,8 @@ var Util_1 = __webpack_require__(10);
 var Factory_1 = __webpack_require__(7);
 var Container_1 = __webpack_require__(40);
 var Global_1 = __webpack_require__(9);
-var Canvas_1 = __webpack_require__(45);
-var DragAndDrop_1 = __webpack_require__(48);
+var Canvas_1 = __webpack_require__(46);
+var DragAndDrop_1 = __webpack_require__(49);
 var Global_2 = __webpack_require__(9);
 var STAGE = 'Stage', STRING = 'string', PX = 'px', MOUSEOUT = 'mouseout', MOUSELEAVE = 'mouseleave', MOUSEOVER = 'mouseover', MOUSEENTER = 'mouseenter', MOUSEMOVE = 'mousemove', MOUSEDOWN = 'mousedown', MOUSEUP = 'mouseup', CONTEXTMENU = 'contextmenu', CLICK = 'click', DBL_CLICK = 'dblclick', TOUCHSTART = 'touchstart', TOUCHEND = 'touchend', TAP = 'tap', DBL_TAP = 'dbltap', TOUCHMOVE = 'touchmove', WHEEL = 'wheel', CONTENT_MOUSEOUT = 'contentMouseout', CONTENT_MOUSEOVER = 'contentMouseover', CONTENT_MOUSEMOVE = 'contentMousemove', CONTENT_MOUSEDOWN = 'contentMousedown', CONTENT_MOUSEUP = 'contentMouseup', CONTENT_CONTEXTMENU = 'contentContextmenu', CONTENT_CLICK = 'contentClick', CONTENT_DBL_CLICK = 'contentDblclick', CONTENT_TOUCHSTART = 'contentTouchstart', CONTENT_TOUCHEND = 'contentTouchend', CONTENT_DBL_TAP = 'contentDbltap', CONTENT_TAP = 'contentTap', CONTENT_TOUCHMOVE = 'contentTouchmove', CONTENT_WHEEL = 'contentWheel', RELATIVE = 'relative', KONVA_CONTENT = 'konvajs-content', SPACE = ' ', UNDERSCORE = '_', CONTAINER = 'container', MAX_LAYERS_NUMBER = 5, EMPTY_STRING = '', EVENTS = [
     MOUSEENTER,
@@ -51933,7 +51998,7 @@ Factory_1.Factory.addGetterSetter(Stage, 'container');
 
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51955,8 +52020,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Util_1 = __webpack_require__(10);
 var Container_1 = __webpack_require__(40);
 var Factory_1 = __webpack_require__(7);
-var BaseLayer_1 = __webpack_require__(73);
-var Canvas_1 = __webpack_require__(45);
+var BaseLayer_1 = __webpack_require__(74);
+var Canvas_1 = __webpack_require__(46);
 var Shape_1 = __webpack_require__(21);
 var Validators_1 = __webpack_require__(8);
 var Global_1 = __webpack_require__(9);
@@ -52111,7 +52176,7 @@ Util_1.Collection.mapMethods(Layer);
 
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52132,7 +52197,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Util_1 = __webpack_require__(10);
 var Container_1 = __webpack_require__(40);
-var BaseLayer_1 = __webpack_require__(73);
+var BaseLayer_1 = __webpack_require__(74);
 var Global_1 = __webpack_require__(9);
 var FastLayer = (function (_super) {
     __extends(FastLayer, _super);
@@ -52172,14 +52237,14 @@ Util_1.Collection.mapMethods(FastLayer);
 
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Util_1 = __webpack_require__(10);
-var Animation_1 = __webpack_require__(49);
+var Animation_1 = __webpack_require__(50);
 var Node_1 = __webpack_require__(17);
 var Global_1 = __webpack_require__(9);
 var blacklist = {
@@ -52694,7 +52759,7 @@ exports.Easings = {
 
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52759,7 +52824,7 @@ Util_1.Collection.mapMethods(Arc);
 
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52780,7 +52845,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Util_1 = __webpack_require__(10);
 var Factory_1 = __webpack_require__(7);
-var Line_1 = __webpack_require__(74);
+var Line_1 = __webpack_require__(75);
 var Validators_1 = __webpack_require__(8);
 var Global_1 = __webpack_require__(9);
 var Arrow = (function (_super) {
@@ -52859,7 +52924,7 @@ Util_1.Collection.mapMethods(Arrow);
 
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52922,7 +52987,7 @@ Util_1.Collection.mapMethods(Circle);
 
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52989,7 +53054,7 @@ Util_1.Collection.mapMethods(Ellipse);
 
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -53096,7 +53161,7 @@ Util_1.Collection.mapMethods(Image);
 
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -53118,7 +53183,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Util_1 = __webpack_require__(10);
 var Factory_1 = __webpack_require__(7);
 var Shape_1 = __webpack_require__(21);
-var Group_1 = __webpack_require__(57);
+var Group_1 = __webpack_require__(58);
 var Validators_1 = __webpack_require__(8);
 var Global_1 = __webpack_require__(9);
 var ATTR_CHANGE_LIST = [
@@ -53305,7 +53370,7 @@ Util_1.Collection.mapMethods(Tag);
 
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -53371,7 +53436,7 @@ Util_1.Collection.mapMethods(RegularPolygon);
 
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -53434,7 +53499,7 @@ Util_1.Collection.mapMethods(Ring);
 
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -53456,7 +53521,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Util_1 = __webpack_require__(10);
 var Factory_1 = __webpack_require__(7);
 var Shape_1 = __webpack_require__(21);
-var Animation_1 = __webpack_require__(49);
+var Animation_1 = __webpack_require__(50);
 var Validators_1 = __webpack_require__(8);
 var Global_1 = __webpack_require__(9);
 var Sprite = (function (_super) {
@@ -53570,7 +53635,7 @@ Util_1.Collection.mapMethods(Sprite);
 
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -53638,7 +53703,7 @@ Util_1.Collection.mapMethods(Star);
 
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -53660,8 +53725,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Util_1 = __webpack_require__(10);
 var Factory_1 = __webpack_require__(7);
 var Shape_1 = __webpack_require__(21);
-var Path_1 = __webpack_require__(75);
-var Text_1 = __webpack_require__(77);
+var Path_1 = __webpack_require__(76);
+var Text_1 = __webpack_require__(78);
 var Validators_1 = __webpack_require__(8);
 var Global_1 = __webpack_require__(9);
 var EMPTY_STRING = '', NORMAL = 'normal';
@@ -54003,7 +54068,7 @@ Util_1.Collection.mapMethods(TextPath);
 
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -54026,8 +54091,8 @@ var Util_1 = __webpack_require__(10);
 var Factory_1 = __webpack_require__(7);
 var Node_1 = __webpack_require__(17);
 var Shape_1 = __webpack_require__(21);
-var Rect_1 = __webpack_require__(76);
-var Group_1 = __webpack_require__(57);
+var Rect_1 = __webpack_require__(77);
+var Group_1 = __webpack_require__(58);
 var Global_1 = __webpack_require__(9);
 var Validators_1 = __webpack_require__(8);
 var Global_2 = __webpack_require__(9);
@@ -54688,7 +54753,7 @@ Util_1.Collection.mapMethods(Transformer);
 
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -54756,7 +54821,7 @@ Util_1.Collection.mapMethods(Wedge);
 
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -55462,7 +55527,7 @@ Factory_1.Factory.addGetterSetter(Node_1.Node, 'blurRadius', 0, Validators_1.get
 
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -55483,7 +55548,7 @@ Factory_1.Factory.addGetterSetter(Node_1.Node, 'brightness', 0, Validators_1.get
 
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -55526,7 +55591,7 @@ Factory_1.Factory.addGetterSetter(Node_1.Node, 'contrast', 0, Validators_1.getNu
 
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -55637,7 +55702,7 @@ Factory_1.Factory.addGetterSetter(Node_1.Node, 'embossBlend', false, null, Facto
 
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -55729,7 +55794,7 @@ Factory_1.Factory.addGetterSetter(Node_1.Node, 'enhance', 0, Validators_1.getNum
 
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -55747,7 +55812,7 @@ exports.Grayscale = function (imageData) {
 
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -55780,7 +55845,7 @@ exports.HSL = function (imageData) {
 
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -55813,7 +55878,7 @@ Factory_1.Factory.addGetterSetter(Node_1.Node, 'value', 0, Validators_1.getNumbe
 
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -55830,7 +55895,7 @@ exports.Invert = function (imageData) {
 
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -55971,7 +56036,7 @@ Factory_1.Factory.addGetterSetter(Node_1.Node, 'kaleidoscopeAngle', 0, Validator
 
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -56120,7 +56185,7 @@ Factory_1.Factory.addGetterSetter(Node_1.Node, 'threshold', 0, Validators_1.getN
 
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -56141,7 +56206,7 @@ Factory_1.Factory.addGetterSetter(Node_1.Node, 'noise', 0.2, Validators_1.getNum
 
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -56211,7 +56276,7 @@ Factory_1.Factory.addGetterSetter(Node_1.Node, 'pixelSize', 8, Validators_1.getN
 
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -56230,7 +56295,7 @@ Factory_1.Factory.addGetterSetter(Node_1.Node, 'levels', 0.5, Validators_1.getNu
 
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -56278,7 +56343,7 @@ Factory_1.Factory.addGetterSetter(Node_1.Node, 'blue', 0, Validators_1.RGBCompon
 
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -56336,7 +56401,7 @@ Factory_1.Factory.addGetterSetter(Node_1.Node, 'alpha', 1, function (val) {
 
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -56356,7 +56421,7 @@ exports.Sepia = function (imageData) {
 
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -56390,7 +56455,7 @@ exports.Solarize = function (imageData) {
 
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -56409,14 +56474,14 @@ Factory_1.Factory.addGetterSetter(Node_1.Node, 'threshold', 0.5, Validators_1.ge
 
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = __webpack_require__(11);
-const Base_1 = __webpack_require__(78);
+const Base_1 = __webpack_require__(79);
 exports.defaultRectAttrs = Object.assign({}, Base_1.defaultBaseAttrs, { height: 40, width: 40 });
 exports.rectModelFields = [
     ...Base_1.baseModelFields,
@@ -56436,7 +56501,7 @@ exports.rectModelFields = [
 
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -56445,9 +56510,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const konva_1 = __importDefault(__webpack_require__(47));
+const konva_1 = __importDefault(__webpack_require__(48));
 const utils_1 = __webpack_require__(11);
-const Base_1 = __webpack_require__(78);
+const Base_1 = __webpack_require__(79);
 exports.defaultCircleAttrs = Object.assign({}, Base_1.defaultBaseAttrs, { radius: 20, drawFromCenter: true });
 exports.circleModelFields = [
     ...Base_1.baseModelFields,
@@ -56494,14 +56559,14 @@ exports.KonvaCircleModel = KonvaCircleModel;
 
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = __webpack_require__(11);
-const Texture_1 = __webpack_require__(58);
+const Texture_1 = __webpack_require__(59);
 const defaultFillTextureState = {
     fill: 'black',
     stroke: 'red',
@@ -56557,14 +56622,14 @@ exports.FillTexture = FillTexture;
 
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = __webpack_require__(11);
-const Texture_1 = __webpack_require__(58);
+const Texture_1 = __webpack_require__(59);
 const defaultImageTextureState = {
     src: '',
     offset: { x: 0, y: 0 },
@@ -56629,13 +56694,13 @@ exports.ImageTexture = ImageTexture;
 
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Texture_1 = __webpack_require__(58);
+const Texture_1 = __webpack_require__(59);
 exports.hiddenTextureFields = [];
 class HiddenTexture extends Texture_1.Texture {
     constructor() {
@@ -56656,14 +56721,14 @@ exports.HiddenTexture = HiddenTexture;
 
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = __webpack_require__(11);
-const utils_2 = __webpack_require__(81);
+const utils_2 = __webpack_require__(82);
 const { round } = Math;
 exports.distort = ({ xc, yc, R, r, xd, yd, debug, }) => (outputData) => {
     const { height, width } = outputData;
@@ -56807,10 +56872,10 @@ exports.stickDistort = ({ state: { xc, yc, debug, R, r, leash }, input: { xp, xn
     yd: Math.round(leash * (R - r) * utils_1.normalizeAxis(yp, yn)),
 });
 exports.dPadDistortInputFields = [
-    { key: 'r', inputKind: 'axis', label: 'Right' },
-    { key: 'l', inputKind: 'axis', label: 'Left' },
-    { key: 'd', inputKind: 'axis', label: 'Down' },
-    { key: 'u', inputKind: 'axis', label: 'Up' },
+    { key: 'r', inputKind: 'button', label: 'Right' },
+    { key: 'l', inputKind: 'button', label: 'Left' },
+    { key: 'd', inputKind: 'button', label: 'Down' },
+    { key: 'u', inputKind: 'button', label: 'Up' },
 ];
 exports.defaultDPadDistortState = defaultDistortState;
 exports.dPadDistort = ({ state: { xc, yc, debug, R, r: _r, leash }, input: { u, l, d, r }, }) => exports.distort({
@@ -56825,14 +56890,14 @@ exports.dPadDistort = ({ state: { xc, yc, debug, R, r: _r, leash }, input: { u, 
 
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = __webpack_require__(11);
-const utils_2 = __webpack_require__(81);
+const utils_2 = __webpack_require__(82);
 const { round } = Math;
 exports.zoom = ({ xc, yc, r, zoom, debug, }) => (outputData) => {
     const { height, width } = outputData;
@@ -56924,7 +56989,7 @@ exports.buttonZoom = ({ state, input: { down }, }) => (down ? exports.zoom(state
 
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -56974,7 +57039,7 @@ exports.Keyboard = Keyboard;
 
 
 /***/ }),
-/* 155 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57039,13 +57104,13 @@ exports.ps2Config = {
 
 
 /***/ }),
-/* 156 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const bindings_1 = __webpack_require__(60);
+const bindings_1 = __webpack_require__(61);
 const CONFIRM_AXIS_VALUE_FRAME_COUNT = 7;
 class NextInputListener {
     constructor(snapshotInput, snapshotDiff) {
@@ -57109,14 +57174,14 @@ exports.NextInputListener = NextInputListener;
 
 
 /***/ }),
-/* 157 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const gamepad_1 = __webpack_require__(50);
-const keyboard_1 = __webpack_require__(61);
+const gamepad_1 = __webpack_require__(51);
+const keyboard_1 = __webpack_require__(62);
 class GlobalInputSources {
     constructor(sourceGetters) {
         this.getSource = (kind) => this.sources[kind];
@@ -57155,7 +57220,7 @@ exports.GlobalInputSources = GlobalInputSources;
 
 
 /***/ }),
-/* 158 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57172,12 +57237,14 @@ const actions = __importStar(__webpack_require__(23));
 const selectors = __importStar(__webpack_require__(28));
 const events = __importStar(__webpack_require__(34));
 const component_1 = __webpack_require__(31);
-const ComponentManager_1 = __webpack_require__(159);
-const KonvaComponentPlugin_1 = __webpack_require__(160);
+const ComponentManager_1 = __webpack_require__(160);
+const KonvaComponentPlugin_1 = __webpack_require__(161);
 class Display {
     constructor(config, store, eventBus) {
         this.clearDisplay = () => {
-            this.cm.requestRemoveAll();
+            this.cm.forEachComponent(c => {
+                this.eventBus.emit(events.requestRemoveComponent(c.id));
+            });
         };
         this.loadDisplay = (display) => {
             this.clearDisplay();
@@ -57201,7 +57268,7 @@ class Display {
         this.eventBus.emit(events.setComponentState(id, state));
     }
     emitUpdateComponentModel(id, modelName, serialModel, model) {
-        this.store.dispatch(actions.setComponentModel(id, modelName, serialModel));
+        actions.setModel({ id, modelName, model: serialModel })(this.store.dispatch);
         this.eventBus.emit(events.setComponentModel(id, modelName, model));
     }
     draw() {
@@ -57215,7 +57282,7 @@ exports.Display = Display;
 
 
 /***/ }),
-/* 159 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57228,9 +57295,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ramda_1 = __webpack_require__(53);
+const ramda_1 = __webpack_require__(54);
 const utils_1 = __webpack_require__(11);
-const input_1 = __webpack_require__(80);
+const input_1 = __webpack_require__(81);
 const events = __importStar(__webpack_require__(34));
 class ComponentManager {
     constructor(eventBus) {
@@ -57249,6 +57316,9 @@ class ComponentManager {
                 }
             }
         };
+        this.forEachComponent = (f) => {
+            [...this.components].forEach(f);
+        };
         eventBus.on({
             kind: 'setComponentState',
             cb: ({ id, state }) => {
@@ -57259,9 +57329,6 @@ class ComponentManager {
         });
         eventBus.on({ kind: 'requestAddComponent', cb: this.add });
         eventBus.on({ kind: 'requestRemoveComponent', cb: this.remove });
-    }
-    requestRemoveAll() {
-        this.components.forEach(c => this.eventBus.emit(events.requestRemoveComponent(c.id)));
     }
     update(globalInput, dt) {
         if (window.stopUpdating)
@@ -57291,7 +57358,7 @@ exports.ComponentManager = ComponentManager;
 
 
 /***/ }),
-/* 160 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57307,12 +57374,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const konva_1 = __importDefault(__webpack_require__(47));
+const konva_1 = __importDefault(__webpack_require__(48));
 const events = __importStar(__webpack_require__(34));
 const actions = __importStar(__webpack_require__(23));
 const konva_2 = __webpack_require__(39);
 const texture_1 = __webpack_require__(36);
-const DisplayPlugin_1 = __webpack_require__(163);
+const DisplayPlugin_1 = __webpack_require__(164);
 // TODO: possibly allow transformer config
 const attachTransformer = (model, layer) => {
     const transformer = new konva_1.default.Transformer({
@@ -57355,8 +57422,12 @@ class KonvaComponentPlugin extends DisplayPlugin_1.DisplayPlugin {
             this.display.emitUpdateComponentState(id, update);
         };
         this.onGroupTransformend = (id) => (event) => {
-            const { scaleX: x, scaleY: y, rotation } = event.target.attrs;
-            const update = { scale: { x, y }, rotation };
+            const { scaleX, scaleY, rotation, x, y } = event.target.attrs;
+            const update = {
+                position: { x, y },
+                rotation,
+                scale: { x: scaleX, y: scaleY },
+            };
             this.display.emitUpdateComponentState(id, update);
         };
         this.onRequestSetCanvasDimensions = ({ width, height, }) => {
@@ -57569,10 +57640,10 @@ class KonvaComponentPlugin extends DisplayPlugin_1.DisplayPlugin {
 }
 exports.KonvaComponentPlugin = KonvaComponentPlugin;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(161).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(162).setImmediate))
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
@@ -57628,7 +57699,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(162);
+__webpack_require__(163);
 // On some exotic environments, it's not clear which object `setimmediate` was
 // able to install onto.  Search each possibility in the same order as the
 // `setimmediate` library.
@@ -57642,7 +57713,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35)))
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -57832,10 +57903,10 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35), __webpack_require__(87)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35), __webpack_require__(88)))
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57854,7 +57925,7 @@ exports.DisplayPlugin = DisplayPlugin;
 
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57909,7 +57980,7 @@ exports.DisplayEventBus = DisplayEventBus;
 
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57925,8 +57996,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
 const ReactDOM = __importStar(__webpack_require__(6));
 const react_redux_1 = __webpack_require__(29);
-const createStore_1 = __webpack_require__(170);
-const EditorContainer_1 = __webpack_require__(181);
+const createStore_1 = __webpack_require__(171);
+const EditorContainer_1 = __webpack_require__(182);
 // I'm not really sure how to get around this right now, it seems like
 // you need to use the `ReactReduxContext` element from react-redux
 const _Editor = EditorContainer_1.EditorContainer;
@@ -57942,7 +58013,7 @@ exports.createEditorApp = (target, eventBus) => {
 
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57955,7 +58026,7 @@ exports.createEditorApp = (target, eventBus) => {
 
 
 
-var ReactPropTypesSecret = __webpack_require__(167);
+var ReactPropTypesSecret = __webpack_require__(168);
 
 function emptyFunction() {}
 function emptyFunctionWithReset() {}
@@ -58013,7 +58084,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58032,7 +58103,7 @@ module.exports = ReactPropTypesSecret;
 
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58054,7 +58125,7 @@ exports.isSuspense=function(a){return t(a)===p};
 
 
 /***/ }),
-/* 169 */
+/* 170 */
 /***/ (function(module, exports) {
 
 module.exports = function(originalModule) {
@@ -58084,7 +58155,7 @@ module.exports = function(originalModule) {
 
 
 /***/ }),
-/* 170 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58094,11 +58165,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const redux_1 = __webpack_require__(24);
-const redux_localstorage_1 = __importDefault(__webpack_require__(171));
-const redux_logger_1 = __webpack_require__(176);
+const redux_localstorage_1 = __importDefault(__webpack_require__(172));
+const redux_logger_1 = __webpack_require__(177);
 const utils_1 = __webpack_require__(11);
-const root_1 = __webpack_require__(177);
-const persist_1 = __webpack_require__(180);
+const root_1 = __webpack_require__(178);
+const persist_1 = __webpack_require__(181);
 const createDisplayEmitter = (eventBus) => () => next => (action) => {
     if (action.type === 'emitDisplayEvents') {
         action.data.forEach(eventBus.emit);
@@ -58123,7 +58194,7 @@ exports.createStore = (eventBus) => {
 
 
 /***/ }),
-/* 171 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58139,11 +58210,11 @@ exports['default'] = persistState;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _createSlicerJs = __webpack_require__(172);
+var _createSlicerJs = __webpack_require__(173);
 
 var _createSlicerJs2 = _interopRequireDefault(_createSlicerJs);
 
-var _utilMergeStateJs = __webpack_require__(175);
+var _utilMergeStateJs = __webpack_require__(176);
 
 var _utilMergeStateJs2 = _interopRequireDefault(_utilMergeStateJs);
 
@@ -58218,7 +58289,7 @@ function persistState(paths, config) {
 module.exports = exports['default'];
 
 /***/ }),
-/* 172 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58231,11 +58302,11 @@ exports['default'] = createSlicer;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _getSubsetJs = __webpack_require__(173);
+var _getSubsetJs = __webpack_require__(174);
 
 var _getSubsetJs2 = _interopRequireDefault(_getSubsetJs);
 
-var _utilTypeOfJs = __webpack_require__(174);
+var _utilTypeOfJs = __webpack_require__(175);
 
 var _utilTypeOfJs2 = _interopRequireDefault(_utilTypeOfJs);
 
@@ -58270,7 +58341,7 @@ function createSlicer(paths) {
 module.exports = exports['default'];
 
 /***/ }),
-/* 173 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58305,7 +58376,7 @@ function getSubset(obj, paths) {
 module.exports = exports["default"];
 
 /***/ }),
-/* 174 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58344,7 +58415,7 @@ function typeOf(thing) {
 module.exports = exports['default'];
 
 /***/ }),
-/* 175 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58365,7 +58436,7 @@ function mergeState(initialState, persistedState) {
 module.exports = exports["default"];
 
 /***/ }),
-/* 176 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {!function(e,t){ true?t(exports):undefined}(this,function(e){"use strict";function t(e,t){e.super_=t,e.prototype=Object.create(t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}})}function r(e,t){Object.defineProperty(this,"kind",{value:e,enumerable:!0}),t&&t.length&&Object.defineProperty(this,"path",{value:t,enumerable:!0})}function n(e,t,r){n.super_.call(this,"E",e),Object.defineProperty(this,"lhs",{value:t,enumerable:!0}),Object.defineProperty(this,"rhs",{value:r,enumerable:!0})}function o(e,t){o.super_.call(this,"N",e),Object.defineProperty(this,"rhs",{value:t,enumerable:!0})}function i(e,t){i.super_.call(this,"D",e),Object.defineProperty(this,"lhs",{value:t,enumerable:!0})}function a(e,t,r){a.super_.call(this,"A",e),Object.defineProperty(this,"index",{value:t,enumerable:!0}),Object.defineProperty(this,"item",{value:r,enumerable:!0})}function f(e,t,r){var n=e.slice((r||t)+1||e.length);return e.length=t<0?e.length+t:t,e.push.apply(e,n),e}function u(e){var t="undefined"==typeof e?"undefined":N(e);return"object"!==t?t:e===Math?"math":null===e?"null":Array.isArray(e)?"array":"[object Date]"===Object.prototype.toString.call(e)?"date":"function"==typeof e.toString&&/^\/.*\//.test(e.toString())?"regexp":"object"}function l(e,t,r,c,s,d,p){s=s||[],p=p||[];var g=s.slice(0);if("undefined"!=typeof d){if(c){if("function"==typeof c&&c(g,d))return;if("object"===("undefined"==typeof c?"undefined":N(c))){if(c.prefilter&&c.prefilter(g,d))return;if(c.normalize){var h=c.normalize(g,d,e,t);h&&(e=h[0],t=h[1])}}}g.push(d)}"regexp"===u(e)&&"regexp"===u(t)&&(e=e.toString(),t=t.toString());var y="undefined"==typeof e?"undefined":N(e),v="undefined"==typeof t?"undefined":N(t),b="undefined"!==y||p&&p[p.length-1].lhs&&p[p.length-1].lhs.hasOwnProperty(d),m="undefined"!==v||p&&p[p.length-1].rhs&&p[p.length-1].rhs.hasOwnProperty(d);if(!b&&m)r(new o(g,t));else if(!m&&b)r(new i(g,e));else if(u(e)!==u(t))r(new n(g,e,t));else if("date"===u(e)&&e-t!==0)r(new n(g,e,t));else if("object"===y&&null!==e&&null!==t)if(p.filter(function(t){return t.lhs===e}).length)e!==t&&r(new n(g,e,t));else{if(p.push({lhs:e,rhs:t}),Array.isArray(e)){var w;e.length;for(w=0;w<e.length;w++)w>=t.length?r(new a(g,w,new i(void 0,e[w]))):l(e[w],t[w],r,c,g,w,p);for(;w<t.length;)r(new a(g,w,new o(void 0,t[w++])))}else{var x=Object.keys(e),S=Object.keys(t);x.forEach(function(n,o){var i=S.indexOf(n);i>=0?(l(e[n],t[n],r,c,g,n,p),S=f(S,i)):l(e[n],void 0,r,c,g,n,p)}),S.forEach(function(e){l(void 0,t[e],r,c,g,e,p)})}p.length=p.length-1}else e!==t&&("number"===y&&isNaN(e)&&isNaN(t)||r(new n(g,e,t)))}function c(e,t,r,n){return n=n||[],l(e,t,function(e){e&&n.push(e)},r),n.length?n:void 0}function s(e,t,r){if(r.path&&r.path.length){var n,o=e[t],i=r.path.length-1;for(n=0;n<i;n++)o=o[r.path[n]];switch(r.kind){case"A":s(o[r.path[n]],r.index,r.item);break;case"D":delete o[r.path[n]];break;case"E":case"N":o[r.path[n]]=r.rhs}}else switch(r.kind){case"A":s(e[t],r.index,r.item);break;case"D":e=f(e,t);break;case"E":case"N":e[t]=r.rhs}return e}function d(e,t,r){if(e&&t&&r&&r.kind){for(var n=e,o=-1,i=r.path?r.path.length-1:0;++o<i;)"undefined"==typeof n[r.path[o]]&&(n[r.path[o]]="number"==typeof r.path[o]?[]:{}),n=n[r.path[o]];switch(r.kind){case"A":s(r.path?n[r.path[o]]:n,r.index,r.item);break;case"D":delete n[r.path[o]];break;case"E":case"N":n[r.path[o]]=r.rhs}}}function p(e,t,r){if(r.path&&r.path.length){var n,o=e[t],i=r.path.length-1;for(n=0;n<i;n++)o=o[r.path[n]];switch(r.kind){case"A":p(o[r.path[n]],r.index,r.item);break;case"D":o[r.path[n]]=r.lhs;break;case"E":o[r.path[n]]=r.lhs;break;case"N":delete o[r.path[n]]}}else switch(r.kind){case"A":p(e[t],r.index,r.item);break;case"D":e[t]=r.lhs;break;case"E":e[t]=r.lhs;break;case"N":e=f(e,t)}return e}function g(e,t,r){if(e&&t&&r&&r.kind){var n,o,i=e;for(o=r.path.length-1,n=0;n<o;n++)"undefined"==typeof i[r.path[n]]&&(i[r.path[n]]={}),i=i[r.path[n]];switch(r.kind){case"A":p(i[r.path[n]],r.index,r.item);break;case"D":i[r.path[n]]=r.lhs;break;case"E":i[r.path[n]]=r.lhs;break;case"N":delete i[r.path[n]]}}}function h(e,t,r){if(e&&t){var n=function(n){r&&!r(e,t,n)||d(e,t,n)};l(e,t,n)}}function y(e){return"color: "+F[e].color+"; font-weight: bold"}function v(e){var t=e.kind,r=e.path,n=e.lhs,o=e.rhs,i=e.index,a=e.item;switch(t){case"E":return[r.join("."),n,"→",o];case"N":return[r.join("."),o];case"D":return[r.join(".")];case"A":return[r.join(".")+"["+i+"]",a];default:return[]}}function b(e,t,r,n){var o=c(e,t);try{n?r.groupCollapsed("diff"):r.group("diff")}catch(e){r.log("diff")}o?o.forEach(function(e){var t=e.kind,n=v(e);r.log.apply(r,["%c "+F[t].text,y(t)].concat(P(n)))}):r.log("—— no diff ——");try{r.groupEnd()}catch(e){r.log("—— diff end —— ")}}function m(e,t,r,n){switch("undefined"==typeof e?"undefined":N(e)){case"object":return"function"==typeof e[n]?e[n].apply(e,P(r)):e[n];case"function":return e(t);default:return e}}function w(e){var t=e.timestamp,r=e.duration;return function(e,n,o){var i=["action"];return i.push("%c"+String(e.type)),t&&i.push("%c@ "+n),r&&i.push("%c(in "+o.toFixed(2)+" ms)"),i.join(" ")}}function x(e,t){var r=t.logger,n=t.actionTransformer,o=t.titleFormatter,i=void 0===o?w(t):o,a=t.collapsed,f=t.colors,u=t.level,l=t.diff,c="undefined"==typeof t.titleFormatter;e.forEach(function(o,s){var d=o.started,p=o.startedTime,g=o.action,h=o.prevState,y=o.error,v=o.took,w=o.nextState,x=e[s+1];x&&(w=x.prevState,v=x.started-d);var S=n(g),k="function"==typeof a?a(function(){return w},g,o):a,j=D(p),E=f.title?"color: "+f.title(S)+";":"",A=["color: gray; font-weight: lighter;"];A.push(E),t.timestamp&&A.push("color: gray; font-weight: lighter;"),t.duration&&A.push("color: gray; font-weight: lighter;");var O=i(S,j,v);try{k?f.title&&c?r.groupCollapsed.apply(r,["%c "+O].concat(A)):r.groupCollapsed(O):f.title&&c?r.group.apply(r,["%c "+O].concat(A)):r.group(O)}catch(e){r.log(O)}var N=m(u,S,[h],"prevState"),P=m(u,S,[S],"action"),C=m(u,S,[y,h],"error"),F=m(u,S,[w],"nextState");if(N)if(f.prevState){var L="color: "+f.prevState(h)+"; font-weight: bold";r[N]("%c prev state",L,h)}else r[N]("prev state",h);if(P)if(f.action){var T="color: "+f.action(S)+"; font-weight: bold";r[P]("%c action    ",T,S)}else r[P]("action    ",S);if(y&&C)if(f.error){var M="color: "+f.error(y,h)+"; font-weight: bold;";r[C]("%c error     ",M,y)}else r[C]("error     ",y);if(F)if(f.nextState){var _="color: "+f.nextState(w)+"; font-weight: bold";r[F]("%c next state",_,w)}else r[F]("next state",w);l&&b(h,w,r,k);try{r.groupEnd()}catch(e){r.log("—— log end ——")}})}function S(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},t=Object.assign({},L,e),r=t.logger,n=t.stateTransformer,o=t.errorTransformer,i=t.predicate,a=t.logErrors,f=t.diffPredicate;if("undefined"==typeof r)return function(){return function(e){return function(t){return e(t)}}};if(e.getState&&e.dispatch)return console.error("[redux-logger] redux-logger not installed. Make sure to pass logger instance as middleware:\n// Logger with default options\nimport { logger } from 'redux-logger'\nconst store = createStore(\n  reducer,\n  applyMiddleware(logger)\n)\n// Or you can create your own logger with custom options http://bit.ly/redux-logger-options\nimport createLogger from 'redux-logger'\nconst logger = createLogger({\n  // ...options\n});\nconst store = createStore(\n  reducer,\n  applyMiddleware(logger)\n)\n"),function(){return function(e){return function(t){return e(t)}}};var u=[];return function(e){var r=e.getState;return function(e){return function(l){if("function"==typeof i&&!i(r,l))return e(l);var c={};u.push(c),c.started=O.now(),c.startedTime=new Date,c.prevState=n(r()),c.action=l;var s=void 0;if(a)try{s=e(l)}catch(e){c.error=o(e)}else s=e(l);c.took=O.now()-c.started,c.nextState=n(r());var d=t.diff&&"function"==typeof f?f(r,l):t.diff;if(x(u,Object.assign({},t,{diff:d})),u.length=0,c.error)throw c.error;return s}}}}var k,j,E=function(e,t){return new Array(t+1).join(e)},A=function(e,t){return E("0",t-e.toString().length)+e},D=function(e){return A(e.getHours(),2)+":"+A(e.getMinutes(),2)+":"+A(e.getSeconds(),2)+"."+A(e.getMilliseconds(),3)},O="undefined"!=typeof performance&&null!==performance&&"function"==typeof performance.now?performance:Date,N="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},P=function(e){if(Array.isArray(e)){for(var t=0,r=Array(e.length);t<e.length;t++)r[t]=e[t];return r}return Array.from(e)},C=[];k="object"===("undefined"==typeof global?"undefined":N(global))&&global?global:"undefined"!=typeof window?window:{},j=k.DeepDiff,j&&C.push(function(){"undefined"!=typeof j&&k.DeepDiff===c&&(k.DeepDiff=j,j=void 0)}),t(n,r),t(o,r),t(i,r),t(a,r),Object.defineProperties(c,{diff:{value:c,enumerable:!0},observableDiff:{value:l,enumerable:!0},applyDiff:{value:h,enumerable:!0},applyChange:{value:d,enumerable:!0},revertChange:{value:g,enumerable:!0},isConflict:{value:function(){return"undefined"!=typeof j},enumerable:!0},noConflict:{value:function(){return C&&(C.forEach(function(e){e()}),C=null),c},enumerable:!0}});var F={E:{color:"#2196F3",text:"CHANGED:"},N:{color:"#4CAF50",text:"ADDED:"},D:{color:"#F44336",text:"DELETED:"},A:{color:"#2196F3",text:"ARRAY:"}},L={level:"log",logger:console,logErrors:!0,collapsed:void 0,predicate:void 0,duration:!1,timestamp:!0,stateTransformer:function(e){return e},actionTransformer:function(e){return e},errorTransformer:function(e){return e},colors:{title:function(){return"inherit"},prevState:function(){return"#9E9E9E"},action:function(){return"#03A9F4"},nextState:function(){return"#4CAF50"},error:function(){return"#F20404"}},diff:!1,diffPredicate:void 0,transformer:void 0},T=function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},t=e.dispatch,r=e.getState;return"function"==typeof t||"function"==typeof r?S()({dispatch:t,getState:r}):void console.error("\n[redux-logger v3] BREAKING CHANGE\n[redux-logger v3] Since 3.0.0 redux-logger exports by default logger with default settings.\n[redux-logger v3] Change\n[redux-logger v3] import createLogger from 'redux-logger'\n[redux-logger v3] to\n[redux-logger v3] import { createLogger } from 'redux-logger'\n")};e.defaults=L,e.createLogger=S,e.logger=T,e.default=T,Object.defineProperty(e,"__esModule",{value:!0})});
@@ -58373,18 +58444,18 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35)))
 
 /***/ }),
-/* 177 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const redux_1 = __webpack_require__(24);
-const display_1 = __webpack_require__(178);
-const input_1 = __webpack_require__(88);
-const presentation_1 = __webpack_require__(179);
-const savedDisplays_1 = __webpack_require__(89);
-const tab_1 = __webpack_require__(90);
+const display_1 = __webpack_require__(179);
+const input_1 = __webpack_require__(89);
+const presentation_1 = __webpack_require__(180);
+const savedDisplays_1 = __webpack_require__(90);
+const tab_1 = __webpack_require__(91);
 exports.rootReducer = redux_1.combineReducers({
     display: display_1.displayReducer,
     input: input_1.inputReducer,
@@ -58395,16 +58466,16 @@ exports.rootReducer = redux_1.combineReducers({
 
 
 /***/ }),
-/* 178 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const maps_1 = __webpack_require__(62);
+const maps_1 = __webpack_require__(63);
 const utils_1 = __webpack_require__(11);
 const component_1 = __webpack_require__(31);
-const serialize_1 = __webpack_require__(59);
+const serialize_1 = __webpack_require__(60);
 exports.getInitialDisplayState = () => ({
     active: serialize_1.newDisplay(),
 });
@@ -58412,7 +58483,12 @@ exports.displayReducer = (state, action) => {
     if (state === undefined)
         state = exports.getInitialDisplayState();
     switch (action.type) {
-        case 'setCanvasDimensions': {
+        case 'setActiveDisplayName':
+            return utils_1.assocPath(['active', 'name'], action.data, state);
+        case 'saveDisplay':
+            return state.active && state.active.id === action.data.id
+                ? Object.assign({}, state, { active: action.data }) : state;
+        case 'setActiveDisplayDimensions': {
             const { width, height } = action.data;
             return Object.assign({}, state, { active: Object.assign({}, state.active, { width, height }) });
         }
@@ -58474,7 +58550,7 @@ exports.displayReducer = (state, action) => {
 
 
 /***/ }),
-/* 179 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58498,44 +58574,6 @@ exports.presentationReducer = (state = exports.initialPresentationState, action)
 
 
 /***/ }),
-/* 180 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const selectors = __importStar(__webpack_require__(28));
-const input_1 = __webpack_require__(88);
-const savedDisplays_1 = __webpack_require__(89);
-exports.defaultPersistentState = {
-    controllers: [],
-    savedDisplays: savedDisplays_1.initialSavedDisplaysState,
-};
-const projectToPersistentState = (state) => ({
-    savedDisplays: selectors.savedDisplaysState(state),
-    controllers: selectors.controllers(state),
-});
-exports.serializeEditorState = (state) => JSON.stringify(projectToPersistentState(state));
-const recoverEditorState = (pState) => {
-    const { controllers, savedDisplays } = Object.assign({}, exports.defaultPersistentState, pState);
-    const active = selectors.selectedDisplay.proj(savedDisplays);
-    return {
-        display: active && { active },
-        input: Object.assign({}, input_1.initialInputState, { controllers }),
-        savedDisplays,
-    };
-};
-exports.deserializePersistentString = (str) => recoverEditorState(JSON.parse(str));
-
-
-/***/ }),
 /* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -58549,22 +58587,30 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const React = __importStar(__webpack_require__(0));
-const react_redux_1 = __webpack_require__(29);
-const redux_1 = __webpack_require__(24);
-const actions = __importStar(__webpack_require__(23));
+const serialize_1 = __webpack_require__(60);
 const selectors = __importStar(__webpack_require__(28));
-const Editor_1 = __webpack_require__(182);
-const PresentationSnackbar_1 = __webpack_require__(225);
-const mapStateToProps = (state) => ({
-    inPresentationMode: selectors.inPresentationMode(state),
-    isPresentationSnackbarOpen: selectors.isPresentationSnackbarOpen(state),
+const input_1 = __webpack_require__(89);
+const savedDisplays_1 = __webpack_require__(90);
+exports.defaultPersistentState = {
+    controllers: [],
+    savedDisplays: savedDisplays_1.initialSavedDisplaysState,
+};
+const projectToPersistentState = (state) => ({
+    savedDisplays: selectors.savedDisplaysState(state),
+    controllers: selectors.controllers(state),
 });
-const mapDispatchToProps = (dispatch) => redux_1.bindActionCreators(actions, dispatch);
-const BaseEditorContainer = ({ inPresentationMode, isPresentationSnackbarOpen, closePresentationSnackbar, }) => (React.createElement("div", null,
-    inPresentationMode ? null : React.createElement(Editor_1.Editor, null),
-    React.createElement(PresentationSnackbar_1.PresentationSnackbar, { isOpen: isPresentationSnackbarOpen, close: closePresentationSnackbar })));
-exports.EditorContainer = react_redux_1.connect(mapStateToProps, mapDispatchToProps)(BaseEditorContainer);
+exports.serializeEditorState = (state) => JSON.stringify(projectToPersistentState(state));
+const recoverEditorState = (pState) => {
+    const { controllers, savedDisplays: rawSavedDisplays } = Object.assign({}, exports.defaultPersistentState, pState);
+    const savedDisplays = Object.assign({}, rawSavedDisplays, { displays: rawSavedDisplays.displays.map(serialize_1.portOutdatedDisplay) });
+    const active = selectors.selectedDisplay.proj(savedDisplays);
+    return {
+        display: active && { active },
+        input: Object.assign({}, input_1.initialInputState, { controllers }),
+        savedDisplays,
+    };
+};
+exports.deserializePersistentString = (str) => recoverEditorState(JSON.parse(str));
 
 
 /***/ }),
@@ -58582,15 +58628,47 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const EditorTabs_1 = __webpack_require__(183);
-const EditorRouter_1 = __webpack_require__(190);
+const react_redux_1 = __webpack_require__(29);
+const redux_1 = __webpack_require__(24);
+const actions = __importStar(__webpack_require__(23));
+const selectors = __importStar(__webpack_require__(28));
+const Editor_1 = __webpack_require__(183);
+const PresentationSnackbar_1 = __webpack_require__(224);
+const mapStateToProps = (state) => ({
+    inPresentationMode: selectors.inPresentationMode(state),
+    isPresentationSnackbarOpen: selectors.isPresentationSnackbarOpen(state),
+});
+const mapDispatchToProps = (dispatch) => redux_1.bindActionCreators(actions, dispatch);
+const BaseEditorContainer = ({ inPresentationMode, isPresentationSnackbarOpen, closePresentationSnackbar, }) => (React.createElement("div", null,
+    inPresentationMode ? null : React.createElement(Editor_1.Editor, null),
+    React.createElement(PresentationSnackbar_1.PresentationSnackbar, { isOpen: isPresentationSnackbarOpen, close: closePresentationSnackbar })));
+exports.EditorContainer = react_redux_1.connect(mapStateToProps, mapDispatchToProps)(BaseEditorContainer);
+
+
+/***/ }),
+/* 183 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = __importStar(__webpack_require__(0));
+const EditorTabs_1 = __webpack_require__(184);
+const EditorRouter_1 = __webpack_require__(191);
 exports.Editor = () => (React.createElement("div", null,
     React.createElement(EditorTabs_1.EditorTabs, null),
     React.createElement(EditorRouter_1.EditorRouter, null)));
 
 
 /***/ }),
-/* 183 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58609,9 +58687,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(__webpack_require__(0));
 const redux_1 = __webpack_require__(24);
 const react_redux_1 = __webpack_require__(29);
-const core_1 = __webpack_require__(95);
+const core_1 = __webpack_require__(96);
 const actions = __importStar(__webpack_require__(23));
-const tab_1 = __webpack_require__(90);
+const tab_1 = __webpack_require__(91);
 const mapStateToProps = (state) => ({
     currentTab: state.tab.kind,
 });
@@ -58631,7 +58709,7 @@ exports.EditorTabs = react_redux_1.connect(mapStateToProps, mapDispatchToProps)(
 
 
 /***/ }),
-/* 184 */
+/* 185 */
 /***/ (function(module, exports) {
 
 function _arrayWithoutHoles(arr) {
@@ -58647,7 +58725,7 @@ function _arrayWithoutHoles(arr) {
 module.exports = _arrayWithoutHoles;
 
 /***/ }),
-/* 185 */
+/* 186 */
 /***/ (function(module, exports) {
 
 function _iterableToArray(iter) {
@@ -58657,7 +58735,7 @@ function _iterableToArray(iter) {
 module.exports = _iterableToArray;
 
 /***/ }),
-/* 186 */
+/* 187 */
 /***/ (function(module, exports) {
 
 function _nonIterableSpread() {
@@ -58667,7 +58745,7 @@ function _nonIterableSpread() {
 module.exports = _nonIterableSpread;
 
 /***/ }),
-/* 187 */
+/* 188 */
 /***/ (function(module, exports) {
 
 function _arrayWithHoles(arr) {
@@ -58677,7 +58755,7 @@ function _arrayWithHoles(arr) {
 module.exports = _arrayWithHoles;
 
 /***/ }),
-/* 188 */
+/* 189 */
 /***/ (function(module, exports) {
 
 function _iterableToArrayLimit(arr, i) {
@@ -58709,7 +58787,7 @@ function _iterableToArrayLimit(arr, i) {
 module.exports = _iterableToArrayLimit;
 
 /***/ }),
-/* 189 */
+/* 190 */
 /***/ (function(module, exports) {
 
 function _nonIterableRest() {
@@ -58719,7 +58797,7 @@ function _nonIterableRest() {
 module.exports = _nonIterableRest;
 
 /***/ }),
-/* 190 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58734,10 +58812,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
 const react_redux_1 = __webpack_require__(29);
-const ControllerPane_1 = __webpack_require__(191);
-const DisplayPane_1 = __webpack_require__(198);
+const ControllerPane_1 = __webpack_require__(192);
+const DisplayPane_1 = __webpack_require__(199);
 const ConfigPane_1 = __webpack_require__(221);
-const AboutPane_1 = __webpack_require__(224);
+const AboutPane_1 = __webpack_require__(223);
 const mapStateToProps = (state) => ({
     currentTab: state.tab.kind,
 });
@@ -58758,7 +58836,7 @@ exports.EditorRouter = react_redux_1.connect(mapStateToProps)(BaseEditorRouter);
 
 
 /***/ }),
-/* 191 */
+/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58776,10 +58854,10 @@ const react_redux_1 = __webpack_require__(29);
 const redux_1 = __webpack_require__(24);
 const selectors = __importStar(__webpack_require__(28));
 const actions = __importStar(__webpack_require__(23));
-const controller_1 = __webpack_require__(46);
-const ControllerSelect_1 = __webpack_require__(192);
-const ControllerEditor_1 = __webpack_require__(194);
-const ControllerAdd_1 = __webpack_require__(197);
+const controller_1 = __webpack_require__(47);
+const ControllerSelect_1 = __webpack_require__(193);
+const ControllerEditor_1 = __webpack_require__(195);
+const ControllerAdd_1 = __webpack_require__(198);
 const mapStateToProps = (state) => ({
     controllers: selectors.controllers(state),
     selectedController: selectors.selectedController(state),
@@ -58788,17 +58866,17 @@ const mapDispatchToProps = (dispatch) => redux_1.bindActionCreators({
     addController: kind => actions.addController(controller_1.getNewController(kind)),
     removeController: actions.removeController,
     selectController: actions.selectController,
-    updateControllerName: actions.updateControllerName,
+    setControllerName: actions.setControllerName,
 }, dispatch);
-const BaseControllerPane = ({ addController, controllers, removeController, selectedController, selectController, updateControllerName, }) => (React.createElement("div", null,
+const BaseControllerPane = ({ addController, controllers, removeController, selectedController, selectController, setControllerName, }) => (React.createElement("div", null,
     React.createElement(ControllerAdd_1.ControllerAdd, { addController: addController }),
     React.createElement(ControllerSelect_1.ControllerSelect, { controllers: controllers, selected: selectedController, selectController: selectController }),
-    React.createElement(ControllerEditor_1.ControllerEditor, { controller: selectedController, removeController: removeController, updateControllerName: updateControllerName })));
+    React.createElement(ControllerEditor_1.ControllerEditor, { controller: selectedController, removeController: removeController, setControllerName: setControllerName })));
 exports.ControllerPane = react_redux_1.connect(mapStateToProps, mapDispatchToProps)(BaseControllerPane);
 
 
 /***/ }),
-/* 192 */
+/* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58812,7 +58890,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const EditorSelect_1 = __webpack_require__(63);
+const EditorSelect_1 = __webpack_require__(64);
 const toOption = (b) => ({
     value: b.id,
     label: b.name,
@@ -58822,7 +58900,7 @@ exports.ControllerSelect = ({ controllers, selected, selectController, }) => (Re
 
 
 /***/ }),
-/* 193 */
+/* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.12.2
@@ -58861,30 +58939,7 @@ exports.ControllerSelect = ({ controllers, selected, selectController, }) => (Re
 }).call(this);
 
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(87)))
-
-/***/ }),
-/* 194 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = __importStar(__webpack_require__(0));
-const ControllerBindings_1 = __webpack_require__(195);
-const ControllerName_1 = __webpack_require__(196);
-exports.ControllerEditor = ({ controller, removeController, updateControllerName, }) => controller ? (React.createElement("div", null,
-    React.createElement(ControllerName_1.ControllerName, { initialName: controller.name, update: name => updateControllerName(controller.id, name) }),
-    React.createElement("button", { onClick: () => removeController(controller.id) }, "delete controller"),
-    React.createElement(ControllerBindings_1.ControllerBindings, { controller: controller }))) : null;
-
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(88)))
 
 /***/ }),
 /* 195 */
@@ -58901,13 +58956,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const controller_1 = __webpack_require__(46);
-const RemapButton_1 = __webpack_require__(64);
-exports.ControllerBindings = ({ controller, }) => (React.createElement("div", null, controller_1.getControllerKeyOrder(controller.kind).map(key => (React.createElement("div", { key: key },
-    React.createElement("span", null,
-        controller_1.getKeyName(controller.kind, key),
-        " "),
-    React.createElement(RemapButton_1.RemapButton, { value: { kind: 'controller', controller, key } }))))));
+const ControllerBindings_1 = __webpack_require__(196);
+const ControllerName_1 = __webpack_require__(197);
+exports.ControllerEditor = ({ controller, removeController, setControllerName, }) => controller ? (React.createElement("div", null,
+    React.createElement(ControllerName_1.ControllerName, { initialName: controller.name, update: name => setControllerName(controller.id, name) }),
+    React.createElement("button", { onClick: () => removeController(controller.id) }, "delete controller"),
+    React.createElement(ControllerBindings_1.ControllerBindings, { controller: controller }))) : null;
 
 
 /***/ }),
@@ -58925,13 +58979,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const TextField_1 = __webpack_require__(66);
-exports.ControllerName = ({ initialName, update, }) => {
-    return (React.createElement("div", null,
-        "name:",
-        ' ',
-        React.createElement(TextField_1.TextField, { defaultValue: "Unnamed Controller", initialValue: initialName, update: update })));
-};
+const controller_1 = __webpack_require__(47);
+const RemapButton_1 = __webpack_require__(65);
+exports.ControllerBindings = ({ controller, }) => (React.createElement("div", null, controller_1.getControllerKeyOrder(controller.kind).map(key => (React.createElement("div", { key: key },
+    React.createElement("span", null,
+        controller_1.getKeyName(controller.kind, key),
+        " "),
+    React.createElement(RemapButton_1.RemapButton, { value: { kind: 'controller', controller, key } }))))));
 
 
 /***/ }),
@@ -58949,12 +59003,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const controller_1 = __webpack_require__(46);
-const SelectField_1 = __webpack_require__(42);
-const controllerKinds = controller_1.getControllerKinds();
-const toOption = (k) => ({ value: k, label: k });
-exports.ControllerAdd = ({ addController, }) => (React.createElement("div", null,
-    React.createElement(SelectField_1.SelectField, { buttonText: "add new controller", data: controllerKinds, onConfirm: (kind) => kind && addController(kind), placeholder: "controller type", toOption: toOption })));
+const TextField_1 = __webpack_require__(67);
+exports.ControllerName = ({ initialName, update, }) => {
+    return (React.createElement("div", null,
+        "name:",
+        ' ',
+        React.createElement(TextField_1.TextField, { defaultValue: "Unnamed Controller", initialValue: initialName, update: update })));
+};
 
 
 /***/ }),
@@ -58972,28 +59027,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const react_redux_1 = __webpack_require__(29);
-const redux_1 = __webpack_require__(24);
-const selectors = __importStar(__webpack_require__(28));
-const actions = __importStar(__webpack_require__(23));
-const ComponentEditor_1 = __webpack_require__(199);
-const CanvasEditor_1 = __webpack_require__(217);
-const ComponentSelect_1 = __webpack_require__(218);
-const ComponentAdd_1 = __webpack_require__(219);
-const mapStateToProps = (state) => ({
-    components: selectors.components(state),
-    display: selectors.activeDisplay(state),
-    selectedComponent: selectors.selectedComponent(state),
-});
-const mapDispatchToProps = (dispatch) => redux_1.bindActionCreators(actions, dispatch);
-const BaseDisplayPane = ({ addDefaultComponent, components, display, saveDisplay, selectComponent, selectedComponent, setCanvasDimensions, }) => (React.createElement("div", null,
-    React.createElement(CanvasEditor_1.CanvasEditor, { display: display, setCanvasDimensions: setCanvasDimensions }),
-    React.createElement("div", null,
-        React.createElement("button", { onClick: () => saveDisplay(display) }, "save display")),
-    React.createElement(ComponentAdd_1.ComponentAdd, { addComponent: addDefaultComponent }),
-    React.createElement(ComponentSelect_1.ComponentSelect, { components: components, selected: selectedComponent, selectComponent: selectComponent }),
-    selectedComponent === undefined ? null : (React.createElement(ComponentEditor_1.ComponentEditor, { component: selectedComponent }))));
-exports.DisplayPane = react_redux_1.connect(mapStateToProps, mapDispatchToProps)(BaseDisplayPane);
+const controller_1 = __webpack_require__(47);
+const SelectField_1 = __webpack_require__(42);
+const controllerKinds = controller_1.getControllerKinds();
+const toOption = (k) => ({ value: k, label: k });
+exports.ControllerAdd = ({ addController, }) => (React.createElement("div", null,
+    React.createElement(SelectField_1.SelectField, { buttonText: "add new controller", data: controllerKinds, onConfirm: (kind) => kind && addController(kind), placeholder: "controller type", toOption: toOption })));
 
 
 /***/ }),
@@ -59013,31 +59052,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
 const react_redux_1 = __webpack_require__(29);
 const redux_1 = __webpack_require__(24);
+const selectors = __importStar(__webpack_require__(28));
 const actions = __importStar(__webpack_require__(23));
-const editor_1 = __webpack_require__(200);
-const TransformerToggle_1 = __webpack_require__(201);
-const ComponentFilters_1 = __webpack_require__(202);
-const ComponentTextures_1 = __webpack_require__(205);
-const ComponentKeys_1 = __webpack_require__(209);
-const ComponentState_1 = __webpack_require__(210);
-const ComponentModels_1 = __webpack_require__(211);
-const ComponentTitle_1 = __webpack_require__(216);
+const ComponentEditor_1 = __webpack_require__(200);
+const Section_1 = __webpack_require__(43);
+const ComponentSelect_1 = __webpack_require__(218);
+const DisplayEditor_1 = __webpack_require__(219);
+const mapStateToProps = (state) => ({
+    components: selectors.components(state),
+    display: selectors.activeDisplay(state),
+    selectedComponent: selectors.selectedComponent(state),
+});
 const mapDispatchToProps = (dispatch) => redux_1.bindActionCreators(actions, dispatch);
-const BaseComponentEditor = ({ addFilter, cloneComponent, component, removeComponent, removeFilter, setDefaultModel, setDefaultTexture, setDefaultFilter, updateState, updateModel, updateTexture, updateFilter, }) => {
-    const config = editor_1.getComponentEditorConfig(component.kind);
-    return (React.createElement("div", null,
-        React.createElement(ComponentTitle_1.ComponentTitle, { label: config.title }),
-        React.createElement(TransformerToggle_1.TransformerToggle, null),
-        React.createElement("div", null,
-            React.createElement("button", { onClick: () => removeComponent(component.id) }, "remove component"),
-            React.createElement("button", { onClick: () => cloneComponent(component) }, "clone component")),
-        React.createElement(ComponentState_1.ComponentState, { component: component, stateConfig: config.state, update: updateState }),
-        React.createElement(ComponentKeys_1.ComponentKeys, { component: component, keys: config.keys }),
-        React.createElement(ComponentModels_1.ComponentModels, { addFilter: addFilter, component: component, modelList: config.models, setDefaultModel: setDefaultModel, updateModel: updateModel }),
-        React.createElement(ComponentTextures_1.ComponentTextures, { component: component, setDefaultTexture: setDefaultTexture, textureList: config.textures, update: updateTexture }),
-        React.createElement(ComponentFilters_1.ComponentFilters, { component: component, removeFilter: removeFilter, setDefaultFilter: setDefaultFilter, updateFilter: updateFilter })));
-};
-exports.ComponentEditor = react_redux_1.connect(undefined, mapDispatchToProps)(BaseComponentEditor);
+const BaseDisplayPane = ({ addDefaultComponent, components, display, exportDisplay, importComponent, saveDisplay, selectComponent, selectedComponent, setActiveDisplayName, setActiveDisplayDimensions, }) => (React.createElement("div", null,
+    React.createElement(Section_1.Section, null,
+        React.createElement(DisplayEditor_1.DisplayEditor, { addComponent: addDefaultComponent, display: display, exportDisplay: exportDisplay, importComponent: importComponent, saveDisplay: saveDisplay, setActiveDisplayDimensions: setActiveDisplayDimensions, setDisplayName: setActiveDisplayName })),
+    React.createElement(Section_1.Section, null,
+        React.createElement(ComponentSelect_1.ComponentSelect, { components: components, selected: selectedComponent, selectComponent: selectComponent })),
+    selectedComponent === undefined ? null : (React.createElement(ComponentEditor_1.ComponentEditor, { component: selectedComponent }))));
+exports.DisplayPane = react_redux_1.connect(mapStateToProps, mapDispatchToProps)(BaseDisplayPane);
 
 
 /***/ }),
@@ -59046,13 +59079,60 @@ exports.ComponentEditor = react_redux_1.connect(undefined, mapDispatchToProps)(B
 
 "use strict";
 
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = __importStar(__webpack_require__(0));
+const react_redux_1 = __webpack_require__(29);
+const redux_1 = __webpack_require__(24);
+const actions = __importStar(__webpack_require__(23));
+const editor_1 = __webpack_require__(201);
+const TransformerToggle_1 = __webpack_require__(202);
+const Section_1 = __webpack_require__(43);
+const ComponentFilters_1 = __webpack_require__(203);
+const ComponentTextures_1 = __webpack_require__(206);
+const ComponentKeys_1 = __webpack_require__(210);
+const ComponentState_1 = __webpack_require__(211);
+const ComponentModels_1 = __webpack_require__(212);
+const ComponentTitle_1 = __webpack_require__(217);
+const mapDispatchToProps = (dispatch) => redux_1.bindActionCreators(actions, dispatch);
+const BaseComponentEditor = ({ addFilter, cloneComponent, component, exportComponent, exportFilter, exportModel, exportTexture, importFilter, importModel, importNewFilter, importTexture, removeComponent, removeFilter, setDefaultModel, setDefaultTexture, setDefaultFilter, setState, setModel, setTexture, setFilter, }) => {
+    const config = editor_1.getComponentEditorConfig(component.kind);
+    return (React.createElement("div", null,
+        React.createElement(Section_1.Section, null,
+            React.createElement(ComponentTitle_1.ComponentTitle, { label: config.title }),
+            React.createElement(TransformerToggle_1.TransformerToggle, null),
+            React.createElement("div", null,
+                React.createElement("button", { onClick: () => removeComponent(component.id) }, "remove component"),
+                React.createElement("button", { onClick: () => cloneComponent(component) }, "clone component"),
+                React.createElement("button", { onClick: () => exportComponent(component) }, "export component")),
+            React.createElement(ComponentState_1.ComponentState, { component: component, stateConfig: config.state, update: setState })),
+        React.createElement(ComponentKeys_1.ComponentKeys, { component: component, keys: config.keys }),
+        React.createElement(ComponentModels_1.ComponentModels, { addFilter: addFilter, component: component, exportModel: exportModel, importModel: importModel, importNewFilter: importNewFilter, modelList: config.models, setDefaultModel: setDefaultModel, setModel: setModel }),
+        React.createElement(ComponentTextures_1.ComponentTextures, { component: component, exportTexture: exportTexture, importTexture: importTexture, setDefaultTexture: setDefaultTexture, textureList: config.textures, update: setTexture }),
+        React.createElement(ComponentFilters_1.ComponentFilters, { component: component, exportFilter: exportFilter, importFilter: importFilter, removeFilter: removeFilter, setDefaultFilter: setDefaultFilter, setFilter: setFilter })));
+};
+exports.ComponentEditor = react_redux_1.connect(undefined, mapDispatchToProps)(BaseComponentEditor);
+
+
+/***/ }),
+/* 201 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = __webpack_require__(11);
 const Component_1 = __webpack_require__(41);
-const ButtonComponent_1 = __webpack_require__(79);
-const StickComponent_1 = __webpack_require__(84);
-const DPadComponent_1 = __webpack_require__(82);
-const StaticComponent_1 = __webpack_require__(83);
+const ButtonComponent_1 = __webpack_require__(80);
+const StickComponent_1 = __webpack_require__(85);
+const DPadComponent_1 = __webpack_require__(83);
+const StaticComponent_1 = __webpack_require__(84);
 const baseStateEditorFields = [
     {
         label: 'Name',
@@ -59102,7 +59182,7 @@ exports.getComponentEditorConfig = (kind) => componentEditorConfigs[kind];
 
 
 /***/ }),
-/* 201 */
+/* 202 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -59121,7 +59201,7 @@ const redux_1 = __webpack_require__(24);
 const events = __importStar(__webpack_require__(34));
 const actions = __importStar(__webpack_require__(23));
 const selectors = __importStar(__webpack_require__(28));
-const BooleanField_1 = __webpack_require__(92);
+const BooleanField_1 = __webpack_require__(93);
 const mapStateToProps = (state) => ({
     visibility: selectors.transformerVisibility(state),
     target: selectors.transformerTarget(state),
@@ -59140,40 +59220,6 @@ exports.TransformerToggle = react_redux_1.connect(mapStateToProps, mapDispatchTo
 
 
 /***/ }),
-/* 202 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = __importStar(__webpack_require__(0));
-const FilterEditor_1 = __webpack_require__(203);
-const filter_1 = __webpack_require__(37);
-const component_1 = __webpack_require__(31);
-exports.ComponentFilters = ({ component, removeFilter, setDefaultFilter, updateFilter, }) => (React.createElement("div", null, component_1.mapComponentFilters((filter, ref, key) => {
-    return (React.createElement("div", { key: key },
-        React.createElement("div", null,
-            React.createElement(FilterEditor_1.FilterEditor, { filter: filter, getRemapButtonValue: field => {
-                    const controllerKey = filter_1.getInputFilterControllerKey(component_1.getComponentInputFilter(component, ref), field.key);
-                    return {
-                        kind: 'filter',
-                        component,
-                        controllerKey,
-                        ref,
-                        field,
-                    };
-                }, remove: () => removeFilter({ id: component.id, ref }), setDefaultFilter: kind => setDefaultFilter({ component, ref, kind }), update: filter => updateFilter({ component, ref, filter }) }))));
-}, component)));
-
-
-/***/ }),
 /* 203 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -59188,16 +59234,22 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
+const FilterEditor_1 = __webpack_require__(204);
 const filter_1 = __webpack_require__(37);
-const EditorField_1 = __webpack_require__(52);
-const FilterKeys_1 = __webpack_require__(204);
-const FilterKindSelect_1 = __webpack_require__(94);
-exports.FilterEditor = ({ getRemapButtonValue, setDefaultFilter, filter, remove, update, }) => filter === undefined ? null : (React.createElement("div", { style: { border: '1px solid green' } },
-    React.createElement(FilterKindSelect_1.FilterKindSelect, { buttonText: "set filter type", initialValue: filter.kind, handleSelection: setDefaultFilter }),
-    filter_1.getInputFilterFields(filter.kind).map(field => (React.createElement("div", { key: field.key },
-        React.createElement(EditorField_1.EditorField, { field: field, initialValue: field.getter(filter), update: value => update(field.setter(filter, value)) })))),
-    React.createElement(FilterKeys_1.FilterKeys, { filter: filter, getRemapButtonValue: getRemapButtonValue }),
-    React.createElement("button", { onClick: remove }, "remove filter")));
+const component_1 = __webpack_require__(31);
+const Section_1 = __webpack_require__(43);
+exports.ComponentFilters = ({ component, exportFilter, importFilter, removeFilter, setDefaultFilter, setFilter, }) => (React.createElement(Section_1.Section, null, component_1.mapComponentFilters((filter, ref, key) => (React.createElement("div", { key: key },
+    React.createElement("div", null,
+        React.createElement(FilterEditor_1.FilterEditor, { exportFilter: exportFilter, filter: filter, getRemapButtonValue: field => {
+                const controllerKey = filter_1.getInputFilterControllerKey(component_1.getComponentInputFilter(component, ref), field.key);
+                return {
+                    kind: 'filter',
+                    component,
+                    controllerKey,
+                    ref,
+                    field,
+                };
+            }, name: component_1.componentFilterRefName(ref), importFilter: () => importFilter({ id: component.id, ref }), remove: () => removeFilter({ id: component.id, ref }), setDefaultFilter: kind => setDefaultFilter({ component, ref, kind }), update: filter => setFilter({ id: component.id, ref, filter }) })))), component)));
 
 
 /***/ }),
@@ -59216,11 +59268,20 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
 const filter_1 = __webpack_require__(37);
-const RemapButton_1 = __webpack_require__(64);
-exports.FilterKeys = ({ filter, getRemapButtonValue, }) => (React.createElement("div", null, filter_1.getInputFilterInputFields(filter.kind).map(field => (React.createElement("div", { key: field.key },
-    field.label,
-    ":",
-    React.createElement(RemapButton_1.RemapButton, { value: getRemapButtonValue(field) }))))));
+const EditorField_1 = __webpack_require__(53);
+const FilterKeys_1 = __webpack_require__(205);
+const FilterKindSelect_1 = __webpack_require__(95);
+exports.FilterEditor = ({ exportFilter, filter, getRemapButtonValue, importFilter, name, remove, setDefaultFilter, update, }) => filter === undefined ? null : (React.createElement("div", { style: { border: '1px solid blue', marginTop: '10px' } },
+    React.createElement("div", null,
+        "Filter: ",
+        React.createElement("b", null, name),
+        React.createElement("button", { onClick: () => exportFilter(filter) }, "export filter"),
+        React.createElement("button", { onClick: importFilter }, "import filter"),
+        React.createElement("button", { onClick: remove }, "remove filter")),
+    React.createElement(FilterKindSelect_1.FilterKindSelect, { buttonText: "set filter type", initialValue: filter.kind, handleSelection: setDefaultFilter }),
+    filter_1.getInputFilterFields(filter.kind).map(field => (React.createElement("div", { key: field.key },
+        React.createElement(EditorField_1.EditorField, { field: field, initialValue: field.getter(filter), update: value => update(field.setter(filter, value)) })))),
+    React.createElement(FilterKeys_1.FilterKeys, { filter: filter, getRemapButtonValue: getRemapButtonValue })));
 
 
 /***/ }),
@@ -59238,13 +59299,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const TexturesEditor_1 = __webpack_require__(206);
-exports.ComponentTextures = ({ component, setDefaultTexture, textureList, update, }) => {
-    return (React.createElement("div", null,
-        React.createElement("div", null, "Textures!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"),
-        React.createElement("div", null,
-            React.createElement(TexturesEditor_1.TexturesEditor, { setDefaultTexture: (textureName, kind) => setDefaultTexture({ id: component.id, textureName, kind }), textureList: textureList, textureMap: component.graphics.textures, update: (textureName, texture) => update({ component, textureName, texture }) }))));
-};
+const filter_1 = __webpack_require__(37);
+const RemapButton_1 = __webpack_require__(65);
+exports.FilterKeys = ({ filter, getRemapButtonValue, }) => (React.createElement("div", null, filter_1.getInputFilterInputFields(filter.kind).map(field => (React.createElement("div", { key: field.key },
+    field.label,
+    ":",
+    React.createElement(RemapButton_1.RemapButton, { value: getRemapButtonValue(field) }))))));
 
 
 /***/ }),
@@ -59262,11 +59322,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const TextureEditor_1 = __webpack_require__(207);
-function TexturesEditor({ setDefaultTexture, textureList, textureMap, update, }) {
-    return (React.createElement("div", null, textureList.map(name => (React.createElement(TextureEditor_1.TextureEditor, { key: name, name: name, setDefaultTexture: setDefaultTexture, texture: textureMap[name], update: texture => update(name, texture) })))));
-}
-exports.TexturesEditor = TexturesEditor;
+const TexturesEditor_1 = __webpack_require__(207);
+const Section_1 = __webpack_require__(43);
+exports.ComponentTextures = ({ component: { id, graphics }, exportTexture, importTexture, setDefaultTexture, textureList, update, }) => textureList.length === 0 ? null : (React.createElement(Section_1.Section, null,
+    React.createElement(TexturesEditor_1.TexturesEditor, { exportTexture: exportTexture, importTexture: textureName => importTexture({ id, textureName }), setDefaultTexture: (textureName, kind) => setDefaultTexture({ id, textureName, kind }), textureList: textureList, textureMap: graphics.textures, update: (textureName, texture) => update({ id, textureName, texture }) })));
 
 
 /***/ }),
@@ -59284,14 +59343,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const texture_1 = __webpack_require__(36);
-const EditorField_1 = __webpack_require__(52);
-const TextureKindSelect_1 = __webpack_require__(208);
-exports.TextureEditor = ({ name, setDefaultTexture, texture, update, }) => texture === undefined ? (React.createElement("div", null)) : (React.createElement("div", { style: { border: '1px solid blue' } },
-    React.createElement("div", null, name),
-    React.createElement(TextureKindSelect_1.TextureKindSelect, { buttonText: "set texture type", initialValue: texture.kind, setDefaultTexture: kind => setDefaultTexture(name, kind) }),
-    texture_1.getTextureFields(texture.kind).map(field => (React.createElement("div", { key: field.key },
-        React.createElement(EditorField_1.EditorField, { field: field, initialValue: field.getter(texture), update: value => update(field.setter(texture, value)) }))))));
+const TextureEditor_1 = __webpack_require__(208);
+function TexturesEditor({ exportTexture, importTexture, setDefaultTexture, textureList, textureMap, update, }) {
+    return (React.createElement("div", null, textureList.map(name => (React.createElement(TextureEditor_1.TextureEditor, { exportTexture: exportTexture, importTexture: importTexture, key: name, name: name, setDefaultTexture: setDefaultTexture, texture: textureMap[name], update: texture => update(name, texture) })))));
+}
+exports.TexturesEditor = TexturesEditor;
 
 
 /***/ }),
@@ -59310,10 +59366,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
 const texture_1 = __webpack_require__(36);
-const SelectField_1 = __webpack_require__(42);
-const toOption = (k) => ({ value: k, label: k });
-exports.TextureKindSelect = ({ buttonText, initialValue, setDefaultTexture, }) => (React.createElement("div", null,
-    React.createElement(SelectField_1.SelectField, { buttonText: buttonText, data: texture_1.getTextureKinds(), initialValue: initialValue, onConfirm: (c) => c && setDefaultTexture(c), placeholder: "texture class", toOption: toOption })));
+const EditorField_1 = __webpack_require__(53);
+const TextureKindSelect_1 = __webpack_require__(209);
+exports.TextureEditor = ({ exportTexture, importTexture, name, setDefaultTexture, texture, update, }) => texture === undefined ? null : (React.createElement("div", null,
+    React.createElement("div", null,
+        "Texture: ",
+        React.createElement("b", null, name),
+        React.createElement("button", { onClick: () => exportTexture(texture) }, "export texture"),
+        React.createElement("button", { onClick: () => importTexture(name) }, "import texture")),
+    React.createElement(TextureKindSelect_1.TextureKindSelect, { buttonText: "set texture type", initialValue: texture.kind, setDefaultTexture: kind => setDefaultTexture(name, kind) }),
+    texture_1.getTextureFields(texture.kind).map(field => (React.createElement("div", { key: field.key },
+        React.createElement(EditorField_1.EditorField, { field: field, initialValue: field.getter(texture), update: value => update(field.setter(texture, value)) }))))));
 
 
 /***/ }),
@@ -59331,13 +59394,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const component_1 = __webpack_require__(31);
-const RemapButton_1 = __webpack_require__(64);
-exports.ComponentKeys = ({ component, keys, }) => {
-    return (React.createElement("div", null, keys.map((componentKey) => (React.createElement("div", { key: componentKey.key },
-        component_1.stringifyComponentKey(componentKey),
-        React.createElement(RemapButton_1.RemapButton, { value: { kind: 'component', component, componentKey } }))))));
-};
+const texture_1 = __webpack_require__(36);
+const SelectField_1 = __webpack_require__(42);
+const toOption = (k) => ({ value: k, label: k });
+exports.TextureKindSelect = ({ buttonText, initialValue, setDefaultTexture, }) => (React.createElement("div", { className: "flex-container" },
+    React.createElement("span", { className: "center" }, "filter type:"),
+    React.createElement("span", { className: "flex-rest" },
+        React.createElement(SelectField_1.SelectField, { buttonText: buttonText, data: texture_1.getTextureKinds(), initialValue: initialValue, onConfirm: (c) => c && setDefaultTexture(c), placeholder: "texture class", toOption: toOption }))));
 
 
 /***/ }),
@@ -59355,9 +59418,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const EditorField_1 = __webpack_require__(52);
-exports.ComponentState = ({ component, stateConfig, update, }) => stateConfig === undefined ? null : (React.createElement("div", null, stateConfig.map(field => (React.createElement("div", { key: field.key },
-    React.createElement(EditorField_1.EditorField, { initialValue: field.getter(component.state), field: field, update: value => update({ component, field, value }) }))))));
+const component_1 = __webpack_require__(31);
+const RemapButton_1 = __webpack_require__(65);
+const Section_1 = __webpack_require__(43);
+exports.ComponentKeys = ({ component, keys, }) => {
+    return keys.length === 0 ? null : (React.createElement(Section_1.Section, null, keys.map((componentKey) => (React.createElement("div", { key: componentKey.key },
+        component_1.stringifyComponentKey(componentKey),
+        React.createElement(RemapButton_1.RemapButton, { value: { kind: 'component', component, componentKey } }))))));
+};
 
 
 /***/ }),
@@ -59375,9 +59443,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const ModelsEditor_1 = __webpack_require__(212);
-exports.ComponentModels = ({ addFilter, component, modelList, setDefaultModel, updateModel, }) => (React.createElement("div", null,
-    React.createElement(ModelsEditor_1.ModelsEditor, { addFilter: (modelName, kind) => addFilter({ component, modelName, kind }), modelList: modelList, modelMap: component.graphics.models, setDefaultModel: (modelName, kind) => setDefaultModel({ id: component.id, modelName, kind }), updateModel: (modelName, model) => updateModel({ component, modelName, model }) })));
+const EditorField_1 = __webpack_require__(53);
+exports.ComponentState = ({ component, stateConfig, update, }) => stateConfig === undefined ? null : (React.createElement("div", null, stateConfig.map(field => (React.createElement("div", { key: field.key },
+    React.createElement(EditorField_1.EditorField, { initialValue: field.getter(component.state), field: field, update: value => update({ component, field, value }) }))))));
 
 
 /***/ }),
@@ -59395,11 +59463,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const ModelEditor_1 = __webpack_require__(213);
-function ModelsEditor({ addFilter, modelList, modelMap, setDefaultModel, updateModel, }) {
-    return (React.createElement("div", null, modelList.map(name => (React.createElement(ModelEditor_1.ModelEditor, { addFilter: kind => addFilter(name, kind), key: name, name: name, setDefaultModel: kind => setDefaultModel(name, kind), model: modelMap[name], updateModel: model => updateModel(name, model) })))));
-}
-exports.ModelsEditor = ModelsEditor;
+const ModelsEditor_1 = __webpack_require__(213);
+const Section_1 = __webpack_require__(43);
+exports.ComponentModels = ({ addFilter, component, exportModel, importModel, importNewFilter, modelList, setDefaultModel, setModel, }) => modelList.length === 0 ? null : (React.createElement(Section_1.Section, null,
+    React.createElement(ModelsEditor_1.ModelsEditor, { addFilter: (modelName, kind) => addFilter({ component, modelName, kind }), exportModel: exportModel, importNewFilter: modelName => importNewFilter({ component, modelName }), importModel: modelName => importModel({ id: component.id, modelName }), modelList: modelList, modelMap: component.graphics.models, setDefaultModel: (modelName, kind) => setDefaultModel({ id: component.id, modelName, kind }), setModel: (modelName, model) => setModel({ id: component.id, modelName, model }) })));
 
 
 /***/ }),
@@ -59417,17 +59484,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const EditorField_1 = __webpack_require__(52);
-const konva_1 = __webpack_require__(39);
-const ModelKindSelect_1 = __webpack_require__(214);
-const ModelAddFilter_1 = __webpack_require__(215);
-exports.ModelEditor = ({ addFilter, name, setDefaultModel, model, updateModel, }) => (React.createElement("div", { style: { border: '1px solid red' } },
-    React.createElement("div", null, name),
-    React.createElement(ModelKindSelect_1.ModelKindSelect, { buttonText: "set model type", initialValue: model && model.kind, setDefaultModel: setDefaultModel }),
-    model === undefined ? null : (React.createElement("div", null,
-        konva_1.getKonvaModelFields(model.kind).map(field => (React.createElement("div", { key: field.key },
-            React.createElement(EditorField_1.EditorField, { field: field, initialValue: field.getter(model), update: value => updateModel(field.setter(model, value)) })))),
-        React.createElement(ModelAddFilter_1.ModelAddFilter, { addFilter: addFilter })))));
+const ModelEditor_1 = __webpack_require__(214);
+function ModelsEditor({ addFilter, exportModel, importNewFilter, importModel, modelList, modelMap, setDefaultModel, setModel, }) {
+    return (React.createElement("div", null, modelList.map(name => (React.createElement(ModelEditor_1.ModelEditor, { addFilter: kind => addFilter(name, kind), key: name, exportModel: exportModel, importNewFilter: () => importNewFilter(name), importModel: importModel, name: name, setDefaultModel: kind => setDefaultModel(name, kind), model: modelMap[name], setModel: model => setModel(name, model) })))));
+}
+exports.ModelsEditor = ModelsEditor;
 
 
 /***/ }),
@@ -59445,11 +59506,21 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
+const EditorField_1 = __webpack_require__(53);
 const konva_1 = __webpack_require__(39);
-const SelectField_1 = __webpack_require__(42);
-const toOption = (k) => ({ value: k, label: k });
-exports.ModelKindSelect = ({ buttonText, initialValue, setDefaultModel, }) => (React.createElement("div", null,
-    React.createElement(SelectField_1.SelectField, { buttonText: buttonText, data: konva_1.getKonvaModelKinds(), initialValue: initialValue, onConfirm: (c) => c && setDefaultModel(c), placeholder: "model class", toOption: toOption })));
+const ModelKindSelect_1 = __webpack_require__(215);
+const ModelAddFilter_1 = __webpack_require__(216);
+exports.ModelEditor = ({ addFilter, exportModel, importNewFilter, importModel, name, setDefaultModel, model, setModel, }) => (React.createElement("div", null,
+    React.createElement("div", null,
+        "Model: ",
+        React.createElement("b", null, name),
+        React.createElement("button", { onClick: () => importModel(name) }, " import model "),
+        model && (React.createElement("button", { onClick: () => exportModel(model) }, " export model "))),
+    React.createElement(ModelKindSelect_1.ModelKindSelect, { buttonText: "set model type", initialValue: model && model.kind, setDefaultModel: setDefaultModel }),
+    model === undefined ? null : (React.createElement("div", null,
+        konva_1.getKonvaModelFields(model.kind).map(field => (React.createElement("div", { key: field.key },
+            React.createElement(EditorField_1.EditorField, { field: field, initialValue: field.getter(model), update: value => setModel(field.setter(model, value)) })))),
+        React.createElement(ModelAddFilter_1.ModelAddFilter, { addFilter: addFilter, importNewFilter: importNewFilter })))));
 
 
 /***/ }),
@@ -59467,10 +59538,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const FilterKindSelect_1 = __webpack_require__(94);
-exports.ModelAddFilter = ({ addFilter, }) => (React.createElement("div", null,
-    "new filter:",
-    React.createElement(FilterKindSelect_1.FilterKindSelect, { buttonText: "add filter", handleSelection: addFilter, initialValue: undefined })));
+const konva_1 = __webpack_require__(39);
+const SelectField_1 = __webpack_require__(42);
+const toOption = (k) => ({ value: k, label: k });
+exports.ModelKindSelect = ({ buttonText, initialValue, setDefaultModel, }) => (React.createElement("div", { className: "flex-container" },
+    React.createElement("span", { className: "center" }, "model type:"),
+    React.createElement("span", { className: "flex-rest" },
+        React.createElement(SelectField_1.SelectField, { buttonText: buttonText, data: konva_1.getKonvaModelKinds(), initialValue: initialValue, onConfirm: (c) => c && setDefaultModel(c), placeholder: "model class", toOption: toOption }))));
 
 
 /***/ }),
@@ -59488,7 +59562,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-exports.ComponentTitle = ({ label }) => (React.createElement("span", null, label));
+const FilterKindSelect_1 = __webpack_require__(95);
+exports.ModelAddFilter = ({ addFilter, importNewFilter, }) => (React.createElement("div", { className: "flex-container" },
+    React.createElement("button", { onClick: importNewFilter }, "import new filter"),
+    React.createElement("span", { className: "center" }, "add new filter:"),
+    React.createElement("span", { className: "flex-rest" },
+        React.createElement(FilterKindSelect_1.FilterKindSelect, { buttonText: "add filter", handleSelection: addFilter, initialValue: undefined }))));
 
 
 /***/ }),
@@ -59506,12 +59585,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const Vec2Field_1 = __webpack_require__(93);
-const defaultCanvasDimensions = { x: 500, y: 700 };
-exports.CanvasEditor = ({ display: { width, height }, setCanvasDimensions, }) => (React.createElement("div", null,
-    "canvas size:",
-    ' ',
-    React.createElement(Vec2Field_1.Vec2Field, { defaultValue: defaultCanvasDimensions, initialValue: { x: width, y: height }, update: ({ x, y }) => setCanvasDimensions({ width: x, height: y }) })));
+exports.ComponentTitle = ({ label }) => (React.createElement("span", null, label));
 
 
 /***/ }),
@@ -59529,13 +59603,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const EditorSelect_1 = __webpack_require__(63);
+const EditorSelect_1 = __webpack_require__(64);
 const toOption = (b) => ({
     value: b.id,
     label: b.state.name || 'Unnamed component',
 });
-exports.ComponentSelect = ({ components, selected, selectComponent, }) => (React.createElement("div", null,
-    React.createElement(EditorSelect_1.EditorSelect, { data: components, onChange: o => selectComponent(o.value), placeholder: "Components", selected: selected, toOption: toOption })));
+exports.ComponentSelect = ({ components, selected, selectComponent, }) => (React.createElement("div", { className: "flex-container" },
+    React.createElement("span", { className: "center" }, "selected component:"),
+    React.createElement("span", { className: "flex-rest" },
+        React.createElement(EditorSelect_1.EditorSelect, { data: components, onChange: o => selectComponent(o.value), placeholder: "Components", selected: selected, toOption: toOption }))));
 
 
 /***/ }),
@@ -59553,9 +59629,29 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
+const TextField_1 = __webpack_require__(67);
+const Vec2Field_1 = __webpack_require__(94);
 const ComponentKindSelect_1 = __webpack_require__(220);
-exports.ComponentAdd = ({ addComponent, }) => (React.createElement("div", null,
-    React.createElement(ComponentKindSelect_1.ComponentKindSelect, { buttonText: "add new component", initialValue: undefined, handleSelection: addComponent })));
+exports.renderUnsetDimensionsWarning = ({ width, height, }) => !width || !height ? (React.createElement("span", null,
+    React.createElement("b", null, "set canvas dimensions!!! "))) : null;
+exports.DisplayEditor = ({ addComponent, display, exportDisplay, importComponent, saveDisplay, setActiveDisplayDimensions, setDisplayName, }) => display === undefined ? null : (React.createElement("div", null,
+    React.createElement("div", null,
+        React.createElement("button", { onClick: () => exportDisplay(display) }, "export display"),
+        React.createElement("button", { onClick: () => saveDisplay(display) }, "save display"),
+        React.createElement("button", { onClick: importComponent }, "import component")),
+    ' ',
+    React.createElement("div", null,
+        "display name:",
+        React.createElement(TextField_1.TextField, { defaultValue: display.name, update: setDisplayName })),
+    React.createElement("div", null,
+        exports.renderUnsetDimensionsWarning(display),
+        "canvas size:",
+        ' ',
+        React.createElement(Vec2Field_1.Vec2Field, { defaultValue: { x: 0, y: 0 }, initialValue: { x: display.width, y: display.height }, update: ({ x, y }) => setActiveDisplayDimensions({ width: x, height: y }) })),
+    React.createElement("div", { className: "flex-container" },
+        React.createElement("span", { className: "center" }, "add new component:"),
+        React.createElement("span", { className: "flex-rest" },
+            React.createElement(ComponentKindSelect_1.ComponentKindSelect, { buttonText: "add new component", initialValue: undefined, handleSelection: addComponent })))));
 
 
 /***/ }),
@@ -59577,8 +59673,7 @@ const component_1 = __webpack_require__(31);
 const SelectField_1 = __webpack_require__(42);
 const componentKinds = component_1.getComponentKinds();
 const toOption = (k) => ({ value: k, label: k });
-exports.ComponentKindSelect = ({ buttonText, handleSelection, initialValue, }) => (React.createElement("div", null,
-    React.createElement(SelectField_1.SelectField, { buttonText: buttonText, data: componentKinds, initialValue: initialValue, onConfirm: (c) => c && handleSelection(c), placeholder: "component type", toOption: toOption })));
+exports.ComponentKindSelect = ({ buttonText, handleSelection, initialValue, }) => (React.createElement(SelectField_1.SelectField, { buttonText: buttonText, data: componentKinds, initialValue: initialValue, onConfirm: (c) => c && handleSelection(c), placeholder: "component type", toOption: toOption }));
 
 
 /***/ }),
@@ -59600,28 +59695,23 @@ const react_redux_1 = __webpack_require__(29);
 const redux_1 = __webpack_require__(24);
 const actions = __importStar(__webpack_require__(23));
 const selectors = __importStar(__webpack_require__(28));
-const utils_1 = __webpack_require__(11);
-const serialize_1 = __webpack_require__(59);
 const DisplaySelect_1 = __webpack_require__(222);
-const DisplayEditor_1 = __webpack_require__(223);
 const mapStateToProps = (state) => ({
     activeDisplay: selectors.activeDisplay(state),
     savedDisplays: selectors.savedDisplays(state),
     selectedDisplay: selectors.selectedDisplay(state),
 });
 const mapDispatchToProps = (dispatch) => redux_1.bindActionCreators(actions, dispatch);
-const exportDisplay = (display) => utils_1.clipboard.write(serialize_1.displayToString(display));
-const BaseConfigPane = ({ activeDisplay, createNewDisplay, enterPresentationMode, importDisplay, removeDisplay, saveDisplay, saveDisplayAsNew, savedDisplays, selectExistingDisplay, selectedDisplay, setDisplayName, }) => (React.createElement("div", null,
+const BaseConfigPane = ({ activeDisplay, createNewDisplay, enterPresentationMode, importDisplay, removeDisplay, saveDisplay, saveDisplayAsNew, savedDisplays, selectExistingDisplay, selectedDisplay, }) => (React.createElement("div", null,
     React.createElement("div", null,
         React.createElement("button", { onClick: enterPresentationMode }, "hide editor"),
-        React.createElement("button", { onClick: importDisplay }, "import display from clipboard")),
+        React.createElement("button", { onClick: importDisplay }, "import display")),
     React.createElement(DisplaySelect_1.DisplaySelect, { displays: savedDisplays, selectDisplay: selectExistingDisplay, selectedDisplay: selectedDisplay }),
     React.createElement("div", null,
         React.createElement("button", { onClick: createNewDisplay }, "create new display"),
         React.createElement("button", { onClick: () => saveDisplay(activeDisplay) }, selectedDisplay === undefined ? 'save display as new' : 'save display'),
         React.createElement("button", { onClick: () => saveDisplayAsNew(activeDisplay) }, "clone display"),
-        selectedDisplay && (React.createElement("button", { onClick: () => removeDisplay(selectedDisplay) }, "remove display"))),
-    React.createElement(DisplayEditor_1.DisplayEditor, { display: selectedDisplay, exportDisplay: exportDisplay, updateDisplayName: setDisplayName })));
+        selectedDisplay && (React.createElement("button", { onClick: () => removeDisplay(selectedDisplay) }, "remove display")))));
 exports.ConfigPane = react_redux_1.connect(mapStateToProps, mapDispatchToProps)(BaseConfigPane);
 
 
@@ -59664,14 +59754,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-const TextField_1 = __webpack_require__(66);
-exports.DisplayEditor = ({ display, exportDisplay, updateDisplayName, }) => display === undefined ? null : (React.createElement("div", null,
-    "display name:",
-    ' ',
-    React.createElement("div", null,
-        React.createElement(TextField_1.TextField, { defaultValue: display.name, update: name => updateDisplayName({ display, name }) })),
-    React.createElement("div", null,
-        React.createElement("button", { onClick: () => exportDisplay(display) }, "export to clipboard"))));
+exports.AboutPane = () => (React.createElement("div", null,
+    "obviously this is pre-pre-pre-pre-alpha. however im working on more",
+    '"important"',
+    " stuff for the time being, so i probably wont be making many changes to this for a while.",
+    React.createElement("br", null),
+    React.createElement("a", { href: "https://github.com/graftss/noire/" }, "heres the repo"),
+    " if you want to help out (this was my first nontrivial typescript project, so a lot of the older stuff is pretty goofy looking because i didnt know what i was doing).",
+    React.createElement("br", null),
+    "if you just have a feature request or usage question or bug report or whatever, hmu grass#9931",
+    React.createElement("br", null),
+    "the main big feature i would like to do at some point would be to port this to electron to allow for global keyboard and mouse input handling."));
 
 
 /***/ }),
@@ -59689,41 +59782,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(__webpack_require__(0));
-exports.AboutPane = () => (React.createElement("div", null,
-    "obviously this is pre-pre-pre-pre-alpha. however im working on more",
-    '"important"',
-    " stuff for the time being, so i probably wont be making many changes to this for a while.",
-    React.createElement("br", null),
-    React.createElement("a", { href: "https://github.com/graftss/noire/" }, "heres the repo"),
-    " if you want to help out (this was my first nontrivial typescript project, so a lot of the older stuff is pretty goofy looking because i didnt know what i was doing).",
-    React.createElement("br", null),
-    "if you just have a feature request or usage question or bug report or whatever, hmu grass#9931",
-    React.createElement("br", null),
-    "the main big feature i would like to do at some point would be to port this to electron to allow for global keyboard and mouse input handling."));
-
-
-/***/ }),
-/* 225 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = __importStar(__webpack_require__(0));
-const core_1 = __webpack_require__(95);
+const core_1 = __webpack_require__(96);
 exports.PresentationSnackbar = ({ close, isOpen, }) => (React.createElement("div", null,
     React.createElement(core_1.Snackbar, { anchorOrigin: { horizontal: 'center', vertical: 'top' }, message: "Press Esc to exit full screen", onClose: close, open: isOpen })));
 
 
 /***/ }),
-/* 226 */
+/* 225 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -59734,7 +59799,7 @@ exports.Component = Component_1.Component;
 
 
 /***/ }),
-/* 227 */
+/* 226 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -59841,7 +59906,7 @@ function index (resultFn, isEqual) {
 /* harmony default export */ var memoize_one_esm = (index);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/inheritsLoose.js
-var inheritsLoose = __webpack_require__(101);
+var inheritsLoose = __webpack_require__(102);
 var inheritsLoose_default = /*#__PURE__*/__webpack_require__.n(inheritsLoose);
 
 // CONCATENATED MODULE: ./node_modules/@emotion/sheet/dist/sheet.browser.esm.js
@@ -61493,7 +61558,7 @@ var prop_types_default = /*#__PURE__*/__webpack_require__.n(prop_types);
 var esm_typeof = __webpack_require__(25);
 
 // EXTERNAL MODULE: ./node_modules/raf/index.js
-var raf = __webpack_require__(68);
+var raf = __webpack_require__(69);
 var raf_default = /*#__PURE__*/__webpack_require__.n(raf);
 
 // CONCATENATED MODULE: ./node_modules/react-select/dist/chunk-e8ae4b0f.browser.esm.js
@@ -61711,7 +61776,7 @@ function _taggedTemplateLiteral(strings, raw) {
   }));
 }
 // EXTERNAL MODULE: ./node_modules/react-input-autosize/lib/AutosizeInput.js
-var AutosizeInput = __webpack_require__(69);
+var AutosizeInput = __webpack_require__(70);
 var AutosizeInput_default = /*#__PURE__*/__webpack_require__.n(AutosizeInput);
 
 // CONCATENATED MODULE: ./node_modules/react-select/dist/chunk-5d200a41.browser.esm.js
