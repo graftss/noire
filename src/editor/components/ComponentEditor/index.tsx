@@ -11,6 +11,7 @@ import { ComponentKeys } from './ComponentKeys';
 import { ComponentState } from './ComponentState';
 import { ComponentModels } from './ComponentModels';
 import { ComponentTitle } from './ComponentTitle';
+import { Section } from '../layout/Section';
 
 interface PropsFromDispatch {
   setDefaultModel: CB1<{
@@ -83,21 +84,23 @@ const BaseComponentEditor: React.SFC<ComponentEditorProps> = ({
 
   return (
     <div>
-      <ComponentTitle label={config.title} />
-      <TransformerToggle />
-      <div>
-        <button onClick={() => removeComponent(component.id)}>
-          remove component
-        </button>
-        <button onClick={() => cloneComponent(component)}>
-          clone component
-        </button>
-      </div>
-      <ComponentState
-        component={component}
-        stateConfig={config.state}
-        update={updateState}
-      />
+      <Section>
+        <ComponentTitle label={config.title} />
+        <TransformerToggle />
+        <div>
+          <button onClick={() => removeComponent(component.id)}>
+            remove component
+          </button>
+          <button onClick={() => cloneComponent(component)}>
+            clone component
+          </button>
+        </div>
+        <ComponentState
+          component={component}
+          stateConfig={config.state}
+          update={updateState}
+        />
+      </Section>
       <ComponentKeys component={component} keys={config.keys} />
       <ComponentModels
         addFilter={addFilter}

@@ -21,14 +21,17 @@ export const TextureKindSelect: React.SFC<TextureKindSelectProps> = ({
   initialValue,
   setDefaultTexture,
 }) => (
-  <div>
-    <SelectField
-      buttonText={buttonText}
-      data={getTextureKinds()}
-      initialValue={initialValue}
-      onConfirm={(c: Maybe<T.TextureKind>) => c && setDefaultTexture(c)}
-      placeholder="texture class"
-      toOption={toOption}
-    />
+  <div className="flex-container">
+    <span className="center">filter type:</span>
+    <span className="flex-rest">
+      <SelectField
+        buttonText={buttonText}
+        data={getTextureKinds()}
+        initialValue={initialValue}
+        onConfirm={(c: Maybe<T.TextureKind>) => c && setDefaultTexture(c)}
+        placeholder="texture class"
+        toOption={toOption}
+      />
+    </span>
   </div>
 );

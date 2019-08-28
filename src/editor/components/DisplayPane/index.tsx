@@ -9,6 +9,7 @@ import { clipboard } from '../../../utils';
 import { displayToString } from '../../../display/serialize';
 import { ComponentSelect } from './ComponentSelect';
 import { DisplayEditor } from './DisplayEditor';
+import { Section } from '../layout/Section';
 
 interface PropsFromState {
   display: T.SerializedDisplay;
@@ -49,19 +50,23 @@ const BaseDisplayPane: React.SFC<DisplayPaneProps> = ({
   setCanvasDimensions,
 }) => (
   <div>
-    <DisplayEditor
-      addComponent={addDefaultComponent}
-      display={display}
-      exportDisplay={exportDisplay}
-      saveDisplay={saveDisplay}
-      setCanvasDimensions={setCanvasDimensions}
-      setDisplayName={setActiveDisplayName}
-    />
-    <ComponentSelect
-      components={components}
-      selected={selectedComponent}
-      selectComponent={selectComponent}
-    />
+    <Section>
+      <DisplayEditor
+        addComponent={addDefaultComponent}
+        display={display}
+        exportDisplay={exportDisplay}
+        saveDisplay={saveDisplay}
+        setCanvasDimensions={setCanvasDimensions}
+        setDisplayName={setActiveDisplayName}
+      />
+    </Section>
+    <Section>
+      <ComponentSelect
+        components={components}
+        selected={selectedComponent}
+        selectComponent={selectComponent}
+      />
+    </Section>
     {selectedComponent === undefined ? null : (
       <ComponentEditor component={selectedComponent} />
     )}

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as T from '../../../types';
 import { TexturesEditor } from '../TexturesEditor';
+import { Section } from '../layout/Section';
 
 interface ComponentTexturesProps {
   component: T.SerializedComponent;
@@ -22,21 +23,17 @@ export const ComponentTextures: React.SFC<ComponentTexturesProps> = ({
   setDefaultTexture,
   textureList,
   update,
-}) => {
-  return (
-    <div>
-      <div>
-        <TexturesEditor
-          setDefaultTexture={(textureName, kind) =>
-            setDefaultTexture({ id: component.id, textureName, kind })
-          }
-          textureList={textureList}
-          textureMap={component.graphics.textures}
-          update={(textureName, texture) =>
-            update({ component, textureName, texture })
-          }
-        />
-      </div>
-    </div>
-  );
-};
+}) => textureList.length === 0 ? null : (
+  <Section>
+    <TexturesEditor
+      setDefaultTexture={(textureName, kind) =>
+        setDefaultTexture({ id: component.id, textureName, kind })
+      }
+      textureList={textureList}
+      textureMap={component.graphics.textures}
+      update={(textureName, texture) =>
+        update({ component, textureName, texture })
+      }
+    />
+  </Section>
+);

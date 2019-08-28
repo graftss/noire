@@ -23,13 +23,16 @@ export const ComponentSelect: React.SFC<ComponentSelectProps> = ({
   selected,
   selectComponent,
 }) => (
-  <div>
-    <EditorSelect
-      data={components}
-      onChange={o => selectComponent(o.value)}
-      placeholder="Components"
-      selected={selected}
-      toOption={toOption}
-    />
+  <div className="flex-container">
+    <span className="center">selected component:</span>
+    <span className="flex-rest">
+      <EditorSelect
+        data={components}
+        onChange={o => selectComponent(o.value)}
+        placeholder="Components"
+        selected={selected}
+        toOption={toOption}
+      />
+    </span>
   </div>
 );

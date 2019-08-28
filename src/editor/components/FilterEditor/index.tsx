@@ -21,7 +21,7 @@ export const FilterEditor: React.SFC<FilterEditorProps> = ({
   update,
 }) =>
   filter === undefined ? null : (
-    <div style={{ border: '1px solid green' }}>
+    <div>
       <FilterKindSelect
         buttonText="set filter type"
         initialValue={filter.kind}

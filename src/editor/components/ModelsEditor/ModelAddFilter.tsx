@@ -9,12 +9,14 @@ interface ModelAddFilterProps {
 export const ModelAddFilter: React.SFC<ModelAddFilterProps> = ({
   addFilter,
 }) => (
-  <div>
-    new filter:
-    <FilterKindSelect
-      buttonText="add filter"
-      handleSelection={addFilter}
-      initialValue={undefined}
-    />
+  <div className="flex-container">
+    <span className="center">add filter:</span>
+    <span className="flex-rest">
+      <FilterKindSelect
+        buttonText="add filter"
+        handleSelection={addFilter}
+        initialValue={undefined}
+      />
+    </span>
   </div>
 );

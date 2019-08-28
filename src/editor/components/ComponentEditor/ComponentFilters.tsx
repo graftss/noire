@@ -6,6 +6,7 @@ import {
   getComponentInputFilter,
   mapComponentFilters,
 } from '../../../display/component';
+import { Section } from '../layout/Section';
 
 interface ComponentFiltersProps {
   component: T.SerializedComponent;
@@ -28,7 +29,7 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
   setDefaultFilter,
   updateFilter,
 }) => (
-  <div>
+  <Section>
     {mapComponentFilters((filter, ref, key) => {
       return (
         <div key={key}>
@@ -59,5 +60,5 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
         </div>
       );
     }, component)}
-  </div>
+  </Section>
 );

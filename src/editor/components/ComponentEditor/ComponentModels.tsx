@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as T from '../../../types';
 import { ModelsEditor } from '../ModelsEditor';
+import { Section } from '../layout/Section'
 
 interface ComponentModelsProps {
   component: T.SerializedComponent;
@@ -28,8 +29,8 @@ export const ComponentModels: React.SFC<ComponentModelsProps> = ({
   modelList,
   setDefaultModel,
   updateModel,
-}) => (
-  <div>
+}) => modelList.length === 0 ? null : (
+  <Section>
     <ModelsEditor
       addFilter={(modelName, kind) => addFilter({ component, modelName, kind })}
       modelList={modelList}
@@ -41,5 +42,5 @@ export const ComponentModels: React.SFC<ComponentModelsProps> = ({
         updateModel({ component, modelName, model })
       }
     />
-  </div>
+  </Section>
 );

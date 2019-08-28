@@ -32,16 +32,16 @@ export const DisplayEditor: React.SFC<DisplayEditorProps> = ({
   setDisplayName,
 }) =>
   display === undefined ? null : (
-    <div style={{ border: '3px solid blue' }}>
-      display name:{' '}
-      <div>
-        <TextField defaultValue={display.name} update={setDisplayName} />
-      </div>
+    <div>
       <div>
         <button onClick={() => exportDisplay(display)}>
           export to clipboard
         </button>
         <button onClick={() => saveDisplay(display)}>save display</button>
+      </div>{' '}
+      <div>
+        display name:
+        <TextField defaultValue={display.name} update={setDisplayName} />
       </div>
       <div>
         {renderUnsetDimensionsWarning(display)}
@@ -52,12 +52,15 @@ export const DisplayEditor: React.SFC<DisplayEditorProps> = ({
           update={({ x, y }) => setCanvasDimensions({ width: x, height: y })}
         />
       </div>
-      <div>
-        <ComponentKindSelect
-          buttonText="add new component"
-          initialValue={undefined}
-          handleSelection={addComponent}
-        />
+      <div className="flex-container">
+        <span className="center">add component:</span>
+        <span className="flex-rest">
+          <ComponentKindSelect
+            buttonText="add new component"
+            initialValue={undefined}
+            handleSelection={addComponent}
+          />
+        </span>
       </div>
     </div>
   );

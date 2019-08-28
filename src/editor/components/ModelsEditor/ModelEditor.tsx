@@ -20,8 +20,10 @@ export const ModelEditor: React.SFC<ModelEditorProps> = ({
   model,
   updateModel,
 }) => (
-  <div style={{ border: '1px solid red' }}>
-    <div>{name}</div>
+  <div>
+    <div>
+      Model: <b>{name}</b>
+    </div>
     <ModelKindSelect
       buttonText="set model type"
       initialValue={model && model.kind}

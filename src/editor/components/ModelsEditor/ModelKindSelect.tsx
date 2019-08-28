@@ -21,14 +21,17 @@ export const ModelKindSelect: React.SFC<ModelKindSelectProps> = ({
   initialValue,
   setDefaultModel,
 }) => (
-  <div>
-    <SelectField
-      buttonText={buttonText}
-      data={getKonvaModelKinds()}
-      initialValue={initialValue}
-      onConfirm={(c: Maybe<T.KonvaModelKind>) => c && setDefaultModel(c)}
-      placeholder="model class"
-      toOption={toOption}
-    />
+  <div className="flex-container">
+    <span className="center">model type:</span>
+    <span className="flex-rest">
+      <SelectField
+        buttonText={buttonText}
+        data={getKonvaModelKinds()}
+        initialValue={initialValue}
+        onConfirm={(c: Maybe<T.KonvaModelKind>) => c && setDefaultModel(c)}
+        placeholder="model class"
+        toOption={toOption}
+      />
+    </span>
   </div>
 );
