@@ -25,7 +25,6 @@ export const ComponentTextures: React.SFC<ComponentTexturesProps> = ({
 }) => {
   return (
     <div>
-      <div>Textures!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</div>
       <div>
         <TexturesEditor
           setDefaultTexture={(textureName, kind) =>

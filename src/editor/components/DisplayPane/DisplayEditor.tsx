@@ -10,7 +10,7 @@ interface DisplayEditorProps {
   exportDisplay: CB1<T.SerializedDisplay>;
   saveDisplay: CB1<T.SerializedDisplay>;
   setCanvasDimensions: CB1<{ width: number; height: number }>;
-  setDisplayName: CB1<{ display: T.SerializedDisplay; name: string }>;
+  setDisplayName: CB1<string>;
 }
 
 export const renderUnsetDimensionsWarning = ({
@@ -35,10 +35,7 @@ export const DisplayEditor: React.SFC<DisplayEditorProps> = ({
     <div style={{ border: '3px solid blue' }}>
       display name:{' '}
       <div>
-        <TextField
-          defaultValue={display.name}
-          update={name => setDisplayName({ display, name })}
-        />
+        <TextField defaultValue={display.name} update={setDisplayName} />
       </div>
       <div>
         <button onClick={() => exportDisplay(display)}>

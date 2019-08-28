@@ -62,6 +62,7 @@ export type EditorAction =
   | { type: 'enterPresentationMode' }
   | { type: 'closePresentationSnackbar' }
   | { type: 'exitPresentationMode' }
+  | { type: 'setActiveDisplayName'; data: string }
   | { type: 'saveDisplay'; data: T.SerializedDisplay }
   | { type: 'selectDisplay'; data: T.SerializedDisplay }
   | { type: 'removeDisplay'; data: string };
@@ -169,6 +170,11 @@ export const stopListening = (): EditorAction => ({
 export const setTab = (kind: T.TabKind): EditorAction => ({
   type: 'setTab',
   data: kind,
+});
+
+export const setActiveDisplayName = (name: string): EditorAction => ({
+  type: 'setActiveDisplayName',
+  data: name,
 });
 
 export const setDefaultModel: FuncCreator<{

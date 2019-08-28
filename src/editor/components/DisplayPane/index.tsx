@@ -21,7 +21,7 @@ interface PropsFromDispatch {
   saveDisplay: CB1<T.SerializedDisplay>;
   selectComponent: CB1<string>;
   setCanvasDimensions: CB1<{ width: number; height: number }>;
-  setDisplayName: CB1<{ display: T.SerializedDisplay; name: string }>;
+  setActiveDisplayName: CB1<string>;
 }
 
 interface DisplayPaneProps extends PropsFromState, PropsFromDispatch {}
@@ -45,8 +45,8 @@ const BaseDisplayPane: React.SFC<DisplayPaneProps> = ({
   saveDisplay,
   selectComponent,
   selectedComponent,
+  setActiveDisplayName,
   setCanvasDimensions,
-  setDisplayName,
 }) => (
   <div>
     <DisplayEditor
@@ -55,7 +55,7 @@ const BaseDisplayPane: React.SFC<DisplayPaneProps> = ({
       exportDisplay={exportDisplay}
       saveDisplay={saveDisplay}
       setCanvasDimensions={setCanvasDimensions}
-      setDisplayName={setDisplayName}
+      setDisplayName={setActiveDisplayName}
     />
     <ComponentSelect
       components={components}
