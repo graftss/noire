@@ -23,14 +23,12 @@ export const ComponentKindSelect: React.SFC<ComponentKindSelectProps> = ({
   handleSelection,
   initialValue,
 }) => (
-  <div>
-    <SelectField
-      buttonText={buttonText}
-      data={componentKinds}
-      initialValue={initialValue}
-      onConfirm={(c: Maybe<T.ComponentKind>) => c && handleSelection(c)}
-      placeholder="component type"
-      toOption={toOption}
-    />
-  </div>
+  <SelectField
+    buttonText={buttonText}
+    data={componentKinds}
+    initialValue={initialValue}
+    onConfirm={(c: Maybe<T.ComponentKind>) => c && handleSelection(c)}
+    placeholder="component type"
+    toOption={toOption}
+  />
 );

@@ -35,7 +35,9 @@ export class Display {
   }
 
   private clearDisplay = (): void => {
-    this.cm.requestRemoveAll();
+    this.cm.forEachComponent(c => {
+      this.eventBus.emit(events.requestRemoveComponent(c.id));
+    });
   };
 
   private loadDisplay = (display: T.SerializedDisplay): void => {
@@ -59,7 +61,9 @@ export class Display {
     serialModel: T.SerializedKonvaModel,
     model: T.KonvaModel,
   ): void {
-    this.store.dispatch(actions.setComponentModel(id, modelName, serialModel));
+    actions.setModel({ id, modelName, model: serialModel })(
+      this.store.dispatch,
+    );
     this.eventBus.emit(events.setComponentModel(id, modelName, model));
   }
 

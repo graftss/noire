@@ -3,20 +3,24 @@ import * as T from '../../../types';
 import { FilterEditor } from '../FilterEditor';
 import { getInputFilterControllerKey } from '../../../display/filter';
 import {
+  componentFilterRefName,
   getComponentInputFilter,
   mapComponentFilters,
 } from '../../../display/component';
+import { Section } from '../layout/Section';
 
 interface ComponentFiltersProps {
   component: T.SerializedComponent;
+  exportFilter: CB1<T.InputFilter>;
+  importFilter: CB1<{ id: string; ref: T.ComponentFilterRef }>;
   removeFilter: CB1<{ id: string; ref: T.ComponentFilterRef }>;
   setDefaultFilter: CB1<{
     component: T.SerializedComponent;
     ref: T.ComponentFilterRef;
     kind: T.InputFilterKind;
   }>;
-  updateFilter: CB1<{
-    component: T.SerializedComponent;
+  setFilter: CB1<{
+    id: string;
     ref: T.ComponentFilterRef;
     filter: T.InputFilter;
   }>;
@@ -24,16 +28,19 @@ interface ComponentFiltersProps {
 
 export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
   component,
+  exportFilter,
+  importFilter,
   removeFilter,
   setDefaultFilter,
-  updateFilter,
+  setFilter,
 }) => (
-  <div>
-    {mapComponentFilters((filter, ref, key) => {
-      return (
+  <Section>
+    {mapComponentFilters(
+      (filter, ref, key) => (
         <div key={key}>
           <div>
             <FilterEditor
+              exportFilter={exportFilter}
               filter={filter}
               getRemapButtonValue={field => {
                 const controllerKey = getInputFilterControllerKey(
@@ -49,15 +56,18 @@ export const ComponentFilters: React.SFC<ComponentFiltersProps> = ({
                   field,
                 };
               }}
+              name={componentFilterRefName(ref)}
+              importFilter={() => importFilter({ id: component.id, ref })}
               remove={() => removeFilter({ id: component.id, ref })}
               setDefaultFilter={kind =>
                 setDefaultFilter({ component, ref, kind })
               }
-              update={filter => updateFilter({ component, ref, filter })}
+              update={filter => setFilter({ id: component.id, ref, filter })}
             />
           </div>
         </div>
-      );
-    }, component)}
-  </div>
+      ),
+      component,
+    )}
+  </Section>
 );

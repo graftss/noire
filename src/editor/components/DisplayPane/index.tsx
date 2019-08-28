@@ -5,9 +5,9 @@ import * as T from '../../../types';
 import * as selectors from '../../../state/selectors';
 import * as actions from '../../../state/actions';
 import { ComponentEditor } from '../ComponentEditor';
-import { CanvasEditor } from './CanvasEditor';
+import { Section } from '../layout/Section';
 import { ComponentSelect } from './ComponentSelect';
-import { ComponentAdd } from './ComponentAdd';
+import { DisplayEditor } from './DisplayEditor';
 
 interface PropsFromState {
   display: T.SerializedDisplay;
@@ -17,9 +17,12 @@ interface PropsFromState {
 
 interface PropsFromDispatch {
   addDefaultComponent: CB1<T.ComponentKind>;
+  exportDisplay: CB1<T.SerializedDisplay>;
+  importComponent: CB0;
   saveDisplay: CB1<T.SerializedDisplay>;
   selectComponent: CB1<string>;
-  setCanvasDimensions: CB1<{ width: number; height: number }>;
+  setActiveDisplayDimensions: CB1<{ width: number; height: number }>;
+  setActiveDisplayName: CB1<string>;
 }
 
 interface DisplayPaneProps extends PropsFromState, PropsFromDispatch {}
@@ -37,22 +40,33 @@ const BaseDisplayPane: React.SFC<DisplayPaneProps> = ({
   addDefaultComponent,
   components,
   display,
+  exportDisplay,
+  importComponent,
   saveDisplay,
   selectComponent,
   selectedComponent,
-  setCanvasDimensions,
+  setActiveDisplayName,
+  setActiveDisplayDimensions,
 }) => (
   <div>
-    <CanvasEditor display={display} setCanvasDimensions={setCanvasDimensions} />
-    <div>
-      <button onClick={() => saveDisplay(display)}>save display</button>
-    </div>
-    <ComponentAdd addComponent={addDefaultComponent} />
-    <ComponentSelect
-      components={components}
-      selected={selectedComponent}
-      selectComponent={selectComponent}
-    />
+    <Section>
+      <DisplayEditor
+        addComponent={addDefaultComponent}
+        display={display}
+        exportDisplay={exportDisplay}
+        importComponent={importComponent}
+        saveDisplay={saveDisplay}
+        setActiveDisplayDimensions={setActiveDisplayDimensions}
+        setDisplayName={setActiveDisplayName}
+      />
+    </Section>
+    <Section>
+      <ComponentSelect
+        components={components}
+        selected={selectedComponent}
+        selectComponent={selectComponent}
+      />
+    </Section>
     {selectedComponent === undefined ? null : (
       <ComponentEditor component={selectedComponent} />
     )}

@@ -37,11 +37,9 @@ export class ComponentManager {
     }
   };
 
-  requestRemoveAll(): void {
-    this.components.forEach(c =>
-      this.eventBus.emit(events.requestRemoveComponent(c.id)),
-    );
-  }
+  forEachComponent = (f: (c: Component) => void): void => {
+    [...this.components].forEach(f);
+  };
 
   update(globalInput: T.GlobalControllerInput, dt: number): void {
     if ((window as any).stopUpdating) return;

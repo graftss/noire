@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import * as T from '../../types';
-import { keys } from '../../utils';
+import { keys, validateJSONString } from '../../utils';
 import { Texture } from '../texture/Texture';
 import { rectModelFields, defaultRectAttrs } from './Rect';
 import {
@@ -96,3 +96,15 @@ export const defaultSerializedKonvaModel = <K extends KonvaModelKind>(
 export const defaultKonvaModel = <K extends KonvaModelKind>(
   kind: K,
 ): KonvaModel<K> => deserializeKonvaModel(defaultSerializedKonvaModel(kind));
+
+const validateModel = (o: any): boolean =>
+  typeof o === 'object' &&
+  konvaModelKinds.includes(o.kind) &&
+  typeof o.attrs === 'object';
+
+export const stringToModel: (
+  str: string,
+) => Maybe<SerializedKonvaModel> = validateJSONString(validateModel);
+
+export const modelToString = (model: SerializedKonvaModel): string =>
+  JSON.stringify(model);

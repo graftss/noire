@@ -49,8 +49,8 @@ export function SelectField<T, O extends BaseOption>({
     <WithDefault
       initialValue={initialIndex}
       render={(index: number, setIndex: (index: number) => void) => (
-        <div style={{ display: 'flex' }}>
-          <div style={{ flexGrow: 100 }}>
+        <span style={{ display: 'flex' }}>
+          <span style={{ flexGrow: 100 }}>
             <EditorSelect
               data={data}
               selected={dataAtIndex(index)}
@@ -61,13 +61,13 @@ export function SelectField<T, O extends BaseOption>({
               placeholder={placeholder}
               toOption={indexedToOption}
             />
-          </div>
+          </span>
           {autoConfirm ? null : (
             <button onClick={() => onConfirm(dataAtIndex(index))}>
               {buttonText}
             </button>
           )}
-        </div>
+        </span>
       )}
     />
   );

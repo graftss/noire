@@ -217,10 +217,10 @@ export const stickDistort: T.InputFilterFactory<'stickDistort'> = ({
   });
 
 export const dPadDistortInputFields: Readonly<T.InputFilterInputField[]> = [
-  { key: 'r', inputKind: 'axis', label: 'Right' },
-  { key: 'l', inputKind: 'axis', label: 'Left' },
-  { key: 'd', inputKind: 'axis', label: 'Down' },
-  { key: 'u', inputKind: 'axis', label: 'Up' },
+  { key: 'r', inputKind: 'button', label: 'Right' },
+  { key: 'l', inputKind: 'button', label: 'Left' },
+  { key: 'd', inputKind: 'button', label: 'Down' },
+  { key: 'u', inputKind: 'button', label: 'Up' },
 ] as const;
 
 export const defaultDPadDistortState = defaultDistortState;

@@ -6,19 +6,19 @@ import { ControllerName } from './ControllerName';
 interface ControllerEditorProps {
   controller: Maybe<T.Controller>;
   removeController: (id: string) => void;
-  updateControllerName: (id: string, name: string) => void;
+  setControllerName: (id: string, name: string) => void;
 }
 
 export const ControllerEditor: React.SFC<ControllerEditorProps> = ({
   controller,
   removeController,
-  updateControllerName,
+  setControllerName,
 }) =>
   controller ? (
     <div>
       <ControllerName
         initialName={controller.name}
-        update={name => updateControllerName(controller.id, name)}
+        update={name => setControllerName(controller.id, name)}
       />
       <button onClick={() => removeController(controller.id)}>
         delete controller

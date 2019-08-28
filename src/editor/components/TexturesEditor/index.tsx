@@ -3,6 +3,8 @@ import * as T from '../../../types';
 import { TextureEditor } from './TextureEditor';
 
 interface TextureEditorProps<TS extends readonly string[]> {
+  exportTexture: CB1<T.SerializedTexture>;
+  importTexture: CB1<string>;
   setDefaultTexture: (textureName: string, k: T.TextureKind) => void;
   textureMap: Record<TS[number], T.SerializedTexture>;
   textureList: TS;
@@ -10,6 +12,8 @@ interface TextureEditorProps<TS extends readonly string[]> {
 }
 
 export function TexturesEditor<TS extends readonly string[]>({
+  exportTexture,
+  importTexture,
   setDefaultTexture,
   textureList,
   textureMap,
@@ -19,6 +23,8 @@ export function TexturesEditor<TS extends readonly string[]>({
     <div>
       {textureList.map(name => (
         <TextureEditor
+          exportTexture={exportTexture}
+          importTexture={importTexture}
           key={name}
           name={name}
           setDefaultTexture={setDefaultTexture}

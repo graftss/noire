@@ -17,6 +17,7 @@ export interface ControllerKeyData {
 export interface ControllerClassConfig<CK extends string = string> {
   keyOrder: readonly CK[];
   map: Readonly<Record<CK, ControllerKeyData>>;
+  defaultBindings?: Partial<Record<CK, T.Binding>>;
 }
 
 export interface BaseControllerClass<CK extends string = string> {
@@ -70,7 +71,7 @@ export const getNewController = (kind: ControllerKind): Controller =>
     id: uuid(),
     name: `New ${kind} controller`,
     kind,
-    bindings: {},
+    bindings: configs[kind].defaultBindings || {},
   } as Controller);
 
 export const getKeyInputKind = (

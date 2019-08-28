@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { blurOnEnterKeyDown, defaultTo } from '../../../utils';
+import { runOnEnterKeydown, defaultTo } from '../../../utils';
 import { WithDefault } from './WithDefault';
 
 interface TextFieldProps {
@@ -15,14 +15,18 @@ export const TextField: React.SFC<TextFieldProps> = ({
 }) => (
   <WithDefault
     initialValue={defaultTo(initialValue, defaultValue)}
-    render={(value, setValue) => (
-      <input
-        value={value}
-        onChange={e => setValue(e.target.value)}
-        onBlur={() => update(value)}
-        onKeyDown={blurOnEnterKeyDown}
-        type="text"
-      />
-    )}
+    render={(value, setValue) => {
+      const runUpdate = (): void => update(value);
+
+      return (
+        <input
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          onBlur={runUpdate}
+          onKeyDown={runOnEnterKeydown(runUpdate)}
+          type="text"
+        />
+      );
+    }}
   />
 );

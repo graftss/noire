@@ -9,6 +9,7 @@ import {
   path,
   toPairs,
   uuid,
+  validateJSONString,
 } from '../../utils';
 import { serializeKonvaModel, deserializeKonvaModel } from '../model/konva';
 import { defaultSerializedTexture } from '../texture';
@@ -194,6 +195,9 @@ export const getNewComponentFilterRef = (
   return { modelName, filterIndex };
 };
 
+export const componentFilterRefName = (ref: ComponentFilterRef): string =>
+  `(${ref.modelName}, #${ref.filterIndex})`;
+
 export const getComponentInputFilter = (
   component: SerializedComponent,
   { modelName, filterIndex }: ComponentFilterRef,
@@ -269,6 +273,7 @@ export const defaultSerializedComponent = (
 };
 
 export const validateSerializedComponent = (o: any): boolean =>
+  typeof o === 'object' &&
   typeof o.id === 'string' &&
   componentKinds.includes(o.kind) &&
   typeof o.graphics === 'object' &&
@@ -282,3 +287,31 @@ export const cloneSerializedComponent = (
   id: uuid(),
   state: { ...c.state, name: `Clone of ${c.state.name}` },
 });
+
+export const portOutdatedComponent = (
+  c: SerializedComponent,
+): SerializedComponent => {
+  const state: any = c.state;
+
+  // replace `offset` with `position` in state
+  if (state.offset) {
+    state.position = state.offset;
+    delete state.offset;
+  }
+
+  return c;
+};
+
+const stringToRawComponent: (
+  str: string,
+) => Maybe<SerializedComponent> = validateJSONString(
+  validateSerializedComponent,
+);
+
+export const stringToComponent = (str: string): Maybe<SerializedComponent> => {
+  const component = stringToRawComponent(str);
+  return component && portOutdatedComponent(component);
+};
+
+export const componentToString = (component: SerializedComponent): string =>
+  JSON.stringify(component);

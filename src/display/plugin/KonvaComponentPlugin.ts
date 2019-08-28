@@ -27,7 +27,15 @@ interface DragEndEvent {
 }
 
 interface TransformEndEvent {
-  target: { attrs: { scaleX: number; scaleY: number; rotation: number } };
+  target: {
+    attrs: {
+      rotation: number;
+      scaleX: number;
+      scaleY: number;
+      x: number;
+      y: number;
+    };
+  };
 }
 
 type ComponentQueryResult =
@@ -156,8 +164,12 @@ export class KonvaComponentPlugin extends DisplayPlugin {
   private onGroupTransformend = (id: string) => (
     event: TransformEndEvent,
   ): void => {
-    const { scaleX: x, scaleY: y, rotation } = event.target.attrs;
-    const update: T.ComponentState = { scale: { x, y }, rotation };
+    const { scaleX, scaleY, rotation, x, y } = event.target.attrs;
+    const update: T.ComponentState = {
+      position: { x, y },
+      rotation,
+      scale: { x: scaleX, y: scaleY },
+    };
     this.display.emitUpdateComponentState(id, update);
   };
 
