@@ -95,10 +95,10 @@ export class KonvaComponentPlugin extends DisplayPlugin {
 
     this.stage.on('click', this.onStageClick);
 
-    const handlers = [
+    const handlers: T.DisplayEventHandler[] = [
       {
-        kind: 'requestSetCanvasDimensions',
-        cb: this.onRequestSetCanvasDimensions,
+        kind: 'requestUpdateDisplayField',
+        cb: this.onRequestUpdateDisplayField,
       },
       { kind: 'requestAddComponent', cb: this.onRequestAddComponent },
       { kind: 'requestRemoveComponent', cb: this.onRequestRemoveComponent },
@@ -117,6 +117,14 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     ];
 
     handlers.forEach(eventBus.on);
+  }
+
+  initCanvas(display: T.SerializedDisplay): void {
+    const { width, height, backgroundColor } = display;
+
+    this.stage.size({ width, height });
+    this.border.size({ width, height });
+    this.border.fill(backgroundColor);
   }
 
   private onStageClick = ({ target }: StageClickEvent) => {
@@ -173,12 +181,10 @@ export class KonvaComponentPlugin extends DisplayPlugin {
     this.display.emitUpdateComponentState(id, update);
   };
 
-  private onRequestSetCanvasDimensions = ({
-    width,
-    height,
-  }: T.DisplayHandlerData['requestSetCanvasDimensions']): void => {
-    this.stage.size({ width, height });
-    this.border.size({ width, height });
+  private onRequestUpdateDisplayField = ({
+    display,
+  }: T.DisplayHandlerData['requestUpdateDisplayField']): void => {
+    this.initCanvas(display);
   };
 
   // we need to add each model to its group before calling `init`

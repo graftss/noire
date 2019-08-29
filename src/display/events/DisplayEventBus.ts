@@ -5,7 +5,10 @@ import { Component } from '../component/Component';
 import { Texture } from '../texture/Texture';
 
 export interface DisplayHandlerData {
-  requestSetCanvasDimensions: { width: number; height: number };
+  requestUpdateDisplayField: {
+    display: T.SerializedDisplay;
+    field: T.DisplayField;
+  };
   requestClearDisplay: undefined;
   requestLoadDisplay: T.SerializedDisplay;
   requestAddComponent: Component;
@@ -82,7 +85,7 @@ type AllDisplayEventCallbacks = {
 
 export class DisplayEventBus {
   private callbacks: AllDisplayEventCallbacks = {
-    requestSetCanvasDimensions: [],
+    requestUpdateDisplayField: [],
     requestClearDisplay: [],
     requestLoadDisplay: [],
     requestAddComponent: [],

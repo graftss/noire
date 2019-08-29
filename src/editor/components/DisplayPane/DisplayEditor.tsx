@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as T from '../../../types';
-import { TextField } from '../controls/TextField';
-import { Vec2Field } from '../controls/Vec2Field';
 import { ComponentKindSelect } from './ComponentKindSelect';
+import { DisplayFields } from './DisplayFields';
 
 interface DisplayEditorProps {
   addComponent: CB1<T.ComponentKind>;
@@ -10,8 +9,10 @@ interface DisplayEditorProps {
   exportDisplay: CB1<T.SerializedDisplay>;
   importComponent: CB0;
   saveDisplay: CB1<T.SerializedDisplay>;
-  setActiveDisplayDimensions: CB1<{ width: number; height: number }>;
-  setDisplayName: CB1<string>;
+  updateDisplayField: CB1<{
+    display: T.SerializedDisplay;
+    field: T.DisplayField;
+  }>;
 }
 
 export const renderUnsetDimensionsWarning = ({
@@ -30,8 +31,7 @@ export const DisplayEditor: React.SFC<DisplayEditorProps> = ({
   exportDisplay,
   importComponent,
   saveDisplay,
-  setActiveDisplayDimensions,
-  setDisplayName,
+  updateDisplayField,
 }) =>
   display === undefined ? null : (
     <div>
@@ -40,21 +40,7 @@ export const DisplayEditor: React.SFC<DisplayEditorProps> = ({
         <button onClick={() => saveDisplay(display)}>save display</button>
         <button onClick={importComponent}>import component</button>
       </div>{' '}
-      <div>
-        display name:
-        <TextField defaultValue={display.name} update={setDisplayName} />
-      </div>
-      <div>
-        {renderUnsetDimensionsWarning(display)}
-        canvas size:{' '}
-        <Vec2Field
-          defaultValue={{ x: 0, y: 0 }}
-          initialValue={{ x: display.width, y: display.height }}
-          update={({ x, y }) =>
-            setActiveDisplayDimensions({ width: x, height: y })
-          }
-        />
-      </div>
+      <DisplayFields display={display} update={updateDisplayField} />
       <div className="flex-container">
         <span className="center">add new component:</span>
         <span className="flex-rest">

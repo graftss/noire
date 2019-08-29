@@ -446,6 +446,16 @@ export const saveDisplayAsNew: FuncCreator<
   })(dispatch);
 };
 
+export const updateDisplayField: FuncCreator<{
+  display: T.SerializedDisplay;
+  field: T.DisplayField;
+}> = ({ display, field }) => dispatch => {
+  const event = events.requestUpdateDisplayField(display, field);
+
+  saveDisplay(display)(dispatch);
+  dispatch(emitDisplayEvents([event]));
+};
+
 export const selectExistingDisplay: FuncCreator<
   T.SerializedDisplay
 > = display => dispatch => {
@@ -456,16 +466,6 @@ export const setActiveDisplayName = (name: string): EditorAction => ({
   type: 'setActiveDisplayName',
   data: name,
 });
-
-export const setActiveDisplayDimensions: FuncCreator<{
-  width: number;
-  height: number;
-}> = ({ width, height }) => dispatch => {
-  const event = events.requestSetCanvasDimensions(width, height);
-
-  dispatch({ type: 'setActiveDisplayDimensions', data: { width, height } });
-  dispatch(emitDisplayEvents([event]));
-};
 
 export const closePresentationSnackbar: FuncCreator0 = () => dispatch =>
   dispatch({ type: 'closePresentationSnackbar' });
