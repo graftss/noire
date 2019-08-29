@@ -1,15 +1,17 @@
 import * as T from '../../types';
-import { mapPath } from '../../utils';
+import { assocPath } from '../../utils';
 import { Texture } from './Texture';
 
 export interface ImageTextureState {
   src: string;
   offset: Vec2;
+  scale: Vec2;
 }
 
 const defaultImageTextureState: ImageTextureState = {
   src: '',
   offset: { x: 0, y: 0 },
+  scale: { x: 1, y: 1 },
 };
 
 type ImageLoadState = 'requested' | 'loaded' | 'error';
@@ -21,15 +23,24 @@ export const imageTextureFields: T.TextureField<'image'>[] = [
     kind: 'string',
     defaultValue: defaultImageTextureState.src,
     getter: t => t.state.src,
-    setter: (t, src) => mapPath(['state', 'src'], () => src, t),
+    setter: (t, src) => assocPath(['state', 'src'], src, t),
   } as T.TextureField<'image', 'string'>,
   {
     key: 'offset',
-    label: 'Offset',
+    label: 'Image offset',
     kind: 'Vec2',
     defaultValue: defaultImageTextureState.offset,
     getter: t => t.state.offset,
-    setter: (t, offset) => mapPath(['state', 'offset'], () => offset, t),
+    setter: (t, offset) => assocPath(['state', 'offset'], offset, t),
+  } as T.TextureField<'image', 'Vec2'>,
+  {
+    key: 'scale',
+    label: 'Image scale',
+    kind: 'Vec2',
+    defaultValue: defaultImageTextureState.scale,
+    props: { precision: 3 },
+    getter: t => t.state.scale,
+    setter: (t, scale) => assocPath(['state', 'scale'], scale, t),
   } as T.TextureField<'image', 'Vec2'>,
 ];
 
@@ -57,7 +68,7 @@ export class ImageTexture extends Texture<'image'> {
 
   update(update: Partial<ImageTextureState>): void {
     super.update(update);
-    if (update.src !== undefined) this.loadImage(update.src);
+    if (update.src && update.src !== this.state.src) this.loadImage(update.src);
   }
 
   fillImage(model: T.KonvaModel): void {
@@ -65,6 +76,7 @@ export class ImageTexture extends Texture<'image'> {
     model.fillPatternRepeat('no-repeat');
     model.fillPatternImage(this.image);
     model.fillPatternOffset(this.state.offset);
+    model.fillPatternScale(this.state.scale);
     model.cache(null);
   }
 

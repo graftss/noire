@@ -2,12 +2,12 @@ import Konva from 'konva';
 import * as T from '../../types';
 import { Texture } from '../texture/Texture';
 
-export const requestSetCanvasDimensions = (
-  width: number,
-  height: number,
-): T.DisplayEvent<'requestSetCanvasDimensions'> => ({
-  kind: 'requestSetCanvasDimensions',
-  data: { width, height },
+export const requestUpdateDisplayField = (
+  display: T.SerializedDisplay,
+  field: T.DisplayField,
+): T.DisplayEvent<'requestUpdateDisplayField'> => ({
+  kind: 'requestUpdateDisplayField',
+  data: { display, field },
 });
 
 export const requestClearDisplay = (): T.DisplayEvent<

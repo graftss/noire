@@ -6,14 +6,13 @@ import { deserializeComponent } from './component';
 import { ComponentManager } from './ComponentManager';
 import { KonvaComponentPlugin } from './plugin/KonvaComponentPlugin';
 import { DisplayEventBus } from './events/DisplayEventBus';
-import { DisplayPlugin } from './plugin/DisplayPlugin';
 
 export class Display {
-  private plugins: DisplayPlugin[];
   cm: ComponentManager;
   config: T.NoireConfig;
   store: T.EditorStore;
   eventBus: DisplayEventBus;
+  konvaPlugin: KonvaComponentPlugin;
 
   constructor(
     config: T.NoireConfig,
@@ -25,7 +24,7 @@ export class Display {
     this.eventBus = eventBus;
 
     this.cm = new ComponentManager(this.eventBus);
-    this.plugins = [new KonvaComponentPlugin(config, this)];
+    this.konvaPlugin = new KonvaComponentPlugin(config, this);
 
     // sync display with the store's initial state
     this.loadDisplay(selectors.activeDisplay(store.getState()));
@@ -42,9 +41,7 @@ export class Display {
 
   private loadDisplay = (display: T.SerializedDisplay): void => {
     this.clearDisplay();
-    this.eventBus.emit(
-      events.requestSetCanvasDimensions(display.width, display.height),
-    );
+    this.konvaPlugin.initCanvas(display);
     display.components
       .map(deserializeComponent)
       .forEach(c => this.eventBus.emit(events.requestAddComponent(c)));
