@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as T from '../../../types';
 import { getInputFilterInputFields } from '../../../display/filter';
-import { RemapButton } from '../controls/RemapButton';
+import { RemapButtonList } from '../controls/RemapButtonList';
 
 interface FilterKeysProps {
   filter: T.InputFilter;
@@ -13,11 +13,11 @@ export const FilterKeys: React.SFC<FilterKeysProps> = ({
   getRemapButtonValue,
 }) => (
   <div>
-    {getInputFilterInputFields(filter.kind).map(field => (
-      <div key={field.key}>
-        {field.label}:
-        <RemapButton value={getRemapButtonValue(field)} />
-      </div>
-    ))}
+    <RemapButtonList
+      data={getInputFilterInputFields(filter.kind).map(field => ({
+        label: field.label,
+        value: getRemapButtonValue(field),
+      }))}
+    />
   </div>
 );
