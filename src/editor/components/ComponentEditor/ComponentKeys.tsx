@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as T from '../../../types';
 import { stringifyComponentKey } from '../../../display/component';
-import { RemapButton } from '../controls/RemapButton';
+import { RemapButtonList } from '../controls/RemapButtonList';
 import { Section } from '../layout/Section';
 
 interface ComponentKeysProps {
@@ -15,12 +15,12 @@ export const ComponentKeys: React.SFC<ComponentKeysProps> = ({
 }) => {
   return keys.length === 0 ? null : (
     <Section>
-      {keys.map((componentKey: T.ComponentKey) => (
-        <div key={componentKey.key}>
-          {stringifyComponentKey(componentKey)}
-          <RemapButton value={{ kind: 'component', component, componentKey }} />
-        </div>
-      ))}
+      <RemapButtonList
+        data={keys.map(componentKey => ({
+          label: stringifyComponentKey(componentKey),
+          value: { kind: 'component', component, componentKey },
+        }))}
+      />
     </Section>
   );
 };
