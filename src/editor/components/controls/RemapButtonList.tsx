@@ -7,14 +7,16 @@ interface RemapButtonListProps {
 }
 
 export const RemapButtonList: React.SFC<RemapButtonListProps> = ({ data }) => (
-  <table>
-    {data.map(({ label, value }, i) => (
-      <tr key={i}>
-        <td>{label}</td>
-        <td>
-          <RemapButton value={value} />
-        </td>
-      </tr>
-    ))}
+  <table className="remap-button-list">
+    <tbody>
+      {data.map(({ label, value }, i) => (
+        <tr key={i}>
+          <td>{label}</td>
+          <td>
+            <RemapButton value={value} />
+          </td>
+        </tr>
+      ))}
+    </tbody>
   </table>
 );
