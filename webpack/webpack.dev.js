@@ -10,7 +10,7 @@ module.exports = merge(common, {
   devtool: 'source-map',
 
   devServer: {
-    contentBase: root,
+    contentBase: path.join(root, 'dist'),
   },
 
   module: {
