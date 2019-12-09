@@ -7,7 +7,7 @@
   "scripts": {
     "build": "webpack --config webpack/webpack.prod.js",
     "start": "webpack-dev-server --open --hot --config webpack/webpack.dev.js",
-    "lint": "node node_modules/eslint/bin/eslint.js --ext .ts,.tsx --fix src/**/* || exit 0",
+    "lint": "eslint --fix --ext ts,tsx src || exit 0",
     "deploy": "npm run build && gh-pages -d dist"
   },
   "author": "",
