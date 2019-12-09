@@ -119,6 +119,7 @@ export { EditorAction } from './state/actions';
 export { Dispatch } from './state/actions';
 export { DisplayState } from './state/reducers/display';
 export { EditorState } from './state/reducers/root';
+export { LocalState } from './state/reducers/local';
 export {
   InputState,
   RemapState,

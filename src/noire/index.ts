@@ -1,9 +1,10 @@
 import * as T from './types';
+import * as actions from './state/actions';
+import * as selectors from './state/selectors';
 import { ControllerManager } from './input/ControllerManager';
 import { Display } from './display';
 import { DisplayEventBus } from './display/events/DisplayEventBus';
 import { createEditorApp } from './editor';
-import * as actions from './state/actions';
 
 // TODO: figure out how to not need this to recompile types.ts when the
 // watcher notices that it has changed. googling suggests that to do
@@ -26,14 +27,18 @@ export class Noire {
   constructor(private config: NoireConfig) {}
 
   private updateLoop = (tNext: number): void => {
+    const fps = selectors.fps(this.editorApp.store.getState());
     const dt = tNext - this.tLast;
-    this.tLast = tNext;
 
-    const input = this.controllerManager.getInput();
-    this.display.update(input, dt);
-    this.display.draw();
+    if (dt > 1000/fps) {
+      this.tLast = tNext;
 
-    this.controllerManager.update();
+      const input = this.controllerManager.getInput();
+      this.display.update(input, dt);
+      this.display.draw();
+
+      this.controllerManager.update();
+    }
 
     requestAnimationFrame(this.updateLoop);
   };

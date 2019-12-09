@@ -149,3 +149,8 @@ export const selectedDisplay = lift(
   (state: T.SavedDisplaysState): Maybe<T.SerializedDisplay> =>
     find(d => d.id === state.selectedDisplayId, state.displays),
 );
+
+export const fps = lift(
+  'local',
+  (state: T.LocalState): number => state.fps,
+);
