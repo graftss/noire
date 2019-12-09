@@ -1,22 +1,16 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const root = path.resolve(__dirname, '..');
+
 module.exports = {
-  mode: 'development',
-
-  devtool: 'source-map',
-
-  devServer: {
-    contentBase: path.join(__dirname),
-  },
-
   entry: {
-    bundle: './src/index.ts',
+    bundle: path.join(root, '/src/web/index.ts'),
   },
 
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(root, 'dist'),
   },
 
   resolve: {
@@ -34,33 +28,15 @@ module.exports = {
         ],
       },
       {
-        enforce: 'pre',
-        test: /\.js$/,
-        loader: 'source-map-loader',
-      },
-      {
-        test: /\.html$/,
-        loader: 'html-loader',
-      },
-      {
         test: /\.css$/,
         loader: ['style-loader', 'css-loader'],
       },
     ],
   },
 
-  externals: {
-    react: 'React',
-    'react-dom': 'ReactDOM',
-  },
-
-  optimization: {
-    minimize: false,
-  },
-
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'src/index.html',
+      template: path.join(root, 'src/web/index.html'),
     }),
   ],
 };

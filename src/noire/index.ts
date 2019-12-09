@@ -56,12 +56,3 @@ export class Noire {
     this.updateLoop(0);
   }
 }
-
-const test = new Noire({
-  width: 400,
-  height: 700,
-  editorTarget: document.getElementById('editor') as HTMLElement,
-  canvasTarget: document.getElementById('canvas') as HTMLDivElement,
-});
-
-test.init();
