@@ -2,21 +2,25 @@ import * as T from '../types';
 import { portOutdatedDisplay } from '../display/serialize';
 import * as selectors from './selectors';
 import { initialInputState } from './reducers/input';
+import { initialLocalState } from './reducers/local';
 import { initialSavedDisplaysState } from './reducers/savedDisplays';
 
 export interface PersistentState {
   controllers: T.Controller[];
   savedDisplays: T.SavedDisplaysState;
+  local: T.LocalState;
 }
 
 export const defaultPersistentState: PersistentState = {
   controllers: [],
   savedDisplays: initialSavedDisplaysState,
+  local: initialLocalState,
 };
 
 const projectToPersistentState = (state: T.EditorState): PersistentState => ({
   savedDisplays: selectors.savedDisplaysState(state),
   controllers: selectors.controllers(state),
+  local: selectors.localState(state),
 });
 
 export const serializeEditorState = (state: T.EditorState): string =>
@@ -25,7 +29,7 @@ export const serializeEditorState = (state: T.EditorState): string =>
 const recoverEditorState = (
   pState: PersistentState,
 ): Partial<T.EditorState> => {
-  const { controllers, savedDisplays: rawSavedDisplays } = {
+  const { controllers, local, savedDisplays: rawSavedDisplays } = {
     ...defaultPersistentState,
     ...pState,
   };
@@ -40,6 +44,7 @@ const recoverEditorState = (
   return {
     display: active && { active },
     input: { ...initialInputState, controllers },
+    local,
     savedDisplays,
   };
 };

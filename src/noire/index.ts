@@ -30,7 +30,7 @@ export class Noire {
     const fps = selectors.fps(this.editorApp.store.getState());
     const dt = tNext - this.tLast;
 
-    if (dt > 1000/fps) {
+    if (dt > 1000 / fps) {
       this.tLast = tNext;
 
       const input = this.controllerManager.getInput();

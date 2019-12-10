@@ -150,7 +150,9 @@ export const selectedDisplay = lift(
     find(d => d.id === state.selectedDisplayId, state.displays),
 );
 
-export const fps = lift(
+export const localState = lift(
   'local',
-  (state: T.LocalState): number => state.fps,
+  (state: T.LocalState): T.LocalState => state,
 );
+
+export const fps = lift('local', (state: T.LocalState): number => state.fps);

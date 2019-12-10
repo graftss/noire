@@ -82,7 +82,8 @@ export type EditorAction =
   | { type: 'setActiveDisplayName'; data: string }
   | { type: 'saveDisplay'; data: T.SerializedDisplay }
   | { type: 'selectDisplay'; data: T.SerializedDisplay }
-  | { type: 'removeDisplay'; data: string };
+  | { type: 'removeDisplay'; data: string }
+  | { type: 'setFps'; data: number };
 
 export type Dispatch = ((a: T.EditorAction) => void) | (() => void);
 
@@ -472,4 +473,9 @@ export const closePresentationSnackbar: FuncCreator0 = () => dispatch =>
 
 export const exitPresentationMode = (): EditorAction => ({
   type: 'exitPresentationMode',
+});
+
+export const setFps = (fps: number): EditorAction => ({
+  type: 'setFps',
+  data: fps,
 });

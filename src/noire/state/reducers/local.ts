@@ -13,7 +13,11 @@ export const localReducer = (
   action: T.EditorAction,
 ): LocalState => {
   switch (action.type) {
-
+    case 'setFps':
+      return {
+        ...state,
+        fps: action.data,
+      };
   }
 
   return state;
