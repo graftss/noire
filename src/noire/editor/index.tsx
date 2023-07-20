@@ -11,6 +11,13 @@ export interface EditorApp {
   render: () => void;
 }
 
+console.log((window as any).elt = React.createElement('div', { x: 3, y: 4 },
+    <div>a</div>,
+    <div>b</div>
+));
+(window as any).React = React;
+
+
 // I'm not really sure how to get around this right now, it seems like
 // you need to use the `ReactReduxContext` element from react-redux
 const _Editor: any = EditorContainer;
