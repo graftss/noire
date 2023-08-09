@@ -24,8 +24,8 @@ const tabSwitch = (kind: T.TabKind): React.ReactNode => {
       return <ControllerPane />;
     case 'config':
       return <ConfigPane />;
-    case 'about':
-      return <AboutPane />;
+    // case 'about':
+    //   return <AboutPane />;
   }
 };
 
