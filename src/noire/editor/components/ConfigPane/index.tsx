@@ -25,7 +25,7 @@ interface PropsFromDispatch {
   setFps: CB1<number>;
 }
 
-interface ConfigPaneProps extends PropsFromState, PropsFromDispatch {}
+interface ConfigPaneProps extends PropsFromState, PropsFromDispatch { }
 
 const mapStateToProps = (state: T.EditorState): PropsFromState => ({
   activeDisplay: selectors.activeDisplay(state),

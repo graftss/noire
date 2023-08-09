@@ -26,13 +26,13 @@ const mapDispatchToProps = (dispatch): PropsFromDispatch =>
     dispatch,
   );
 
-interface EditorTabsProps extends PropsFromState, PropsFromDispatch {}
+interface EditorTabsProps extends PropsFromState, PropsFromDispatch { }
 
 const kindToLabel: Record<T.TabKind, string> = {
   display: 'Display',
   controllers: 'Controllers',
   config: 'Config',
-  about: 'About',
+  // about: 'About',
 };
 
 const BaseEditorTabs: React.SFC<EditorTabsProps> = ({ currentTab, setTab }) => (

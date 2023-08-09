@@ -1,6 +1,7 @@
 import * as T from '../../types';
 
-export const tabOrder = ['display', 'controllers', 'config', 'about'] as const;
+// export const tabOrder = ['display', 'controllers', 'config', 'about'] as const;
+export const tabOrder = ['display', 'controllers', 'config'] as const;
 
 export type TabKind = typeof tabOrder[number];
 
