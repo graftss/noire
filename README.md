@@ -7,7 +7,7 @@ Noire is an input display designed for livestream layouts, plus a editor to crea
 - Live editor for creating, customizing, and testing input displays.
 - Instantly serialize, share, and import input displays as JSON.
 - Built-in single-color background designed to work with stream layout chroma keying.
--
+
 ## Demo
 
 [![Demo screenshot](https://i.imgur.com/2p7p1no.png)](https://www.youtube.com/watch?v=fjYLomcFU7c)
